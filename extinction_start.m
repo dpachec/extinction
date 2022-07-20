@@ -9,10 +9,13 @@
 %addpath ('D:\Extinction\iEEG\extinction_ieeg_scripts\additional_functions');
 %ft_defaults % adds the right folders of fieldtrip
 
-load_paths % call this function to define path variables (path_data, path_info, path_out)
+
             
 %% read in log file information (for trialinfo & for behavioral data analysis)
 clear 
+
+load_paths % call this function to define path variables (path_data, path_info, path_out)
+
 
 %  we have read in the eeg files, however we need more information: 
 % 1. what trial number (position in presentation)?
@@ -78,7 +81,7 @@ for f=1:numel(allfiles)
         start_trial = strncmp(strcat(sel_phase,'trial'),log{1,3},6);
         id_trials = find(start_trial);
         log_time_trials=log{1,4}(start_trial);
-         phase_ind = ((r-1)*numel(id_trials))+1:r*numel(id_trials); % 1-72 or 73-144
+        phase_ind = ((r-1)*numel(id_trials))+1:r*numel(id_trials); % 1-72 or 73-144
 
         item_trials = find(strncmp('Item',log{1,3},4));
         item_trials = item_trials(phase_ind);            
@@ -274,6 +277,8 @@ end
 
 
 %% get some FIGURES for behavioral data per participant
+
+load_paths % call this function to define path variables (path_data, path_info, path_out)
 
 mkdir(path_info)
 % 
