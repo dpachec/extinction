@@ -1,3 +1,6 @@
+%% load paths for extinction project
+
+
 
 path_data='/Users/danielpacheco/Documents/iEEG_data_analysis/extinction/data/raw_data/';
 path_out = '/Users/danielpacheco/Documents/iEEG_data_analysis/extinction/data/preproc/trialinfo/';
