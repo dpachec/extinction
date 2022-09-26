@@ -1,21 +1,5 @@
 %% behavdata readin
-
-
-% first: add toolboxes to your path
-
-% add path with your fieldtrip toolbox
-%addpath('D:\matlab_tools\fieldtrip-20190108')
-% add path with additional functions
-%addpath ('D:\Extinction\iEEG\extinction_ieeg_scripts\additional_functions');
-%ft_defaults % adds the right folders of fieldtrip
-
-
-            
 %% read in log file information (for trialinfo & for behavioral data analysis)
-clear 
-
-load_paths % call this function to define path variables (path_data, path_info, path_out)
-
 
 %  we have read in the eeg files, however we need more information: 
 % 1. what trial number (position in presentation)?
@@ -37,31 +21,27 @@ load_paths % call this function to define path variables (path_data, path_info, 
 %later added
 %15. number of item rep in each block
 %16 number of us in total
-%path_data='D:\Extinction\iEEG\rawdata\extinction_ieeg\';
-%path_out='D:\Extinction\iEEG\data\preproc\trialinfo\';
 
+load_paths
+mkdir(path_out);
 
-mkdir(path_info)
-
- 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-           'c_sub17','c_sub18', 'c_sub19','c_sub20', 'c_sub21','c_sub22' };
+           'c_sub17','c_sub18','c_sub19','c_sub20', 'c_sub21','c_sub22'};
        
        
 for sub=1:length(allsubs)
     
-clearvars -except allsubs path_data path_info path_out sub
-
-sel_sub=allsubs{sub};
-sel_sub_str=str2double(sel_sub(6:7));
-path_in=strcat(path_data,sel_sub,'/log/');
-all_logs= dir(path_in);
-all_logs={all_logs.name}; 
-allfiles={'A&B','C'};
+    clearvars -except allsubs sub path_out path_info path_data
+    sel_sub=allsubs{sub};
+    sel_sub_str=str2double(sel_sub(6:7));
+    path_in=strcat(path_data,sel_sub,'/log/');
+    all_logs= dir(path_in);
+    all_logs={all_logs.name}; 
+    allfiles={'A&B','C'};
 
 for f=1:numel(allfiles) 
-    sel_file=allfiles{f}
+sel_file=allfiles{f}
     switch sel_file
         case 'A&B'
             allruns={'A','B'};
@@ -71,27 +51,27 @@ for f=1:numel(allfiles)
              allblocks=3;
     end
 
-    for r=1:numel(allruns)
+for r=1:numel(allruns)
 
-        sel_phase=allruns{r};
-        sel_block=allblocks(r);
-        file_ind=strncmp(strcat(num2str(sel_sub_str),'-phase',sel_file,'_'),all_logs,9);
-        file_name=strcat(path_in,all_logs{file_ind});
-
-        log = log2matSHORT(file_name); % info from logfile_x is now in this variable;  
-        clear file_ind 
+    sel_phase=allruns{r};
+    sel_block=allblocks(r);
+    file_ind=strncmp(strcat(num2str(sel_sub_str),'-phase',sel_file,'_'),all_logs,9);
+    file_name=strcat(path_in,all_logs{file_ind});
+    
+    log = log2matSHORT(file_name); % info from logfile_x is now in this variable;  
+    clear file_ind 
 
         start_trial = strncmp(strcat(sel_phase,'trial'),log{1,3},6);
         id_trials = find(start_trial);
         log_time_trials=log{1,4}(start_trial);
-        phase_ind = ((r-1)*numel(id_trials))+1:r*numel(id_trials); % 1-72 or 73-144
+         phase_ind = ((r-1)*numel(id_trials))+1:r*numel(id_trials); % 1-72 or 73-144
 
         item_trials = find(strncmp('Item',log{1,3},4));
         item_trials = item_trials(phase_ind);            
         trlinfo(:,1) = log{1,1}(id_trials); % logfile trl number in first colum of trialinfo
         trlinfo(:,2)=ones(size(trlinfo)).*sel_block; % % number of task block
         log_time_item=log{1,4}(item_trials);
-
+        
         % indices contexts, converts context into double, writes in trlinfo
         z = find(strncmp('context',log{1,3}, 7));
         z = z(phase_ind);
@@ -127,126 +107,126 @@ for f=1:numel(allfiles)
         trlinfo(:,6) = type;
             clear item type i 
 
-        % --------------------
-        % until here, same A-D
-        % --------------------
+    % --------------------
+    % until here, same A-D
+    % --------------------
 
-        if f == 1 % only in Phase A and B and all response trials now, therefore...
+    if f == 1 % only in Phase A and B and all response trials now, therefore...
 
-            % responses (1,2,3 or 4 ); participant probably didn't respond! (or responded with SPACE or responded too early (before response screen) or responded no matter what....
-            % if no answer to response trial: NaN
-            % ... probably switched responses...
-            % always take first response
-            y = zeros(length(trlinfo),1);
-            RT = zeros(length(id_trials),1);
-            for i = 1:length(id_trials)
-                if (id_trials(i)+7)<numel(log{1,3})
+        % responses (1,2,3 or 4 ); participant probably didn't respond! (or responded with SPACE or responded too early (before response screen) or responded no matter what....
+        % if no answer to response trial: NaN
+        % ... probably switched responses...
+        % always take first response
+        y = zeros(length(trlinfo),1);
+        RT = zeros(length(id_trials),1);
+        for i = 1:length(id_trials)
+            if (id_trials(i)+7)<numel(log{1,3})
 
-               tmp_tr= log{1,3}(id_trials(i)+3:id_trials(i)+7);
-               tmp_rt= log{1,4}(id_trials(i)+3:id_trials(i)+7);
-                else (id_trials(i)+7)>numel(log{1,3})
-               tmp_tr= log{1,3}(id_trials(i)+3:end);
-               tmp_rt= log{1,4}(id_trials(i)+3:end);
-                end
-
-               tmp_allres=str2double(tmp_tr);
-               res_ind= find(~isnan(tmp_allres));
-               if isempty(res_ind)
-                    y(i)= NaN; % didn't respond when response_trial -> missing
-                    RT(i)=NaN;
-               else
-                    y(i)=tmp_allres(res_ind(1)); 
-                    RT(i)=(tmp_rt(res_ind(1)));
-               end
-
+           tmp_tr= log{1,3}(id_trials(i)+3:id_trials(i)+7);
+           tmp_rt= log{1,4}(id_trials(i)+3:id_trials(i)+7);
+            else (id_trials(i)+7)>numel(log{1,3})
+           tmp_tr= log{1,3}(id_trials(i)+3:end);
+           tmp_rt= log{1,4}(id_trials(i)+3:end);
             end
-            trlinfo(:,7) = y;
 
-            % RT (response - item trial)
-            % NaN: missing
+           tmp_allres=str2double(tmp_tr);
+           res_ind= find(~isnan(tmp_allres));
+           if isempty(res_ind)
+                y(i)= NaN; % didn't respond when response_trial -> missing
+                RT(i)=NaN;
+           else
+                y(i)=tmp_allres(res_ind(1)); 
+                RT(i)=(tmp_rt(res_ind(1)));
+           end
 
-            % cs1 vs. cs0
-            cs = strncmp('cs',log{1,3}, 2);
-            cs = find(cs);
-             cs = cs(phase_ind);
-            u = zeros(length(id_trials),1);
-            for i=1:numel(cs)
-                u(i)=str2double(log{1,3}{cs(i)}(3));
-            end
-            trlinfo(:,8) = u;         
-            % keep y!
-            % us_event (1) or no_us(0)
-            w = zeros(length(trlinfo),1);
-            a1 = strncmp(log{1,3},'us_event',7);
-            a2 = strncmp(log{1,3},'no_us',7);
-            b = find(a1+a2);
-            b = b(phase_ind);
-            log_time_us=log{1,4}(b);
-            for i = 1:length(b)
-                if strcmp('no_us',log{1,3}(b(i)))
-                    w(i) = 0;
-                elseif strcmp('us_event',log{1,3}(b(i)))
-                    w(i) = 1;
-                end
-            end
-            trlinfo(:,9) = w;
-           clear w b a1 a2 u cs
-
-        elseif f == 2
-            % responses and RTs
-            response = strncmp(strcat(sel_phase,'response'),log{1,3}, 5); 
-            id_response = find(response);
-            resp = zeros(length(id_response), 1);
-            %first_button_press = zeros(length(log{1,3}));
-            RT = zeros(length(id_response), 1);
-            y = zeros(length(trlinfo),1);
-            for i = 1:length(id_response)
-               tmp_tr= log{1,3}(id_response(i)-1:id_response(i)+1);
-               tmp_rt= log{1,4}(id_response(i)-1:id_response(i)+1);
-               tmp_allres=str2double(tmp_tr);
-               res_ind= find(~isnan(tmp_allres));
-               if isempty(res_ind)
-                    y(i)= NaN; % didn't respond when response_trial -> missing
-                    RT(i)=NaN;
-               else
-                    y(i)=tmp_allres(res_ind(1)); 
-                    RT(i)=(tmp_rt(res_ind(1)));
-               end
-            end
-            trlinfo(:,7) = y;
-
-            % all no_us -> not in trialinfo
-            % pattern ABC -> A=1; B =2; C=3;
-            h = find(strncmp('A',log{1,3}, 1));
-            test = cell(length(id_trials),1);
-            type = cell(length(id_trials),1);
-            for i=1:numel(h)
-              test{i}=log{1,3}{h(i)}(1:3);
-              type{i}=log{1,3}{h(i)}(end);
-            end          
-            test = strrep(test, 'A', '1');
-            test = strrep(test, 'B', '2');
-            test = strrep(test, 'C', '3');
-            test = (cellfun(@str2num,test))-120;
-            type = cellfun(@str2double, type);
-            trlinfo(:,4) = test;
-
-            clear h test %type
-            a2 = strncmp(log{1,3},'no_us',7);     
-            log_time_us=log{1,4}(a2);
         end
-        trlinfo(:,10)=log_time_trials;
-        trlinfo(:,11)= log_time_video;
-        trlinfo(:,12)=log_time_item;
-        trlinfo(:,13)=log_time_us;
-        trlinfo(:,14) = RT;
+        trlinfo(:,7) = y;
 
-        clear log_time_trials log_time_us log_time_video log_time_item RTclear;
+        % RT (response - item trial)
+        % NaN: missing
 
-       log_allblock{sel_block}=trlinfo;
-       clear trlinfo  
+        % cs1 vs. cs0
+        cs = strncmp('cs',log{1,3}, 2);
+        cs = find(cs);
+         cs = cs(phase_ind);
+        u = zeros(length(id_trials),1);
+        for i=1:numel(cs)
+            u(i)=str2double(log{1,3}{cs(i)}(3));
+        end
+        trlinfo(:,8) = u;         
+        % keep y!
+        % us_event (1) or no_us(0)
+        w = zeros(length(trlinfo),1);
+        a1 = strncmp(log{1,3},'us_event',7);
+        a2 = strncmp(log{1,3},'no_us',7);
+        b = find(a1+a2);
+        b = b(phase_ind);
+        log_time_us=log{1,4}(b);
+        for i = 1:length(b)
+            if strcmp('no_us',log{1,3}(b(i)))
+                w(i) = 0;
+            elseif strcmp('us_event',log{1,3}(b(i)))
+                w(i) = 1;
+            end
+        end
+        trlinfo(:,9) = w;
+       clear w b a1 a2 u cs
 
+    elseif f == 2
+        % responses and RTs
+        response = strncmp(strcat(sel_phase,'response'),log{1,3}, 5); 
+        id_response = find(response);
+        resp = zeros(length(id_response), 1);
+        %first_button_press = zeros(length(log{1,3}));
+        RT = zeros(length(id_response), 1);
+        y = zeros(length(trlinfo),1);
+        for i = 1:length(id_response)
+           tmp_tr= log{1,3}(id_response(i)-1:id_response(i)+1);
+           tmp_rt= log{1,4}(id_response(i)-1:id_response(i)+1);
+           tmp_allres=str2double(tmp_tr);
+           res_ind= find(~isnan(tmp_allres));
+           if isempty(res_ind)
+                y(i)= NaN; % didn't respond when response_trial -> missing
+                RT(i)=NaN;
+           else
+                y(i)=tmp_allres(res_ind(1)); 
+                RT(i)=(tmp_rt(res_ind(1)));
+           end
+        end
+        trlinfo(:,7) = y;
+
+        % all no_us -> not in trialinfo
+        % pattern ABC -> A=1; B =2; C=3;
+        h = find(strncmp('A',log{1,3}, 1));
+        test = cell(length(id_trials),1);
+        type = cell(length(id_trials),1);
+        for i=1:numel(h)
+          test{i}=log{1,3}{h(i)}(1:3);
+          type{i}=log{1,3}{h(i)}(end);
+        end          
+        test = strrep(test, 'A', '1');
+        test = strrep(test, 'B', '2');
+        test = strrep(test, 'C', '3');
+        test = (cellfun(@str2num,test))-120;
+        type = cellfun(@str2double, type);
+        trlinfo(:,4) = test;
+               
+        clear h test %type
+        a2 = strncmp(log{1,3},'no_us',7);     
+        log_time_us=log{1,4}(a2);
     end
+    trlinfo(:,10)=log_time_trials;
+   trlinfo(:,11)= log_time_video;
+    trlinfo(:,12)=log_time_item;
+    trlinfo(:,13)=log_time_us;
+    trlinfo(:,14) = RT;
+
+    clear log_time_trials log_time_us log_time_video log_time_item RTclear;
+           
+   log_allblock{sel_block}=trlinfo;
+   clear trlinfo  
+        
+end
 end
 % concatenate all logs to define different types:
 % cs+/cs+=1;cs+/cs-=2;cs-/cs-=3;
@@ -263,39 +243,38 @@ end
 
 %there was an error in instructing patient c_sub01, responses in block a&b
 %need to be switch
-% if strcmp(sel_sub, 'c_sub01')
-% check=0;
-% blockAB=trlinfo(:,2)<=2;
-% trlinfo(blockAB,7)=5-trlinfo(blockAB,7);
-% elseif strcmp(sel_sub, 'c_sub01')
-% trlinfo(:,7)=5-trlinfo(:,7);
-% end
+if strcmp(sel_sub, 'c_sub01')
+check=0;
+blockAB=trlinfo(:,2)<=2;
+trlinfo(blockAB,7)=5-trlinfo(blockAB,7);
+elseif strcmp(sel_sub, 'c_sub01')
+trlinfo(:,7)=5-trlinfo(:,7);
+end
 
-mkdir(path_out)
 save(strcat(path_out,sel_sub,'_trlinfo'),'trlinfo')
 clear all_logs allblocks allfiles allruns f file_name i id_response id_trials item_trials...
-    log log_allblock log_time_trials phase_ind r res_ind resp respnse sel_block sel_file ... 
-    sel_phase sel_sub sum_us tmp_allres tmp_rt tmp_tr type type_sum
+    log log_allblock log_time_trials phase_ind r res_ind resp respnse sel_block sel_file sel_phase sel_sub sum_us tmp_allres tmp_rt tmp_tr trlinfo type type_sum
 
 end
 
 
 %% get some FIGURES for behavioral data per participant
-clear 
-
-load_paths % call this function to define path variables (path_data, path_info, path_out)
+path_info='D:\Extinction\iEEG\data\preproc\data_check\behav\'; % define where you want to save your file:
+path_in='D:\Extinction\iEEG\data\preproc\trialinfo\';
 
 mkdir(path_info)
-
+% 
+% allsubs = {'p_sub01','p_sub02','p_sub03','p_sub04','p_sub05','p_sub06','p_sub07',...
+%           'c_sub01','c_sub02','c_sub03','c_sub05','c_sub06','c_sub07','c_sub08','c_sub09','c_sub10',...
+%           'c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16','c_sub17','c_sub18'};
+ %allsubs = {'c_sub04','c_sub20'};
  
-allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
-           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-           'c_sub17','c_sub18', 'c_sub19','c_sub20', 'c_sub21','c_sub22' };
- 
+ allsubs = {'p_sub10'}
+ %allsubs = {'c_sub19','c_sub21','c_sub22','c_sub23','c_sub24','c_sub25'};
 
 for sub = 1:numel(allsubs)
     sel_sub=allsubs{sub};
-    load(strcat(path_out,sel_sub,'_trlinfo'))
+    load(strcat(path_in,sel_sub,'_trlinfo'))
     
     % organize trialinfo in matrix
     trialinfo=trlinfo;
@@ -353,7 +332,7 @@ for sub = 1:numel(allsubs)
     end
     
     clear tmp    
-    figure(); set(gcf, 'Position', [100 100 700 600])
+    figure % initializes figure
     
         for i = 1:length(types)
             subplot(3,4,i)
@@ -437,9 +416,7 @@ for sub = 1:numel(allsubs)
         end
         legend(types)
            
-   %savefig (strcat(path_info, sel_sub, '_rating_summary.fig'));   
-   exportgraphics(gcf, [sel_sub '.png'], 'Resolution', 300)
-   
+   savefig (strcat(path_info, sel_sub, '_rating_summary.fig'));   
     
 %     figure
 %     % plot rating for each item
@@ -460,41 +437,3 @@ for sub = 1:numel(allsubs)
 %     end
     
 end
-
-
-
-%%
-data.hdr.label = data.label
-data.hdr.nChans = length(data.label)
-EEG = fieldtrip2eeglab(data.hdr,cat(3,data.trial{:}));
-
-
-%% plot 
-chanids = [70:75];
-eegplot(EEG.data(chanids,:,:), 'srate', EEG.srate, 'winlength', 100, 'spacing', 1500, 'events', EEG.event);
-
-
-%%
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
