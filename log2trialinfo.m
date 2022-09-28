@@ -22,6 +22,7 @@
 %15. number of item rep in each block
 %16 number of us in total
 
+clear
 load_paths
 mkdir(path_out);
 
@@ -252,8 +253,6 @@ trlinfo(:,7)=5-trlinfo(:,7);
 end
 
 save(strcat(path_out,sel_sub,'_trlinfo'),'trlinfo')
-clear all_logs allblocks allfiles allruns f file_name i id_response id_trials item_trials...
-    log log_allblock log_time_trials phase_ind r res_ind resp respnse sel_block sel_file sel_phase sel_sub sum_us tmp_allres tmp_rt tmp_tr trlinfo type type_sum
 
 end
 

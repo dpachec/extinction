@@ -1,20 +1,8 @@
-%% behavdata readin
-
-
-% first: add toolboxes to your path
-
-% add path with your fieldtrip toolbox
-%addpath('D:\matlab_tools\fieldtrip-20190108')
-% add path with additional functions
-%addpath ('D:\Extinction\iEEG\extinction_ieeg_scripts\additional_functions');
-%ft_defaults % adds the right folders of fieldtrip
-
-
-            
+%% generate trialinfo files from log 
 %% read in log file information (for trialinfo & for behavioral data analysis)
 clear 
 
-load_paths % call this function to define path variables (path_data, path_info, path_out)
+paths = load_paths; % call this function to define path variables (path_data, path_info, path_out)
 
 
 %  we have read in the eeg files, however we need more information: 
@@ -40,22 +28,19 @@ load_paths % call this function to define path variables (path_data, path_info, 
 %path_data='D:\Extinction\iEEG\rawdata\extinction_ieeg\';
 %path_out='D:\Extinction\iEEG\data\preproc\trialinfo\';
 
-
-mkdir(path_info)
-
  
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
            'c_sub17','c_sub18', 'c_sub19','c_sub20', 'c_sub21','c_sub22' };
        
        
-for sub=1:length(allsubs)
+for sub=4:length(allsubs)
     
-clearvars -except allsubs path_data path_info path_out sub
+clearvars -except allsubs paths sub 
 
 sel_sub=allsubs{sub};
 sel_sub_str=str2double(sel_sub(6:7));
-path_in=strcat(path_data,sel_sub,'/log/');
+path_in=strcat(paths.data,sel_sub,'/log/');
 all_logs= dir(path_in);
 all_logs={all_logs.name}; 
 allfiles={'A&B','C'};
@@ -271,11 +256,9 @@ end
 % trlinfo(:,7)=5-trlinfo(:,7);
 % end
 
-mkdir(path_out)
-save(strcat(path_out,sel_sub,'_trlinfo'),'trlinfo')
-clear all_logs allblocks allfiles allruns f file_name i id_response id_trials item_trials...
-    log log_allblock log_time_trials phase_ind r res_ind resp respnse sel_block sel_file ... 
-    sel_phase sel_sub sum_us tmp_allres tmp_rt tmp_tr type type_sum
+mkdir(paths.info)
+save(strcat(paths.info,sel_sub,'_trlinfo'),'trlinfo')
+
 
 end
 
