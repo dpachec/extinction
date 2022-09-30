@@ -1,7 +1,7 @@
 %% load paths for extinction project
 function [paths] = load_paths()
 
-paths.data='D:/extinction/raw_data/';
+paths.data= '/Users/danielpacheco/Documents/iEEG_data_analysis/extinction/raw_data/';
 paths.preproc = '/Users/danielpacheco/Documents/iEEG_data_analysis/extinction/data/iEEG/preproc/ieeg/readin/'
 %path_out = '/Users/danielpacheco/Documents/iEEG_data_analysis/extinction/results/ERPs/';
 paths.info = 'D:/extinction/data/preproc/trialinfo/';
