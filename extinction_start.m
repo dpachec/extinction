@@ -46,7 +46,7 @@ clearvars -except allsubs paths sub
 
 sel_sub=allsubs{sub};
 sel_sub_str=str2double(sel_sub(6:7));
-path_in=strcat(paths.data,sel_sub,'/log/');
+path_in=strcat(paths.raw_data,sel_sub,'/log/');
 all_logs= dir(path_in);
 all_logs={all_logs.name}; 
 allfiles={'A&B','C'};
@@ -262,8 +262,8 @@ end
 % trlinfo(:,7)=5-trlinfo(:,7);
 % end
 
-mkdir(paths.info)
-save(strcat(paths.info,sel_sub,'_trlinfo'),'trlinfo')
+mkdir(paths.trlinfo)
+save(strcat(paths.trlinfo,sel_sub,'_trlinfo'),'trlinfo')
 
 
 end

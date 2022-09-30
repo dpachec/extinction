@@ -78,23 +78,22 @@ eegplot(EEG.data(chanids,:), 'srate', EEG.srate, 'eloc_file',EEG.chanlocs(chanid
 
 %eeglab
 clear, close all
-path_log = '/Users/danielpacheco/Documents/iEEG_data_analysis/extinction/data/preproc/trialinfo/'
-path_edf = '/Users/danielpacheco/Documents/iEEG_data_analysis/extinction/raw_data/'
+paths = load_paths; 
 currentPath = pwd; 
 
-sub = 'c_sub23'
+sub = 'c_sub21'
 
-cd(path_log)
+cd(paths.trlinfo)
 log_list = dir('*mat'); log_list = {log_list.name};
 
-cd(path_edf)
+cd(paths.raw_data)
 edf_list = dir(); edf_list = edf_list(3:end); iDir = [edf_list.isdir]; edf_list = edf_list(iDir);
 edf_list = {edf_list.name}';
 
-cd(path_log)
+cd(paths.trlinfo)
 load ([sub '_trlinfo.mat']);
 
-cd([path_edf sub '/ieeg/'])
+cd([paths.raw_data sub '/ieeg/'])
 edf_list = dir('*edf'); edf_list = {edf_list.name};
 if length(edf_list) < 2    
     EEG = pop_biosig(edf_list{1}, 'importevent', 'off'); 
