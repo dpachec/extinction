@@ -316,11 +316,11 @@ for subji = 1:length(allsubs)
     trigger_value=[event(ind_vidonset).value];
     trigger_sp=[event(ind_vidonset).sample];
 
-    if strcmp(sub,'p_sub05') ind_vidonset(1:8)=[]; trigger_value(1:8)=[]; trigger_sp(1:8)=[]; end
-    
-    if numel(ind_vidonset)~=size(trlinfo,1)
-        error('check why number of trigger do not match number of trials in trlinfo')
-    end
+%     if strcmp(sub,'p_sub05') ind_vidonset(1:8)=[]; trigger_value(1:8)=[]; trigger_sp(1:8)=[]; end
+%     
+%     if numel(ind_vidonset)~=size(trlinfo,1)
+%         error('check why number of trigger do not match number of trials in trlinfo')
+%     end
         
     % check diff times between triggers
     %trigger_diff=diff(trigger_sp)'.*(1000/EEG.srate); %convert ms
@@ -344,6 +344,7 @@ for subji = 1:length(allsubs)
     EEG.xmax = size(EEG.data,2)/EEG.srate;
     %EEG.times = 0:2:size(EEG.data,2)*2;
     
+
     diff_12 = trigger_sp_ds(1) - trlinfo_sp_ds(1); 
     % add triggers from trlinfo and event data 
     EEG.event = struct('latency', [], 'type', '', 'urevent', []);
@@ -355,6 +356,18 @@ for subji = 1:length(allsubs)
     end
     EEG.event = nestedSortStruct(EEG.event, 'latency');
 
+    % cut data
+    task_sp = [trigger_sp_ds(1)- 20000,trigger_sp_ds(end)+ 20000]; %20 secs before and after
+    EEG.data = EEG.data(:, task_sp(1):task_sp(2));
+    EEG.pnts = size(EEG.data,2);
+    EEG.xmax = size(EEG.data,2)/EEG.srate;
+    x =  [EEG.event.latency]' - (trigger_sp_ds(1) - 20000);
+    x = num2cell(x');
+    EEG.event = struct('latency',x, 'type', {EEG.event.type});
+    
+
+
+    
 
     cd ..
 
@@ -365,6 +378,11 @@ end
 
 
 
+
+
+%%  plot downsampled data
+chanids = 1:10; 
+eegplot(EEG.data(chanids,:), 'srate', EEG.srate,'winlength', 50, 'spacing', 1000, 'events', EEG.event);
 
 
 
