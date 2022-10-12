@@ -23,20 +23,21 @@
 %16 number of us in total
 
 clear
-load_paths
-mkdir(path_out);
+paths = load_paths; 
 
-allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
-           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-           'c_sub17','c_sub18','c_sub19','c_sub20', 'c_sub21','c_sub22'};
+
+% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+%            'c_sub17','c_sub18','c_sub19','c_sub20', 'c_sub21','c_sub22'};
        
-       
+allsubs = {'p_sub08'}
+
 for sub=1:length(allsubs)
     
-    clearvars -except allsubs sub path_out path_info path_data
+    clearvars -except allsubs sub paths
     sel_sub=allsubs{sub};
     sel_sub_str=str2double(sel_sub(6:7));
-    path_in=strcat(path_data,sel_sub,'/log/');
+    path_in=strcat(paths.raw_data,sel_sub,'/log/');
     all_logs= dir(path_in);
     all_logs={all_logs.name}; 
     allfiles={'A&B','C'};
@@ -252,7 +253,7 @@ elseif strcmp(sel_sub, 'c_sub01')
 trlinfo(:,7)=5-trlinfo(:,7);
 end
 
-save(strcat(path_out,sel_sub,'_trlinfo'),'trlinfo')
+save(strcat(paths.trlinfo,sel_sub,'_trlinfo'),'trlinfo')
 
 end
 

@@ -35,11 +35,11 @@ paths = load_paths; % call this function to define path variables (path_data, pa
 %             'c_sub25','c_sub26','c_sub29' };
        
 %allsubs = {'p_sub01','p_sub02','p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub08'}
-allsubs = {'p_sub01','p_sub02','p_sub03','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-            'p_sub11','p_sub12','p_sub13','p_sub14', 'p_sub16','p_sub17'};
+% allsubs = {'p_sub01','p_sub02','p_sub03','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+%             'p_sub11','p_sub12','p_sub13','p_sub14', 'p_sub16','p_sub17'};
        
-       
-       
+allsubs = {'p_sub15'}
+
 for sub=1:length(allsubs)
     
 clearvars -except allsubs paths sub 
