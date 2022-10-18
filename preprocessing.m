@@ -10,7 +10,7 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' }';
 
 
-for subji = 21:21 %18:length(allsubs)
+for subji = 30:30 %18:length(allsubs)
 
     sub = allsubs{subji}; 
     cd(paths.trlinfo)
@@ -34,12 +34,6 @@ for subji = 21:21 %18:length(allsubs)
     
 end
 
-EEG1 = EEG
-
-
-%%
-
-EEG = EEG1
 
     clearvars -except EEG subji paths trlinfo path_log currentPath sub allsubs EEG1
     eventChannel = 'POL DC12';
@@ -69,8 +63,9 @@ EEG = EEG1
     if strcmp(sub, 'c_sub19') lat2breakTTL = EEG.event(id2Break+26).latency; end
     if strcmp(sub, 'c_sub21') lat2breakTTL = EEG.event(id2Break+122).latency; end
     if strcmp(sub, 'c_sub23') lat2breakTTL = EEG.event(id2Break+71).latency; end
-    if strcmp(sub, 'c_sub25') lat2breakTTL = EEG.event(id2Break+32).latency; end
+    if strcmp(sub, 'c_sub25') lat2breakTTL = EEG.event(id2Break+32).latency; end    
     if strcmp(sub, 'c_sub29') lat2breakTTL = EEG.event(id2Break+97).latency; end
+    if strcmp(sub, 'c_sub30') lat2breakTTL = EEG.event(id2Break+30).latency; end
     
     lat_prev = trlinfo(:, 10:14); 
     latencies = reshape (lat_prev', 1, [])'; 
@@ -111,7 +106,7 @@ EEG = EEG1
         [P,Q] = rat(1000/EEG.srate);
         for chani = 1:size(EEG.data, 1)
            chani
-           data(chani,:) = resample(EEG.data(chani,:), P, Q); %use the function in fieldtrip, matlab signal processing rescales the data
+           data(chani,:) = resample(double(EEG.data(chani,:)), P, Q); %use the function in fieldtrip, matlab signal processing rescales the data
         end
         events = EEG.event; 
         chans = EEG.chanlocs; 
@@ -127,12 +122,13 @@ EEG = EEG1
     end
     
     
-    cd ..
+    mkdir([paths.ds sub])
+    cd ([paths.ds sub])
    
     filename = [sub '_downSampiEEG.mat']
     save(filename, 'EEG', '-v7.3');
     cd (currentPath)
-    
+  
     disp('done')
     
 
@@ -141,7 +137,7 @@ EEG = EEG1
         'winlength', 50, 'spacing', 10000000, 'events', EEG.event);
 
    
-%end
+end
 
 
 %% Process NCS files PARIS 
