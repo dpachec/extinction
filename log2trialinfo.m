@@ -1,7 +1,5 @@
-%% behavdata readin
-%% read in log file information (for trialinfo & for behavioral data analysis)
+%% This scripts reads the raw log files and creates trialinfo files 
 
-%  we have read in the eeg files, however we need more information: 
 % 1. what trial number (position in presentation)?
 % 2. which Phase?
 % 3. which context was used?
@@ -25,12 +23,11 @@
 clear
 paths = load_paths; 
 
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' }';
 
-% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
-%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-%            'c_sub17','c_sub18','c_sub19','c_sub20', 'c_sub21','c_sub22'};
-       
-allsubs = {'p_sub08'}
 
 for sub=1:length(allsubs)
     
@@ -258,182 +255,12 @@ save(strcat(paths.trlinfo,sel_sub,'_trlinfo'),'trlinfo')
 end
 
 
-%% get some FIGURES for behavioral data per participant
-path_info='D:\Extinction\iEEG\data\preproc\data_check\behav\'; % define where you want to save your file:
-path_in='D:\Extinction\iEEG\data\preproc\trialinfo\';
 
-mkdir(path_info)
-% 
-% allsubs = {'p_sub01','p_sub02','p_sub03','p_sub04','p_sub05','p_sub06','p_sub07',...
-%           'c_sub01','c_sub02','c_sub03','c_sub05','c_sub06','c_sub07','c_sub08','c_sub09','c_sub10',...
-%           'c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16','c_sub17','c_sub18'};
- %allsubs = {'c_sub04','c_sub20'};
- 
- allsubs = {'p_sub10'}
- %allsubs = {'c_sub19','c_sub21','c_sub22','c_sub23','c_sub24','c_sub25'};
 
-for sub = 1:numel(allsubs)
-    sel_sub=allsubs{sub};
-    load(strcat(path_in,sel_sub,'_trlinfo'))
-    
-    % organize trialinfo in matrix
-    trialinfo=trlinfo;
-    
-    res = 4; % rating 1-4
-    label = {'Dangerous','Safe'}; % 
-    types = {'cs+/cs+','cs+/cs-','cs-/cs-'}; % only 3 types in EXT loss (cs+/cs+ = type1, cs+/cs- = type 2,cs-/cs- = type3) 
-    items = 1:3; % only 3 items in EXT loss (2, 4, 6)
-    block_def=[1 24;25 48;49 64]; % #of trials in blocks
-    
-    % which item is which type?
-    type_item = zeros(1,length(items));
-    responses_item = zeros(3, block_def(end,end)); 
-    RT_item_alltrials = zeros(3, block_def(end,end));
-    for i = 1:length(items)
-        type_item(i) = mean(trialinfo(trialinfo(:,5) == items(i),6)); % mean gives exact value of itemtype
-        responses_item(i,:) = trialinfo(trialinfo(:,5) == i,7); % give response from column 18 at (column 17 equals 1 or 2 or 3 (itemtype)
-    
-    end
-    
-    % compute average over types
-    for ty=1:numel(types)
-    RT_type_alltrials(ty,:)= trialinfo(trialinfo(:, 6) == ty, 14)-trialinfo(trialinfo(:, 6) == ty, 12)./10;
-    responses(ty,:)=trialinfo(trialinfo(:,6) == ty,7);
-    end
-    
-    
-    % gives for every itemtype the responses throughout the experiment 
-    
-    % 1st line: type 1, 2nd line: type 2, 3rd line: type 3
-    % gives reaction time for every itemtype (1st line: type 1, 2nd line: type 2, 3rd line: type 3)
-    
-    avg_response_type = nanmean(responses,2); % mean resonses per item type
-    % 1st line: type 1, 2nd line: type 2, 3rd line: type 3
-    % replace following line above if interested in median responses per item_type
-    % avg_response_type = median(responses,2, 'omitnan');
-    avg_RT_type_alltrials = nanmean(RT_type_alltrials,2); % mean RT per item type
-    std_RT_type_alltrials = nanstd(RT_type_alltrials,0,2); % std RT per item type
-    
-    % median and mean responses and RT per BLOCK for every itemtype
-    response_medianblock = zeros(length(items),size(block_def, 1));
-    response_avgblock = zeros(length(items),size(block_def, 1));
-    response_stdblock = zeros(length(items),size(block_def, 1));
-    RT_avgblock = zeros(length(items),size(block_def, 1));
-    RT_stdblock = zeros(length(items),size(block_def, 1));
-    
-    for b = 1:length(types)
-        for i = 1:size(block_def, 1) % 4columns
-            response_medianblock(b,i) = median(responses(b,(block_def(i,1):block_def(i,2))), 2, 'omitnan');
-            response_avgblock(b,i) = nanmean(responses(b,(block_def(i,1):block_def(i,2))), 2);
-            response_stdblock(b,i)= nanstd(responses(b,(block_def(i,1):block_def(i,2))));
-            RT_avgblock(b,i) = nanmean(RT_type_alltrials(b,(block_def(i,1):block_def(i,2))), 2);
-            RT_stdblock(b,i)= nanstd(RT_type_alltrials(b,(block_def(i,1):block_def(i,2))));
-        end
-    end
-    
-    clear tmp    
-    figure % initializes figure
-    
-        for i = 1:length(types)
-            subplot(3,4,i)
-            hold on 
-            rectangle('Position',[0 0 24 res],'FaceColor',[1 .9 .9])
-            rectangle('Position',[24 0 24 res],'FaceColor',[0.9 .9 .9])
-            rectangle('Position',[48 0 16 res],'FaceColor',[1 .8 1])
-               
-            stem(responses(i,:))
-            title(types{i})
-            h = gca;
-            h.YTick = 0:res;
-            h.YTickLabel = {' ', label{1}, ' ', ' ',label{2}};
-            h.YTickLabelRotation = 90;
-        end % creates first 3 figures with colored stem plot
-    
-        % mean responses per itemtype
-        subplot(3,3,4)
-        plot(avg_response_type)
-        title('mean responses per type')
-        hold on
-        h = gca;
-        h.XTick = 1:3;
-        h.XTickLabel = types;
-        h.YLim = [0 4];
-        h.YTick = 0:res;
-        h.YTickLabel = {' ', label{1}, ' ', ' ',label{2}};
-        h.YTickLabelRotation = 90;
-        
-        % median responses per itemtype per block
-        for i = 1:length(types)
-            subplot(3,3,5)
-            hold on 
-            plot(response_medianblock(i,:))
-            title('median rating/block')
-            h = gca;
-            h.XTick = 1:4;
-            h.YLim = [0 4];
-            h.YTick = 0:res;
-            h.YTickLabel = {' ', label{1}, ' ', ' ',label{2}};
-            h.YTickLabelRotation = 90;
-            %errorbar(response_avgblock(i,:),response_stdblock(i,:))
-        end
-        legend(types)
-    
-        % mean rating for each block
-        for ty = 1:length(types)
-            subplot(3,3,6)
-            hold on
-            plot(response_avgblock(ty,:));
-            %errorbar(1:4,response_avgblock(ty,:),response_stdblock(ty,:))
-            title('mean rating/block')
-            h = gca;
-            h.XTick = 1:4;
-            h.YLim = [0 4];
-            h.YTick = 0:res;
-            h.YTickLabel = {' ', label{1}, ' ', ' ',label{2}};
-            h.YTickLabelRotation = 90;
-        end
-        legend(types)
-        
-        % mean RT per itemtype
-        subplot(3,3,7)
-        hold on
-        bar(1:length(types),avg_RT_type_alltrials)
-        errorbar(1:length(types),avg_RT_type_alltrials,std_RT_type_alltrials,'.')
-        title('mean RT per type')
-        h = gca;
-        h.XTick = 1:3;
-        h.XTickLabel = types;
-        
-        % mean RT per itemtype
-        for ty = 1:length(types)
-            subplot(3,3,8)
-            hold on
-            plot(RT_avgblock(ty,:));
-            %errorbar(1:4,RT_avgblock(ty,:),RT_stdblock(ty,:))
-            title('mean RT/block')
-            h = gca;
-            h.XTick = 1:4;
-        end
-        legend(types)
-           
-   savefig (strcat(path_info, sel_sub, '_rating_summary.fig'));   
-    
-%     figure
-%     % plot rating for each item
-%     for i=1:numel(items)
-%     subplot(4,2,i)
-%      hold on 
-%             rectangle('Position',[0 0 16 res],'FaceColor',[1 .9 .9])
-%             rectangle('Position',[16 0 16 res],'FaceColor',[0.9 .9 .9])
-%             rectangle('Position',[32 0 16 res],'FaceColor',[1 .8 1])
-%             rectangle('Position',[48 0 16 res],'FaceColor',[1 1 .8])
-%               
-%             stem(responses_item(i,:))
-%             title(types{type_item(i)})
-%             h = gca;
-%             h.YTick = 0:res;
-%             h.YTickLabel = {' ', label{1}, ' ', ' ',label{2}};
-%             h.YTickLabelRotation = 90;
-%     end
-    
-end
+
+
+
+
+
+
+%%

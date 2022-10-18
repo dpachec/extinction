@@ -6,11 +6,11 @@ paths = load_paths;
 currentPath = pwd; 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-           'c_sub17','c_sub18', 'c_sub19','c_sub20', 'c_sub22', 'c_sub23','c_sub24', ...
-            'c_sub25','c_sub26','c_sub29' };
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' }';
 
 
-for subji = 1:1 %18:length(allsubs)
+for subji = 21:21 %18:length(allsubs)
 
     sub = allsubs{subji}; 
     cd(paths.trlinfo)
@@ -32,7 +32,16 @@ for subji = 1:1 %18:length(allsubs)
         EEG2 = pop_biosig(edf_list{2}, 'importevent', 'off'); EEG.data = [EEG.data EEG2.data];
     end        
     
-    clearvars -except EEG subji paths trlinfo path_log currentPath sub allsubs
+end
+
+EEG1 = EEG
+
+
+%%
+
+EEG = EEG1
+
+    clearvars -except EEG subji paths trlinfo path_log currentPath sub allsubs EEG1
     eventChannel = 'POL DC12';
     if strcmp(sub, 'c_sub09') eventChannel = 'POL DC09'; end
     
@@ -58,6 +67,7 @@ for subji = 1:1 %18:length(allsubs)
     if strcmp(sub, 'c_sub16') lat2breakTTL = EEG.event(id2Break+169).latency; end
     if strcmp(sub, 'c_sub18') lat2breakTTL = EEG.event(id2Break+151).latency; end
     if strcmp(sub, 'c_sub19') lat2breakTTL = EEG.event(id2Break+26).latency; end
+    if strcmp(sub, 'c_sub21') lat2breakTTL = EEG.event(id2Break+122).latency; end
     if strcmp(sub, 'c_sub23') lat2breakTTL = EEG.event(id2Break+71).latency; end
     if strcmp(sub, 'c_sub25') lat2breakTTL = EEG.event(id2Break+32).latency; end
     if strcmp(sub, 'c_sub29') lat2breakTTL = EEG.event(id2Break+97).latency; end
@@ -131,7 +141,7 @@ for subji = 1:1 %18:length(allsubs)
         'winlength', 50, 'spacing', 10000000, 'events', EEG.event);
 
    
-end
+%end
 
 
 %% Process NCS files PARIS 
