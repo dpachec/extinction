@@ -10,7 +10,7 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' }';
 
 
-for subji = 30:30 %18:length(allsubs)
+for subji = [21 27 28 30] %18:length(allsubs)
 
     sub = allsubs{subji}; 
     cd(paths.trlinfo)
@@ -32,7 +32,7 @@ for subji = 30:30 %18:length(allsubs)
         EEG2 = pop_biosig(edf_list{2}, 'importevent', 'off'); EEG.data = [EEG.data EEG2.data];
     end        
     
-end
+
 
 
     clearvars -except EEG subji paths trlinfo path_log currentPath sub allsubs EEG1
@@ -147,10 +147,10 @@ paths = load_paths;
 cd (paths.github)
 
 allsubs = {'p_sub01','p_sub02','p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17'};
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
 
 
-for subji = 8:length(allsubs)
+for subji = 17 %8:length(allsubs)
 
     clearvars -except allsubs subji paths
     sub = allsubs{subji}; 
@@ -165,7 +165,7 @@ for subji = 8:length(allsubs)
     load ([sub '_trlinfo.mat']);
     
     
-    if ~(strcmp(sub, 'p_sub04') | strcmp(sub, 'p_sub15'))
+    if ~(strcmp(sub, 'p_sub04') | strcmp(sub, 'p_sub15') | strcmp(sub, 'p_sub18'))
         dataset=strcat(paths.raw_data,sub,'/ieeg/');
         hdr=ft_read_header(dataset,'headerformat','neuralynx_ds')
     else
@@ -182,10 +182,10 @@ for subji = 8:length(allsubs)
     dataF = zeros(1, (hdr.nSamples * (P/Q)) ); %to test with 1 chan only
     if strcmp(sub, 'p_sub11') dataF = zeros(1, (hdr.nSamples * (P/Q)) -1 ); end %why?
     if strcmp(sub, 'p_sub14') dataF = zeros(1, (hdr.nSamples * (P/Q)) +3 ); end %why?
-    if strcmp(sub, 'p_sub04') | strcmp(sub, 'p_sub15') dataF = zeros(1, (hdr.nSamples * (P/Q)) *2) ; end 
+    if strcmp(sub, 'p_sub04') | strcmp(sub, 'p_sub15') | strcmp(sub, 'p_sub18') dataF = zeros(1, (hdr.nSamples * (P/Q)) *2) ; end 
     eCom = []; 
     for chani = 1:hdr.nChans
-        if ~(strcmp(sub, 'p_sub04') | strcmp(sub, 'p_sub15'))
+        if ~(strcmp(sub, 'p_sub04') | strcmp(sub, 'p_sub15')| strcmp(sub, 'p_sub18'))
             data_raw_double=ft_read_data(dataset, 'chanindx', chani);
             data_raw = single(data_raw_double); 
             clear data_raw_double %save memory
@@ -217,11 +217,25 @@ for subji = 8:length(allsubs)
         EEG.event = struct('latency', [], 'type', '');
     
     if chani == 1 %only store event info in first channel
-        if ~(strcmp(sub, 'p_sub04') | strcmp(sub, 'p_sub15'))
+        if ~(strcmp(sub, 'p_sub04') | strcmp(sub, 'p_sub15') | strcmp(sub, 'p_sub18') )
             event=ft_read_event(dataset);
-        else
-            event=ft_read_event(dataset1);
         end
+        if strcmp(sub, 'p_sub18')
+            event1=ft_read_event(dataset1); % event.mrk and event.nev must exist in the folder
+            event2=ft_read_event(dataset2); % event.mrk and event.nev must exist in the folder
+            x = [event2.sample]; x = x + double(hdr.nSamples); 
+            x = num2cell(x');
+            [event2.sample] = x{:}; 
+            event = event1; 
+            for i = 1:length(event2)
+                event(end+1) = event2(i);
+            end
+        end
+         if strcmp(sub, 'p_sub04') | strcmp(sub, 'p_sub15')
+            event=ft_read_event(dataset1); % event.mrk and event.nev must exist in the folder
+         end
+        
+
         values = [event.value]; 
         event = event(values~= 0);
         trigger_sp=[event.sample];
@@ -277,7 +291,6 @@ for subji = 8:length(allsubs)
 
     % % % % % cut data
     t2c = 10000; %10 secs before and after
-    %task_sp = [sP1L - t2c, event(end).sample*(1000/hdr.Fs) + t2c]; 
     trlinfo_sp_ds(isnan(trlinfo_sp_ds)) = []; 
     task_sp = [sP1L - t2c, trlinfo_sp_ds(end) + diff_12  + t2c]; 
     EEG.data = EEG.data(:, task_sp(1):task_sp(2));
@@ -290,15 +303,15 @@ for subji = 8:length(allsubs)
     foldN2 = strcat(paths.ds,sub);
     mkdir(foldN2);
     cd(foldN2)
-% 
-    filename = [sub '_' num2str(chani, '%03.f'), '_diEEG.mat'];
-    save(filename, 'EEG', '-v7.3');
-    cd (paths.github);
+ 
+     filename = [sub '_' num2str(chani, '%03.f'), '_diEEG.mat'];
+     save(filename, 'EEG', '-v7.3');
+     cd (paths.github);
 
     end
 
 
-% % % % % % % 
+% % % % % % 
 % chanids = [1];
 % eegplot(EEG.data(chanids,:), 'srate', EEG.srate, 'eloc_file',chanids, ...
 %     'winlength', 50, 'spacing', 10000, 'events', EEG.event);
@@ -361,68 +374,7 @@ for i = 1:length(trigger_sp)
 end
 
 
-%%
-chanids = [1];
-eegplot(EEG.data(chanids,:), 'srate', EEG.srate, 'eloc_file',chanids, ...
-'winlength', 10, 'spacing', 500, 'events', EEG.event);
-% !works perfectly
-
-
-
-
-%% subject 8 has micromed (.TRC) data 
-
-
-clear, close all
-paths = load_paths; 
-cd (paths.github)
-
-sub = 'p_sub08'; 
-
-cd(paths.trlinfo)
-load ([sub '_trlinfo.mat']);
-
-cd([paths.raw_data sub '/ieeg/'])
-trc_list = dir('*TRC'); trc_list = {trc_list.name};
-  
-header = read_micromed_trc(trc_list{1});
-data = read_micromed_trc(trc_list{1}, 1, header.Num_Samples);
-
-event = read_micromed_event(trc_list{1})
-
 
 
 %%
-EEG = []; 
-EEG.data = data;
-EEG.srate = 1024;
-EEG.pnts = size(EEG.data,2);
-EEG.chanlocs.labels = header.elec; 
-
-
-
-%%
-chanids = [1:90];
-eegplot(EEG.data(chanids,:), 'srate', EEG.srate, 'eloc_file',chanids, ...
-'winlength', 10, 'spacing', 500);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%
-
-
 
