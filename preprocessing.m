@@ -147,7 +147,7 @@ paths = load_paths;
 cd (paths.github)
 
 allsubs = {'p_sub01','p_sub02','p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}'; %subject 8 has differnet format (see below)
 
 
 for subji = 17 %8:length(allsubs)
@@ -358,7 +358,7 @@ end
 EEG = []; 
 EEG.data = data_raw; 
 EEG.srate = hdr.Fs; 
-EEG.chanlocs.label = hdr.label;
+EEG.chanlocs.labels = hdr.label;
 EEG.pnts = size(EEG.data,2);
 EEG.event = struct('latency', [], 'type', '');
 
@@ -376,5 +376,409 @@ end
 
 
 
+%% group the multiple electrode file in one channel (Paris data)
+
+clear, close all
+paths = load_paths; 
+cd (paths.github)
+
+allsubs = {'p_sub01','p_sub02','p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+
+
+
+for subji = 1:length(allsubs)
+
+    clearvars -except allsubs subji paths
+    sub = allsubs{subji}; 
+    
+    cd([paths.ds sub ])
+    diEEG_list = dir(); diEEG_list = diEEG_list(3:end); diEEG_list = {diEEG_list.name}';
+    
+    for chani = 1:length(diEEG_list)
+        load(diEEG_list{chani})
+        if chani ==1
+            events = EEG.event
+        end
+        data(chani,:) = EEG.data; 
+        chans2rec(chani) = EEG.chanlocs(chani).label;
+
+    end
+    
+    EEG.data = data; 
+    [EEG.chanlocs.label] = chans2rec{:}; 
+    EEG.event = events;
+
+    filename = [sub '_downSampiEEG.mat']
+    save(filename, 'EEG', '-v7.3');
+
+
+end
+
+
+
+
+%% combine electrode and iEEG data
+
+clear, close all
+paths = load_paths; 
+currentPath = paths.github; 
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+
+
+
+
+for subji = 15:length(allsubs)
+
+    clearvars -except allsubs subji paths
+    sub = allsubs{subji}; 
+    
+    cd([paths.ds sub ])
+    diEEG_list = dir('*downSampiEEG.mat');diEEG_list = {diEEG_list.name}';
+    
+    % load data
+    load(diEEG_list{1})
+    %load electrode files
+    cd([paths.raw_data sub '\elec'])
+
+
+    if sub(1) == 'c' %guangzhou data
+        chanL= dir('*.mat');chanL= {chanL.name}';
+        load(chanL{1})
+    
+
+        elec_info = table2cell(elec_info)
+        EEG.chanlocs = rmfield(EEG.chanlocs,{'ref', 'theta', 'radius', 'X', 'Y', 'Z', 'sph_theta', 'sph_phi', 'sph_radius', 'type', 'urchan'});
+        for chani = 1:size(elec_info, 1)
+            
+            chanLabel = elec_info(chani, 1);
+            chanEEG = {EEG.chanlocs.labels}'; 
+            chanEEG = erase(chanEEG, 'POL')
+            chanEEG = erase(chanEEG, ' ')
+            chanMatch = strmatch(chanLabel, chanEEG, 'exact');
+            if length(chanMatch) ==1
+                if ~isempty(chanMatch)
+                    EEG.chanlocs(chanMatch).fsLabel = elec_info{chani,2};
+                    EEG.chanlocs(chanMatch).mniCoord = double(elec_info{chani,10});
+                end
+            end
+        end
+
+        % % remove empty and white matter electrodes
+        clear chans2remove
+        count = 1;
+        for chani = 1:length(EEG.chanlocs)
+            if ~isempty(EEG.chanlocs(chani).fsLabel) 
+                if contains(EEG.chanlocs(chani).fsLabel, 'White-Matter') | ...
+                    contains(EEG.chanlocs(chani).fsLabel, 'Unknown') 
+                    
+                    chans2remove(count,:) = chani; 
+                    count = count+ 1; 
+                end
+            else
+                chans2remove(count,:) = chani; 
+                count = count+ 1; 
+            end
+        end
+
+        EEG.chanlocs(chans2remove) = []; 
+        EEG.data(chans2remove, :) =  []; 
+
+                
+
+    end
+
+
+ if sub(1) == 'p' %paris Data
+
+        chanL= dir('*.csv');chanL= {chanL.name}';
+        elec_info = readtable(chanL{1}, 'Delimiter', ';')
+        elec_info1 = elec_info; 
+        elec_info1(:, 1) = fillmissing(elec_info(:, 1),'previous')
+
+        elec_info1 = table2cell(elec_info1)
+        for chani = 1:size(elec_info1, 1)    
+            if ~isnan(elec_info1{chani, 2})
+                chanLabel = strcat(elec_info1(chani, 1), '_', string(elec_info1(chani, 2)));
+                chanEEG = {EEG.chanlocs.label}'; 
+                chanMatch = strmatch(chanLabel, chanEEG, 'exact'); 
+                if ~isempty(chanMatch)
+                    EEG.chanlocs(chanMatch).fsLabel = elec_info1{chani,36};
+                    EEG.chanlocs(chanMatch).mniCoord = double(elec_info{chani,4:6});
+                end
+            end
+        end
+
+        % % remove empty and white matter electrodes
+        clear chans2remove
+        count = 1;
+        for chani = 1:length(EEG.chanlocs)
+            if ~isempty(EEG.chanlocs(chani).fsLabel) 
+                if contains(EEG.chanlocs(chani).fsLabel, 'White-Matter') | ...
+                    contains(EEG.chanlocs(chani).fsLabel, 'Unknown') 
+                    
+                    chans2remove(count,:) = chani; 
+                    count = count+ 1; 
+                end
+            else
+                chans2remove(count,:) = chani; 
+                count = count+ 1; 
+            end
+        end
+
+        EEG.chanlocs(chans2remove) = []; 
+        EEG.data(chans2remove, :) =  []; 
+
+
+ end
+
+    if isfield(EEG, 'setname')
+        EEG = rem_EEGLAB_fields(EEG);
+    end
+    % % % % save final versions
+    mkdir(paths.fiEEG)
+    cd([paths.fiEEG])
+    filename = [sub '_iEEG.mat']
+    save(filename, 'EEG', '-v7.3');
+
+
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% subject 8 in paris has a different format MICROMED % discuss data inconsistencies with Katia
+
+clear, close all
+paths = load_paths; 
+
+sub = 'p_sub08'
+
+hdr = ft_read_header('D:\extinction\raw_data\p_sub08\ieeg\EEG_444702.TRC');
+data = ft_read_data('D:\extinction\raw_data\p_sub08\ieeg\EEG_444702.TRC');
+EEG = []; 
+EEG.data = data;
+EEG.srate = hdr.Fs;
+EEG.pnts = size(EEG.data,2);
+EEG.chanlocs = struct('labels', hdr.label)
+EEG.trials = 1; 
+EEG.setname = 'EEG_444702';
+EEG.icawinv = [];
+EEG.icaweights = []; 
+EEG.icasphere =  []; 
+EEG.nbchan = size(EEG.data, 1);
+EEG.xmax = length(data); 
+EEG.xmin= 0; 
+EEG.icaact = []; 
+
+
+ 
+cd(paths.trlinfo)
+load ([sub '_trlinfo.mat']);
+
+
 %%
+
+clearvars -except EEG subji paths trlinfo path_log currentPath sub allsubs EEG1
+eventChannel = 'sti1+';
+TTL = strmatch(eventChannel, {EEG.chanlocs.labels}, 'exact');
+strEvent = 'X > 180 & X < 400';
+EEG.event = [];
+EEG = pop_chanevent (EEG, TTL, 'edge', 'leading', 'oper', strEvent, 'delchan', 'off','delevent', 'on');
+
+chanids = [TTL];
+eegplot(EEG.data(chanids,:), 'srate', EEG.srate, 'eloc_file',EEG.chanlocs(chanids), ...
+    'winlength', 50, 'spacing', 1000, 'events', EEG.event);
+
+
+%%
+
+
+EEG.event = struct('latency', [], 'type', '', 'urevent', []);
+
+factor = ( 10000 / EEG.srate); 
+x = [EEG.event.latency]';
+[d id2Break] = max(abs(diff(x)));
+
+lat_prev = trlinfo(:, 10:14); 
+latencies = reshape (lat_prev', 1, [])'; 
+latencies(latencies == 0) = nan; 
+
+sCod = string(trlinfo(:, 1:9));
+sCod (ismissing(sCod)) = 'nan';
+typOT = ['T' 'V' 'C' 'U' 'R']';
+typOT = repmat(typOT, 192, 1);
+sCod1 = repelem(sCod, 5, 1); 
+sCod1 = [sCod1, string(typOT)]; %uncomment to include trialinfo
+sCodF = join(sCod1, '_');
+
+[d id2Break] = max(abs(diff(latencies)));
+lat2breakLog = latencies(id2Break+2)/factor;
+
+diff_12 = 5150100;
+%diff_13 = 6721200; 
+for i = 1:380
+    EEG.event(i) = struct('latency', latencies(i)/factor  + diff_12 , 'type', sCodF(i,:), 'urevent', 0);
+end
+for i = 381:395
+    EEG.event(i) = struct('latency', latencies(i)/factor  + diff_12-1700 , 'type', sCodF(i,:), 'urevent', 0);
+end
+for i = 396:488
+    EEG.event(i) = struct('latency', latencies(i)/factor  + diff_12 -3500, 'type', sCodF(i,:), 'urevent', 0);
+end
+for i = 489:720
+    EEG.event(i) = struct('latency', latencies(i)/factor  + diff_12 -7000, 'type', sCodF(i,:), 'urevent', 0);
+end
+
+% for i = 721:length(sCodF)
+%      EEG.event(i) = struct('latency', latencies(i)/factor + diff_13, 'type',sCodF(i,:), 'urevent', 0);
+% end
+
+
+eventChannel = 'sti1+'; TTL = strmatch(eventChannel, {EEG.chanlocs.labels}, 'exact');chanids = [TTL];
+eegplot(EEG.data(chanids,:), 'srate', EEG.srate, 'eloc_file',EEG.chanlocs(chanids), ...
+    'winlength', 50, 'spacing', 1000, 'events', EEG.event);
+
+
+
+
+%%
+% % % %  resample 
+%Downsample data  %https://es.mathworks.com/help/signal/ug/changing-signal-sample-rate.html
+if EEG.srate ~= 1000
+    factor = ( 1000 / EEG.srate); 
+    [P,Q] = rat(1000/EEG.srate);
+    for chani = 1:size(EEG.data, 1)
+       chani
+       data(chani,:) = resample(double(EEG.data(chani,:)), P, Q); %use the function in fieldtrip, matlab signal processing rescales the data
+    end
+    events = EEG.event; 
+    chans = EEG.chanlocs; 
+    EEG = []; 
+    EEG.data = data;
+    EEG.srate = 1000;
+    EEG.pnts = size(EEG.data,2);
+    EEG.event = events; 
+    x = [events.latency]; 
+    x = num2cell(x*factor); 
+    [EEG.event.latency] = x{:};
+    EEG.chanlocs = chans; 
+end
+
+
+mkdir([paths.ds sub])
+cd ([paths.ds sub])
+
+filename = [sub '_downSampiEEG.mat']
+save(filename, 'EEG', '-v7.3');
+cd (currentPath)
+
+disp('done')
+
+
+eventChannel = 'POL DC12';TTL = strmatch(eventChannel, {EEG.chanlocs.labels}, 'exact');chanids = [TTL];
+eegplot(EEG.data(chanids,:), 'srate', EEG.srate, 'eloc_file',EEG.chanlocs(chanids), ...
+    'winlength', 50, 'spacing', 10000000, 'events', EEG.event);
+
+%%
+
+factor = ( 1000 / hdr.Fs); 
+[P,Q] = rat(factor);
+for chani = 1:size(data, 1)
+   chani
+   dataRS(chani,:) = resample(double(data(chani,:)), P, Q); %use the function in fieldtrip, matlab signal processing rescales the data
+end
+events = EEG.event; 
+chans = EEG.chanlocs; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -36,6 +36,7 @@ EEG = rmfield(EEG,'dipfit');
 EEG = rmfield(EEG,'history');
 EEG = rmfield(EEG,'saved');
 EEG = rmfield(EEG,'etc');
+EEG = rmfield(EEG,'run');
 
 % can also be done by passing all in an array
 %EEG.chanlocs = rmfield(EEG.chanlocs, {'ref', 'theta', 'radius', 'sph_theta', 'sph_phi', 'sph_radius', 'type', 'urchan'});
