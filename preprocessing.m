@@ -433,7 +433,7 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
 
 
 
-for subji = 15:length(allsubs)
+for subji = 1:length(allsubs)
 
     clearvars -except allsubs subji paths
     sub = allsubs{subji}; 
@@ -453,7 +453,6 @@ for subji = 15:length(allsubs)
     
 
         elec_info = table2cell(elec_info)
-        EEG.chanlocs = rmfield(EEG.chanlocs,{'ref', 'theta', 'radius', 'X', 'Y', 'Z', 'sph_theta', 'sph_phi', 'sph_radius', 'type', 'urchan'});
         for chani = 1:size(elec_info, 1)
             
             chanLabel = elec_info(chani, 1);
@@ -532,19 +531,20 @@ for subji = 15:length(allsubs)
         end
 
         EEG.chanlocs(chans2remove) = []; 
+        EEG.chanlocs = EEG.chanlocs'; 
         EEG.data(chans2remove, :) =  []; 
-
 
  end
 
-    if isfield(EEG, 'setname')
-        EEG = rem_EEGLAB_fields(EEG);
-    end
+   
+    EEG = rem_EEGLAB_fields(EEG);
+
     % % % % save final versions
     mkdir(paths.fiEEG)
     cd([paths.fiEEG])
     filename = [sub '_iEEG.mat']
-    save(filename, 'EEG', '-v7.3');
+    %save(filename, 'EEG', '-v7.3');
+    save(filename, 'EEG');
 
 
 end
@@ -553,6 +553,36 @@ end
 
 
 
+%% save all electrodes into a csv file
+
+clear, close all
+paths = load_paths; 
+
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+
+
+allSChans = []; 
+for subji = 1:length(allsubs)
+    
+    sub = allsubs{subji}; 
+    cd([ paths.fiEEG])
+    load ([sub '_iEEG.mat']);
+    
+    chansLab = struct2cell(EEG.chanlocs)';
+    chansLab(:, 4) = {sub}; %{num2str(subji, '%02.f')};
+
+    %allSChans = [allSChans; chansLab]; 
+
+    allSChans{subji} = chansLab; 
+end
+
+cd (paths.elec)
+save('allSChans', 'allSChans')
 
 
 
@@ -575,15 +605,7 @@ EEG.data = data;
 EEG.srate = hdr.Fs;
 EEG.pnts = size(EEG.data,2);
 EEG.chanlocs = struct('labels', hdr.label)
-EEG.trials = 1; 
-EEG.setname = 'EEG_444702';
-EEG.icawinv = [];
-EEG.icaweights = []; 
-EEG.icasphere =  []; 
-EEG.nbchan = size(EEG.data, 1);
-EEG.xmax = length(data); 
-EEG.xmin= 0; 
-EEG.icaact = []; 
+EEG = add_EEGLAB_fields(EEG);
 
 
  
