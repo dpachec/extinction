@@ -1170,6 +1170,40 @@ writetable(T,'myDataFile.csv')
 
 
 
+%% count channels in each region 
+clear
+tic 
+paths = load_paths
+cd (paths.elec)
+
+
+load allSChans
+ch2u = allSChans'; 
+
+for subji = 1:length(allSChans)
+    
+    elecS = allSChans{subji}    ;
+    totalNofElec(subji,:) = length(elecS);
+    chansLab = elecS(:, 2);
+    selChans = contains(chansLab, 'Amygdala');
+    sCH_Amygdala{subji,:} = sum(selChans);
+    selChans = contains(chansLab, 'Hippocampus');
+    sCH_Hippocampus{subji,:} = sum(selChans);
+
+    
+
+end
+
+%%
+
+sum(totalNofElec)
+sum(cell2mat(sCH_Hippocampus))
+sum(cell2mat(sCH_Amygdala))
+
+
+
+cell2mat(sCH_Amygdala) == 0
+
 
 
 

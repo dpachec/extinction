@@ -212,7 +212,7 @@ for subji = 17 %8:length(allsubs)
         EEG = []; 
         EEG.data = dataF'; 
         EEG.srate = 1000; 
-        EEG.chanlocs(chani).label = hdr.label(chani);
+        EEG.chanlocs(chani).labels = hdr.label(chani);
         EEG.pnts = size(EEG.data,2);
         EEG.event = struct('latency', [], 'type', '');
     
@@ -406,7 +406,7 @@ for subji = 1:length(allsubs)
     end
     
     EEG.data = data; 
-    [EEG.chanlocs.label] = chans2rec{:}; 
+    [EEG.chanlocs.labels] = chans2rec{:}; 
     EEG.event = events;
 
     filename = [sub '_downSampiEEG.mat']
@@ -431,7 +431,8 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
 
 
-
+allsubs = {'p_sub01','p_sub02', 'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
 
 for subji = 1:length(allsubs)
 
@@ -457,8 +458,8 @@ for subji = 1:length(allsubs)
             
             chanLabel = elec_info(chani, 1);
             chanEEG = {EEG.chanlocs.labels}'; 
-            chanEEG = erase(chanEEG, 'POL')
-            chanEEG = erase(chanEEG, ' ')
+            chanEEG = erase(chanEEG, 'POL');
+            chanEEG = erase(chanEEG, ' ');
             chanMatch = strmatch(chanLabel, chanEEG, 'exact');
             if length(chanMatch) ==1
                 if ~isempty(chanMatch)
@@ -504,7 +505,19 @@ for subji = 1:length(allsubs)
         for chani = 1:size(elec_info1, 1)    
             if ~isnan(elec_info1{chani, 2})
                 chanLabel = strcat(elec_info1(chani, 1), '_', string(elec_info1(chani, 2)));
-                chanEEG = {EEG.chanlocs.label}'; 
+                
+                
+                % % % correct should be labels and not label, this field name was
+                % incorrect in the previous preprocessing stage (important
+                % for epoching data later)
+                if isfield(EEG.chanlocs, 'label')
+                    chanEEG = {EEG.chanlocs.label}'; 
+                    [EEG.chanlocs.labels] = EEG.chanlocs.label;
+                    EEG.chanlocs = rmfield(EEG.chanlocs,'label');
+                else 
+                    chanEEG = {EEG.chanlocs.labels}';
+                end
+
                 chanMatch = strmatch(chanLabel, chanEEG, 'exact'); 
                 if ~isempty(chanMatch)
                     EEG.chanlocs(chanMatch).fsLabel = elec_info1{chani,36};

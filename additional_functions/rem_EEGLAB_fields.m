@@ -1,5 +1,6 @@
 function[EEG] = rem_EEGLAB_fields(EEG)
 
+%disp('hola')
 if isfield (EEG, 'chanlocs') & isfield (EEG.chanlocs, 'ref')
     EEG.chanlocs = rmfield(EEG.chanlocs,{'ref', 'theta', 'radius', 'X', 'Y', 'Z', 'sph_theta', 'sph_phi', 'sph_radius', 'type', 'urchan'});
 end

@@ -1,4 +1,27 @@
-%% analyse behav: individual responses
+%% Extinction behavioral analysis
+
+% 1. what trial number (position in presentation)?
+% 2. which Phase?
+% 3. which context was used?
+% 4. what was the role of the video (A,B,C1,C2)
+% 5. which item was shown?
+% 6. which type of item was shown? % cs+/cs+=1;cs+/cs-=2;cs-/cs-=3;
+% 7. what response was given?
+% 8. cs (0/1) current cs+/cs-
+% 9. us 0/1 (y/n)
+%%%% SR logfile 10000
+% 10. sample point trialonset
+% 11. sample point videoonset
+% 12. sample point cueonset
+% 13. sample point us onset
+% 14. sample point response 
+
+%later added
+%15. number of item rep in each block
+%16 number of us in total
+%path_data='D:\Extinction\iEEG\rawdata\extinction_ieeg\';
+%path_out='D:\Extinction\iEEG\data\preproc\trialinfo\';
+
 
 clear 
 
