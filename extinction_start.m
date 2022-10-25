@@ -4,8 +4,6 @@ clear
 
 paths = load_paths; % call this function to define path variables (path_data, path_info, path_out)
 
-
-%  we have read in the eeg files, however we need more information: 
 % 1. what trial number (position in presentation)?
 % 2. which Phase?
 % 3. which context was used?
