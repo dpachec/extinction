@@ -1,4 +1,5 @@
 %% 
+%% 
 %clear, close all
 paths = load_paths; 
 
@@ -11,7 +12,7 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
 
 
 for subji = 1:length(allsubs)
-    
+    subji
     sub = allsubs{subji}; 
     cd([ paths.fiEEG])
     load ([sub '_iEEG.mat']);
@@ -34,10 +35,9 @@ for subji = 1:length(allsubs)
         EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
         Ev2 = cat(1, Ev1{:});
        
-        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
-        ids = strcmp(Ev2(:, 10), 'C'); 
-        newEvs = join(Ev2, '_');
-        [EEG.event.type] = newEvs{:};
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects havespace in the last character of the event WHY??
+        ids = strcmp(Ev2(:, 10), 'U'); 
+        EEG.event = EEG.event(ids)
         EEG = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
         EEG = extract_power_EXT(EEG, 0.01); 
         EEG = normalize_EXT(EEG);
@@ -48,8 +48,8 @@ for subji = 1:length(allsubs)
 
 end
 
-%filename = [paths.iEEGRes.power 'allS']
-%save(filename, "ALLEEG");
+filename = [paths.iEEGRes.power 'allS_U']
+save(filename, "ALLEEG");
 
 
 
@@ -102,17 +102,18 @@ for subji = 1:length(ALLEEG)
         Ev = [{EEG.event.type}]';
         Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
         Ev2 = cat(1, Ev1{:})
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
         if ndims(EEG.power) == 4
-            ids = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1') % CS+CS+ during acquisition
-            d2p1	= squeeze(mean(mean(EEG.power(ids, :, : ,:))));
-            ids = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '2')  & strcmp(Ev2(:, 2), '1') % CS+CS- during acquisition
-            d2p2	= squeeze(mean(mean(EEG.power(ids, :, : ,:))));
+            ids1 = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1') % CS+CS+ during acquisition
+            d2p1	= squeeze(mean(mean(EEG.power(ids1, :, : ,:))));
+            ids2 = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') % CS+CS- during acquisition
+            d2p2	= squeeze(mean(mean(EEG.power(ids2, :, : ,:))));
         else
-            ids = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1') % CS+CS+ during acquisition
-            d2p1	= squeeze(mean(EEG.power(ids, :, : )));
-            ids = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '2')  & strcmp(Ev2(:, 2), '1') % CS+CS- during acquisition
-            d2p2	= squeeze(mean(EEG.power(ids, :, : )));
+            ids1 = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1') % CS+CS+ during acquisition
+            d2p1	= squeeze(mean(EEG.power(ids1, :, : )));
+            ids2 = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') % CS+CS- during acquisition
+            d2p2	= squeeze(mean(EEG.power(ids2, :, : )));
 
         end
     
@@ -124,10 +125,26 @@ end
 
 %%
 
+d2p1	= squeeze(mean(c1));
+d2p2	= squeeze(mean(c2));
+
+figure
+%myCmap = colormap(brewermap([],'YlOrRd'));
+%colormap(myCmap)
+contourf(1:701, 1:54, d2p1, 40, 'linecolor', 'none'); hold on; colorbar
+figure
+contourf(1:701, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; colorbar
+
+figure
+contourf(1:701, 1:54, d2p1-d2p2, 40, 'linecolor', 'none'); hold on; colorbar
 
 
+%% stats 
 
-
+[h p ci ts] = ttest(c1, c2); 
+h = squeeze(h); t = squeeze(ts.tstat);
+figure
+contourf(1:701, 1:54, h, 40, 'linecolor', 'none'); hold on; colorbar
 
 
 
