@@ -25,6 +25,8 @@ for chani = 1:size(EEG.data, 1)
     newTrace = remove_small_segments_NAV(newTrace, minSegLength); 
       
     markers(chani, :) = newTrace;
+
+    EEG.data(chani, newTrace==1) = nan; 
        
 end
 

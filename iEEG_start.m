@@ -1,7 +1,9 @@
 %% 
 %% 
-%clear, close all
+clear, close all
 paths = load_paths; 
+
+c2u = 'U';
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -39,7 +41,17 @@ for subji = 1:length(allsubs)
         ids = strcmp(Ev2(:, 10), 'U'); 
         EEG.event = EEG.event(ids)
         EEG = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+        % remove trials with artifacts
         EEG = extract_power_EXT(EEG, 0.01); 
+        %remove edge artifacts
+        if ndims(EEG.power) == 4
+            EEG.power = EEG.power(:, :, :, 201:500);
+        else
+            EEG.power = EEG.power(:, :, 201:500);
+        end
+        %remove amplitude data 
+        EEG = rmfield(EEG, 'data');
+        EEG = rmfield(EEG, 'marker_artifacts');
         EEG = normalize_EXT(EEG);
     
         ALLEEG{subji,:} = EEG; 
@@ -48,8 +60,17 @@ for subji = 1:length(allsubs)
 
 end
 
-filename = [paths.iEEGRes.power 'allS_U']
+filename = [paths.iEEGRes.power 'allS_' c2u];
 save(filename, "ALLEEG");
+
+
+
+%% check that markers are ok
+data2check = [EEG.data(1, :); EEG.marker_artifacts(1,:)*1000]; 
+eegplot(data2check, 'srate', EEG.srate, 'winlength', 50, 'spacing', 1000);
+
+
+
 
 
 
@@ -64,7 +85,7 @@ d2p	= squeeze(EEG.power(tr, ch, : ,:));
 figure
 myCmap = colormap(brewermap([],'YlOrRd'));
 colormap(myCmap)
-contourf(1:1201, 1:54, d2p, 40, 'linecolor', 'none'); hold on; %colorbar
+contourf(1:701, 1:54, d2p, 40, 'linecolor', 'none'); hold on; %colorbar
 
 
 
@@ -74,26 +95,30 @@ contourf(1:1201, 1:54, d2p, 40, 'linecolor', 'none'); hold on; %colorbar
 Ev = [{EEG.event.type}]';
 Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
 Ev2 = cat(1, Ev1{:})
-ids = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1') % CS+CS+ during acquisition
+ids = strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1') % CS+CS+ during acquisition
 d2p1	= squeeze(mean(mean(EEG.power(ids, :, : ,:))));
-ids = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '2')  & strcmp(Ev2(:, 2), '1') % CS+CS- during acquisition
+ids = strcmp(Ev2(:, 6), '2')  & strcmp(Ev2(:, 2), '1') % CS+CS- during acquisition
 d2p2	= squeeze(mean(mean(EEG.power(ids, :, : ,:))));
 
 myCmap = colormap(brewermap([],'YlOrRd')); colormap(myCmap)
 
 tiledlayout(2, 1,'TileSpacing','compact');
 nexttile
-contourf(1:1201, 1:54, d2p1, 40, 'linecolor', 'none'); hold on; %colorbar
+contourf(1:701, 1:54, d2p1, 40, 'linecolor', 'none'); hold on; %colorbar
 nexttile
-contourf(1:1201, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; %colorbar
+contourf(1:701, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; %colorbar
 
 
 %% PLOT grand average for each condition
 paths = load_paths; 
 
-load ([paths.iEEGRes.power 'allS']); 
+if ~exist('ALLEEG') load ([paths.iEEGRes.power 'allS_U']); end
 clearvars -except ALLEEG
 
+
+c2u = 'U'
+
+count = 1; 
 for subji = 1:length(ALLEEG)
     
     EEG = ALLEEG{subji};
@@ -101,42 +126,43 @@ for subji = 1:length(ALLEEG)
     if ~isempty(EEG)
         Ev = [{EEG.event.type}]';
         Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
-        Ev2 = cat(1, Ev1{:})
+        Ev2 = cat(1, Ev1{:});
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
         if ndims(EEG.power) == 4
-            ids1 = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1') % CS+CS+ during acquisition
-            d2p1	= squeeze(mean(mean(EEG.power(ids1, :, : ,:))));
-            ids2 = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') % CS+CS- during acquisition
-            d2p2	= squeeze(mean(mean(EEG.power(ids2, :, : ,:))));
+            ids1 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1'); % CS+CS+ during acquisition
+            d2p1	= squeeze(mean(mean(EEG.power(ids1, :, : ,:), 'omitnan'), 'omitnan'));
+            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');  % CS+CS- during acquisition
+            d2p2	= squeeze(mean(mean(EEG.power(ids2, :, : ,:), 'omitnan'), 'omitnan'));
         else
-            ids1 = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1') % CS+CS+ during acquisition
-            d2p1	= squeeze(mean(EEG.power(ids1, :, : )));
-            ids2 = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') % CS+CS- during acquisition
-            d2p2	= squeeze(mean(EEG.power(ids2, :, : )));
+            ids1 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1');  % CS+CS+ during acquisition
+            d2p1	= squeeze(mean(EEG.power(ids1, :, : ), 'omitnan'));
+            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');  % CS+CS- during acquisition
+            d2p2	= squeeze(mean(EEG.power(ids2, :, : ), 'omitnan'));
 
         end
     
-        c1(subji, :, :) = d2p1; 
-        c2(subji, :, :) = d2p2; 
+        c1(count, :, :) = d2p1; 
+        c2(count, :, :) = d2p2; 
+        count = count+1; 
     end
 
 end
 
 %%
 
-d2p1	= squeeze(mean(c1));
-d2p2	= squeeze(mean(c2));
+d2p1	= squeeze(mean(c1, 'omitnan'));
+d2p2	= squeeze(mean(c2, 'omitnan'));
 
 figure
 %myCmap = colormap(brewermap([],'YlOrRd'));
 %colormap(myCmap)
-contourf(1:701, 1:54, d2p1, 40, 'linecolor', 'none'); hold on; colorbar
+contourf(1:300, 1:54, d2p1, 40, 'linecolor', 'none'); hold on; colorbar
 figure
-contourf(1:701, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; colorbar
+contourf(1:300, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; colorbar
 
 figure
-contourf(1:701, 1:54, d2p1-d2p2, 40, 'linecolor', 'none'); hold on; colorbar
+contourf(1:300, 1:54, d2p1-d2p2, 40, 'linecolor', 'none'); hold on; colorbar
 
 
 %% stats 
@@ -144,7 +170,7 @@ contourf(1:701, 1:54, d2p1-d2p2, 40, 'linecolor', 'none'); hold on; colorbar
 [h p ci ts] = ttest(c1, c2); 
 h = squeeze(h); t = squeeze(ts.tstat);
 figure
-contourf(1:701, 1:54, h, 40, 'linecolor', 'none'); hold on; colorbar
+contourf(1:300, 1:54, h, 40, 'linecolor', 'none'); hold on; colorbar
 
 
 
