@@ -19,7 +19,12 @@ for subji = 1:length(allsubs)
     cd([ paths.fiEEG])
     load ([sub '_iEEG.mat']);
 
+    %select amygdala electrodes
+    chansLab = {EEG.chanlocs.fsLabelsR}';
+    selChans = contains(chansLab, 'Amygdala');
 
+    EEG = artifact_detection(EEG, 4, 200, 100);
+    
 
     if find(selChans)
         EEG.chanlocs = EEG.chanlocs(selChans);
@@ -34,7 +39,7 @@ for subji = 1:length(allsubs)
         Ev2 = cat(1, Ev1{:});
        
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects havespace in the last character of the event WHY??
-        ids = strcmp(Ev2(:, 10), 'U'); 
+        ids = strcmp(Ev2(:, 10), c2u); 
         EEG.event = EEG.event(ids)
         EEG = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
         % remove trials with artifacts
@@ -64,7 +69,6 @@ save(filename, "ALLEEG");
 %% check that markers are ok
 data2check = [EEG.data(1, :); EEG.marker_artifacts(1,:)*1000]; 
 eegplot(data2check, 'srate', EEG.srate, 'winlength', 50, 'spacing', 1000);
-
 
 
 
@@ -108,11 +112,11 @@ contourf(1:701, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; %colorbar
 %% PLOT grand average for each condition
 paths = load_paths; 
 
-if ~exist('ALLEEG') load ([paths.iEEGRes.power 'allS_U']); end
+if ~exist('ALLEEG') load ([paths.iEEGRes.power 'allS_C']); end
 clearvars -except ALLEEG paths
 
 
-c2u = 'C'
+c2u = 'U'
 
 count = 1; 
 for subji = 1:length(ALLEEG)
