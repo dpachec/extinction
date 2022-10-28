@@ -15,9 +15,9 @@ for chani = 1:size(EEG.data, 1)
         markers(zScoreAmp > std_thres | zScoreGrad > std_thres | zScoreHPFD > std_thres | ... 
             (zScoreAmp > std_thres2 & (zScoreGrad > std_thres2 | zScoreHPFD > std_thres2)) ) = 1; %check Staresina 2018 Nat Neuro
         
-        newTrace = padding_NAV(markers, paddingValue); 
+        newTrace = padding_EXT(markers, paddingValue); 
         
-        markers = remove_small_segments_NAV(newTrace, minSegLength); 
+        markers = remove_small_segments_EXT(newTrace, minSegLength); 
 
         EEG.data(chani, markers == 1) = nan;
         markers_artifacts(chani, :) = markers; 

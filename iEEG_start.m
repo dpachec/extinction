@@ -3,8 +3,8 @@
 clear, close all
 paths = load_paths; 
 
-c2u = 'U';
-sROI = 'Hippocampus';
+c2u = 'C';
+sROI = 'Amygdala';
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -26,11 +26,10 @@ for subji = 1:length(allsubs)
 
     
     if find(selChans)
-        EEG = artifact_detection(EEG, 4, 200, 100);
+        [EEG marker_artifacts] = artifact_detection_EXT(EEG, 3, 5, 200, 100);
         EEG.chanlocs = EEG.chanlocs(selChans);
-        EEG.data = EEG.data(selChans, :);
-        EEG.marker_artifacts = EEG.marker_artifacts(selChans,:);
-    
+        EEG.data = EEG.data(selChans, :); %contains nans
+        
         %epoch data
         Ev = [{EEG.event.type}]'; 
         Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
