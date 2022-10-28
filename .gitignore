@@ -1,3 +1,4 @@
 
 *.asv
 additional_functions/load_paths.m
+additional_functions/.DS_Store
