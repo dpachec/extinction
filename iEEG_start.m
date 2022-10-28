@@ -62,6 +62,7 @@ mkdir (paths.iEEGRes.power)
 filename = [paths.iEEGRes.power 'allS_' c2u];
 save(filename, "ALLEEG");
 
+cd(paths.github)
 
 %% check artifacts 
 
@@ -122,7 +123,7 @@ if ~exist('ALLEEG') load ([paths.iEEGRes.power 'allS_U']); end
 clearvars -except ALLEEG
 
 
-c2u = 'U'
+c2u = 'C'
 
 count = 1; 
 for subji = 1:length(ALLEEG)
