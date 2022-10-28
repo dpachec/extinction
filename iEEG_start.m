@@ -23,13 +23,12 @@ for subji = 1:length(allsubs)
     chansLab = {EEG.chanlocs.fsLabel}';
     selChans = contains(chansLab, 'Amygdala');
 
-    EEG = artifact_detection(EEG, 4, 200, 100);
+    EEG = artifact_detection_NAV(EEG, 4, 200, 100);
 
     if find(selChans)
         EEG.chanlocs = EEG.chanlocs(selChans);
         EEG.data = EEG.data(selChans, :);
-        EEG.marker_artifacts = EEG.marker_artifacts(selChans,:);
-    
+        
         %epoch data
         Ev = [{EEG.event.type}]'; 
         Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
