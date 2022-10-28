@@ -1,9 +1,9 @@
-function [markers]  = artifact_detection_NAV(EEG, std_thres, std_thres2, paddingValue, minSegLength)
+function [EEG markers_artifacts]  = artifact_detection_EXT(EEG, std_thres, std_thres2, paddingValue, minSegLength)
 
 
 for chani = 1:size(EEG.data, 1)
 
-        data = EEG(chani, :)
+        data = EEG.data(chani, :);
         zScoreAmp = bsxfun(@rdivide, data - mean(data), std(data));
         grad = diff(data); grad(end+1) = nan; 
         zScoreGrad = bsxfun(@rdivide, grad - mean(grad, 'omitnan'), std(grad, 'omitnan'));
@@ -19,7 +19,9 @@ for chani = 1:size(EEG.data, 1)
         
         markers = remove_small_segments_NAV(newTrace, minSegLength); 
 
-        EEG.data(chani, markers) = nan; 
+        EEG.data(chani, markers == 1) = nan;
+        markers_artifacts(chani, :) = markers; 
+
         
         
     end

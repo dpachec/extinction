@@ -3,6 +3,7 @@
 clear, close all
 paths = load_paths; 
 
+sROI = 'Amygdala'; 
 c2u = 'U';
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
@@ -21,13 +22,12 @@ for subji = 1:length(allsubs)
 
     %select amygdala electrodes
     chansLab = {EEG.chanlocs.fsLabel}';
-    selChans = contains(chansLab, 'Amygdala');
-
-    EEG = artifact_detection_NAV(EEG, 4, 200, 100);
+    selChans = contains(chansLab, sROI);
 
     if find(selChans)
         EEG.chanlocs = EEG.chanlocs(selChans);
         EEG.data = EEG.data(selChans, :);
+        [EEG markers_artifacts] = artifact_detection_EXT(EEG, 5,3, 1000, 500);
         
         %epoch data
         Ev = [{EEG.event.type}]'; 
@@ -50,7 +50,7 @@ for subji = 1:length(allsubs)
         end
         %remove amplitude data 
         EEG = rmfield(EEG, 'data');
-        EEG = rmfield(EEG, 'marker_artifacts');
+        %EEG = rmfield(EEG, 'marker_artifacts');
         EEG = normalize_EXT(EEG);
     
         ALLEEG{subji,:} = EEG; 
@@ -58,10 +58,17 @@ for subji = 1:length(allsubs)
 
 
 end
-
+mkdir (paths.iEEGRes.power)
 filename = [paths.iEEGRes.power 'allS_' c2u];
 save(filename, "ALLEEG");
 
+
+%% check artifacts 
+
+d2p(1, :) = EEG.data(1, :); 
+d2p(2, :) = markers_artifacts(1,:) *200; 
+
+eegplot(d2p, 'srate', EEG.srate, 'winlength', 10, 'spacing', 200);
 
 
 %% check that markers are ok
