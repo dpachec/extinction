@@ -51,7 +51,6 @@ for subji = 1:length(allsubs)
         end
         %remove amplitude data 
         EEG = rmfield(EEG, 'data');
-        EEG = rmfield(EEG, 'marker_artifacts');
         EEG = normalize_EXT(EEG);
     
         ALLEEG{subji,:} = EEG; 
