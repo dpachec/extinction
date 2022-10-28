@@ -3,7 +3,8 @@
 clear, close all
 paths = load_paths; 
 
-c2u = 'C';
+c2u = 'U';
+sROI = 'Hippocampus';
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -21,12 +22,11 @@ for subji = 1:length(allsubs)
 
     %select amygdala electrodes
     chansLab = {EEG.chanlocs.fsLabelsR}';
-    selChans = contains(chansLab, 'Amygdala');
+    selChans = contains(chansLab, sROI);
 
-    EEG = artifact_detection(EEG, 4, 200, 100);
     
-
     if find(selChans)
+        EEG = artifact_detection(EEG, 4, 200, 100);
         EEG.chanlocs = EEG.chanlocs(selChans);
         EEG.data = EEG.data(selChans, :);
         EEG.marker_artifacts = EEG.marker_artifacts(selChans,:);
@@ -38,7 +38,7 @@ for subji = 1:length(allsubs)
         EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
         Ev2 = cat(1, Ev1{:});
        
-        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects havespace in the last character of the event WHY??
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
         ids = strcmp(Ev2(:, 10), c2u); 
         EEG.event = EEG.event(ids)
         EEG = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
@@ -61,7 +61,7 @@ for subji = 1:length(allsubs)
 
 end
 
-filename = [paths.iEEGRes.power 'allS_' c2u];
+filename = [paths.iEEGRes.power 'allS_' sROI '_' c2u];
 save(filename, "ALLEEG");
 
 
@@ -111,14 +111,14 @@ contourf(1:701, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; %colorbar
 
 %% PLOT grand average for each condition
 paths = load_paths; 
+file2load = 'allS_Hippocampus_C'; 
+load ([paths.iEEGRes.power file2load]); 
+clearvars -except ALLEEG paths file2load
 
-if ~exist('ALLEEG') load ([paths.iEEGRes.power 'allS_C']); end
-clearvars -except ALLEEG paths
+
+c2u = file2load(end);
 
 
-c2u = 'U'
-
-count = 1; 
 for subji = 1:length(ALLEEG)
     
     EEG = ALLEEG{subji};
@@ -132,45 +132,56 @@ for subji = 1:length(ALLEEG)
         if ndims(EEG.power) == 4
             ids1 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1'); % CS+CS+ during acquisition
             d2p1	= squeeze(mean(mean(EEG.power(ids1, :, : ,:), 'omitnan'), 'omitnan'));
-            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');  % CS+CS- during acquisition
+            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');  % CS-CS- during acquisition
             d2p2	= squeeze(mean(mean(EEG.power(ids2, :, : ,:), 'omitnan'), 'omitnan'));
         else
             ids1 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1');  % CS+CS+ during acquisition
             d2p1	= squeeze(mean(EEG.power(ids1, :, : ), 'omitnan'));
-            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');  % CS+CS- during acquisition
+            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');  % CS-CS- during acquisition
             d2p2	= squeeze(mean(EEG.power(ids2, :, : ), 'omitnan'));
 
         end
     
-        c1(count, :, :) = d2p1; 
-        c2(count, :, :) = d2p2; 
-        count = count+1; 
+        c1(subji, :, :) = d2p1; 
+        c2(subji, :, :) = d2p2; 
+        
     end
 
 end
 
 %%
 
-d2p1	= squeeze(mean(c1, 'omitnan'));
-d2p2	= squeeze(mean(c2, 'omitnan'));
+sub2exc = []
 
-figure
-%myCmap = colormap(brewermap([],'YlOrRd'));
-%colormap(myCmap)
-contourf(1:300, 1:54, d2p1, 40, 'linecolor', 'none'); hold on; colorbar
-figure
-contourf(1:300, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; colorbar
+c1B = c1; c2B = c2; 
+c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 
-figure
-contourf(1:300, 1:54, d2p1-d2p2, 40, 'linecolor', 'none'); hold on; colorbar
+d2p1	= squeeze(mean(c1B, 'omitnan'));
+d2p2	= squeeze(mean(c2B, 'omitnan'));
+
+
+[h p ci ts] = ttest(c1, c2); 
+h = squeeze(h); t = squeeze(ts.tstat);
+
+times = -1:.01:1.99; 
+tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 800])
+nexttile
+contourf(times, 1:54, d2p1, 40, 'linecolor', 'none'); hold on; colorbar
+nexttile
+contourf(times, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; colorbar
+nexttile
+contourf(times, 1:54, t, 40, 'linecolor', 'none'); hold on; colorbar
+contour(times, 1:54,h, 1, 'Color', [0, 0, 0], 'LineWidth', 1); set(gca, 'clim', [-3 3])
+colormap(brewermap([],'Spectral'))
+set(findobj(gcf,'type','axes'),'FontSize',12, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'});
+
+exportgraphics(gcf, [paths.iEEGRes.power 'allS_U.png'], 'Resolution',150)
+
 
 
 %% stats 
 
-[h p ci ts] = ttest(c1, c2); 
-h = squeeze(h); t = squeeze(ts.tstat);
-figure
-contourf(1:300, 1:54, h, 40, 'linecolor', 'none'); hold on; colorbar
+
 
 
 
