@@ -5,8 +5,6 @@ function [EEG] = normalize_WM(EEG)
     EEG.power = bsxfun(@rdivide, EEG.power- mT, stdT);  
     
 
-
-
 % %     for chani = 1:size(EEG.data, 1)
 % %         dataChan = squeeze(EEG.data(:, chani, :, :));
 % %         mT = mean(dataChan,2, 'omitnan');

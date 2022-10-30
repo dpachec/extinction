@@ -26,9 +26,10 @@ for subji = 1:length(allsubs)
 
     
     if find(selChans)
-        [EEG marker_artifacts] = artifact_detection_EXT(EEG, 3, 5, 200, 100);
+        
         EEG.chanlocs = EEG.chanlocs(selChans);
         EEG.data = EEG.data(selChans, :); %contains nans
+        [EEG] = artifact_detection_EXT(EEG, 3, 5, 200, 100);
         
         %epoch data
         Ev = [{EEG.event.type}]'; 
@@ -40,15 +41,37 @@ for subji = 1:length(allsubs)
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
         ids = strcmp(Ev2(:, 10), c2u); 
         EEG.event = EEG.event(ids)
+
+        %epoch data and markers
         EEG = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
-        % remove trials with artifacts
-        EEG = extract_power_EXT(EEG, 0.01); 
-        %remove edge artifacts
+        EEGM = EEG; 
+        EEGM.data = EEG.markers_artifacts; 
+        EEGM = pop_epoch( EEGM, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+        %EEG = extract_power_EXT(EEG, 0.01); 
+        EEG = extract_power_EXT(EEG, 'all'); 
         if ndims(EEG.power) == 4
+            for chani = 1:size(EEG.power, 2)
+                for triali = 1:size(EEG.power, 1)
+                    data = EEG.power(triali, chani,:, :); 
+                    markers = EEGM.data(chani, :,triali);
+                    data(:, :, :, markers ==1) = nan; 
+                    dataDS = downsample(squeeze(data)', 10)';
+                    EEG.power(triali, chani, :, :) = dataDS; 
+                end
+            end
             EEG.power = EEG.power(:, :, :, 201:500);
         else
-            EEG.power = EEG.power(:, :, 201:500);
+            for triali = 1:size(EEG.power, 1)
+                data = EEG.power(triali,:, :); 
+                markers = EEGM.data(:,:, triali);
+                data(:, :, markers ==1) = nan; 
+                dataDS = downsample(squeeze(data)', 10)';
+                EEG.power(triali, :, :) = dataDS; 
+            end
+             EEG.power = EEG.power(:, :, 201:500);
         end
+        
+
         %remove amplitude data 
         EEG = rmfield(EEG, 'data');
         EEG = normalize_EXT(EEG);
@@ -62,29 +85,51 @@ end
 filename = [paths.iEEGRes.power 'allS_' sROI '_' c2u];
 save(filename, "ALLEEG");
 
-
+cd (paths.github)
 
 %% check that markers are ok
 data2check = [EEG.data(1, :); EEG.marker_artifacts(1,:)*1000]; 
 eegplot(data2check, 'srate', EEG.srate, 'winlength', 50, 'spacing', 1000);
 
 
+%% 
+EEG.power(7, 1, :, :)
 
+%% plot example trial in one subject (WITH MORE THAN 1 electrode)
 
-
-
-%% plot example trial in one subject
-
-EEG = ALLEEG{1}; 
+%EEG = ALLEEG{1}; 
 tr = 1; 
 ch = 1; 
-d2p	= squeeze(EEG.power(tr, ch, : ,:));
+
+figure
+d2p	= squeeze(EEG.dsPower(tr, ch, : ,:));
+myCmap = colormap(brewermap([],'YlOrRd'));
+colormap(myCmap)
+contourf(1:300, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
 
 figure
 myCmap = colormap(brewermap([],'YlOrRd'));
 colormap(myCmap)
-contourf(1:701, 1:54, d2p, 40, 'linecolor', 'none'); hold on; %colorbar
+d2p	= squeeze(EEG.power(tr, ch, : ,:));
+contourf(1:3000, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
 
+
+%% plot example trial in one subject (ONLY 1 electrode)
+
+%EEG = ALLEEG{1}; 
+tr = 12; 
+
+figure
+d2p	= squeeze(EEG.dsPower(tr, : ,:));
+myCmap = colormap(brewermap([],'YlOrRd'));
+colormap(myCmap)
+contourf(1:300, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
+
+figure
+myCmap = colormap(brewermap([],'YlOrRd'));
+colormap(myCmap)
+d2p	= squeeze(EEG.power(tr,: ,:));
+contourf(1:3000, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
 
 
 %% plot two different conditions (average in all amygdala channels and across trials)
@@ -109,8 +154,8 @@ contourf(1:701, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; %colorbar
 
 %% PLOT grand average for each condition
 paths = load_paths; 
-file2load = 'allS_Hippocampus_C'; 
-load ([paths.iEEGRes.power file2load]); 
+file2load = 'allS_Amygdala_C'; 
+%load ([paths.iEEGRes.power file2load]); 
 clearvars -except ALLEEG paths file2load
 
 
@@ -120,7 +165,8 @@ c2u = file2load(end);
 for subji = 1:length(ALLEEG)
     
     EEG = ALLEEG{subji};
-
+    
+    
     if ~isempty(EEG)
         Ev = [{EEG.event.type}]';
         Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
@@ -146,6 +192,9 @@ for subji = 1:length(ALLEEG)
     end
 
 end
+
+
+cd (paths.github)
 
 %%
 
