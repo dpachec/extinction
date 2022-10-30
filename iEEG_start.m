@@ -29,7 +29,7 @@ for subji = 1:length(allsubs)
         
         EEG.chanlocs = EEG.chanlocs(selChans);
         EEG.data = EEG.data(selChans, :); %contains nans
-        [EEG] = artifact_detection_EXT(EEG, 3, 5, 200, 100);
+        [EEG] = artifact_detection_EXT(EEG, 5, 3, 200, 100);
         
         %epoch data
         Ev = [{EEG.event.type}]'; 
@@ -56,19 +56,19 @@ for subji = 1:length(allsubs)
                     markers = EEGM.data(chani, :,triali);
                     data(:, :, :, markers ==1) = nan; 
                     dataDS = downsample(squeeze(data)', 10)';
-                    EEG.power(triali, chani, :, :) = dataDS; 
+                    EEG.powerDS(triali, chani, :, :) = dataDS; 
                 end
             end
-            EEG.power = EEG.power(:, :, :, 201:500);
+            EEG.power = EEG.powerDS(:, :, :, 201:500);
         else
             for triali = 1:size(EEG.power, 1)
                 data = EEG.power(triali,:, :); 
                 markers = EEGM.data(:,:, triali);
                 data(:, :, markers ==1) = nan; 
                 dataDS = downsample(squeeze(data)', 10)';
-                EEG.power(triali, :, :) = dataDS; 
+                EEG.powerDS(triali, :, :) = dataDS; 
             end
-             EEG.power = EEG.power(:, :, 201:500);
+             EEG.power = EEG.powerDS(:, :, 201:500);
         end
         
 
@@ -98,20 +98,20 @@ EEG.power(7, 1, :, :)
 %% plot example trial in one subject (WITH MORE THAN 1 electrode)
 
 %EEG = ALLEEG{1}; 
-tr = 1; 
-ch = 1; 
+tr = 20; 
+ch = 2; 
 
-figure
-d2p	= squeeze(EEG.dsPower(tr, ch, : ,:));
-myCmap = colormap(brewermap([],'YlOrRd'));
-colormap(myCmap)
-contourf(1:300, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
+% figure
+% d2p	= squeeze(EEG.dsPower(tr, ch, : ,:));
+% myCmap = colormap(brewermap([],'YlOrRd'));
+% colormap(myCmap)
+% contourf(1:300, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
 
 figure
 myCmap = colormap(brewermap([],'YlOrRd'));
 colormap(myCmap)
 d2p	= squeeze(EEG.power(tr, ch, : ,:));
-contourf(1:3000, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
+contourf(1:300, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
 
 
 %% plot example trial in one subject (ONLY 1 electrode)
@@ -174,14 +174,14 @@ for subji = 1:length(ALLEEG)
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
         if ndims(EEG.power) == 4
-            ids1 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1'); % CS+CS+ during acquisition
+            ids1 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '2');
             d2p1	= squeeze(mean(mean(EEG.power(ids1, :, : ,:), 'omitnan'), 'omitnan'));
-            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');  % CS-CS- during acquisition
+            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '2')  & strcmp(Ev2(:, 2), '2');
             d2p2	= squeeze(mean(mean(EEG.power(ids2, :, : ,:), 'omitnan'), 'omitnan'));
         else
-            ids1 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1');  % CS+CS+ during acquisition
+            ids1 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '2');
             d2p1	= squeeze(mean(EEG.power(ids1, :, : ), 'omitnan'));
-            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');  % CS-CS- during acquisition
+            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '2')  & strcmp(Ev2(:, 2), '2');
             d2p2	= squeeze(mean(EEG.power(ids2, :, : ), 'omitnan'));
 
         end
@@ -220,9 +220,9 @@ nexttile
 contourf(times, 1:54, t, 40, 'linecolor', 'none'); hold on; colorbar
 contour(times, 1:54,h, 1, 'Color', [0, 0, 0], 'LineWidth', 1); set(gca, 'clim', [-3 3])
 colormap(brewermap([],'Spectral'))
-set(findobj(gcf,'type','axes'),'FontSize',12, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'});
+set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'});
 
-exportgraphics(gcf, [paths.iEEGRes.power 'allS_U.png'], 'Resolution',150)
+exportgraphics(gcf, [paths.iEEGRes.power file2load '.png'], 'Resolution',150)
 
 
 
