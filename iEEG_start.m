@@ -174,14 +174,14 @@ for subji = 1:length(ALLEEG)
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
         if ndims(EEG.power) == 4
-            ids1 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '2');
+            ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
             d2p1	= squeeze(mean(mean(EEG.power(ids1, :, : ,:), 'omitnan'), 'omitnan'));
-            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '2')  & strcmp(Ev2(:, 2), '2');
+            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
             d2p2	= squeeze(mean(mean(EEG.power(ids2, :, : ,:), 'omitnan'), 'omitnan'));
         else
-            ids1 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '2');
+            ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
             d2p1	= squeeze(mean(EEG.power(ids1, :, : ), 'omitnan'));
-            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '2')  & strcmp(Ev2(:, 2), '2');
+            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
             d2p2	= squeeze(mean(EEG.power(ids2, :, : ), 'omitnan'));
 
         end
