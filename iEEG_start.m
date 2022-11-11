@@ -1,10 +1,9 @@
 %% 
-%% 
+%% power analysis all channels 
 clear, close all
 paths = load_paths; 
 
 c2u = 'C';
-sROI = {'middlefrontal'};
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -20,7 +19,92 @@ for subji = 1:length(allsubs)
     cd([ paths.fiEEG])
     load ([sub '_iEEG.mat']);
 
-    %select amygdala electrodes
+    [EEG] = artifact_detection_EXT(EEG, 5, 3, 500, 500);
+    
+    Ev = [{EEG.event.type}]'; 
+    Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+    clen = cellfun(@length, Ev1); 
+    EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
+    Ev2 = cat(1, Ev1{:});
+   
+    Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
+    ids = strcmp(Ev2(:, 10), c2u); 
+    EEG.event = EEG.event(ids)
+
+    %epoch data and markers
+    EEG = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+    EEGM = EEG; 
+    EEGM.data = EEG.markers_artifacts; 
+    EEGM = pop_epoch( EEGM, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+    %EEG = extract_power_EXT(EEG, 0.01); 
+    EEG = extract_power_EXT(EEG, 'all'); 
+    if ndims(EEG.power) == 4
+        for chani = 1:size(EEG.power, 2)
+            for triali = 1:size(EEG.power, 1)
+                data = EEG.power(triali, chani,:, :); 
+                markers = EEGM.data(chani, :,triali);
+                data(:, :, :, markers ==1) = nan; 
+                dataDS = downsample(squeeze(data)', 100)';
+                EEG.powerDS(triali, chani, :, :) = dataDS; 
+            end
+        end
+        EEG.power = EEG.powerDS(:, :, :, 21:50);
+        %EEG.power = EEG.powerDS(:, :, :, 201:500);
+    else
+        for triali = 1:size(EEG.power, 1)
+            data = EEG.power(triali,:, :); 
+            markers = EEGM.data(:,:, triali);
+            data(:, :, markers ==1) = nan; 
+            dataDS = downsample(squeeze(data)', 100)';
+            EEG.powerDS(triali, :, :) = dataDS; 
+        end
+        EEG.power = EEG.powerDS(:, :, 21:50);
+         %EEG.power = EEG.powerDS(:, :, 201:500);
+    end
+    
+    EEG = rmfield(EEG, 'data');
+    EEG = rmfield(EEG, 'markers_artifacts');
+    EEG = rmfield(EEG, 'powerDS');
+    EEG = normalize_EXT(EEG);
+
+    ALLEEG{subji,:} = EEG; 
+
+
+end
+
+
+
+
+sROI = char(join(sROI, '_'));
+filename = [paths.iEEGRes.power 'allS_' sROI '_' c2u];
+save(filename, "ALLEEG");
+
+cd (paths.github)
+
+%% 
+clear, close all
+paths = load_paths; 
+
+c2u = 'C';
+%sROI = {'orbitofrontal'};
+
+ sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' 
+          'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' 'entorhinal'};
+
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+
+
+for subji = 1:length(allsubs)
+    subji
+    sub = allsubs{subji}; 
+    cd([ paths.fiEEG])
+    load ([sub '_iEEG.mat']);
+
     chansLab = {EEG.chanlocs.fsLabelsR}';
     selChans = contains(chansLab, sROI);
 
@@ -55,20 +139,22 @@ for subji = 1:length(allsubs)
                     data = EEG.power(triali, chani,:, :); 
                     markers = EEGM.data(chani, :,triali);
                     data(:, :, :, markers ==1) = nan; 
-                    dataDS = downsample(squeeze(data)', 10)';
+                    dataDS = downsample(squeeze(data)', 100)';
                     EEG.powerDS(triali, chani, :, :) = dataDS; 
                 end
             end
-            EEG.power = EEG.powerDS(:, :, :, 201:500);
+            EEG.power = EEG.powerDS(:, :, :, 21:50);
+            %EEG.power = EEG.powerDS(:, :, :, 201:500);
         else
             for triali = 1:size(EEG.power, 1)
                 data = EEG.power(triali,:, :); 
                 markers = EEGM.data(:,:, triali);
                 data(:, :, markers ==1) = nan; 
-                dataDS = downsample(squeeze(data)', 10)';
+                dataDS = downsample(squeeze(data)', 100)';
                 EEG.powerDS(triali, :, :) = dataDS; 
             end
-             EEG.power = EEG.powerDS(:, :, 201:500);
+            EEG.power = EEG.powerDS(:, :, 21:50);
+             %EEG.power = EEG.powerDS(:, :, 201:500);
         end
         
 
@@ -220,7 +306,8 @@ h = squeeze(h); t = squeeze(ts.tstat);
 
 
 
-times = -1:.01:1.99; 
+%times = -1:.01:1.99; 
+times = -1:.1:1.99; 
 tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 800])
 nexttile
 contourf(times, 1:54, d2p1, 40, 'linecolor', 'none'); hold on; colorbar
@@ -325,6 +412,10 @@ disp (['Total elec num: ' num2str(sum(nChans))])
 
 
 
+
+
+
+%% Searchlight analysis 
 
 
 
