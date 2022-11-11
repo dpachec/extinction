@@ -4,6 +4,7 @@ clear, close all
 paths = load_paths; 
 
 c2u = 'C';
+sROI = 'allChannels';
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -33,38 +34,10 @@ for subji = 1:length(allsubs)
 
     %epoch data and markers
     EEG = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
-    EEGM = EEG; 
-    EEGM.data = EEG.markers_artifacts; 
-    EEGM = pop_epoch( EEGM, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
-    %EEG = extract_power_EXT(EEG, 0.01); 
-    EEG = extract_power_EXT(EEG, 'all'); 
-    if ndims(EEG.power) == 4
-        for chani = 1:size(EEG.power, 2)
-            for triali = 1:size(EEG.power, 1)
-                data = EEG.power(triali, chani,:, :); 
-                markers = EEGM.data(chani, :,triali);
-                data(:, :, :, markers ==1) = nan; 
-                dataDS = downsample(squeeze(data)', 100)';
-                EEG.powerDS(triali, chani, :, :) = dataDS; 
-            end
-        end
-        EEG.power = EEG.powerDS(:, :, :, 21:50);
-        %EEG.power = EEG.powerDS(:, :, :, 201:500);
-    else
-        for triali = 1:size(EEG.power, 1)
-            data = EEG.power(triali,:, :); 
-            markers = EEGM.data(:,:, triali);
-            data(:, :, markers ==1) = nan; 
-            dataDS = downsample(squeeze(data)', 100)';
-            EEG.powerDS(triali, :, :) = dataDS; 
-        end
-        EEG.power = EEG.powerDS(:, :, 21:50);
-         %EEG.power = EEG.powerDS(:, :, 201:500);
-    end
+    EEG = extract_power_EXT(EEG, 0.1); 
+    EEG.power = EEG.power(:, :, :, 21:50);
     
     EEG = rmfield(EEG, 'data');
-    EEG = rmfield(EEG, 'markers_artifacts');
-    EEG = rmfield(EEG, 'powerDS');
     EEG = normalize_EXT(EEG);
 
     ALLEEG{subji,:} = EEG; 
@@ -177,7 +150,8 @@ save(filename, "ALLEEG");
 cd (paths.github)
 
 %% check that markers are ok
-data2check = [EEG.data(1, :); EEG.markers_artifacts(1,:)*1000]; 
+%data2check = [EEG.data(1, :); EEG.markers_artifacts(1,:)*1000]; 
+data2check = [EEG.data(1, :)]; 
 eegplot(data2check, 'srate', EEG.srate, 'winlength', 50, 'spacing', 1000);
 
 
@@ -200,7 +174,7 @@ figure
 myCmap = colormap(brewermap([],'YlOrRd'));
 colormap(myCmap)
 d2p	= squeeze(EEG.power(tr, ch, : ,:));
-contourf(1:300, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
+contourf(1:70, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
 
 
 %% plot example trial in one subject (ONLY 1 electrode)
@@ -243,7 +217,7 @@ contourf(1:701, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; %colorbar
 
 %% PLOT grand average for each condition
 paths = load_paths; 
-file2load = 'allS_middlefrontal_C'; 
+file2load = 'allS_allChannels_C'; 
 %load ([paths.iEEGRes.power file2load]); 
 clearvars -except ALLEEG paths file2load
 

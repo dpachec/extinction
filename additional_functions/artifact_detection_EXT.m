@@ -19,8 +19,8 @@ for chani = 1:size(EEG.data, 1)
         
         markers = remove_small_segments_EXT(newTrace, minSegLength); 
 
-        %EEG.data(chani, markers == 1) = nan;
-        EEG.markers_artifacts(chani, :) = markers; 
+        EEG.data(chani, markers == 1) = nan;
+        %EEG.markers_artifacts(chani, :) = markers; 
 
         
         

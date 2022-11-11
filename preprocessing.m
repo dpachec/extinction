@@ -475,28 +475,42 @@ for subji = 1:length(allsubs)
 
 
         % % remove empty and white matter electrodes
+        % % % % % % COMMENT ONLY IN THIS VERSION WITH ALL ELECTRODES
+% % %         clear chans2remove
+% % %         count = 1;
+% % %         for chani = 1:length(EEG.chanlocs)
+% % %             if ~isempty(EEG.chanlocs(chani).fsLabelsR) 
+% % %                 labelR = EEG.chanlocs(chani).fsLabelsR; 
+% % %                 labelR = strsplit(labelR, ';');
+% % %                 if sum(contains(labelR, 'White-Matter')) == 2 ...
+% % %                     | sum(contains(labelR, 'Unknown')) == 2 ...
+% % %                     | sum(contains(labelR, 'Unknown')) + sum(contains(labelR, 'White-Matter')) == 2 
+% % %                     chans2remove(count,:) = chani; 
+% % %                     count = count+ 1; 
+% % %                 end
+% % %             else
+% % %                 chans2remove(count,:) = chani; 
+% % %                 count = count+ 1; 
+% % %             end
+% % %         end
+% % % 
+% % %         EEG.chanlocs(chans2remove) = []; 
+% % %         EEG.data(chans2remove, :) =  []; 
+
+        % % % % remove only channels without label
         clear chans2remove
         count = 1;
         for chani = 1:length(EEG.chanlocs)
-            if ~isempty(EEG.chanlocs(chani).fsLabelsR) 
-                labelR = EEG.chanlocs(chani).fsLabelsR; 
-                labelR = strsplit(labelR, ';');
-                if sum(contains(labelR, 'White-Matter')) == 2 ...
-                    | sum(contains(labelR, 'Unknown')) == 2 ...
-                    | sum(contains(labelR, 'Unknown')) + sum(contains(labelR, 'White-Matter')) == 2 
-                    chans2remove(count,:) = chani; 
-                    count = count+ 1; 
-                end
-            else
+            if isempty(EEG.chanlocs(chani).fsLabelsR) 
                 chans2remove(count,:) = chani; 
                 count = count+ 1; 
             end
         end
-
         EEG.chanlocs(chans2remove) = []; 
         EEG.data(chans2remove, :) =  []; 
 
-                
+
+
 
     end
 
@@ -538,28 +552,45 @@ for subji = 1:length(allsubs)
         EEG = re_reference_EXT(EEG, 'bipo', sub);
 
 
-        % % remove empty and white matter electrodes
+        % % % % remove only channels without label
         clear chans2remove
         count = 1;
         for chani = 1:length(EEG.chanlocs)
-            if ~isempty(EEG.chanlocs(chani).fsLabelsR) 
-                labelR = EEG.chanlocs(chani).fsLabelsR; 
-                labelR = strsplit(labelR, ';');
-                if sum(contains(labelR, 'White-Matter')) == 2 ...
-                    | sum(contains(labelR, 'Unknown')) == 2 ...
-                    | sum(contains(labelR, 'Unknown')) + sum(contains(labelR, 'White-Matter')) == 2 
-                    chans2remove(count,:) = chani; 
-                    count = count+ 1; 
-                end
-            else
+            if isempty(EEG.chanlocs(chani).fsLabelsR) 
                 chans2remove(count,:) = chani; 
                 count = count+ 1; 
             end
         end
-
         EEG.chanlocs(chans2remove) = []; 
-        EEG.chanlocs = EEG.chanlocs'; 
         EEG.data(chans2remove, :) =  []; 
+
+
+% % % %         % % remove empty and white matter electrodes
+% % % %         % % % % % % COMMENT ONLY IN THIS VERSION WITH ALL ELECTRODES
+% % % %         clear chans2remove
+% % % %         count = 1;
+% % % %         for chani = 1:length(EEG.chanlocs)
+% % % %             if ~isempty(EEG.chanlocs(chani).fsLabelsR) 
+% % % %                 labelR = EEG.chanlocs(chani).fsLabelsR; 
+% % % %                 labelR = strsplit(labelR, ';');
+% % % %                 if sum(contains(labelR, 'White-Matter')) == 2 ...
+% % % %                     | sum(contains(labelR, 'Unknown')) == 2 ...
+% % % %                     | sum(contains(labelR, 'Unknown')) + sum(contains(labelR, 'White-Matter')) == 2 
+% % % %                     chans2remove(count,:) = chani; 
+% % % %                     count = count+ 1; 
+% % % %                 end
+% % % %             else
+% % % %                 chans2remove(count,:) = chani; 
+% % % %                 count = count+ 1; 
+% % % %             end
+% % % %         end
+% % % % 
+% % % %         EEG.chanlocs(chans2remove) = []; 
+% % % %         EEG.data(chans2remove, :) =  []; 
+
+
+
+        EEG.chanlocs = EEG.chanlocs'; 
 
  end
 
@@ -567,8 +598,8 @@ for subji = 1:length(allsubs)
     EEG = rem_EEGLAB_fields(EEG);
 
     % % % % save final versions
-    mkdir(paths.fiEEG)
-    cd([paths.fiEEG])
+    mkdir(paths.iEEG)
+    cd([paths.iEEG])
     filename = [sub '_iEEG.mat']
     %save(filename, 'EEG', '-v7.3');
     save(filename, 'EEG');
