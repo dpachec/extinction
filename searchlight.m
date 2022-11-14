@@ -2,7 +2,7 @@
 %% 
 
 paths = load_paths; 
-file2load = 'allS_orbitofrontal_C'; 
+file2load = 'allS_allChannels_C'; 
 %load ([paths.iEEGRes.power file2load]); 
 clearvars -except ALLEEG paths file2load
 
@@ -53,7 +53,8 @@ cd (paths.github)
 %% load brain model 
 
 %load surface
-[vertices faces] = readObj('brain_LR.obj');
+%[vertices faces] = readObj('brain_LR.obj');
+[vertices faces] = readObj('brain_HR.obj');
 
 iDD = cellfun(@(x) cell2mat(x(:,3)),ch2u,'UniformOutput',false)
 
@@ -113,6 +114,10 @@ toc
 
 %% count electrodes influencing each vertex
 % subj2model is a subjects * vertices matrix containing average values to plot 
+
+freq2use = [3:8]; 
+toi      = [1:10];
+
 tic
 
 clear subj2model
@@ -127,8 +132,8 @@ for subji = 1:length(iDD)
 
             % % % % project difference data
             d2projMeanChans = squeeze(mean(d2proj, 1)); % = freq by time
-            d2projMeanChansFreq = squeeze(mean(d2projMeanChans(3:8,:), 1)); % only time
-            d2projMeanChansFreqTime = squeeze(mean(d2projMeanChansFreq(11:20))); % all
+            d2projMeanChansFreq = squeeze(mean(d2projMeanChans(freq2use,:), 1)); % only time
+            d2projMeanChansFreqTime = squeeze(mean(d2projMeanChansFreq(toi))); % all
             d2projF = d2projMeanChansFreqTime; 
 
             subj2model(subji, vxi) = d2projF;
@@ -144,21 +149,23 @@ toc
 
 %% compute stats
 
-minSubj = 6
+minSubj = 5
 
 
-t = squeeze(mean(subj2model, 'omitnan')); 
+r = squeeze(mean(subj2model, 'omitnan')); 
 
 
 % % % % project statistics data 
-%[h p ci ts] = ttest(subj2model); 
-%t = ts.tstat; 
+[h p ci ts] = ttest(subj2model); 
+t = ts.tstat; 
 
 
 x = ~isnan(subj2model);
 x1 = sum(x);
 x2 = x1< minSubj; 
 t(x2) = nan; 
+r(x2) = nan; 
+h(x2) = nan; 
 
 
 
@@ -169,10 +176,13 @@ toc
 %% plot
 clear gaPatch 
 
-dat2plot        = 't'; %t or h
+dat2plot        = 't'; %t h r 
 v2p             = 'l' %l or r
-crange          = [-.05 .05];
-%crange          = [-4 4];
+
+if strcmp(dat2plot, 'h') crange = [0 1]; end 
+if strcmp(dat2plot, 't') crange = [-4 4]; end 
+if strcmp(dat2plot, 'r') crange = [-.175 .175]; end 
+
 %colorMap2use    = 'autumn';
 colorMap2use    = 'jet';
 

@@ -2,3 +2,7 @@
 *.asv
 additional_functions/load_paths.m
 additional_functions/.DS_Store
+brain_model/brain_HR.obj
+brain_model/rh.pial.stl
+brain_model/lh.pial.stl
+brain_model/brain_HR.mtl

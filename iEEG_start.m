@@ -17,10 +17,9 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
 for subji = 1:length(allsubs)
     subji
     sub = allsubs{subji}; 
-    cd([ paths.fiEEG])
+    cd([paths.iEEG])
     load ([sub '_iEEG.mat']);
 
-    [EEG] = artifact_detection_EXT(EEG, 5, 3, 500, 500);
     
     Ev = [{EEG.event.type}]'; 
     Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
@@ -35,7 +34,7 @@ for subji = 1:length(allsubs)
     %epoch data and markers
     EEG = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
     EEG = extract_power_EXT(EEG, 0.1); 
-    EEG.power = EEG.power(:, :, :, 21:50);
+    EEG.power = EEG.power(:, :, :, 31:40);
     
     EEG = rmfield(EEG, 'data');
     EEG = normalize_EXT(EEG);
