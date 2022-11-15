@@ -3,7 +3,7 @@
 
 paths = load_paths; 
 file2load = 'allS_allChannels_C'; 
-%load ([paths.iEEGRes.power file2load]); 
+load ([paths.iEEGRes.power file2load]); 
 clearvars -except ALLEEG paths file2load
 
 
@@ -54,7 +54,7 @@ cd (paths.github)
 
 %load surface
 %[vertices faces] = readObj('brain_LR.obj');
-[vertices faces] = readObj('brain_HR.obj');
+[vertices faces] = readObj('yaleBA_rot.obj');
 
 iDD = cellfun(@(x) cell2mat(x(:,3)),ch2u,'UniformOutput',false)
 
@@ -75,7 +75,7 @@ end
 
 %% find electrode idx
 
-dist4elec = 15;
+dist4elec = 20;
 
 tic
 clear eIds eIdist;
@@ -149,7 +149,7 @@ toc
 
 %% compute stats
 
-minSubj = 5
+minSubj = 3
 
 
 r = squeeze(mean(subj2model, 'omitnan')); 

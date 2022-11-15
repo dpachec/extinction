@@ -4,7 +4,7 @@ clear, close all
 paths = load_paths; 
 
 c2u = 'U';
-sROI = {'orbitofrontal'};
+sROI = {'Amygdala'}; % case sensitive 
 
 %  sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' 
 %           'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' 'entorhinal'};
@@ -79,8 +79,8 @@ eegplot(data2check, 'srate', EEG1.srate, 'winlength', 50, 'spacing', 1000, 'even
 
 %% PLOT grand average for each condition
 paths = load_paths; 
-file2load = ['allS_' 'orbitofrontal' '_C']; 
-load ([paths.iEEGRes.power file2load]); 
+file2load = ['allS_' 'orbitofrontal' '_U']; 
+%load ([paths.iEEGRes.power file2load]); 
 clearvars -except ALLEEG paths file2load
 
 c2u = file2load(end);
@@ -97,22 +97,20 @@ for subji = 1:length(ALLEEG)
         Ev2 = cat(1, Ev1{:});
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
-        if ndims(EEG.power) == 4
-            %ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
-            ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
-            d2p1	= squeeze(mean(mean(EEG.power(ids1, :, : ,:), 'omitnan'), 'omitnan'));
-            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
-            d2p2	= squeeze(mean(mean(EEG.power(ids2, :, : ,:), 'omitnan'), 'omitnan'));
-        else
-            ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
-            d2p1	= squeeze(mean(EEG.power(ids1, :, : ), 'omitnan'));
-            ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
-            d2p2	= squeeze(mean(EEG.power(ids2, :, : ), 'omitnan'));
-
+        if ndims(EEG.power) == 3
+            tmph(:, 1, :, :)  = EEG.power; 
+            EEG.power = tmph; 
         end
-    
-        c1(subji, :, :) = d2p1; 
-        c2(subji, :, :) = d2p2; 
+
+        ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
+        tfDCH1 = mean(EEG.power(ids1, :, : ,:), 'omitnan'); 
+        tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
+        ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
+        tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
+        tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
+
+        c1(subji, :, :) = tfDTF1; 
+        c2(subji, :, :) = tfDTF2; 
         
     end
 
