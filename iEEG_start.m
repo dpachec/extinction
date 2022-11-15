@@ -154,7 +154,8 @@ contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 1); set(gca, 'clim',
 colormap(brewermap([],'Spectral'))
 set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'});
 
-exportgraphics(gcf, [paths.iEEGRes.power file2load '.png'], 'Resolution',150)
+%exportgraphics(gcf, [paths.iEEGRes.power file2load '.png'], 'Resolution',150)
+exportgraphics(gcf, [paths.iEEGRes.power  'myP.png'], 'Resolution',150)
 
 
 
