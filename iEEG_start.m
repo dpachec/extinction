@@ -3,7 +3,7 @@
 clear, close all
 paths = load_paths; 
 
-c2u = 'U';
+c2u = 'C';
 sROI = {'Amygdala'}; % case sensitive 
 
 %  sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' 
@@ -20,7 +20,7 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
 for subji = 1:length(allsubs)
     subji
     sub = allsubs{subji}; 
-    cd([ paths.fiEEG])
+    cd([ paths.iEEG])
     load ([sub '_iEEG.mat']);
 
     chansLab = {EEG.chanlocs.fsLabelsR}';
@@ -59,7 +59,7 @@ end
 
 sROI = char(join(sROI, '_'));
 filename = [paths.iEEGRes.power 'allS_' sROI '_' c2u];
-save(filename, "ALLEEG");
+save(filename, 'ALLEEG', '-v7.3');
 
 cd (paths.github)
 
