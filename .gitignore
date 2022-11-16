@@ -6,3 +6,6 @@ brain_model/brain_HR.obj
 brain_model/rh.pial.stl
 brain_model/lh.pial.stl
 brain_model/brain_HR.mtl
+brain_model/yaleBA.obj
+brain_model/yaleBA_rot.mtl
+brain_model/yaleBA_rot.obj
