@@ -4,7 +4,7 @@ clear, close all
 paths = load_paths; 
 
 c2u = 'C';
-sROI = {'Amygdala'}; % case sensitive 
+sROI = {'frontal'}; % case sensitive 
 
 %  sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' 
 %           'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' 'entorhinal'};
@@ -79,8 +79,8 @@ eegplot(data2check, 'srate', EEG1.srate, 'winlength', 50, 'spacing', 1000, 'even
 
 %% PLOT grand average for each condition
 paths = load_paths; 
-file2load = ['allS_' 'orbitofrontal' '_U']; 
-%load ([paths.iEEGRes.power file2load]); 
+file2load = ['allS_' 'obitofrontal' '_C']; 
+load ([paths.iEEGRes.power file2load]); 
 clearvars -except ALLEEG paths file2load
 
 c2u = file2load(end);
@@ -123,7 +123,7 @@ cd (paths.github)
 
 sub2exc = []
 
-c1B = c1; c2B = c2; 
+c1B = c1(:, 1:30, 201:500); c2B = c2(:, 1:30, 201:500); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 
 c1B(c1B == 0) = nan; 
@@ -132,34 +132,9 @@ d2p1	= squeeze(mean(c1B, 'omitnan'));
 d2p2	= squeeze(mean(c2B, 'omitnan'));
 
 
-[h p ci ts] = ttest(c1, c2); 
+[h p ci ts] = ttest(c1B, c2B); 
 h = squeeze(h); t = squeeze(ts.tstat);
 
-%h = zeros(54, 300);
-%h(clustinfo.PixelIdxList{45}) = 1; 
-
-
-
-%times = -1:.01:1.99; 
-times = -3:.01:3.99; 
-freqs = 1:54;
-tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 800])
-nexttile
-contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; colorbar
-nexttile
-contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; colorbar
-nexttile
-contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; colorbar
-contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 1); set(gca, 'clim', [-3 4])
-colormap(brewermap([],'Spectral'))
-set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'});
-
-%exportgraphics(gcf, [paths.iEEGRes.power file2load '.png'], 'Resolution',150)
-exportgraphics(gcf, [paths.iEEGRes.power  'myP.png'], 'Resolution',150)
-
-
-
-%% stats 
 clear allSTs  
 clustinfo = bwconncomp(h);
 for pxi = 1:length(clustinfo.PixelIdxList)
@@ -169,13 +144,45 @@ end
 max_clust_obs = allSTs(id); 
 
 
+h = zeros(30, 300);
+%h(clustinfo.PixelIdxList{9}) = 1; 
+
+
+
+%times = -1:.01:1.99; 
+times = -1:.01:1.99; 
+freqs = 1:30;
+tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 800])
+nexttile
+contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; colorbar
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 2);set(gca, 'clim', [-.1 .1])
+nexttile
+contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; colorbar
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 2); set(gca, 'clim', [-.1 .1])
+nexttile
+contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; colorbar
+contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 1); set(gca, 'clim', [-3 4])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 2);
+colormap(brewermap([],'*Spectral'))
+set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 2]);
+
+
+
+%exportgraphics(gcf, [paths.iEEGRes.power file2load '.png'], 'Resolution',150)
+exportgraphics(gcf, [paths.iEEGRes.power  'myP.png'], 'Resolution',150)
+
+
+
+
+
+
 %% permutations 
 
 nPerm = 1000; 
 clear max_clust_sum_perm
 for permi = 1:nPerm
-    c1B = c1(:,:,101:300); 
-    c2B = c2(:,:,101:300); 
+    c1B = c1(:,1:30,301:500); 
+    c2B = c2(:,1:30,301:500); 
     c1B(c1B == 0) = nan; 
     c2B(c2B == 0) = nan; 
     for subji = 1:size(c1B, 1)
