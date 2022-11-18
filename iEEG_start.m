@@ -4,9 +4,9 @@ clear, close all
 paths = load_paths; 
 
 c2u = 'C';
-sROI = {'frontal'}; % case sensitive 
+sROI = {'Amygdala'}; % case sensitive 
 
-%  sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' 
+%sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' ...
 %           'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' 'entorhinal'};
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
@@ -45,13 +45,20 @@ for subji = 1:length(allsubs)
 
         %epoch data and markers
         EEG = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
-        EEG = extract_power_EXT(EEG, 0.01); 
         
-        %remove amplitude data 
-        EEG = rmfield(EEG, 'data');
-        EEG = normalize_EXT(EEG);
+        EEG = remove_elec_EXT(EEG)
+        
+
+        if ~isempty(EEG.data)
+            
+            EEG = extract_power_EXT(EEG, 0.01); 
+            EEG = normalize_EXT(EEG);
+            EEG = rmfield(EEG, 'data');
+            nChans(subji, :) = size(EEG.power, 2);
+            ALLEEG{subji,:} = EEG; 
+
+        end
     
-        ALLEEG{subji,:} = EEG; 
     end
 
 
@@ -59,9 +66,29 @@ end
 
 sROI = char(join(sROI, '_'));
 filename = [paths.iEEGRes.power 'allS_' sROI '_' c2u];
-save(filename, 'ALLEEG', '-v7.3');
+nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
+totalChans = sum(nChans);
+save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
 
 cd (paths.github)
+
+
+%% Plot all spectrograms in each region
+
+
+
+
+
+%% plot example trial in one subject (ONLY 1 electrode)
+
+%EEG = ALLEEG{1}; 
+tr =26; 
+
+figure
+d2p	= squeeze(EEG_before.power(tr, 1 ,:,:));
+myCmap = colormap(brewermap([],'YlOrRd'));
+colormap(myCmap)
+contourf(1:700, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
 
 %% delete trigger labels in events
 
@@ -78,10 +105,14 @@ eegplot(data2check, 'srate', EEG1.srate, 'winlength', 50, 'spacing', 1000, 'even
 
 
 %% PLOT grand average for each condition
-paths = load_paths; 
-file2load = ['allS_' 'obitofrontal' '_C']; 
-load ([paths.iEEGRes.power file2load]); 
+
 clearvars -except ALLEEG paths file2load
+
+paths = load_paths; 
+file2load = ['allS_' 'orbitofrontal' '_C']; 
+
+%load ([paths.iEEGRes.power file2load]); 
+
 
 c2u = file2load(end);
 
@@ -103,9 +134,11 @@ for subji = 1:length(ALLEEG)
         end
 
         ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
+        %ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) > 36;
         tfDCH1 = mean(EEG.power(ids1, :, : ,:), 'omitnan'); 
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
         ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
+        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) > 36;
         tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
         tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
 
@@ -145,7 +178,7 @@ max_clust_obs = allSTs(id);
 
 
 h = zeros(30, 300);
-%h(clustinfo.PixelIdxList{9}) = 1; 
+%h(clustinfo.PixelIdxList{11}) = 1; 
 
 
 
@@ -155,13 +188,13 @@ freqs = 1:30;
 tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 800])
 nexttile
 contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; colorbar
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 2);set(gca, 'clim', [-.1 .1])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 2);%set(gca, 'clim', [-.1 .1])
 nexttile
 contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; colorbar
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 2); set(gca, 'clim', [-.1 .1])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 2); %set(gca, 'clim', [-.1 .1])
 nexttile
 contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; colorbar
-contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 1); set(gca, 'clim', [-3 4])
+contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-3 4])
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 2);
 colormap(brewermap([],'*Spectral'))
 set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 2]);
@@ -181,8 +214,8 @@ exportgraphics(gcf, [paths.iEEGRes.power  'myP.png'], 'Resolution',150)
 nPerm = 1000; 
 clear max_clust_sum_perm
 for permi = 1:nPerm
-    c1B = c1(:,1:30,301:500); 
-    c2B = c2(:,1:30,301:500); 
+    c1B = c1(:,1:30,201:500); 
+    c2B = c2(:,1:30,201:500); 
     c1B(c1B == 0) = nan; 
     c2B(c2B == 0) = nan; 
     for subji = 1:size(c1B, 1)
@@ -219,7 +252,7 @@ mcsR = max_clust_obs;
 mcsP = max_clust_sum_perm;
 
 allAb = mcsP(abs(mcsP) > abs(mcsR))';
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm;
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
 
@@ -336,19 +369,13 @@ contourf(1:70, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
 %% plot example trial in one subject (ONLY 1 electrode)
 
 %EEG = ALLEEG{1}; 
-tr = 12; 
+tr =26; 
 
 figure
-d2p	= squeeze(EEG.dsPower(tr, : ,:));
+d2p	= squeeze(EEG.power(tr, 1 ,:,:));
 myCmap = colormap(brewermap([],'YlOrRd'));
 colormap(myCmap)
-contourf(1:300, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
-
-figure
-myCmap = colormap(brewermap([],'YlOrRd'));
-colormap(myCmap)
-d2p	= squeeze(EEG.power(tr,: ,:));
-contourf(1:3000, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
+contourf(1:700, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
 
 
 %% plot two different conditions (average in all amygdala channels and across trials)

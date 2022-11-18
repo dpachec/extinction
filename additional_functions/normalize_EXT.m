@@ -1,16 +1,29 @@
-function [EEG] = normalize_WM(EEG)
+function [EEG] = normalize_EXT(EEG)
+% 
+%     mT = mean(EEG.power,1, 'omitnan');
+%     stdT = std(EEG.power,[], 1, 'omitnan');
+%     EEG.power = bsxfun(@rdivide, EEG.power- mT, stdT);  
 
-    mT = mean(EEG.power,1, 'omitnan');
-    stdT = std(EEG.power,[], 1, 'omitnan');
-    EEG.power = bsxfun(@rdivide, EEG.power- mT, stdT);  
+
     
+    if ndims(EEG.power) == 3 
+        tmp(:, 1, :, :) = EEG.power; 
+        EEG.power = tmp; 
+    end
 
-% %     for chani = 1:size(EEG.data, 1)
-% %         dataChan = squeeze(EEG.data(:, chani, :, :));
-% %         mT = mean(dataChan,2, 'omitnan');
-% %         stdT = std(dataChan,[], 2, 'omitnan');
-% %         EEG.data(chani, :, :) = bsxfun(@rdivide, dataChan - mT, stdT);  
-% %     end
+
+    for chani = 1:size(EEG.power, 2)
+        for triali = 1:size(EEG.power, 1)
+
+            data = EEG.power(triali, chani, :, :); 
+            mT = mean(data(:, :, :, 251:300),4, 'omitnan');
+            stdT = std(data(:, :, :, 251:300),[], 4, 'omitnan');
+            dataNorm = bsxfun(@rdivide, bsxfun(@minus, data, mT), stdT);  
+
+            EEG.power(triali, chani, :, :) = dataNorm; 
+
+        end
+
 
  
 end
