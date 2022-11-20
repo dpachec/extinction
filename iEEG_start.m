@@ -4,7 +4,7 @@ clear, close all
 paths = load_paths; 
 
 c2u = 'C';
-sROI = {'Amygdala'}; % case sensitive 
+sROI = {'cingulate'}; % case sensitive 
 
 %sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' ...
 %           'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' 'entorhinal'};
@@ -46,7 +46,7 @@ for subji = 1:length(allsubs)
         %epoch data and markers
         EEG = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
         
-        EEG = remove_elec_EXT(EEG)
+        EEG = remove_elec_EXT(EEG, 38); %thres channels
         
 
         if ~isempty(EEG.data)
@@ -134,11 +134,11 @@ for subji = 1:length(ALLEEG)
         end
 
         ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
-        %ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) > 36;
+        %ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) < 36;
         tfDCH1 = mean(EEG.power(ids1, :, : ,:), 'omitnan'); 
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
         ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
-        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) > 36;
+        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) < 36;
         tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
         tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
 
@@ -177,7 +177,7 @@ end
 max_clust_obs = allSTs(id); 
 
 
-h = zeros(30, 300);
+%h = zeros(30, 300);
 %h(clustinfo.PixelIdxList{11}) = 1; 
 
 
