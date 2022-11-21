@@ -3,11 +3,14 @@
 clear, close all
 paths = load_paths; 
 
-c2u = 'C';
-sROI = {'cingulate'}; % case sensitive 
+c2u = 'U';
 
-%sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' ...
-%           'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' 'entorhinal'};
+sROI = {'Amygdala'}; 
+
+%sROI = {'superiorfrontal' 'rostralmiddlefrontal' 'anteriorcingulate' 'posteriorcingulate' 'precentral' 'caudalmiddlefrontal'}; % case sensitive 
+
+% sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' ...
+%            'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' 'entorhinal'};
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -46,7 +49,7 @@ for subji = 1:length(allsubs)
         %epoch data and markers
         EEG = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
         
-        EEG = remove_elec_EXT(EEG, 38); %thres channels
+        EEG = remove_elec_EXT(EEG, 38); %thres channels is 1/5 of 192 = 38
         
 
         if ~isempty(EEG.data)
@@ -54,7 +57,11 @@ for subji = 1:length(allsubs)
             EEG = extract_power_EXT(EEG, 0.01); 
             EEG = normalize_EXT(EEG);
             EEG = rmfield(EEG, 'data');
-            nChans(subji, :) = size(EEG.power, 2);
+            if ndims(EEG.power) == 4
+                nChans(subji, :) = size(EEG.power, 2);
+            else
+                nChans(subji, :) = 1;
+            end
             ALLEEG{subji,:} = EEG; 
 
         end
@@ -76,6 +83,19 @@ cd (paths.github)
 %% Plot all spectrograms in each region
 
 
+%% count chans 
+clear nChans
+for subji = 1:length(ALLEEG)
+    EEG = ALLEEG{subji}; 
+    if ~isempty(EEG)
+        if ndims(EEG.power) == 4
+            nChans(subji, :) = size(EEG.power, 2);
+        else
+            nChans(subji, :) = 1;
+        end
+    end
+end
+totalChans = sum(nChans);
 
 
 
@@ -106,12 +126,12 @@ eegplot(data2check, 'srate', EEG1.srate, 'winlength', 50, 'spacing', 1000, 'even
 
 %% PLOT grand average for each condition
 
-clearvars -except ALLEEG paths file2load
+clearvars -except ALLEEG paths file2load totalChans nChans nSub
 
 paths = load_paths; 
 file2load = ['allS_' 'orbitofrontal' '_C']; 
 
-%load ([paths.iEEGRes.power file2load]); 
+load ([paths.iEEGRes.power file2load]); 
 
 
 c2u = file2load(end);
@@ -133,14 +153,25 @@ for subji = 1:length(ALLEEG)
             EEG.power = tmph; 
         end
 
-        ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
-        %ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) < 36;
+        %ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
+        ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) <= 40;
         tfDCH1 = mean(EEG.power(ids1, :, : ,:), 'omitnan'); 
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
-        ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
-        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) < 36;
+        
+        %ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
+        ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) <= 40;
         tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
         tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
+
+
+
+        % % % % just to check number of trials
+        %idsE1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) > 40;
+        %idsL1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) <= 40;
+        %xh1(subji) = sum(idsE1);         xh2(subji) = sum(idsL1); 
+        %disp([num2str(sum(idsE1)) ' // ' num2str(sum(idsL1))])
+
+
 
         c1(subji, :, :) = tfDTF1; 
         c2(subji, :, :) = tfDTF2; 
@@ -176,9 +207,11 @@ end
 [max2u id] = max(abs(allSTs));
 max_clust_obs = allSTs(id); 
 
+% 
+ h = zeros(30, 300);
+ h(clustinfo.PixelIdxList{17}) = 1; 
+ 
 
-%h = zeros(30, 300);
-%h(clustinfo.PixelIdxList{11}) = 1; 
 
 
 
@@ -214,8 +247,8 @@ exportgraphics(gcf, [paths.iEEGRes.power  'myP.png'], 'Resolution',150)
 nPerm = 1000; 
 clear max_clust_sum_perm
 for permi = 1:nPerm
-    c1B = c1(:,1:30,201:500); 
-    c2B = c2(:,1:30,201:500); 
+    c1B = c1(:,1:30,301:500); 
+    c2B = c2(:,1:30,301:500); 
     c1B(c1B == 0) = nan; 
     c2B(c2B == 0) = nan; 
     for subji = 1:size(c1B, 1)
