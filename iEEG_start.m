@@ -72,7 +72,7 @@ for subji = 1:length(allsubs)
 end
 
 sROI = char(join(sROI, '_'));
-filename = [paths.iEEGRes.power 'allS_' sROI '_' c2u];
+filename = [paths.results.power 'allS_' sROI '_' c2u];
 nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
 totalChans = sum(nChans);
 save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
