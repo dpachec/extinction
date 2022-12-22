@@ -1,16 +1,16 @@
 %% 
 %% 
 clear, close all
-paths = load_paths; 
+paths = load_paths_EXT; 
 
 c2u = 'U';
 
-sROI = {'Amygdala'}; 
+sROI = {'Hippocampus'}; 
 
 %sROI = {'superiorfrontal' 'rostralmiddlefrontal' 'anteriorcingulate' 'posteriorcingulate' 'precentral' 'caudalmiddlefrontal'}; % case sensitive 
 
-% sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' ...
-%            'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' 'entorhinal'};
+ sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' ...
+            'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -128,10 +128,10 @@ eegplot(data2check, 'srate', EEG1.srate, 'winlength', 50, 'spacing', 1000, 'even
 
 clearvars -except ALLEEG paths file2load totalChans nChans nSub
 
-paths = load_paths; 
+paths = load_paths_EXT; 
 file2load = ['allS_' 'orbitofrontal' '_C']; 
 
-load ([paths.iEEGRes.power file2load]); 
+%load ([paths.iEEGRes.power file2load]); 
 
 
 c2u = file2load(end);
@@ -153,13 +153,13 @@ for subji = 1:length(ALLEEG)
             EEG.power = tmph; 
         end
 
-        %ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
-        ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) <= 40;
+        ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
+        %ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) <= 40;
         tfDCH1 = mean(EEG.power(ids1, :, : ,:), 'omitnan'); 
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
         
-        %ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
-        ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) <= 40;
+        ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
+        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) <= 40;
         tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
         tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
 
@@ -208,8 +208,8 @@ end
 max_clust_obs = allSTs(id); 
 
 % 
- h = zeros(30, 300);
- h(clustinfo.PixelIdxList{17}) = 1; 
+ %h = zeros(30, 300);
+ %h(clustinfo.PixelIdxList{17}) = 1; 
  
 
 
