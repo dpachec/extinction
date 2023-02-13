@@ -2,7 +2,7 @@
 %%
 %eeglab
 clear, close all
-paths = load_paths; 
+paths = load_paths_EXT; 
 currentPath = pwd; 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -10,7 +10,7 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' }';
 
 
-for subji = 1 %18:length(allsubs)
+for subji = 2 %18:length(allsubs)
 
     sub = allsubs{subji}; 
     cd(paths.trlinfo)
@@ -126,7 +126,7 @@ for subji = 1 %18:length(allsubs)
     cd ([paths.ds sub])
    
     filename = [sub '_downSampiEEG.mat']
-    save(filename, 'EEG', '-v7.3');
+    %save(filename, 'EEG', '-v7.3');
     cd (currentPath)
   
     disp('done')
@@ -143,14 +143,14 @@ end
 %% Process NCS files PARIS 
 %eeglab
 clear, close all
-paths = load_paths; 
+paths = load_paths_EXT; 
 cd (paths.github)
 
 allsubs = {'p_sub01','p_sub02','p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}'; %subject 8 has differnet format (see below)
 
 
-for subji = 1: 2 %1:length(allsubs)
+for subji = 1 %1:length(allsubs)
 
     clearvars -except allsubs subji paths
     sub = allsubs{subji}; 
@@ -305,16 +305,16 @@ for subji = 1: 2 %1:length(allsubs)
     cd(foldN2)
  
      filename = [sub '_' num2str(chani, '%03.f'), '_diEEG.mat'];
-     save(filename, 'EEG', '-v7.3');
+     %save(filename, 'EEG', '-v7.3');
      cd (paths.github);
 
     end
 
 
 % % % % % % 
-% chanids = [1];
-% eegplot(EEG.data(chanids,:), 'srate', EEG.srate, 'eloc_file',chanids, ...
-%     'winlength', 50, 'spacing', 10000, 'events', EEG.event);
+chanids = [1];
+eegplot(EEG.data(chanids,:), 'srate', EEG.srate, 'eloc_file',chanids, ...
+    'winlength', 50, 'spacing', 10000, 'events', EEG.event);
 
 
 

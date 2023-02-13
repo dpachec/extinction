@@ -3,22 +3,62 @@
 
 clear 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'Hippocampus' '_C'];
+file2load = ['allS_' 'Amygdala' '_C'];
 %file2load = 'allS_inferiortemporal_middletemporal_superiortemporal_bankssts_ctx-lh-fusiform_ctx-lh-temporalpole_inferiorparietal_lateraloccipital_lingual_parahippocampal_cuneus_pericalcarine_C.mat'
 load ([paths.results.power file2load]); 
 
 
-%% compute neural RDM 
-%freqs_avTimeFeatVect_freqResolv(0-1)_fitMode(0:noTrials; 1:Trials)_win-width_mf
+%% count number of electrodes 
 clearvars -except ALLEEG paths file2load
 
-f2sav = '39-54_1_0_0_50-1'; 
+for subji = 1:length(ALLEEG)
+    EEG = ALLEEG{subji};
+    if ~isempty(EEG)
+        allChans(subji, :) = length(EEG.chanlocs)
+    end
+end
+
+%% select first 2 in each hemisphere (Amygdala)  
+clearvars -except ALLEEG paths file2load
+clc 
+for subji = 1:length(ALLEEG)
+    EEG = ALLEEG{subji};
+    if ~isempty(EEG)
+        chans = [{EEG.chanlocs.fsLabel}]'; 
+        ids2rem1 = contains(chans, 'Hippocampus')
+        %ids2rem2 = contains(chans, 'Right')
+        %ids2rem = logical(ids2rem1+ids2rem2)
+        ids2rem = ids2rem1; 
+        if ndims(EEG.power) == 3
+            tmph(:, 1, :, :)  = EEG.power; 
+            EEG.power = tmph; 
+        end
+        EEG.chanlocs(ids2rem) = []; 
+        if size(EEG.chanlocs, 2) >0 & size(EEG.chanlocs, 1) >0 
+            EEG.power(:, ids2rem, :, :) = []; 
+            ALLEEG1{subji,:} = EEG; 
+        end
+        
+
+    end
+
+
+    
+
+end
+
+
+%% compute neural RDM 
+%freqs_avTimeFeatVect_freqResolv(0-1)_fitMode(0:noTrials; 1:Trials)_win-width_mf
+clearvars -except ALLEEG ALLEEG1 paths file2load
+
+f2sav = '1-8_0_0_0_50-1'; 
 cfg = getParams_EXT(f2sav);
 
 
-for subji = 1:length(ALLEEG)
+for subji = 1:length(ALLEEG1)
     
-    EEG = ALLEEG{subji};
+    EEG = ALLEEG1{subji};
     
     
     if ~isempty(EEG)
@@ -32,10 +72,10 @@ for subji = 1:length(ALLEEG)
             EEG.power = tmph; 
         else %pick just the deepest amygdala electrode
             
-            %nChans = size(EEG.power, 2); 
-            %if nChans > 3
-            %    EEG.power = EEG.power(:, 1:3, :, :);
-            %end
+%             nChans = size(EEG.power, 2); 
+%             if nChans > 2
+%                 EEG.power = EEG.power(:, 1:2, :, :);
+%             end
 
 
         end
@@ -74,12 +114,15 @@ for subji = 1:length(ALLEEG)
             sRDM1= size(all1, 1);
             sRDM2= size(all2, 1);
             
-            % % % CHECK THAT TEMPLATE USED ARE CORRECT 
+% % %             % % % CHECK THAT TEMPLATE USED ARE CORRECT 
 % % %             SI1_T = zeros(sRDM);SI2_T = zeros(sRDM);SI3_T = zeros(sRDM);
 % % %             SI1_T(1:sRDM1,1:sRDM1) = 1; 
 % % %             SI2_T(sRDM1+1:sRDM2+sRDM1,sRDM1+1:sRDM2+sRDM1) = 1; 
 % % %             SI3_T(sRDM1+sRDM2+1:end,sRDM1+sRDM2+1:end) = 1; 
-% % %             
+% % %             figure; imagesc(SI1_T); axis square
+% % %             figure; imagesc(SI2_T); axis square
+% % %             figure; imagesc(SI3_T); axis square
+% % % 
 % % %             DISV = zeros(sRDM); 
 % % %             DISV(1:sRDM1, sRDM1+1:sRDM2+sRDM1) = 1; 
 % % %             DISV(eye(size(DIDV, 1))== 1) = 2
@@ -154,7 +197,7 @@ plot(times, mavDIDV, 'k', LineWidth=2); hold on;
 legend({'DISV' 'DIDV' 'CS-'})
 
 
-%% 
+%% plot SI CS+ SI CS- conditions variance
 
 mSICP = mean(avSICP);
 stdSICP = std(avSICP, [], 1); 
@@ -166,11 +209,23 @@ seSICM = stdSICM / sqrt(size(avSICM, 1));
 
 diffC = avSICP - avSICM; 
 [h p ci ts] = ttest(diffC); 
-hb = h; hb(h==0) = nan; hb(hb==1) = 0; 
+t = ts.tstat; 
+clustinfo = bwconncomp(h);
+
+clear allSTs
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+if exist('allSTs')
+    [max2u id] = min(allSTs);
+    tObs= allSTs(id) 
+end
+
+hb = h; hb(h==0) = nan; hb(hb==1) = -.01; 
 
 
 %times = 1:size(avC1,2); 
-times = (-1:.01:2) + .25
+times = (-1:.01:2) + .25;
 shadedErrorBar(times, mSICP, seSICP, 'r', 1); hold on; 
 shadedErrorBar(times, mSICM, seSICM, 'k', 1); hold on; 
 plot (times, hb, 'Linewidth', 4)
@@ -179,9 +234,47 @@ set(gca, 'FontSize', 18);
 %plot([90 90],get(gca,'ylim'), 'k','lineWidth',1, 'Color', [.5 .5 .5]);
 %plot(get(gca,'xlim'), [0 0 ], 'k','lineWidth',1, 'Color', [.5 .5 .5]);
 
+%% plot 2 conditions variance
+
+mDISV = mean(avDISV);
+stdDISV = std(avDISV, [], 1); 
+seDISV = stdDISV / sqrt(size(avDISV, 1));
+
+mDIDV = mean(avDIDV);
+stdDIDV = std(avDIDV, [], 1); 
+seDIDV = stdDIDV / sqrt(size(avDIDV, 1));
+
+diffC = avDISV - avDIDV; 
+[h p ci ts] = ttest(diffC); 
+t = ts.tstat; 
+clustinfo = bwconncomp(h);
+
+clear allSTs
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+if exist('allSTs')
+    [max2u id] = max(allSTs);
+    tObs= allSTs(id) 
+end
+
+hb = h; hb(h==0) = nan; hb(hb==1) = -.01; 
+
+
+%times = 1:size(avC1,2); 
+times = (-1:.01:2) + .25;
+shadedErrorBar(times, mDISV, seDISV, 'r', 1); hold on; 
+shadedErrorBar(times, mDIDV, seDIDV, 'k', 1); hold on; 
+plot (times, hb, 'Linewidth', 4)
+set(gca, 'FontSize', 18);
+%set(gca, 'xtick', [1 90 240], 'xticklabels', {'-1' '0' '1.5'}, 'xlim', [51 251])
+%plot([90 90],get(gca,'ylim'), 'k','lineWidth',1, 'Color', [.5 .5 .5]);
+%plot(get(gca,'xlim'), [0 0 ], 'k','lineWidth',1, 'Color', [.5 .5 .5]);
+
+
 %% plot 3 items separately
 
-sub2exc = [1]
+sub2exc = []
 
 avC1 = avCorrSI1; avC2 = avCorrSI2; avC3 = avCorrSI3; 
 avC1(sub2exc, :) = []; avC2(sub2exc, :) = []; avC3(sub2exc, :) = []; 
@@ -207,7 +300,8 @@ set(gca, 'xlim' ,[-.5 2], 'Fontsize', 18)
 legend({'CS+1' 'CS+2' 'CS-'})
 
 
-%% 
+%% plot 3 items separately with variance
+
 md2p1 = mean(avC1);
 std2p1 = std(avC1, [], 1); 
 set2p1 = std2p1 / sqrt(size(avC1, 1));
@@ -230,6 +324,69 @@ shadedErrorBar(times, md2p3, set2p3, 'k', 1); hold on;
 %set(gca, 'FontSize', 12);
 %plot([90 90],get(gca,'ylim'), 'k','lineWidth',1, 'Color', [.5 .5 .5]);
 %plot(get(gca,'xlim'), [0 0 ], 'k','lineWidth',1, 'Color', [.5 .5 .5]);
+
+
+
+%% PERMUTATIONS
+nPerm = 1000; 
+
+realCondMapping = [zeros(1, size(avC1, 1)); ones(1, size(avC1, 1))]';
+
+junts = [avSICP; avSICM];
+
+clear max_clust_sum_perm
+for permi = 1:nPerm
+    
+    [M,N] = size(realCondMapping);
+    rowIndex = repmat((1:M)',[1 N]);
+    [~,randomizedColIndex] = sort(rand(M,N),2);
+    newLinearIndex = sub2ind([M,N],rowIndex,randomizedColIndex);
+    fakeCondMapping = realCondMapping(newLinearIndex);
+
+
+    cond1 = junts(fakeCondMapping == 0, :);
+    cond2 = junts(fakeCondMapping == 1, :);
+
+    diffC = cond1 - cond2; 
+    [h p ci ts] = ttest(diffC); 
+    t = ts.tstat; 
+    clear allSTs  
+    clustinfo = bwconncomp(h);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+    end
+    
+    if exist('allSTs')
+        [max2u id] = max(allSTs);
+        max_clust_sum_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_sum_perm(permi,:) = 0; 
+    end
+
+end
+
+
+disp('done')
+
+%% 
+%tObs =  -30.4546%-86.4470;
+allAb = max_clust_sum_perm(max_clust_sum_perm > tObs);
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
+
+
+
+%% plot histogram
+figure
+%tObs =  -30.4546%-86.4470;
+histogram(max_clust_sum_perm, 20); hold on; 
+scatter(tObs,0, 100, 'filled','r');
+set(gca, 'FontSize', 16)
+
+
+
+
+
+
 
 
 
