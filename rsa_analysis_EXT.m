@@ -25,10 +25,12 @@ for subji = 1:length(ALLEEG)
     EEG = ALLEEG{subji};
     if ~isempty(EEG)
         chans = [{EEG.chanlocs.fsLabel}]'; 
-        ids2rem1 = contains(chans, 'Hippocampus')
-        %ids2rem2 = contains(chans, 'Right')
+        ids2rem1 = []; 
+        %ids2rem1 = contains(chans, 'Hippocampus')
+        %ids2rem2 = contains(chans, 'Left')
         %ids2rem = logical(ids2rem1+ids2rem2)
         ids2rem = ids2rem1; 
+
         if ndims(EEG.power) == 3
             tmph(:, 1, :, :)  = EEG.power; 
             EEG.power = tmph; 
@@ -49,10 +51,10 @@ end
 
 
 %% compute neural RDM 
-%freqs_avTimeFeatVect_freqResolv(0-1)_fitMode(0:noTrials; 1:Trials)_win-width_mf
+%freqs_avTimeFeatVect_freqResolv(0-1)_win-width_mf
 clearvars -except ALLEEG ALLEEG1 paths file2load
 
-f2sav = '1-8_0_0_0_50-1'; 
+f2sav = '3-8_1_0_50-1'; 
 cfg = getParams_EXT(f2sav);
 
 
@@ -67,20 +69,6 @@ for subji = 1:length(ALLEEG1)
         Ev2 = cat(1, Ev1{:});
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
-        if ndims(EEG.power) == 3
-            tmph(:, 1, :, :)  = EEG.power; 
-            EEG.power = tmph; 
-        else %pick just the deepest amygdala electrode
-            
-%             nChans = size(EEG.power, 2); 
-%             if nChans > 2
-%                 EEG.power = EEG.power(:, 1:2, :, :);
-%             end
-
-
-        end
-        
-
         ids1 =  strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '1');
         ids2 =  strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '2');
         ids3 =  strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
@@ -88,6 +76,7 @@ for subji = 1:length(ALLEEG1)
         all1 = EEG.power(ids1, :, : ,201:550); 
         all2 = EEG.power(ids2, :, : ,201:550); 
         all3 = EEG.power(ids3, :, : ,201:550); 
+
         
         [all1] = remove_nans_EXT(all1);
         [all2] = remove_nans_EXT(all2);
@@ -95,7 +84,7 @@ for subji = 1:length(ALLEEG1)
         
         allIts = cat(1, all1, all2, all3);
 
-        minTR = 3;  
+        minTR = 10;  
         if size(all3, 1) > minTR  % CS- condition has fewer trials
         
             %neuralRDM1 = createNeuralRDMs_EXT(cfg, all1);
@@ -167,7 +156,7 @@ disp('done');
 
 %% plot 2 conditions
 
-sub2exc = []
+sub2exc = [];
 
 avSI1 = avCorrSI1; avSI2 = avCorrSI2; 
 avSICP = squeeze(mean(cat(3, avCorrSI1, avCorrSI2), 3)); 
@@ -194,7 +183,7 @@ figure();
 plot(times, mavDISV, 'r', LineWidth=2); hold on; 
 plot(times, mavDIDV, 'k', LineWidth=2); hold on; 
 %set(gca, 'xlim' ,[-.5 2], 'Fontsize', 18)
-legend({'DISV' 'DIDV' 'CS-'})
+legend({'DISV' 'DIDV'})
 
 
 %% plot SI CS+ SI CS- conditions variance
@@ -224,17 +213,17 @@ end
 hb = h; hb(h==0) = nan; hb(hb==1) = -.01; 
 
 
-%times = 1:size(avC1,2); 
+%times = 1:size(avSICP,2); 
 times = (-1:.01:2) + .25;
 shadedErrorBar(times, mSICP, seSICP, 'r', 1); hold on; 
 shadedErrorBar(times, mSICM, seSICM, 'k', 1); hold on; 
 plot (times, hb, 'Linewidth', 4)
 set(gca, 'FontSize', 18);
-%set(gca, 'xtick', [1 90 240], 'xticklabels', {'-1' '0' '1.5'}, 'xlim', [51 251])
-%plot([90 90],get(gca,'ylim'), 'k','lineWidth',1, 'Color', [.5 .5 .5]);
-%plot(get(gca,'xlim'), [0 0 ], 'k','lineWidth',1, 'Color', [.5 .5 .5]);
 
-%% plot 2 conditions variance
+
+
+
+%% plot VALENCE WITH VARIANCE
 
 mDISV = mean(avDISV);
 stdDISV = std(avDISV, [], 1); 
@@ -261,8 +250,8 @@ end
 hb = h; hb(h==0) = nan; hb(hb==1) = -.01; 
 
 
-%times = 1:size(avC1,2); 
 times = (-1:.01:2) + .25;
+%times = (-1:.01:2.3) + .1;
 shadedErrorBar(times, mDISV, seDISV, 'r', 1); hold on; 
 shadedErrorBar(times, mDIDV, seDIDV, 'k', 1); hold on; 
 plot (times, hb, 'Linewidth', 4)
@@ -330,9 +319,10 @@ shadedErrorBar(times, md2p3, set2p3, 'k', 1); hold on;
 %% PERMUTATIONS
 nPerm = 1000; 
 
-realCondMapping = [zeros(1, size(avC1, 1)); ones(1, size(avC1, 1))]';
+realCondMapping = [zeros(1, size(avDISV, 1)); ones(1, size(avDISV, 1))]';
 
 junts = [avSICP; avSICM];
+%junts = [avDISV; avDIDV];
 
 clear max_clust_sum_perm
 for permi = 1:nPerm
@@ -370,7 +360,7 @@ disp('done')
 
 %% 
 %tObs =  -30.4546%-86.4470;
-allAb = max_clust_sum_perm(max_clust_sum_perm > tObs);
+allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 

@@ -421,7 +421,7 @@ end
 %% combine electrode and iEEG data, filter and remove artifacts
 
 clear, close all
-paths = load_paths; 
+paths = load_paths_EXT; 
 currentPath = paths.github; 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -431,15 +431,12 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
 
 
-for subji = 1:length(allsubs)
+for subji = 6%1:length(allsubs)
 
     clearvars -except allsubs subji paths
     sub = allsubs{subji}; 
-    
     cd([paths.ds sub ])
     diEEG_list = dir('*downSampiEEG.mat');diEEG_list = {diEEG_list.name}';
-    
-    % load data
     load(diEEG_list{1})
     %load electrode files
     cd([paths.raw_data sub '\elec'])
@@ -448,9 +445,7 @@ for subji = 1:length(allsubs)
     if sub(1) == 'c' %guangzhou data
         chanL= dir('*.mat');chanL= {chanL.name}';
         load(chanL{1})
-    
-
-        elec_info = table2cell(elec_info)
+        elec_info = table2cell(elec_info);
         for chani = 1:size(elec_info, 1)
             
             chanLabel = elec_info(chani, 1);
@@ -465,70 +460,19 @@ for subji = 1:length(allsubs)
                 end
             end
         end
-
-       
-
-        % % %  Filter
-        EEG = add_EEGLAB_fields(EEG);
-        EEG = pop_eegfiltnew (EEG, .1, 400);
-        EEG = pop_eegfiltnew (EEG, 49, 50, [],  1); %notch filter
-        EEG = pop_eegfiltnew (EEG, 99, 101, [],  1); %notch filter
-        EEG = pop_eegfiltnew (EEG, 149, 150, [],  1); %notch filter
-
-        % % % % re-reference 
-        EEG = re_reference_EXT(EEG, 'bipo', sub);
-
-        % % % % remove artifacts
-        EEG = artifact_detection_EXT(EEG, 5, 3, 1000, 500);
-
-       
-
-        % % % % % % remove empty and white matter electrodes
-        clear chans2remove
-        count = 1;
-        for chani = 1:length(EEG.chanlocs)
-            if ~isempty(EEG.chanlocs(chani).fsLabelsR) 
-                labelR = EEG.chanlocs(chani).fsLabelsR; 
-                labelR = strsplit(labelR, ';');
-                if sum(contains(labelR, 'White-Matter')) == 2 ...
-                    | sum(contains(labelR, 'Unknown')) == 2 ...
-                    | sum(contains(labelR, 'Unknown')) + sum(contains(labelR, 'White-Matter')) == 2 
-                    chans2remove(count,:) = chani; 
-                    count = count+ 1; 
-                end
-            else
-                chans2remove(count,:) = chani; 
-                count = count+ 1; 
-            end
-        end
-
-        EEG.chanlocs(chans2remove) = []; 
-        EEG.data(chans2remove, :) =  []; 
-
-        EEG = rem_EEGLAB_fields(EEG);
-
-
-
-
-
     end
-
-
- if sub(1) == 'p' %paris Data
-
+    
+    
+    if sub(1) == 'p' %paris Data
         chanL= dir('*.csv');chanL= {chanL.name}';
         elec_info = readtable(chanL{1}, 'Delimiter', ';')
         elec_info1 = elec_info; 
         elec_info1(:, 1) = fillmissing(elec_info(:, 1),'previous')
-
         elec_info1 = table2cell(elec_info1)
         for chani = 1:size(elec_info1, 1)    
             if ~isnan(elec_info1{chani, 2})
                 chanLabel = strcat(elec_info1(chani, 1), '_', string(elec_info1(chani, 2)));
-                
-                
-                % % % correct should be labels and not label, this field name was
-                % incorrect in the previous preprocessing stage (important
+                % % % correct should be labels and not label, this field name was incorrect in the previous preprocessing stage (important
                 % for epoching data later)
                 if isfield(EEG.chanlocs, 'label')
                     chanEEG = {EEG.chanlocs.label}'; 
@@ -537,7 +481,7 @@ for subji = 1:length(allsubs)
                 else 
                     chanEEG = {EEG.chanlocs.labels}';
                 end
-
+        
                 chanMatch = strmatch(chanLabel, chanEEG, 'exact'); 
                 if ~isempty(chanMatch)
                     EEG.chanlocs(chanMatch).fsLabel = elec_info1{chani,36};
@@ -545,51 +489,22 @@ for subji = 1:length(allsubs)
                 end
             end
         end
+    end
 
-        % % %  Filter
-        EEG = add_EEGLAB_fields(EEG);
-        EEG = pop_eegfiltnew (EEG, .1, 400);
-        EEG = pop_eegfiltnew (EEG, 49, 50, [],  1); %notch filter
-        EEG = pop_eegfiltnew (EEG, 99, 101, [],  1); %notch filter
-        EEG = pop_eegfiltnew (EEG, 149, 150, [],  1); %notch filter
+    % % % % re-reference 
+    EEG = re_reference_EXT(EEG, 'white_matter', sub);
 
-        % % % % re-reference 
-        EEG = re_reference_EXT(EEG, 'bipo', sub);
+    EEG = manual_channel_removal(EEG, sub)
+    
+    % % %  Filter
+    EEG = add_EEGLAB_fields(EEG);
+    EEG = pop_eegfiltnew (EEG, .1, 400);
+    EEG = pop_eegfiltnew (EEG, 49, 50, [],  1); %notch filter
+    EEG = pop_eegfiltnew (EEG, 99, 101, [],  1); %notch filter
+    EEG = pop_eegfiltnew (EEG, 149, 150, [],  1); %notch filter
 
-        % % % % remove artifacts
-        EEG = artifact_detection_EXT(EEG, 5, 3, 1000, 500);
-
-
-        
-        
-
-        % % % % % % remove empty and white matter electrodes
-        clear chans2remove
-        count = 1;
-        for chani = 1:length(EEG.chanlocs)
-            if ~isempty(EEG.chanlocs(chani).fsLabelsR) 
-                labelR = EEG.chanlocs(chani).fsLabelsR; 
-                labelR = strsplit(labelR, ';');
-                if sum(contains(labelR, 'White-Matter')) == 2 ...
-                    | sum(contains(labelR, 'Unknown')) == 2 ...
-                    | sum(contains(labelR, 'Unknown')) + sum(contains(labelR, 'White-Matter')) == 2 
-                    chans2remove(count,:) = chani; 
-                    count = count+ 1; 
-                end
-            else
-                chans2remove(count,:) = chani; 
-                count = count+ 1; 
-            end
-        end
-
-        EEG.chanlocs(chans2remove) = []; 
-        EEG.data(chans2remove, :) =  []; 
-
-
-        EEG = rem_EEGLAB_fields(EEG);
-        EEG.chanlocs = EEG.chanlocs'; 
-
- end
+    % % % % remove artifacts
+    EEG = artifact_detection_EXT(EEG, 5, 3, 1000, 500);
 
    
     EEG = rem_EEGLAB_fields(EEG);
@@ -603,6 +518,16 @@ for subji = 1:length(allsubs)
 
 
 end
+
+
+%% plot 1 spectrogram per trial to make sure the data looks ok
+
+% % % TBD
+
+
+
+
+
 
 
 

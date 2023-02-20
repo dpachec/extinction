@@ -72,14 +72,31 @@ if strcmp (mode, 'bipo');
         EEG.chanlocs(ids2rem) = []; 
         EEG.data(ids2rem, :) = [];
         
-        disp (' >>>> bipolar reference all electrodes');
+ 
+        count = 1;
+        for chani = 1:length(EEG.chanlocs)
+            if ~isempty(EEG.chanlocs(chani).fsLabelsR) 
+                labelR = EEG.chanlocs(chani).fsLabelsR; 
+                labelR = strsplit(labelR, ';');
+                if sum(contains(labelR, 'White-Matter')) == 2 ...
+                    | sum(contains(labelR, 'Unknown')) == 2 ...
+                    | sum(contains(labelR, 'Unknown')) + sum(contains(labelR, 'White-Matter')) == 2 
+                    chans2remove(count,:) = chani; 
+                    count = count+ 1; 
+                end
+            else
+                chans2remove(count,:) = chani; 
+                count = count+ 1; 
+            end
+        end
+
+        EEG.chanlocs(chans2remove) = []; 
+        EEG.data(chans2remove, :) =  []; 
+
+        EEG = rem_EEGLAB_fields(EEG);
 
 
-
-
-
-
-
+       disp (' >>>> bipolar reference all electrodes');
 
 
 
@@ -96,6 +113,60 @@ if strcmp (mode, 'aver');
     dataRef = EEG.data; %dataRef(chans2exc1, :) = []; EEG.chanlocs(chans2exc1, :) = [];
     EEG_average = mean(dataRef, 1);
     EEG.data = dataRef - EEG_average;
+end
+
+
+if strcmp (mode, 'white_matter') %  % % CONTINUE HERE
+
+    % % % % this loop below detects the closest white-matter channel for each channel (check EEG.chanlocs dist2WM field, to check everything is correct)
+    for chani = 1:size(EEG.chanlocs,2)
+        minDist = 100; 
+        currCoord = EEG.chanlocs(chani).mniCoord;
+        for chani2 = 1:size(EEG.chanlocs,2)
+            coord2ev = EEG.chanlocs(chani2).mniCoord;
+            if ~isempty(currCoord) & ~isempty(coord2ev) 
+                if ~contains(EEG.chanlocs(chani).fsLabel, 'White') & contains(EEG.chanlocs(chani2).fsLabel, 'White')
+                    dist2ev = norm(currCoord - coord2ev);
+                    if dist2ev < minDist 
+                        minDist = dist2ev;
+                        id = chani2;
+                        EEG.chanlocs(chani).dist2WM = minDist;
+                        EEG.chanlocs(chani).idWM = id;
+                        EEG.data(chani, :) = EEG.data(chani, :) - EEG.data(id, :);
+                    end
+                end
+            end
+        end
+    end
+
+    count = 1;
+    for chani = 1:length(EEG.chanlocs)
+        if ~isempty(EEG.chanlocs(chani).fsLabel) 
+            labelR = EEG.chanlocs(chani).fsLabel; 
+            if contains(labelR, 'White-Matter') | contains(labelR, 'Unknown') 
+                chans2remove(count,:) = chani; 
+                count = count+ 1; 
+            end
+        else
+            chans2remove(count,:) = chani; 
+            count = count+ 1; 
+        end
+    end
+
+    EEG.chanlocs(chans2remove) = []; 
+    EEG.data(chans2remove, :) =  []; 
+
+    EEG = rem_EEGLAB_fields(EEG);
+
+    % % % % only transpose for the paris data
+    if sub(1) == 'p'
+        EEG.chanlocs = EEG.chanlocs'; 
+    end
+
+   disp (' >>>> white-matter reference all electrodes');
+
+
+
 end
 
 %%end function

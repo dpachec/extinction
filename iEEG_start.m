@@ -26,7 +26,8 @@ for subji = 1:length(allsubs)
     cd([ paths.iEEG])
     load ([sub '_iEEG.mat']);
 
-    chansLab = {EEG.chanlocs.fsLabelsR}';
+    %chansLab = {EEG.chanlocs.fsLabelsR}';
+    chansLab = {EEG.chanlocs.fsLabel}';
     selChans = contains(chansLab, sROI);
 
     
@@ -57,11 +58,11 @@ for subji = 1:length(allsubs)
             EEG = extract_power_EXT(EEG, 0.01); 
             EEG = normalize_EXT(EEG);
             EEG = rmfield(EEG, 'data');
-            if ndims(EEG.power) == 4
-                nChans(subji, :) = size(EEG.power, 2);
-            else
-                nChans(subji, :) = 1;
+            if ndims(EEG.power) == 3
+                tmph(:, 1, :, :)  = EEG.power; 
+                EEG.power = tmph; 
             end
+            nChans(subji, :) = size(EEG.power, 2);
             ALLEEG{subji,:} = EEG; 
 
         end
@@ -80,8 +81,6 @@ save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
 
 cd (paths.github)
 
-
-%% Plot all spectrograms in each region
 
 
 %% count chans 
@@ -102,14 +101,26 @@ totalChans = sum(nChans);
 
 %% plot example trial in one subject (ONLY 1 electrode)
 
-%EEG = ALLEEG{1}; 
-tr =26; 
+EEG = ALLEEG{6}; 
+tr =3; 
 
 figure
-d2p	= squeeze(EEG_before.power(tr, 1 ,:,:));
+d2p	= squeeze(EEG.power(tr, 3 ,:,:));
 myCmap = colormap(brewermap([],'YlOrRd'));
 colormap(myCmap)
 contourf(1:700, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
+
+%% plot Mean across trials in one subject (ONLY 1 electrode)
+
+EEG = ALLEEG{6};
+
+figure
+d2p	= squeeze(mean(EEG.power(:, 1 ,:,:), 'omitnan'));
+myCmap = colormap(brewermap([],'YlOrRd'));
+colormap(myCmap)
+contourf(1:700, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
+
+
 
 %% delete trigger labels in events
 
@@ -128,7 +139,7 @@ eegplot(data2check, 'srate', EEG.srate, 'winlength', 50, 'spacing', 1000, 'event
 clear
 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'orbitofrontal' '_C']; 
+file2load = ['allS_' 'Amygdala' '_C']; 
 load ([paths.results.power file2load]); 
 
 
@@ -146,9 +157,8 @@ for subji = 1:length(ALLEEG)
     if ~isempty(EEG)
         chans = [{EEG.chanlocs.fsLabel}]'; 
         ids2rem1 = []; 
-        %ids2rem1 = contains(chans, 'superior')
+        %ids2rem1 = contains(chans, 'Left')
         %ids2rem1 = contains(chans, 'Hippocampus')
-        %ids2rem2 = contains(chans, 'Right')
         %ids2rem = logical(ids2rem1+ids2rem2)
         ids2rem = ids2rem1; 
         if ndims(EEG.power) == 3
@@ -171,10 +181,8 @@ end
 
 %% PLOT grand average for each condition
 
-clearvars -except ALLEEG ALLEEG1 paths file2load totalChans nChans nSub
+clearvars -except ALLEEG ALLEEG1 paths  totalChans nChans nSub
 
-
-c2u = file2load(end);
 
 
 for subji = 1:length(ALLEEG1)
@@ -190,14 +198,13 @@ for subji = 1:length(ALLEEG1)
         Ev2 = cat(1, Ev1{:});
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
-        ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
-        %ids1 = strcmp(Ev2(:, 10), c2u) & ( strcmp(Ev2(:, 6), '2')  ) & strcmp(Ev2(:, 2), '1');
-        %ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) <= 40;
+        ids1 = strcmp(Ev2(:, 10), 'C') & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
+        %ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) >= 40;
         tfDCH1 = mean(EEG.power(ids1, :, : ,:), 'omitnan'); 
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
         
-        ids2 = strcmp(Ev2(:, 10), c2u) & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
-        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) <= 40;
+        ids2 = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
+        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) >= 40;
         tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
         tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
 
@@ -209,11 +216,10 @@ for subji = 1:length(ALLEEG1)
         %xh1(subji) = sum(idsE1);         xh2(subji) = sum(idsL1); 
         %disp([num2str(sum(idsE1)) ' // ' num2str(sum(idsL1))])
 
-
-
+        
         c1(subji, :, :) = tfDTF1; 
         c2(subji, :, :) = tfDTF2; 
-        
+                
     end
 
 end
@@ -223,9 +229,10 @@ cd (paths.github)
 
 %%
 
-sub2exc = []
+sub2exc = [6]
 
 c1B = c1(:, 1:54, 201:500); c2B = c2(:, 1:54, 201:500); 
+%c1B = c1(:, 1:54, :); c2B = c2(:, 1:54, :); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 
 c1B(c1B == 0) = nan; 
@@ -253,22 +260,27 @@ max_clust_obs = allSTs(id);
 
 
 
-%times = -1:.01:1.99; 
+
 times = -1:.01:1.99; 
+%times = -3:.01:3.99
 freqs = 1:54;
 tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 800])
 nexttile
 contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; colorbar
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 2);set(gca, 'clim', [-.1 .1])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.1 .1])
+plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 nexttile
 contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; colorbar
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 2);set(gca, 'clim', [-.1 .1])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.1 .1])
+plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 nexttile
 contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; colorbar
-contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-3 4])
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 2);
+contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); %set(gca, 'clim', [-3 4])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 colormap(brewermap([],'*Spectral'))
-set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 2]);
+%set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 2]);
+set(findobj(gcf,'type','axes'),'FontSize',28, 'ytick', [1 30 ], 'yticklabels', {'1', '30'});
 
 
 
@@ -285,8 +297,8 @@ exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',150)
 nPerm = 1000; 
 clear max_clust_sum_perm
 for permi = 1:nPerm
-    c1B = c1(:,1:30,301:480); 
-    c2B = c2(:,1:30,301:480); 
+    c1B = c1(:,1:54,301:480); 
+    c2B = c2(:,1:54,301:480); 
     c1B(c1B == 0) = nan; 
     c2B(c2B == 0) = nan; 
     for subji = 1:size(c1B, 1)
