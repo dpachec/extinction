@@ -4,7 +4,6 @@
 clear 
 paths = load_paths_EXT; 
 file2load = ['allS_' 'Amygdala' '_C'];
-%file2load = 'allS_inferiortemporal_middletemporal_superiortemporal_bankssts_ctx-lh-fusiform_ctx-lh-temporalpole_inferiorparietal_lateraloccipital_lingual_parahippocampal_cuneus_pericalcarine_C.mat'
 load ([paths.results.power file2load]); 
 
 
@@ -27,14 +26,10 @@ for subji = 1:length(ALLEEG)
         chans = [{EEG.chanlocs.fsLabel}]'; 
         ids2rem1 = []; 
         %ids2rem1 = contains(chans, 'Hippocampus')
-        %ids2rem2 = contains(chans, 'Left')
+        %ids2rem = contains(chans, 'Right')
         %ids2rem = logical(ids2rem1+ids2rem2)
         ids2rem = ids2rem1; 
 
-        if ndims(EEG.power) == 3
-            tmph(:, 1, :, :)  = EEG.power; 
-            EEG.power = tmph; 
-        end
         EEG.chanlocs(ids2rem) = []; 
         if size(EEG.chanlocs, 2) >0 & size(EEG.chanlocs, 1) >0 
             EEG.power(:, ids2rem, :, :) = []; 
@@ -52,15 +47,16 @@ end
 
 %% compute neural RDM 
 %freqs_avTimeFeatVect_freqResolv(0-1)_win-width_mf
-clearvars -except ALLEEG ALLEEG1 paths file2load
+clc
+clearvars -except ALLEEG paths file2load
 
-f2sav = '3-8_1_0_50-1'; 
+f2sav = '3-8_0_0_50-1'; 
 cfg = getParams_EXT(f2sav);
 
 
-for subji = 1:length(ALLEEG1)
+for subji = 1:length(ALLEEG)
     
-    EEG = ALLEEG1{subji};
+    EEG = ALLEEG{subji};
     
     
     if ~isempty(EEG)
@@ -77,58 +73,52 @@ for subji = 1:length(ALLEEG1)
         all2 = EEG.power(ids2, :, : ,201:550); 
         all3 = EEG.power(ids3, :, : ,201:550); 
 
-        
-        [all1] = remove_nans_EXT(all1);
-        [all2] = remove_nans_EXT(all2);
-        [all3] = remove_nans_EXT(all3);
-        
         allIts = cat(1, all1, all2, all3);
 
-        minTR = 10;  
-        if size(all3, 1) > minTR  % CS- condition has fewer trials
+        %neuralRDM1 = createNeuralRDMs_EXT(cfg, all1);
+        %neuralRDM2 = createNeuralRDMs_EXT(cfg, all2);
+        %neuralRDM3 = createNeuralRDMs_EXT(cfg, all3);
         
-            %neuralRDM1 = createNeuralRDMs_EXT(cfg, all1);
-            %neuralRDM2 = createNeuralRDMs_EXT(cfg, all2);
-            %neuralRDM3 = createNeuralRDMs_EXT(cfg, all3);
-            
-            neuralRDMALL = createNeuralRDMs_EXT(cfg, allIts);
-            
-            %neuralRDM1 = remDiagRDM_TS(neuralRDM1); 
-            %neuralRDM2 = remDiagRDM_TS(neuralRDM2); 
-            %neuralRDM3 = remDiagRDM_TS(neuralRDM3); 
-            neuralRDMALL = remDiagRDM_TS(neuralRDMALL); 
-    
-    
+        neuralRDMALL = createNeuralRDMs_EXT(cfg, allIts);
+        
+        %neuralRDM1 = remDiagRDM_TS(neuralRDM1); 
+        %neuralRDM2 = remDiagRDM_TS(neuralRDM2); 
+        %neuralRDM3 = remDiagRDM_TS(neuralRDM3); 
+        neuralRDMALL = remDiagRDM_TS(neuralRDMALL); 
+
+
+       % if length(find (~isnan(squeeze(neuralRDMALL(:, :, 1))))) > 1500
+
             sRDM = size(neuralRDMALL, 1); 
             sRDM1= size(all1, 1);
             sRDM2= size(all2, 1);
             
-% % %             % % % CHECK THAT TEMPLATE USED ARE CORRECT 
-% % %             SI1_T = zeros(sRDM);SI2_T = zeros(sRDM);SI3_T = zeros(sRDM);
-% % %             SI1_T(1:sRDM1,1:sRDM1) = 1; 
-% % %             SI2_T(sRDM1+1:sRDM2+sRDM1,sRDM1+1:sRDM2+sRDM1) = 1; 
-% % %             SI3_T(sRDM1+sRDM2+1:end,sRDM1+sRDM2+1:end) = 1; 
-% % %             figure; imagesc(SI1_T); axis square
-% % %             figure; imagesc(SI2_T); axis square
-% % %             figure; imagesc(SI3_T); axis square
-% % % 
-% % %             DISV = zeros(sRDM); 
-% % %             DISV(1:sRDM1, sRDM1+1:sRDM2+sRDM1) = 1; 
-% % %             DISV(eye(size(DIDV, 1))== 1) = 2
-% % %             figure; imagesc(DISV); axis square
-% % %             DIDV = zeros(sRDM); 
-% % %             DIDV([1:sRDM1 sRDM1+1:sRDM2+sRDM1], [sRDM1+sRDM2+1:end sRDM1+sRDM2+1:end]) = 1; 
-% % %             DIDV(eye(size(DIDV, 1))== 1) = 2
-% % %             figure; imagesc(DIDV); axis square
-
-
+    % % %             % % % CHECK THAT TEMPLATE USED ARE CORRECT 
+    % % %             SI1_T = zeros(sRDM);SI2_T = zeros(sRDM);SI3_T = zeros(sRDM);
+    % % %             SI1_T(1:sRDM1,1:sRDM1) = 1; 
+    % % %             SI2_T(sRDM1+1:sRDM2+sRDM1,sRDM1+1:sRDM2+sRDM1) = 1; 
+    % % %             SI3_T(sRDM1+sRDM2+1:end,sRDM1+sRDM2+1:end) = 1; 
+    % % %             figure; imagesc(SI1_T); axis square
+    % % %             figure; imagesc(SI2_T); axis square
+    % % %             figure; imagesc(SI3_T); axis square
+    % % % 
+    % % %             DISV = zeros(sRDM); 
+    % % %             DISV(1:sRDM1, sRDM1+1:sRDM2+sRDM1) = 1; 
+    % % %             DISV(eye(size(DIDV, 1))== 1) = 2
+    % % %             figure; imagesc(DISV); axis square
+    % % %             DIDV = zeros(sRDM); 
+    % % %             DIDV([1:sRDM1 sRDM1+1:sRDM2+sRDM1], [sRDM1+sRDM2+1:end sRDM1+sRDM2+1:end]) = 1; 
+    % % %             DIDV(eye(size(DIDV, 1))== 1) = 2
+    % % %             figure; imagesc(DIDV); axis square
+    
+    
             SI1 = neuralRDMALL(1:sRDM1,1:sRDM1, :); 
             SI2 = neuralRDMALL(sRDM1+1:sRDM2+sRDM1,sRDM1+1:sRDM2+sRDM1, :); 
             SI3 = neuralRDMALL(sRDM1+sRDM2+1:end,sRDM1+sRDM2+1:end, :); 
             DISV = neuralRDMALL (1:sRDM1, sRDM1+1:sRDM2+sRDM1,:); 
             DIDV = neuralRDMALL ([1:sRDM1 sRDM1+1:sRDM2+sRDM1], [sRDM1+sRDM2+1:end sRDM1+sRDM2+1:end],:); 
-
-
+    
+    
             avCorrSI1(subji, :) = mean(mean(SI1, 1, 'omitnan'), 2, 'omitnan');
             avCorrSI2(subji, :) = mean(mean(SI2, 1, 'omitnan'), 2, 'omitnan');
             avCorrSI3(subji, :) = mean(mean(SI3, 1, 'omitnan'), 2, 'omitnan');
@@ -136,12 +126,11 @@ for subji = 1:length(ALLEEG1)
             avCorrDIDV(subji, :) = mean(mean(DIDV, 1, 'omitnan'), 2, 'omitnan');
 
 
-        end
+        %end
         
     end
 
 end
-
 
 avCorrSI1 =  avCorrSI1 (any(avCorrSI1 ,2),:);
 avCorrSI2 =  avCorrSI2 (any(avCorrSI2 ,2),:);
@@ -149,8 +138,6 @@ avCorrSI3 =  avCorrSI3 (any(avCorrSI3 ,2),:);
 avCorrDISV =  avCorrDISV (any(avCorrDISV ,2),:);
 avCorrDIDV =  avCorrDIDV (any(avCorrDIDV ,2),:);
 
-
-cd (paths.github)
 
 disp('done');
 
@@ -238,7 +225,7 @@ diffC = avDISV - avDIDV;
 t = ts.tstat; 
 clustinfo = bwconncomp(h);
 
-clear allSTs
+clear allSTs tObs
 for pxi = 1:length(clustinfo.PixelIdxList)
    allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
 end
@@ -321,8 +308,8 @@ nPerm = 1000;
 
 realCondMapping = [zeros(1, size(avDISV, 1)); ones(1, size(avDISV, 1))]';
 
-junts = [avSICP; avSICM];
-%junts = [avDISV; avDIDV];
+%junts = [avSICP; avSICM];
+junts = [avDISV; avDIDV];
 
 clear max_clust_sum_perm
 for permi = 1:nPerm
@@ -360,7 +347,7 @@ disp('done')
 
 %% 
 %tObs =  -30.4546%-86.4470;
-allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
+allAb = max_clust_sum_perm(max_clust_sum_perm > tObs);
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 

@@ -13,8 +13,8 @@ for chani = 1:size(EEG.data, 1)
     end
 end
 
-totalElec = sum(d2check)
-chans2rem = totalElec > thresChan; %% if the total number of trials with nans is higher than this, remove channel
+totalNofNanTrls = sum(d2check);
+chans2rem = totalNofNanTrls > thresChan; %% if the total number of trials with nans is higher than this, remove channel
 
 EEG.chanlocs(chans2rem) = []; 
 EEG.data(chans2rem, :, :) = []; 

@@ -1,6 +1,5 @@
 function[data] = remove_nans_EXT(data)
 
-%clumsy way
 count = 1; 
 for triali = 1:size(data, 1)
     dtr = squeeze(data(triali, :, :,:)); 

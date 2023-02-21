@@ -5,12 +5,12 @@ paths = load_paths_EXT;
 
 c2u = 'C';
 
-sROI = {'Amygdala'}; 
+%sROI = {'Amygdala'}; 
 
 %sROI = {'superiorfrontal' 'rostralmiddlefrontal' 'anteriorcingulate' 'posteriorcingulate' 'precentral' 'caudalmiddlefrontal'}; % case sensitive 
 
-%  sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' ...
-%             'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
+sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' ...
+             'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -58,10 +58,6 @@ for subji = 1:length(allsubs)
             EEG = extract_power_EXT(EEG, 0.01); 
             EEG = normalize_EXT(EEG);
             EEG = rmfield(EEG, 'data');
-            if ndims(EEG.power) == 3
-                tmph(:, 1, :, :)  = EEG.power; 
-                EEG.power = tmph; 
-            end
             nChans(subji, :) = size(EEG.power, 2);
             ALLEEG{subji,:} = EEG; 
 
@@ -82,7 +78,6 @@ save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
 cd (paths.github)
 
 
-
 %% count chans 
 clear nChans
 for subji = 1:length(ALLEEG)
@@ -95,24 +90,26 @@ for subji = 1:length(ALLEEG)
         end
     end
 end
-totalChans = sum(nChans);
+totalChans = sum(nChans)
 
 
 
 %% plot example trial in one subject (ONLY 1 electrode)
 
-EEG = ALLEEG{6}; 
-tr =3; 
+EEG = ALLEEG{2}; 
+tr =20; 
 
 figure
-d2p	= squeeze(EEG.power(tr, 3 ,:,:));
+d2p	= squeeze(EEG.power(tr, 1 ,:,:));
 myCmap = colormap(brewermap([],'YlOrRd'));
 colormap(myCmap)
 contourf(1:700, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
 
+
+
 %% plot Mean across trials in one subject (ONLY 1 electrode)
 
-EEG = ALLEEG{6};
+EEG = ALLEEG{2};
 
 figure
 d2p	= squeeze(mean(EEG.power(:, 1 ,:,:), 'omitnan'));
@@ -139,7 +136,7 @@ eegplot(data2check, 'srate', EEG.srate, 'winlength', 50, 'spacing', 1000, 'event
 clear
 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'Amygdala' '_C']; 
+file2load = ['allS_' 'orbitofrontal' '_C']; 
 load ([paths.results.power file2load]); 
 
 
@@ -149,7 +146,7 @@ load ([paths.results.power file2load]);
 
 
 
-%% REMOVE CHANNELS WITH HIPPOCAMPAL LABEL 
+%% SELECT CHANNELS TO PLOT
 clearvars -except ALLEEG paths file2load
 clc 
 for subji = 1:length(ALLEEG)
@@ -157,7 +154,7 @@ for subji = 1:length(ALLEEG)
     if ~isempty(EEG)
         chans = [{EEG.chanlocs.fsLabel}]'; 
         ids2rem1 = []; 
-        %ids2rem1 = contains(chans, 'Left')
+        %ids2rem1 = contains(chans, 'Right')
         %ids2rem1 = contains(chans, 'Hippocampus')
         %ids2rem = logical(ids2rem1+ids2rem2)
         ids2rem = ids2rem1; 
@@ -185,9 +182,9 @@ clearvars -except ALLEEG ALLEEG1 paths  totalChans nChans nSub
 
 
 
-for subji = 1:length(ALLEEG1)
+for subji = 1:length(ALLEEG)
     
-    EEG = ALLEEG1{subji};
+    EEG = ALLEEG{subji};
     
         
 
@@ -229,10 +226,10 @@ cd (paths.github)
 
 %%
 
-sub2exc = [6]
+sub2exc = []
 
-c1B = c1(:, 1:54, 201:500); c2B = c2(:, 1:54, 201:500); 
-%c1B = c1(:, 1:54, :); c2B = c2(:, 1:54, :); 
+%c1B = c1(:, 1:54, 201:500); c2B = c2(:, 1:54, 201:500); 
+c1B = c1(:, 1:54, :); c2B = c2(:, 1:54, :); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 
 c1B(c1B == 0) = nan; 
@@ -261,17 +258,17 @@ max_clust_obs = allSTs(id);
 
 
 
-times = -1:.01:1.99; 
-%times = -3:.01:3.99
+%times = -1:.01:1.99; 
+times = -3:.01:3.99
 freqs = 1:54;
 tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 800])
 nexttile
 contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; colorbar
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.1 .1])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);%set(gca, 'clim', [-.1 .1])
 plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 nexttile
 contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; colorbar
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.1 .1])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); %set(gca, 'clim', [-.1 .1])
 plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 nexttile
 contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; colorbar
