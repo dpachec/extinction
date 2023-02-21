@@ -24,18 +24,32 @@ for subji = 1:length(ALLEEG)
     EEG = ALLEEG{subji};
     if ~isempty(EEG)
         chans = [{EEG.chanlocs.fsLabel}]'; 
-        ids2rem1 = []; 
-        %ids2rem1 = contains(chans, 'Hippocampus')
-        %ids2rem = contains(chans, 'Right')
-        %ids2rem = logical(ids2rem1+ids2rem2)
-        ids2rem = ids2rem1; 
 
-        EEG.chanlocs(ids2rem) = []; 
-        if size(EEG.chanlocs, 2) >0 & size(EEG.chanlocs, 1) >0 
-            EEG.power(:, ids2rem, :, :) = []; 
-            ALLEEG1{subji,:} = EEG; 
-        end
         
+% %         ids2rem1 = []; 
+% %         %ids2rem1 = contains(chans, 'Hippocampus')
+% %         ids2rem1 = contains(chans, 'Right')
+% %         %ids2rem = logical(ids2rem1+ids2rem2)
+% %         ids2rem = ids2rem1; 
+% %         EEG.chanlocs(ids2rem) = []; 
+% %         if size(EEG.chanlocs, 2) >0 & size(EEG.chanlocs, 1) >0 
+% %             EEG.power(:, ids2rem, :, :) = []; 
+% %             ALLEEG1{subji,:} = EEG; 
+% %         end
+        
+        hy1 = find(contains(chans, 'Left')); 
+        if ~isempty(hy1) idL = hy1(1); end
+        hy2 = find(contains(chans, 'Right'));
+        if ~isempty(hy2) idR = hy2(1); end
+        if ~isempty(hy1) idx = idL; end
+        if ~isempty(hy2) idx = idR; end
+        if ~isempty(hy1) & ~isempty(hy2) idx = [idL idR]; end
+        
+        EEG.power = EEG.power(:, idx, :, :); 
+        EEG.chanlocs = EEG.chanlocs(idx);
+        ALLEEG1{subji,:} = EEG; 
+
+
 
     end
 
@@ -48,15 +62,15 @@ end
 %% compute neural RDM 
 %freqs_avTimeFeatVect_freqResolv(0-1)_win-width_mf
 clc
-clearvars -except ALLEEG paths file2load
+clearvars -except ALLEEG ALLEEG1 paths file2load
 
-f2sav = '3-8_0_0_50-1'; 
+f2sav = '3-54_1_0_50-1'; 
 cfg = getParams_EXT(f2sav);
 
 
-for subji = 1:length(ALLEEG)
+for subji = 1:length(ALLEEG1)
     
-    EEG = ALLEEG{subji};
+    EEG = ALLEEG1{subji};
     
     
     if ~isempty(EEG)
