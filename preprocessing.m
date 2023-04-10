@@ -10,7 +10,7 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' }';
 
 
-for subji = 2 %18:length(allsubs)
+for subji = 26 %18:length(allsubs)
 
     sub = allsubs{subji}; 
     cd(paths.trlinfo)
@@ -32,9 +32,6 @@ for subji = 2 %18:length(allsubs)
         EEG2 = pop_biosig(edf_list{2}, 'importevent', 'off'); EEG.data = [EEG.data EEG2.data];
     end        
     
-
-
-
     clearvars -except EEG subji paths trlinfo path_log currentPath sub allsubs EEG1
     eventChannel = 'POL DC12';
     if strcmp(sub, 'c_sub09') eventChannel = 'POL DC09'; end
@@ -64,6 +61,7 @@ for subji = 2 %18:length(allsubs)
     if strcmp(sub, 'c_sub21') lat2breakTTL = EEG.event(id2Break+122).latency; end
     if strcmp(sub, 'c_sub23') lat2breakTTL = EEG.event(id2Break+71).latency; end
     if strcmp(sub, 'c_sub25') lat2breakTTL = EEG.event(id2Break+32).latency; end    
+    if strcmp(sub, 'c_sub26') lat2breakTTL = EEG.event(id2Break+61).latency; end
     if strcmp(sub, 'c_sub29') lat2breakTTL = EEG.event(id2Break+97).latency; end
     if strcmp(sub, 'c_sub30') lat2breakTTL = EEG.event(id2Break+30).latency; end
     
@@ -99,8 +97,8 @@ for subji = 2 %18:length(allsubs)
     end
     
     
-    % % % %  resample 
-    %Downsample data  %https://es.mathworks.com/help/signal/ug/changing-signal-sample-rate.html
+    % % % %resample 
+    % % % %  % Downsample data  %https://es.mathworks.com/help/signal/ug/changing-signal-sample-rate.html
     if EEG.srate ~= 1000
         factor = ( 1000 / EEG.srate); 
         [P,Q] = rat(1000/EEG.srate);
@@ -126,7 +124,7 @@ for subji = 2 %18:length(allsubs)
     cd ([paths.ds sub])
    
     filename = [sub '_downSampiEEG.mat']
-    %save(filename, 'EEG', '-v7.3');
+    save(filename, 'EEG', '-v7.3');
     cd (currentPath)
   
     disp('done')

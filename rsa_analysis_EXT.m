@@ -8,7 +8,7 @@ load ([paths.results.power file2load]);
 
 
 %% count number of electrodes 
-clearvars -except ALLEEG paths file2load
+clearvars -except ALLEEG ALLEEG1 paths file2load
 
 for subji = 1:length(ALLEEG)
     EEG = ALLEEG{subji};
@@ -26,28 +26,29 @@ for subji = 1:length(ALLEEG)
         chans = [{EEG.chanlocs.fsLabel}]'; 
 
         
-% %         ids2rem1 = []; 
-% %         %ids2rem1 = contains(chans, 'Hippocampus')
-% %         ids2rem1 = contains(chans, 'Right')
-% %         %ids2rem = logical(ids2rem1+ids2rem2)
-% %         ids2rem = ids2rem1; 
-% %         EEG.chanlocs(ids2rem) = []; 
-% %         if size(EEG.chanlocs, 2) >0 & size(EEG.chanlocs, 1) >0 
-% %             EEG.power(:, ids2rem, :, :) = []; 
-% %             ALLEEG1{subji,:} = EEG; 
-% %         end
+        ids2rem1 = []; 
+        %ids2rem1 = contains(chans, 'Hippocampus')
+        %ids2rem1 = contains(chans, 'Right')
+        %ids2rem = logical(ids2rem1+ids2rem2)
+        ids2rem = ids2rem1; 
+        EEG.chanlocs(ids2rem) = []; 
+        if size(EEG.chanlocs, 2) >0 & size(EEG.chanlocs, 1) >0 
+            EEG.power(:, ids2rem, :, :) = []; 
+            ALLEEG1{subji,:} = EEG; 
+        end
         
-        hy1 = find(contains(chans, 'Left')); 
-        if ~isempty(hy1) idL = hy1(1); end
-        hy2 = find(contains(chans, 'Right'));
-        if ~isempty(hy2) idR = hy2(1); end
-        if ~isempty(hy1) idx = idL; end
-        if ~isempty(hy2) idx = idR; end
-        if ~isempty(hy1) & ~isempty(hy2) idx = [idL idR]; end
-        
-        EEG.power = EEG.power(:, idx, :, :); 
-        EEG.chanlocs = EEG.chanlocs(idx);
-        ALLEEG1{subji,:} = EEG; 
+%         hy1 = find(contains(chans, 'Left')); 
+%         if ~isempty(hy1) idL = hy1(1); end
+%         hy2 = find(contains(chans, 'Right'));
+%         if ~isempty(hy2) idR = hy2(1); end
+%         
+%         if ~isempty(hy1) idx = idL; end
+%         if ~isempty(hy2) idx = idR; end
+%         if ~isempty(hy1) & ~isempty(hy2) idx = [idL idR]; end
+%         
+%         EEG.power = EEG.power(:, idx, :, :); 
+%         EEG.chanlocs = EEG.chanlocs(idx);
+%         ALLEEG1{subji,:} = EEG; 
 
 
 
@@ -58,13 +59,25 @@ for subji = 1:length(ALLEEG)
 
 end
 
+%% count channels 
+
+clear nChans
+for subji = 1:length(ALLEEG1)
+    EEG = ALLEEG1{subji};
+    if~isempty(EEG)
+        nChans(subji,:) = length(EEG.chanlocs);
+    end
+end
+
+disp (['Subjects with elec: ' num2str(length(find(nChans)))])
+disp (['Total elec num: ' num2str(sum(nChans))])
 
 %% compute neural RDM 
 %freqs_avTimeFeatVect_freqResolv(0-1)_win-width_mf
 clc
 clearvars -except ALLEEG ALLEEG1 paths file2load
 
-f2sav = '3-54_1_0_50-1'; 
+f2sav = '13-29_1_0_50-1'; 
 cfg = getParams_EXT(f2sav);
 
 
@@ -79,9 +92,14 @@ for subji = 1:length(ALLEEG1)
         Ev2 = cat(1, Ev1{:});
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
-        ids1 =  strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '1');
-        ids2 =  strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '2');
-        ids3 =  strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+        ids1 =  strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1');
+        ids2 =  strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '2');
+        ids3 =  strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '3');
+
+        if ndims(EEG.power) == 3
+            tmph(:, 1, :, :)  = EEG.power; 
+            EEG.power = tmph; 
+        end
 
         all1 = EEG.power(ids1, :, : ,201:550); 
         all2 = EEG.power(ids2, :, : ,201:550); 
@@ -208,7 +226,7 @@ for pxi = 1:length(clustinfo.PixelIdxList)
 end
 if exist('allSTs')
     [max2u id] = min(allSTs);
-    tObs= allSTs(id) 
+    tObsCSPM= allSTs(id) ;
 end
 
 hb = h; hb(h==0) = nan; hb(hb==1) = -.01; 
@@ -221,6 +239,7 @@ shadedErrorBar(times, mSICM, seSICM, 'k', 1); hold on;
 plot (times, hb, 'Linewidth', 4)
 set(gca, 'FontSize', 18);
 
+exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 
 
 
@@ -322,8 +341,8 @@ nPerm = 1000;
 
 realCondMapping = [zeros(1, size(avDISV, 1)); ones(1, size(avDISV, 1))]';
 
-%junts = [avSICP; avSICM];
-junts = [avDISV; avDIDV];
+junts = [avSICP; avSICM];
+%junts = [avDISV; avDIDV];
 
 clear max_clust_sum_perm
 for permi = 1:nPerm
@@ -361,7 +380,9 @@ disp('done')
 
 %% 
 %tObs =  -30.4546%-86.4470;
-allAb = max_clust_sum_perm(max_clust_sum_perm > tObs);
+tObs = tObsCSPM;
+%allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
+allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 

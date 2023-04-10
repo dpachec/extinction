@@ -5,12 +5,12 @@ paths = load_paths_EXT;
 
 c2u = 'C';
 
-%sROI = {'Amygdala'}; 
+sROI = {'Hippocampus'}; 
 
 %sROI = {'superiorfrontal' 'rostralmiddlefrontal' 'anteriorcingulate' 'posteriorcingulate' 'precentral' 'caudalmiddlefrontal'}; % case sensitive 
 
-sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' ...
-             'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
+% sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' ...
+%              'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -45,12 +45,12 @@ for subji = 1:length(allsubs)
        
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
         ids = strcmp(Ev2(:, 10), c2u); 
-        EEG.event = EEG.event(ids)
+        EEG.event = EEG.event(ids);
 
         %epoch data and markers
-        EEG = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+        [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
         
-        EEG = remove_elec_EXT(EEG, 38); %thres channels is 1/5 of 192 = 38
+        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
         
 
         if ~isempty(EEG.data)
@@ -136,7 +136,7 @@ eegplot(data2check, 'srate', EEG.srate, 'winlength', 50, 'spacing', 1000, 'event
 clear
 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'orbitofrontal' '_C']; 
+file2load = ['allS_' 'Hippocampus' '_C']; 
 load ([paths.results.power file2load]); 
 
 
@@ -167,12 +167,9 @@ for subji = 1:length(ALLEEG)
             EEG.power(:, ids2rem, :, :) = []; 
             ALLEEG1{subji,:} = EEG; 
         end
-        
 
     end
 
-
-    
 
 end
 
@@ -182,9 +179,9 @@ clearvars -except ALLEEG ALLEEG1 paths  totalChans nChans nSub
 
 
 
-for subji = 1:length(ALLEEG)
+for subji = 1:length(ALLEEG1)
     
-    EEG = ALLEEG{subji};
+    EEG = ALLEEG1{subji};
     
         
 
@@ -195,13 +192,21 @@ for subji = 1:length(ALLEEG)
         Ev2 = cat(1, Ev1{:});
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
-        ids1 = strcmp(Ev2(:, 10), 'C') & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
+% % %         % % Acquisition
+% % %         ids1 = strcmp(Ev2(:, 10), 'C') & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
+% % %         ids2 = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
+                
+        % % % % % % Extinction
+        ids1 = strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '2');
+        ids2 = ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') )   & strcmp(Ev2(:, 2), '2');
+        
+
+        % % % early and late trials
         %ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) >= 40;
+        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) >= 40;
+
         tfDCH1 = mean(EEG.power(ids1, :, : ,:), 'omitnan'); 
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
-        
-        ids2 = strcmp(Ev2(:, 10), 'C') & strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
-        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) >= 40;
         tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
         tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
 
@@ -228,7 +233,7 @@ cd (paths.github)
 
 sub2exc = []
 
-%c1B = c1(:, 1:54, 201:500); c2B = c2(:, 1:54, 201:500); 
+%c1B = c1(:, 1:30, 201:500); c2B = c2(:, 1:30, 201:500); 
 c1B = c1(:, 1:54, :); c2B = c2(:, 1:54, :); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 
@@ -251,7 +256,7 @@ max_clust_obs = allSTs(id);
 
 % 
 %h = zeros(30, 300);
-%h(clustinfo.PixelIdxList{17}) = 1; 
+%h(clustinfo.PixelIdxList{15}) = 1; 
  
 
 
@@ -261,18 +266,19 @@ max_clust_obs = allSTs(id);
 %times = -1:.01:1.99; 
 times = -3:.01:3.99
 freqs = 1:54;
+figure()
 tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 800])
 nexttile
 contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; colorbar
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);%set(gca, 'clim', [-.1 .1])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.15 .15])
 plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 nexttile
 contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; colorbar
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); %set(gca, 'clim', [-.1 .1])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.15 .15])
 plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 nexttile
 contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; colorbar
-contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); %set(gca, 'clim', [-3 4])
+contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-6 6])
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 colormap(brewermap([],'*Spectral'))
@@ -294,8 +300,8 @@ exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',150)
 nPerm = 1000; 
 clear max_clust_sum_perm
 for permi = 1:nPerm
-    c1B = c1(:,1:54,301:480); 
-    c2B = c2(:,1:54,301:480); 
+    c1B = c1(:,1:30,301:480); 
+    c2B = c2(:,1:30,301:480); 
     c1B(c1B == 0) = nan; 
     c2B(c2B == 0) = nan; 
     for subji = 1:size(c1B, 1)
@@ -324,12 +330,15 @@ for permi = 1:nPerm
 end
 
 %%
+
+
 clear p mcsR mcsP
 
 mcsR = max_clust_obs; 
 mcsP = max_clust_sum_perm;
 
-allAb = mcsP(mcsP < mcsR);
+%allAb = mcsP(mcsP < mcsR);
+allAb = mcsP(abs(mcsP) > abs(mcsR));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
@@ -346,20 +355,15 @@ exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 
 
-%% plot 2 bars with mean theta 
-
-
-
-
 
 
 
 %% count channels 
 
 clear nChans
-for subji = 1:length(ALLEEG)
+for subji = 1:length(ALLEEG1)
 
-    EEG = ALLEEG{subji};
+    EEG = ALLEEG1{subji};
     if~isempty(EEG)
         nChans(subji,:) = length(EEG.chanlocs);
     end
