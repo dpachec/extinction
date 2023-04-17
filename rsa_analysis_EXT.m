@@ -7,15 +7,18 @@ file2load = ['allS_' 'Amygdala' '_C'];
 load ([paths.results.power file2load]); 
 
 
-%% count number of electrodes 
-clearvars -except ALLEEG ALLEEG1 paths file2load
+%% count channels 
 
-for subji = 1:length(ALLEEG)
-    EEG = ALLEEG{subji};
-    if ~isempty(EEG)
-        allChans(subji, :) = length(EEG.chanlocs)
+clear nChans
+for subji = 1:length(ALLEEG1)
+    EEG = ALLEEG1{subji};
+    if~isempty(EEG)
+        nChans(subji,:) = length(EEG.chanlocs);
     end
 end
+
+disp (['Subjects with elec: ' num2str(length(find(nChans)))])
+disp (['Total elec num: ' num2str(sum(nChans))])
 
 %% select first 2 in each hemisphere (Amygdala)  
 clearvars -except ALLEEG paths file2load
@@ -59,25 +62,14 @@ for subji = 1:length(ALLEEG)
 
 end
 
-%% count channels 
 
-clear nChans
-for subji = 1:length(ALLEEG1)
-    EEG = ALLEEG1{subji};
-    if~isempty(EEG)
-        nChans(subji,:) = length(EEG.chanlocs);
-    end
-end
-
-disp (['Subjects with elec: ' num2str(length(find(nChans)))])
-disp (['Total elec num: ' num2str(sum(nChans))])
 
 %% compute neural RDM 
 %freqs_avTimeFeatVect_freqResolv(0-1)_win-width_mf
 clc
 clearvars -except ALLEEG ALLEEG1 paths file2load
 
-f2sav = '13-29_1_0_50-1'; 
+f2sav = '3-8_1_0_50-1'; 
 cfg = getParams_EXT(f2sav);
 
 
@@ -92,38 +84,24 @@ for subji = 1:length(ALLEEG1)
         Ev2 = cat(1, Ev1{:});
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
-        ids1 =  strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1');
-        ids2 =  strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '2');
-        ids3 =  strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '3');
+        ids1 =  strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '1');
+        ids2 =  strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '2');
+        ids3 =  strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
 
-        if ndims(EEG.power) == 3
-            tmph(:, 1, :, :)  = EEG.power; 
-            EEG.power = tmph; 
-        end
-
+        
         all1 = EEG.power(ids1, :, : ,201:550); 
         all2 = EEG.power(ids2, :, : ,201:550); 
         all3 = EEG.power(ids3, :, : ,201:550); 
 
         allIts = cat(1, all1, all2, all3);
-
-        %neuralRDM1 = createNeuralRDMs_EXT(cfg, all1);
-        %neuralRDM2 = createNeuralRDMs_EXT(cfg, all2);
-        %neuralRDM3 = createNeuralRDMs_EXT(cfg, all3);
-        
         neuralRDMALL = createNeuralRDMs_EXT(cfg, allIts);
-        
-        %neuralRDM1 = remDiagRDM_TS(neuralRDM1); 
-        %neuralRDM2 = remDiagRDM_TS(neuralRDM2); 
-        %neuralRDM3 = remDiagRDM_TS(neuralRDM3); 
         neuralRDMALL = remDiagRDM_TS(neuralRDMALL); 
 
 
-       % if length(find (~isnan(squeeze(neuralRDMALL(:, :, 1))))) > 1500
+        sRDM = size(neuralRDMALL, 1); 
+        sRDM1= size(all1, 1);
+        sRDM2= size(all2, 1);
 
-            sRDM = size(neuralRDMALL, 1); 
-            sRDM1= size(all1, 1);
-            sRDM2= size(all2, 1);
             
     % % %             % % % CHECK THAT TEMPLATE USED ARE CORRECT 
     % % %             SI1_T = zeros(sRDM);SI2_T = zeros(sRDM);SI3_T = zeros(sRDM);
@@ -159,10 +137,25 @@ for subji = 1:length(ALLEEG1)
 
 
         %end
-        
+       
     end
 
 end
+
+% % check if subjects have nans in one condition and remove from the others
+cc1 = find(any(isnan(avCorrSI1), 2)); %rows id if there are nans 
+cc2 = find(any(isnan(avCorrSI2), 2)); %rows id if there are nans 
+cc3 = find(any(isnan(avCorrSI3), 2)); %rows id if there are nans 
+ccsv = find(any(isnan(avCorrDISV), 2)); %rows id if there are nans 
+ccdv = find(any(isnan(avCorrDIDV), 2)); %rows id if there are nans 
+
+sub2rem = [cc1 cc2 cc3 ccsv ccdv]; 
+avCorrSI1(sub2rem, : ) = [];
+avCorrSI2(sub2rem, : ) = [];
+avCorrSI3(sub2rem, : ) = [];
+avCorrDISV(sub2rem, : ) = [];
+avCorrDIDV(sub2rem, : ) = [];
+
 
 avCorrSI1 =  avCorrSI1 (any(avCorrSI1 ,2),:);
 avCorrSI2 =  avCorrSI2 (any(avCorrSI2 ,2),:);
@@ -173,7 +166,7 @@ avCorrDIDV =  avCorrDIDV (any(avCorrDIDV ,2),:);
 
 disp('done');
 
-%% plot 2 conditions
+%% plot 2 conditions acquisition
 
 sub2exc = [];
 
@@ -190,22 +183,22 @@ mavDISV = mean(avDISV);
 mavDIDV = mean(avDIDV); 
 
 
-%times = (-1:.01:2) + .25
-times = 1:size(mavSICP,2); 
+times = (-1:.01:2) + .25
+%times = 1:size(mavSICP,2); 
 figure(); 
 plot(times, mavSICP, 'r', LineWidth=2); hold on; 
 plot(times, mavSICM, 'k', LineWidth=2); hold on; 
-%set(gca, 'xlim' ,[-.5 2], 'Fontsize', 18)
+set(gca, 'xlim' ,[-.5 2], 'Fontsize', 18)
 legend({'CS+' 'CS-'})
 
 figure(); 
 plot(times, mavDISV, 'r', LineWidth=2); hold on; 
 plot(times, mavDIDV, 'k', LineWidth=2); hold on; 
-%set(gca, 'xlim' ,[-.5 2], 'Fontsize', 18)
+set(gca, 'xlim' ,[-.5 2], 'Fontsize', 18)
 legend({'DISV' 'DIDV'})
 
 
-%% plot SI CS+ SI CS- conditions variance
+%% plot SI CS+ SI CS- conditions acquisition variance 
 
 mSICP = mean(avSICP);
 stdSICP = std(avSICP, [], 1); 
@@ -225,22 +218,103 @@ for pxi = 1:length(clustinfo.PixelIdxList)
    allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
 end
 if exist('allSTs')
-    [max2u id] = min(allSTs);
+    [max2u id] = max(abs(allSTs));
     tObsCSPM= allSTs(id) ;
 end
 
-hb = h; hb(h==0) = nan; hb(hb==1) = -.01; 
+%h = zeros(1, size(avSICP, 2));
+h (1:100) = 0
 
+
+
+hb = h; hb(h==0) = nan; hb(hb==1) = -.02; 
+
+
+colors2use = brewermap([4],'*Set1')*0.75;
 
 %times = 1:size(avSICP,2); 
 times = (-1:.01:2) + .25;
-shadedErrorBar(times, mSICP, seSICP, 'r', 1); hold on; 
-shadedErrorBar(times, mSICM, seSICM, 'k', 1); hold on; 
-plot (times, hb, 'Linewidth', 4)
-set(gca, 'FontSize', 18);
+shadedErrorBar(times, mSICP, seSICP, {'Color', colors2use(1, :)}, 1); hold on; 
+shadedErrorBar(times, mSICM, seSICM, {'Color', colors2use(2, :)}, 1); hold on; 
+xlabel('Time (s)')
+ylabel('Rho')
+plot (times, hb, 'Linewidth', 7)
+set(gca, 'xlim', [-.5 1.75])
+set(gca, 'FontSize', 24);
 
 exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 
+
+%% plot 2 conditions EXTINCTION
+
+sub2exc = [];
+
+avSI1 = avCorrSI1; avSI2 = avCorrSI2; 
+avSICP = avCorrSI1; 
+avSICM = squeeze(mean(cat(3, avCorrSI2, avCorrSI3), 3)); 
+avDISV = avCorrDISV; avDIDV = avCorrDIDV;
+
+avSICM(sub2exc, :) = []; avSICP(sub2exc, :) = []; avDISV(sub2exc, :) = []; avDIDV(sub2exc, :) = []; 
+
+mavSICP = mean(avSICP); mavSICM = mean(avSICM); mavDISV = mean(avDISV); mavDIDV = mean(avDIDV); 
+
+%times = (-1:.01:2) + .25
+times = 1:size(mavSICP,2); 
+figure(); 
+plot(times, mavSICP, 'r', LineWidth=2); hold on; 
+plot(times, mavSICM, 'k', LineWidth=2); hold on; 
+%set(gca, 'xlim' ,[-.5 2], 'Fontsize', 18)
+legend({'CS+' 'CS-'})
+
+figure(); 
+plot(times, mavDISV, 'r', LineWidth=2); hold on; 
+plot(times, mavDIDV, 'k', LineWidth=2); hold on; 
+%set(gca, 'xlim' ,[-.5 2], 'Fontsize', 18)
+legend({'DISV' 'DIDV'})
+
+%% plot SI CS+ SI CS- conditions EXTINCTION variance 
+
+mSICP = mean(avSICP);
+stdSICP = std(avSICP, [], 1); 
+seSICP = stdSICP / sqrt(size(avSICP, 1));
+
+mSICM = mean(avSICM);
+stdSICM = std(avSICM, [], 1); 
+seSICM = stdSICM / sqrt(size(avSICM, 1));
+
+diffC = avSICP - avSICM; 
+[h p ci ts] = ttest(diffC); 
+t = ts.tstat; 
+clustinfo = bwconncomp(h);
+
+clear allSTs
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    tObsCSPM= allSTs(id) ;
+end
+
+
+%h = zeros(1, size(avSICP, 2));
+h (200:end) = 0
+
+%times = 1:size(avSICP,2); 
+times = (-1:.01:2) + .25;
+hb = h; hb(h==0) = nan; hb(hb==1) = -.02; 
+
+colors2use = brewermap([4],'*Set1')*0.75;
+shadedErrorBar(times, mSICP, seSICP, {'Color',colors2use(1,:)}, 1); hold on; 
+shadedErrorBar(times, mSICM, seSICM,  {'Color',colors2use(2,:)}, 1); hold on; 
+
+xlabel('Time (s)')
+ylabel('Rho')
+plot (times, hb, 'Linewidth', 7)
+set(gca, 'xlim', [-.5 1.75])
+set(gca, 'FontSize', 24);
+
+exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 
 
 %% plot VALENCE WITH VARIANCE
@@ -265,17 +339,25 @@ end
 if exist('allSTs')
     [max2u id] = max(allSTs);
     tObs= allSTs(id) 
+    tObsVAL = tObs; 
 end
 
 hb = h; hb(h==0) = nan; hb(hb==1) = -.01; 
 
 
 times = (-1:.01:2) + .25;
-%times = (-1:.01:2.3) + .1;
-shadedErrorBar(times, mDISV, seDISV, 'r', 1); hold on; 
-shadedErrorBar(times, mDIDV, seDIDV, 'k', 1); hold on; 
-plot (times, hb, 'Linewidth', 4)
-set(gca, 'FontSize', 18);
+
+colors2use = brewermap([6],'*Set1')*0.75;
+shadedErrorBar(times,  mDISV, seDISV, {'Color',colors2use(1,:)}, 1); hold on; 
+shadedErrorBar(times, mDIDV, seDIDV,  {'Color',colors2use(2,:)}, 1); hold on; 
+
+xlabel('Time (s)')
+ylabel('Rho')
+plot (times, hb, 'Linewidth', 7)
+set(gca, 'xlim', [-.5 1.75])
+set(gca, 'FontSize', 24);
+
+exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 %set(gca, 'xtick', [1 90 240], 'xticklabels', {'-1' '0' '1.5'}, 'xlim', [51 251])
 %plot([90 90],get(gca,'ylim'), 'k','lineWidth',1, 'Color', [.5 .5 .5]);
 %plot(get(gca,'xlim'), [0 0 ], 'k','lineWidth',1, 'Color', [.5 .5 .5]);
@@ -339,10 +421,11 @@ shadedErrorBar(times, md2p3, set2p3, 'k', 1); hold on;
 %% PERMUTATIONS
 nPerm = 1000; 
 
-realCondMapping = [zeros(1, size(avDISV, 1)); ones(1, size(avDISV, 1))]';
+nSubj =  size(avDISV, 1);
+realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
 
-junts = [avSICP; avSICM];
-%junts = [avDISV; avDIDV];
+%junts = [avSICP; avSICM];
+junts = [avDISV; avDIDV];
 
 clear max_clust_sum_perm
 for permi = 1:nPerm
@@ -379,8 +462,9 @@ end
 disp('done')
 
 %% 
-%tObs =  -30.4546%-86.4470;
-tObs = tObsCSPM;
+
+%tObs = tObsCSPM;
+tObs = tObsVAL; 
 %allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
@@ -403,19 +487,18 @@ set(gca, 'FontSize', 16)
 
 
 
-%% Analysis 2: across items
-%freqs_avTimeFeatVect_freqResolv(0-1)_fitMode(0:noTrials; 1:Trials)_win-width_mf
-clearvars -except ALLEEG paths file2load
+%% CONTEXT ANALYSIS
+%freqs_avTimeFeatVect_freqResolv(0-1)_win-width_mf
+clc
+clearvars -except ALLEEG ALLEEG1 paths file2load
 
-f2sav = '3-54_0_0_0_50-1'; 
+f2sav = '3-8_1_0_50-1'; 
 cfg = getParams_EXT(f2sav);
 
 
-for subji = 1:length(ALLEEG)
+for subji = 1:length(ALLEEG1)
     
-    subji
-
-    EEG = ALLEEG{subji};
+    EEG = ALLEEG1{subji};
     
     
     if ~isempty(EEG)
@@ -424,243 +507,181 @@ for subji = 1:length(ALLEEG)
         Ev2 = cat(1, Ev1{:});
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
-        if ndims(EEG.power) == 3
-            tmph(:, 1, :, :)  = EEG.power; 
-            EEG.power = tmph; 
-        else %pick just the deepest amygdala electrode
-            
-            %nChans = size(EEG.power, 2); 
-            %if nChans > 3
-            %    EEG.power = EEG.power(:, 1:3, :, :);
-            %end
+        ctxs = Ev2(:, 3); 
+        ctxs = cellfun(@(x) x(2), ctxs, 'un', 0);
 
+        ids1 =  strcmp(Ev2(:, 2), '1') & strcmp(ctxs, '1');
+        ids2 =  strcmp(Ev2(:, 2), '1') & strcmp(ctxs, '2');
+        ids3 =  strcmp(Ev2(:, 2), '1') & strcmp(ctxs, '3');
+        ids4 =  strcmp(Ev2(:, 2), '1') & strcmp(ctxs, '4');
 
-        end
         
+        all1 = EEG.power(ids1, :, : ,201:550); 
+        all2 = EEG.power(ids2, :, : ,201:550); 
+        all3 = EEG.power(ids3, :, : ,201:550); 
+        all4 = EEG.power(ids4, :, : ,201:550); 
 
-        ids1 =  strcmp(Ev2(:, 2), '1') & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
-        %ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) <= 40;
+        allIts = cat(1, all1, all2, all3, all4);
+        neuralRDMALL = createNeuralRDMs_EXT(cfg, allIts);
+        neuralRDMALL = remDiagRDM_TS(neuralRDMALL); 
 
-        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') ;
-        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) <= 40;
-        
-        %ids1 =  strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1')  ;
-        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3' )  | strcmp(Ev2(:, 6), '2') ) ;
-        allCSPIts = EEG.power(ids1, :, : ,201:550); 
-        allCSMIts = EEG.power(ids2, :, : ,201:550); 
-        
-        [allCSPIts] = remove_nans_EXT(allCSPIts);
-        [allCSMIts] = remove_nans_EXT(allCSMIts);
 
-        allIts = cat(1, allCSPIts, allCSMIts);
-        
-        if ~isempty(allIts)
+        sRDM = size(neuralRDMALL, 1); 
+        sRDM1= size(all1, 1);
+        sRDM2= size(all2, 1);
+        sRDM3 = size(all3, 1);
+        sRDM4 = size(all4, 1);
 
-            neuralRDM = createNeuralRDMs_EXT(cfg, allIts);
-            
-            
-            sRDM = size(neuralRDM, 1); 
-            nPPits = size(allCSPIts, 1);
-            cPM = neuralRDM (1:nPPits,nPPits+1:sRDM,:); 
-            cPP = neuralRDM (1:nPPits,1:nPPits,:); 
-            cMM = neuralRDM (nPPits+1:sRDM,nPPits+1:sRDM,:); 
+        SI1_T = zeros(sRDM);SI2_T = zeros(sRDM);SI3_T = zeros(sRDM);SI4_T = zeros(sRDM);S_ALL = zeros(sRDM);
+        SI1_T(1:sRDM1,1:sRDM1) = 1; 
+        SI2_T(sRDM1+1:sRDM2+sRDM1,sRDM1+1:sRDM2+sRDM1) = 1; 
+        SI3_T(sRDM1+sRDM2+1:sRDM1+sRDM2+sRDM3,sRDM1+sRDM2+1:sRDM1+sRDM2+sRDM3) = 1; 
+        SI4_T(sRDM1+sRDM2+sRDM3+1:end,sRDM1+sRDM2+sRDM3+1:end) = 1; 
+
+% % % %         % % % CHECK THAT TEMPLATE USED ARE CORRECT 
+% % % %         figure; imagesc(SI1_T); axis square
+% % % %         figure; imagesc(SI2_T); axis square
+% % % %         figure; imagesc(SI3_T); axis square
+% % % %         figure; imagesc(SI4_T); axis square
+% % % %         figure; imagesc(S_ALL); axis square
+
     
-            % remove diagonal at each time point
-            for timei = 1:size(cPP, 3)
-                cPPt = cPP(:, :, timei); 
-                cPPt(eye(size(cPPt))==1) = nan;
-                cPP(:, :, timei) = cPPt; 
-                cMMt = cMM(:, :, timei); 
-                cMMt(eye(size(cMMt))==1) = nan;
-                cMM(:, :, timei) = cMMt; 
-                
-            end
-            avCorrPM(subji, :) = mean(mean(cPM, 1, 'omitnan'), 2, 'omitnan');
-            avCorrPP(subji, :) = mean(mean(cPP, 1, 'omitnan'), 2, 'omitnan');
-            avCorrMM(subji, :) = mean(mean(cMM, 1, 'omitnan'), 2, 'omitnan');
-
+        S_ALL(SI1_T == 1) = 1;S_ALL(SI2_T == 1) = 1;S_ALL(SI3_T == 1) = 1;S_ALL(SI4_T == 1) = 1;
+       
+        parfor timei = 1:size(neuralRDMALL, 3)
+            tmpM = squeeze(neuralRDMALL(:, :, timei)); 
+            SC(timei) = mean(tmpM(S_ALL == 1), 'omitnan');
+            DC(timei) = mean(tmpM(S_ALL == 0), 'omitnan');
         end
-
-
+        avSC(subji, :) = SC;
+        avDC(subji, :) = DC;
         
     end
 
 end
 
+% % check if subjects have nans in one condition and remove from the others
+cc1 = find(any(isnan(avSC), 2)); %rows id if there are nans 
+cc2 = find(any(isnan(avDC), 2)); %rows id if there are nans 
 
-avCorrPM =  avCorrPM (any(avCorrPM ,2),:);
-avCorrPP =  avCorrPP (any(avCorrPP ,2),:);
-avCorrMM =  avCorrMM (any(avCorrMM ,2),:);
+sub2rem = [cc1 cc2]; 
+avSC(sub2rem, : ) = [];
+avDC(sub2rem, : ) = [];
 
 
-cd (paths.github)
+avSC =  avSC (any(avSC ,2),:);
+avDC =  avDC (any(avDC ,2),:);
 
 disp('done');
 
 
 
-%%
+%% plot SAME CONTEXT vs DIFF CONTEXTs
 
-mCPM = mean(avCorrPM); 
-mCPP = mean(avCorrPP); 
-mCMM = mean(avCorrMM); 
+mSC = mean(avSC);
+stdSC = std(avSC, [], 1); 
+seSC = stdSC / sqrt(size(avSC, 1));
 
-% figure(); 
-% plot(mCPM - mCPP, 'r', LineWidth=2); hold on; 
-% plot(mCPM - mCMM, 'b', LineWidth=2); hold on; 
+mDC = mean(avDC);
+stdDC = std(avDC, [], 1); 
+seDC = stdDC / sqrt(size(avDC, 1));
 
-times = (-1:.01:2) + .25
-figure(); 
-plot(times, mCPP, 'r', LineWidth=2); hold on; 
-plot(times, mCMM, 'b', LineWidth=2); hold on; 
-plot(times, mCPM, 'k', LineWidth=2); hold on; 
-set(gca, 'xlim' ,[-.5 2], 'Fontsize', 18)
+diffC = avSC - avDC; 
+[h p ci ts] = ttest(diffC); 
+t = ts.tstat; 
+clustinfo = bwconncomp(h);
 
-legend({'CS++' 'CS--' 'CS+-'})
+clear allSTs
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    tObsCSPM= allSTs(id) ;
+end
 
+
+%h = zeros(1, size(avSC, 2));
+%h (200:end) = 0
+
+%times = 1:size(avSICP,2); 
+times = (-1:.01:2) + .25;
+hb = h; hb(h==0) = nan; hb(hb==1) = -.02; 
+colors2use = brewermap([4],'*Set1')*0.75;
+shadedErrorBar(times, mSC, seSC,{'Color',colors2use(4,:)}, 1); hold on; 
+shadedErrorBar(times, mDC, seDC,{'Color',colors2use(3,:)}, 1); hold on; 
+
+
+xlabel('Time (s)')
+ylabel('Rho')
+plot (times, hb, 'Linewidth', 7)
+set(gca, 'xlim', [-.5 1.75])
+set(gca, 'FontSize', 24);
+
+
+exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
+
+
+
+
+%% PERMUTATIONS
+nPerm = 1000; 
+
+nSubj =  size(avSC, 1);
+realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
+
+junts = [avSC; avDC];
+%junts = [avDISV; avDIDV];
+
+clear max_clust_sum_perm
+for permi = 1:nPerm
+    
+    [M,N] = size(realCondMapping);
+    rowIndex = repmat((1:M)',[1 N]);
+    [~,randomizedColIndex] = sort(rand(M,N),2);
+    newLinearIndex = sub2ind([M,N],rowIndex,randomizedColIndex);
+    fakeCondMapping = realCondMapping(newLinearIndex);
+
+
+    cond1 = junts(fakeCondMapping == 0, :);
+    cond2 = junts(fakeCondMapping == 1, :);
+
+    diffC = cond1 - cond2; 
+    [h p ci ts] = ttest(diffC); 
+    t = ts.tstat; 
+    clear allSTs  
+    clustinfo = bwconncomp(h);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+    end
+    
+    if exist('allSTs')
+        [max2u id] = max(abs(allSTs));
+        max_clust_sum_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_sum_perm(permi,:) = 0; 
+    end
+
+end
+
+
+disp('done')
 
 %% 
-md2p = mean(avCorrMM);
-std2p = std(avCorrMM, [], 1); 
-set2p = std2p ./ sqrt(size(avCorrMM, 1));
-[h p ci ts] = ttest(avCorrMM);
-hb = h; hb(h==0) = nan; hb(hb==1) = 0; 
-
-
-
-%plot(md2p); hold on; 
-%plot(h)
-
-
-
-times = 1:size(avCorrMM,2); 
-shadedErrorBar(times, md2p, set2p, 'r', 1); hold on; 
-plot (times, hb, 'Linewidth', 4)
-%set(gca, 'xtick', [1 90 240], 'xticklabels', {'-1' '0' '1.5'}, 'xlim', [51 251])
-%set(gca, 'FontSize', 12);
-%plot([90 90],get(gca,'ylim'), 'k','lineWidth',1, 'Color', [.5 .5 .5]);
-%plot(get(gca,'xlim'), [0 0 ], 'k','lineWidth',1, 'Color', [.5 .5 .5]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%% compute model fit
-%freqs_avTimeFeatVect_freqResolv(0-1)_fitMode(0:noTrials; 1:Trials)_win-width_mf
-clearvars -except ALLEEG paths file2load
-
-f2sav = '30-54_0_0_0_20-1'; 
-cfg = getParams_EXT(f2sav);
-
-
-for subji = 1:length(ALLEEG)
-    
-    subji
-
-    EEG = ALLEEG{subji};
-    
-    
-    if ~isempty(EEG)
-        Ev = [{EEG.event.type}]';
-        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
-        Ev2 = cat(1, Ev1{:});
-        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
-
-        if ndims(EEG.power) == 3
-            tmph(:, 1, :, :)  = EEG.power; 
-            EEG.power = tmph; 
-        end
-
-        ids1 =  strcmp(Ev2(:, 2), '1') & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
-        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') ;
-        %ids1 =  strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1')  ;
-        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3' )  | strcmp(Ev2(:, 6), '2') ) ;
-        allCSPIts = EEG.power(ids1, :, : ,201:500); 
-        allCSMIts = EEG.power(ids2, :, : ,201:500); 
-        
-        [allCSPIts] = remove_nans_EXT(allCSPIts);
-        [allCSMIts] = remove_nans_EXT(allCSMIts);
-
-        allIts = cat(1, allCSPIts, allCSMIts);
-        
-        neuralRDM = createNeuralRDMs_EXT(cfg, allIts);
-        modelRDM  = createModelRDM_EXT(neuralRDM, allCSPIts);
-        
-        nnFit{subji,1}              = fitModel_WM(neuralRDM, modelRDM, cfg.fitMode); 
-        %nnFit{subji,2}              = cfg_contrasts.oneListIds_c; 
-
-        
-    end
-
-end
-
-
-filename = [paths.results.rsa 'CM_' file2load];
-save(filename, 'nnFit');
-
-
-cd (paths.github)
-
-disp('done');
-
-%% plot grand average fit
-
-d2p = cell2mat(nnFit);
-md2p = mean(d2p);
-std2p = std(d2p, [], 1); 
-set2p = std2p / sqrt(size(d2p, 1));
-[h p ci ts] = ttest(d2p)
-hb = h; hb(h==0) = nan; hb(hb==1) = 0; 
-
-
-
-%plot(md2p); hold on; 
-%plot(h)
-
-
-
-times = 1:size(d2p,2); 
-shadedErrorBar(times, md2p, set2p, 'r', 1); hold on; 
-plot (times, hb, 'Linewidth', 4)
-set(gca, 'xtick', [1 90 240], 'xticklabels', {'-1' '0' '1.5'}, 'xlim', [51 251])
-set(gca, 'FontSize', 12);
-plot([90 90],get(gca,'ylim'), 'k','lineWidth',1, 'Color', [.5 .5 .5]);
-plot(get(gca,'xlim'), [0 0 ], 'k','lineWidth',1, 'Color', [.5 .5 .5]);
-
-
-
-
-
-
-
-
-
-
-%%
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+%tObs =  -30.4546%-86.4470;
+tObs = tObsCSPM;
+%allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
+allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
+
+
+
+%% plot histogram
+figure
+%tObs =  -30.4546%-86.4470;
+histogram(max_clust_sum_perm, 20); hold on; 
+scatter(tObs,0, 100, 'filled','r');
+set(gca, 'FontSize', 16)
 
 
 

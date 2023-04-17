@@ -1,5 +1,5 @@
 %% Extinction behavioral analysis
-
+%%
 % 1. what trial number (position in presentation)?
 % 2. which Phase?
 % 3. which context was used?
@@ -25,7 +25,7 @@
 
 clear 
 
-paths = load_paths;
+paths = load_paths_EXT;
 
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
@@ -88,8 +88,8 @@ for subji=2:2%1:numel(allsubs)
     
     end
     
-    mkdir(paths.behavRes)
-    filename = [paths.behavRes sub '_behav.png']
+    mkdir(paths.results.behavior)
+    filename = [paths.results.behavior sub '_behav.png']
     exportgraphics(gca, filename, 'Resolution',300)
     %close all
 
@@ -104,7 +104,7 @@ type2u = 3; % (1, 2, 3) ; Cs+Cs+, Cs+Cs-, Cs-Cs-
 
 types={'cs+cs+','cs+cs-','cs-cs-'};
 
-paths = load_paths;
+paths = load_paths_EXT;
 
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
@@ -157,14 +157,13 @@ for subji=1:numel(allsubs)
   
 end
 
-  mkdir(paths.behavRes)
-  filename = [paths.behavRes types{type2u} '_behav.png']
+  filename = [paths.results.behavior types{type2u} '_behav.png']
   exportgraphics(gcf, filename, 'Resolution',300)
   
 
 %% analyse behavior: average responses
 clear
-paths = load_paths;
+paths = load_paths_EXT;
 path_trlinfo= paths.trlinfo;
 
 
@@ -227,11 +226,14 @@ end
 plot([24 24],[1 4],':k', 'Linewidth', 2)
 plot([48 48],[1 4],':k', 'Linewidth', 2)
 
-filename = [paths.behavRes 'average_per_type.png']
+filename = [paths.results.behavior 'average_per_type.png']
 exportgraphics(gcf, filename, 'Resolution',300)
 
 
-%%
+%% Plot with smoothing
+
+
+
 window=2;
 % smooth trajectories
 move_avg=ones(1,window)/window;
@@ -282,7 +284,7 @@ h.YLim=[1,4];
 h.YTick=[1;4];
 h.YTickLabel={'Dangerous','Safe'};
 h.YTickLabelRotation=90;
-h.FontSize = 18;
+h.FontSize = 24;
 end
 
 plot([24 24],[1 4],':k', 'Linewidth', 2)
@@ -347,6 +349,40 @@ title(contrast_label{con})
 
 
 end
+
+%% plot only
+
+figure
+hold on
+fig_stuff=subplot(1,1,1)
+cmap_default=fig_stuff.ColorOrder;
+%cmap_default=cmap_default([1 2 4],:)
+
+
+for ty=1:3
+    x1=1:size(avg_response_type,3)
+    y1=squeeze(nanmean(filt_avg_response_type(:,ty,:)));
+    b1=squeeze(nanstd(filt_avg_response_type(:,ty,:),1))./sqrt(numel(allsubs));
+   
+boundedline(x1, y1, b1, 'LineWidth', 2, 'cmap',cmap_default(ty,:),'transparency',0.2,'alpha');
+
+%plot(squeeze(nanmean(avg_response_type(:,ty,:))))
+h=gca;
+h.YLim=[1,4];
+h.YTick=[1;4];
+h.YTickLabel={'Dangerous','Safe'};
+h.YTickLabelRotation=90;
+h.FontSize = 22;
+end
+
+plot([24 24],[1 4],':k', 'Linewidth', 2)
+plot([48 48],[1 4],':k', 'Linewidth', 2)
+xlabel("Trial Number"); 
+set(gca, 'xtick', [24 48], 'xticklabels', {'24' '48'})
+
+
+filename = [paths.results.behavior 'average_per_type_filtered.png']
+exportgraphics(gcf, filename, 'Resolution',300)
 
 
 %% average rating each block
