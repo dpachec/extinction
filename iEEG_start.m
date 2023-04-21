@@ -190,12 +190,12 @@ for subji = 1:length(ALLEEG1)
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
 % % %         % % Acquisition
-        ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
-        ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
+        %ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
+        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
                 
         % % % % % % Extinction
-        %ids1 = strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '2');
-        %ids2 = ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') )   & strcmp(Ev2(:, 2), '2');
+        ids1 = strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '2');
+        ids2 = ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') )   & strcmp(Ev2(:, 2), '2');
         
 
         % % % early and late trials
@@ -230,7 +230,8 @@ cd (paths.github)
 
 sub2exc = []
 
-c1B = c1(:, 1:30, 201:500); c2B = c2(:, 1:30, 201:500); 
+%c1B = c1(:, 1:30, 201:500); c2B = c2(:, 1:30, 201:500); 
+c1B = c1(:, 3:8, 201:500); c2B = c2(:, 3:8, 201:500); 
 %c1B = c1(:, 1:54, :); c2B = c2(:, 1:54, :); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 
@@ -252,9 +253,8 @@ end
 max_clust_obs = allSTs(id); 
 
 % 
-%h = zeros(30, 300);
-%h(clustinfo.PixelIdxList{15}) = 1; % Amygdala both hemispheres
-%h(clustinfo.PixelIdxList{12}) = 1; % Amygdala LEFT 
+h = zeros(6, 300);
+h(clustinfo.PixelIdxList{4}) = 1; 
  
 
 
@@ -263,7 +263,7 @@ max_clust_obs = allSTs(id);
 
 times = -1:.01:1.99; 
 %times = -3:.01:3.99
-freqs = 1:30;
+freqs = 1:size(c1B, 2);
 figure()
 tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 900])
 nexttile
@@ -289,13 +289,12 @@ xlabel('Time (s)')
 ylabel('Frequency (Hz)')
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 colormap(brewermap([],'*Spectral'))
-%set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 2]);
-set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 1.75]);
-
+%set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 1.75]);
+set(findobj(gcf,'type','axes'),'FontSize',24, 'ytick', [1 6], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
 
 
 %exportgraphics(gcf, [paths.results.power file2load '.png'], 'Resolution',150)
-exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',150)
+exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 
 
 
