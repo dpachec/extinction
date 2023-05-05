@@ -172,7 +172,7 @@ end
 
 %% PLOT grand average for each condition
 
-clearvars -except ALLEEG ALLEEG1 paths  totalChans nChans nSub
+clearvars -except ALLEEG ALLEEG1 paths  totalChans nChans nSub nL
 
 
 
@@ -189,18 +189,19 @@ for subji = 1:length(ALLEEG1)
         Ev2 = cat(1, Ev1{:});
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
-% % %         % % Acquisition
-        ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
-        ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
-                
-        % % % % % % Extinction
-        %ids1 = strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '2');
-        %ids2 = ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') )   & strcmp(Ev2(:, 2), '2');
-        
+        % % %   % % Acquisition
+        ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
 
-        % % % early and late trials
-        %ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) >= 40;
-        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) >= 40;
+        % % % % % % Extinction
+        %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
+
+
+        % % %   % % Acquisition only late trials
+        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & double(string(Ev2(:, 1))) > 42;
+        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') & double(string(Ev2(:, 1))) > 42;
+
 
         tfDCH1 = mean(EEG.power(ids1, :, : ,:), 'omitnan'); 
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
@@ -218,6 +219,7 @@ for subji = 1:length(ALLEEG1)
         
         c1(subji, :, :) = tfDTF1; 
         c2(subji, :, :) = tfDTF2; 
+
                 
     end
 
@@ -228,9 +230,11 @@ cd (paths.github)
 
 %%
 
-sub2exc = []
+sub2exc = [];
 
-c1B = c1(:, 1:30, 201:500); c2B = c2(:, 1:30, 201:500); 
+
+c1B = c1(:, 3:8, 201:500); c2B = c2(:, 3:8, 201:500); 
+%c1B = c1(:, 1:30, 201:500); c2B = c2(:, 1:30, 201:500); 
 %c1B = c1(:, 1:54, :); c2B = c2(:, 1:54, :); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 
@@ -252,9 +256,8 @@ end
 max_clust_obs = allSTs(id); 
 
 % 
-%h = zeros(30, 300);
-%h(clustinfo.PixelIdxList{15}) = 1; % Amygdala both hemispheres
-%h(clustinfo.PixelIdxList{12}) = 1; % Amygdala LEFT 
+%h = zeros(6, 300);
+%h(clustinfo.PixelIdxList{4}) = 4; 
  
 
 
@@ -263,7 +266,7 @@ max_clust_obs = allSTs(id);
 
 times = -1:.01:1.99; 
 %times = -3:.01:3.99
-freqs = 1:30;
+freqs = 3:8;
 figure()
 tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 900])
 nexttile
@@ -290,7 +293,7 @@ ylabel('Frequency (Hz)')
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 colormap(brewermap([],'*Spectral'))
 %set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 2]);
-set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 1.75]);
+set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
 
 
 
@@ -369,7 +372,7 @@ exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 %% check only in theta band
 
-sub2exc = []
+sub2exc = nL;
 
 c1B = c1(:, 3:8, 201:500); c2B = c2(:, 3:8, 201:500); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
@@ -475,6 +478,214 @@ scatter(max_clust_obs,0, 200, 'filled','r');
 set(gca, 'FontSize', 14);
 xlabel('T')
 exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
+
+
+
+
+%% plot average values across trials
+
+clearvars -except ALLEEG ALLEEG1 paths clustinfo nL
+
+sub2exc = [];
+
+for subji = 1:size(ALLEEG1, 1)
+    EEG = ALLEEG1{subji}; 
+    if ~isempty(EEG) % & ~sub2exc(subji)
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
+    
+        % % %   % % Acquisition
+        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+
+        % % % % % % Extinction
+        ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
+
+
+
+        powH = EEG.power(ids2, :, :, :);
+    
+        for triali = 1:size(powH, 1)
+            cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
+            cTRMC(subji, triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
+    
+        end
+        figure
+        A = cTRMC(subji, :);
+        %scatter(1:length(A), A);
+        B = rmoutliers(A,"mean");
+        scatter(1:length(B), B); 
+        h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
+        C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
+        allSlopes(subji, :) = C(2);
+        allIntercepts(subji, :) = C(1);
+        close all; 
+
+        
+
+    end
+
+
+
+end
+
+
+allSlopes(allSlopes==0) = [];
+boxplot(allSlopes)
+[h p ci ts] = ttest(allSlopes);
+disp(['t = ' num2str(ts.tstat) '// p = ' num2str(p)])
+
+%% Correlate responses and power
+
+clearvars -except ALLEEG ALLEEG1 paths clustinfo nL
+close all
+sub2exc = [];
+
+for subji = 1:size(ALLEEG1, 1)
+    EEG = ALLEEG1{subji}; 
+    if ~isempty(EEG) % & ~sub2exc(subji)
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
+    
+        % % %   % % Acquisition
+        %ids = strcmp(Ev2(:, 2), '1'); 
+        %ids = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+    
+        % % % % % % Extinction
+        %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
+
+        
+        powH = EEG.power(ids, :, :, :);
+        
+        for triali = 1:size(powH, 1)
+            cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
+            cTRMC(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
+    
+        end
+        
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
+
+        mcsR = double(string(Ev2(ids, 7)));
+
+
+        ids2rem = isnan(cTRMC) | isnan(mcsR); 
+        cTRMC(ids2rem) = []; 
+        mcsR(ids2rem) = []; 
+
+        allRho(subji, :) = corr(cTRMC, mcsR, 'type', 'p');
+        figure()
+        scatter(cTRMC, mcsR);
+        h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
+        C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
+        allSlopes(subji, :) = C(2);
+        allIntercepts(subji, :) = C(1);
+        set(gca, 'ylim', [1 4], 'xlim', [-2 2])
+        
+
+
+    end
+
+    
+
+end
+ 
+idF = allRho==0 | isnan(allRho); 
+allRho(idF) = []; 
+allSlopes(idF) = []; 
+%boxplot(allRho)
+[h p ci t] = ttest (allRho);
+disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
+
+%% plot one bar
+data.data = [allRho]; 
+
+
+figure(2); set(gcf,'Position', [0 0 500 650]); 
+mean_S = mean(data.data, 1, 'omitnan');
+hb = plot ([1], data.data); hold on;
+set(hb, 'lineWidth', 3, 'Marker', '.', 'MarkerSize',35);hold on;
+h = bar (mean_S);hold on;
+set(h,'FaceColor', 'none', 'lineWidth', 3);
+set(gca,'XTick',[1],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 2], 'ylim', [-.65 .85] );
+plot(get(gca,'xlim'), [0 0],'k','lineWidth', 3);
+
+[h p ci t] = ttest (data.data(:,1));
+disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
+
+set(gca, 'LineWidth', 3);
+
+
+%% identify learners and no-learners
+
+clearvars -except ALLEEG ALLEEG1 paths clustinfo
+
+for subji = 1:size(ALLEEG1, 1)
+    EEG = ALLEEG1{subji}; 
+    if ~isempty(EEG)
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
+
+        % % %   % % Acquisition
+        ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+
+        % % % % % % Extinction
+        %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
+
+        % % %   % % both
+        %ids1 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '2') ;
+        %ids2 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '2') ;
+
+        mcsP(subji,:) = mean(double(string(Ev2(ids1, 7))), 'omitnan');
+        mcsM(subji, :) = mean(double(string(Ev2(ids2, 7))), 'omitnan');
+
+
+    end
+end
+
+
+
+
+%% plot 2 bar
+mcsP(mcsP==0) = nan; mcsM(mcsM==0) = nan;
+data.data = [mcsP mcsM ];
+
+figure(2); set(gcf,'Position', [0 0 500 650]); 
+mean_S = mean(data.data, 1, 'omitnan');
+hb = plot ([1 2], data.data); hold on;
+set(hb, 'lineWidth', 3, 'Marker', '.', 'MarkerSize',35);hold on;
+h = bar (mean_S);hold on;
+set(h,'FaceColor', 'none', 'lineWidth', 3);
+set(gca,'XTick',[1 2],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 3], 'ylim', [0 5] );
+plot(get(gca,'xlim'), [0 0],'k','lineWidth', 3);
+
+[h p ci t] = ttest (data.data(:,1), data.data(:,2));
+disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
+
+set(gca, 'LineWidth', 3);
+
+%export_fig(2, '_2.png','-transparent', '-r80');
+%close all;   
+
+
+%non-learners
+nL = mcsP > mcsM; 
+
+
+
 
 
 
