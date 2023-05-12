@@ -191,12 +191,12 @@ for subji = 1:length(ALLEEG1)
 
 
         % % %   % % Acquisition
-        ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
-        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
 
         % % % % % % Extinction
-        %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
-        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
+        ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
 
 
         % % %   % % Acquisition only late trials
@@ -376,7 +376,7 @@ exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 %% check only in theta band
 
-sub2exc = nL;
+sub2exc = [];
 
 c1B = c1(:, 3:8, 201:500); c2B = c2(:, 3:8, 201:500); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
@@ -550,7 +550,7 @@ sub2exc = [];
 
 for subji = 1:size(ALLEEG1, 1)
     EEG = ALLEEG1{subji}; 
-    if ~isempty(EEG) % & ~sub2exc(subji)
+    if ~isempty(EEG) & isempty(intersect(sub2exc, subji))
         Ev = [{EEG.event.type}]';
         Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
         Ev2 = cat(1, Ev1{:});
@@ -559,14 +559,17 @@ for subji = 1:size(ALLEEG1, 1)
         % % %   % % Acquisition
         %ids = strcmp(Ev2(:, 2), '1'); 
         %ids = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
-        ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+        %ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
     
         % % % % % % Extinction
-        %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
-        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
+        %ids = strcmp(Ev2(:, 2), '2'); 
+        %ids = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
 
         
         powH = EEG.power(ids, :, :, :);
+
+        
         
         for triali = 1:size(powH, 1)
             cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
@@ -581,19 +584,21 @@ for subji = 1:size(ALLEEG1, 1)
 
         mcsR = double(string(Ev2(ids, 7)));
 
-
         ids2rem = isnan(cTRMC) | isnan(mcsR); 
         cTRMC(ids2rem) = []; 
         mcsR(ids2rem) = []; 
+        allNTR(subji,:) = length(cTRMC);
+
+
 
         allRho(subji, :) = corr(cTRMC, mcsR, 'type', 'p');
         figure()
-        scatter(cTRMC, mcsR);
+        scatter(cTRMC, mcsR, 250, 'filled');
         h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
         C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
         allSlopes(subji, :) = C(2);
         allIntercepts(subji, :) = C(1);
-        set(gca, 'ylim', [1 4], 'xlim', [-2 2])
+        set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
         
 
 
@@ -606,7 +611,7 @@ end
 idF = allRho==0 | isnan(allRho); 
 allRho(idF) = []; 
 allSlopes(idF) = []; 
-%boxplot(allRho)
+
 [h p ci t] = ttest (allRho);
 disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
 
@@ -620,7 +625,7 @@ hb = plot ([1], data.data); hold on;
 set(hb, 'lineWidth', 3, 'Marker', '.', 'MarkerSize',35);hold on;
 h = bar (mean_S);hold on;
 set(h,'FaceColor', 'none', 'lineWidth', 3);
-set(gca,'XTick',[1],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 2], 'ylim', [-.65 .85] );
+set(gca,'XTick',[1],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 2], 'ylim', [-.85 .85] );
 plot(get(gca,'xlim'), [0 0],'k','lineWidth', 3);
 
 [h p ci t] = ttest (data.data(:,1));
@@ -642,12 +647,12 @@ for subji = 1:size(ALLEEG1, 1)
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
 
         % % %   % % Acquisition
-        ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
-        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
 
         % % % % % % Extinction
-        %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
-        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
+        ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
 
         % % %   % % both
         %ids1 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '2') ;

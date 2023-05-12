@@ -21,6 +21,7 @@ disp (['Subjects with elec: ' num2str(length(find(nChans)))])
 disp (['Total elec num: ' num2str(sum(nChans))])
 
 %% select first 2 in each hemisphere (Amygdala)  
+
 clearvars -except ALLEEG paths file2load
 clc 
 for subji = 1:length(ALLEEG)
@@ -65,11 +66,11 @@ end
 
 
 %% compute neural RDM 
-%freqs_avTimeFeatVect_freqResolv(0-1)_win-width_mf
+%freqs_avTimeFeatVect_freqResolv(0-1)_trials/noTrials_win-width_mf
 clc
 clearvars -except ALLEEG ALLEEG1 paths file2load
 
-f2sav = '3-8_1_0_50-1'; 
+f2sav = '3-8_1_0_0_50-1'; 
 cfg = getParams_EXT(f2sav);
 
 
@@ -95,8 +96,19 @@ for subji = 1:length(ALLEEG1)
 
         allIts = cat(1, all1, all2, all3);
         neuralRDMALL = createNeuralRDMs_EXT(cfg, allIts);
+        
         neuralRDMALL = remDiagRDM_TS(neuralRDMALL); 
 
+        neuralRDMALL2p = mean(neuralRDMALL(:,:,145:155), 3); 
+        nanTr2 = find(all(isnan(neuralRDMALL2p), 2)); %rows id if there are nans 
+        allNTR(subji,:) = length(nanTr2); 
+        % % % % plot RDMS
+        %if length(nanTr2) < 24
+            neuralRDMAllSort(subji, :, :) = neuralRDMALL2p;
+            figure()
+            imagesc(neuralRDMALL2p)
+        %end
+        
 
         sRDM = size(neuralRDMALL, 1); 
         sRDM1= size(all1, 1);
@@ -122,6 +134,7 @@ for subji = 1:length(ALLEEG1)
     % % %             figure; imagesc(DIDV); axis square
     
     
+            
             SI1 = neuralRDMALL(1:sRDM1,1:sRDM1, :); 
             SI2 = neuralRDMALL(sRDM1+1:sRDM2+sRDM1,sRDM1+1:sRDM2+sRDM1, :); 
             SI3 = neuralRDMALL(sRDM1+sRDM2+1:end,sRDM1+sRDM2+1:end, :); 
@@ -134,6 +147,13 @@ for subji = 1:length(ALLEEG1)
             avCorrSI3(subji, :) = mean(mean(SI3, 1, 'omitnan'), 2, 'omitnan');
             avCorrDISV(subji, :) = mean(mean(DISV, 1, 'omitnan'), 2, 'omitnan');
             avCorrDIDV(subji, :) = mean(mean(DIDV, 1, 'omitnan'), 2, 'omitnan');
+
+
+            avCorrSI1TR = mean(mean(SI1(:, :,145:155), 1, 'omitnan'), 3, 'omitnan');
+            avCorrSI2TR = mean(mean(SI2(:, :,145:155), 1, 'omitnan'), 3, 'omitnan');
+            avCorrSI3TR = mean(mean(SI3(:, :,145:155), 1, 'omitnan'), 3, 'omitnan');
+            avCorrTRALL(subji, :)= [avCorrSI1TR avCorrSI2TR avCorrSI3TR];
+            
 
 
         %end
@@ -163,12 +183,34 @@ avCorrSI3 =  avCorrSI3 (any(avCorrSI3 ,2),:);
 avCorrDISV =  avCorrDISV (any(avCorrDISV ,2),:);
 avCorrDIDV =  avCorrDIDV (any(avCorrDIDV ,2),:);
 
+if exist('neuralRDMAllSort')
+    neuralRDMAllSort(neuralRDMAllSort == 0) = nan; 
+end
 
 disp('done');
 
+
+%% 
+
+
+
+%% plot examples 
+subj = 13
+d2p = squeeze(neuralRDMAllSort(subj, :, :));
+figure()
+imagesc(d2p); axis square
+
+%% plot GA RDM
+
+figure()
+d2p = squeeze(mean(neuralRDMAllSort, 1, 'omitnan'))
+imagesc(d2p); axis square; colorbar
+
+
+
 %% plot 2 conditions acquisition
 
-sub2exc = [];
+sub2exc = [1 5 12];
 
 avSI1 = avCorrSI1; avSI2 = avCorrSI2; 
 avSICP = squeeze(mean(cat(3, avCorrSI1, avCorrSI2), 3)); 
@@ -682,7 +724,6 @@ figure
 histogram(max_clust_sum_perm, 20); hold on; 
 scatter(tObs,0, 100, 'filled','r');
 set(gca, 'FontSize', 16)
-
 
 
 
