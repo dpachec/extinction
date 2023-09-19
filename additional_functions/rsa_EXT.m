@@ -93,7 +93,7 @@ for coni = 1:length(currentContrast)
  
 
 
-    if TG
+    if TG==1
         %filename = ['s' num2str(sessi, '%02.f') '_' id '_gOBO'   '_rsa.mat'];
         rsaZ = cat(1, allRSA{:});
         allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
