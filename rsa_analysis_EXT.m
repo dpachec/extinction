@@ -753,7 +753,7 @@ f2sav = '3-8_1_0_0_50-1_SICSPA-SICSMA_TG';
 
 cfg = getParams_EXT(f2sav);
 
-
+t1 = datetime; 
 for subji = 1:length(ALLEEG1)
     
     EEG = ALLEEG1{subji};
@@ -778,10 +778,11 @@ for subji = 1:length(ALLEEG1)
 end
 
 
+mkdir ([paths.results.DNNs]);
+save([paths.results.DNNs f2sav '.mat'], 'out_rsa');
 
-disp('done');
-
-
+t2 = datetime; 
+etime(datevec(t2), datevec(t1))
 
 
 
