@@ -357,22 +357,64 @@ hold on
 fig_stuff=subplot(1,1,1)
 cmap_default=fig_stuff.ColorOrder;
 %cmap_default=cmap_default([1 2 4],:)
-
+yellow = cmap_default(3,:)
+red = cmap_default(2,:)
 
 for ty=1:3
     x1=1:size(avg_response_type,3)
     y1=squeeze(nanmean(filt_avg_response_type(:,ty,:)));
     b1=squeeze(nanstd(filt_avg_response_type(:,ty,:),1))./sqrt(numel(allsubs));
    
-boundedline(x1, y1, b1, 'LineWidth', 2, 'cmap',cmap_default(ty,:),'transparency',0.2,'alpha');
+    boundedline(x1, y1, b1, 'LineWidth', 2, 'cmap',cmap_default(ty,:),'transparency',0.2,'alpha');
+    
+    
+    %plot(squeeze(nanmean(avg_response_type(:,ty,:))))
+    h=gca;
+    h.YLim=[1,4];
+    h.YTick=[1;4];
+    h.YTickLabel={'Dangerous','Safe'};
+    h.YTickLabelRotation=90;
+    h.FontSize = 22;
+end
 
-%plot(squeeze(nanmean(avg_response_type(:,ty,:))))
-h=gca;
-h.YLim=[1,4];
-h.YTick=[1;4];
-h.YTickLabel={'Dangerous','Safe'};
-h.YTickLabelRotation=90;
-h.FontSize = 22;
+plot([24 24],[1 4],':k', 'Linewidth', 2)
+plot([48 48],[1 4],':k', 'Linewidth', 2)
+xlabel("Trial Number"); 
+set(gca, 'xtick', [24 48], 'xticklabels', {'24' '48'})
+
+
+filename = [paths.results.behavior 'average_per_type_filtered.png']
+exportgraphics(gcf, filename, 'Resolution',300)
+
+
+%% plot only new colors
+
+figure
+hold on
+fig_stuff=subplot(1,1,1)
+
+green= colormap(brewermap([1],'Greens'))
+green = green*.9;
+%cmap_default(3,:) = yellow;
+newM(1, :) = red; 
+newM(2, :) = yellow; 
+newM(3, :) = green; 
+
+for ty=1:3
+    x1=1:size(avg_response_type,3)
+    y1=squeeze(nanmean(filt_avg_response_type(:,ty,:)));
+    b1=squeeze(nanstd(filt_avg_response_type(:,ty,:),1))./sqrt(numel(allsubs));
+   
+    boundedline(x1, y1, b1, 'LineWidth', 2, 'cmap',newM(ty,:),'transparency',0.2,'alpha');
+    
+    
+    %plot(squeeze(nanmean(avg_response_type(:,ty,:))))
+    h=gca;
+    h.YLim=[1,4];
+    h.YTick=[1;4];
+    h.YTickLabel={'Dangerous','Safe'};
+    h.YTickLabelRotation=90;
+    h.FontSize = 28;
 end
 
 plot([24 24],[1 4],':k', 'Linewidth', 2)
