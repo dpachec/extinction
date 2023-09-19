@@ -17,7 +17,7 @@ clc
 clearvars -except ALLEEG paths file2load
 
 %f2sav = '3-8_1_0_0_50-1_DISVA-DIDVA_TG'; 
-f2sav = '39-54_1_0_0_50-1_1_SICSPA-SICSMA'; 
+f2sav = '39-54_1_0_0_50-1_1_SICSPE-SICSME'; 
 %f2sav = '39-54_1_0_0_50-1_1_DISCA-DIDCA'; 
 
 cfg = getParams_EXT(f2sav);
@@ -48,7 +48,7 @@ end
 
 
 mkdir ([paths.results.rsa]);
-save([file2load '_' paths.results.rsa f2sav '.mat'], 'out_rsa');
+save([ paths.results.rsa f2sav '_' file2load '.mat'], 'out_rsa');
 
 t2 = datetime; 
 etime(datevec(t2), datevec(t1))
@@ -56,14 +56,14 @@ etime(datevec(t2), datevec(t1))
 
 %% 
 clearvars -except ALLEEG f2sav paths
-f2sav = [file2load '_' '39-54_1_0_0_50-1_1_SICSPA-SICSMA']; 
+f2sav = [ '39-54_1_0_0_50-1_1_SICSPA-SICSMA_' file2load ]; 
 load([paths.results.rsa f2sav '.mat']);
 
 
 
 %% remove hack 
 ids = []; 
-for subji = 1:47
+for subji = 1:length(ALLEEG)
 
     cond1 = squeeze(out_rsa(subji, 1, :, :)); 
     if cond1(1) == 0
