@@ -35,7 +35,7 @@ for subji = 1:length(ALLEEG)
         cfg.oneListIds = Ev2; 
         cfg.oneListPow = EEG.power; 
 
-        out_contrasts = create_contrasts_EXT(cfg)
+        out_contrasts = create_contrasts_EXT(cfg);
 
         out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
         
@@ -52,6 +52,40 @@ save([paths.results.rsa f2sav '.mat'], 'out_rsa');
 t2 = datetime; 
 etime(datevec(t2), datevec(t1))
 
+
+%% 
+clearvars -except ALLEEG f2sav paths
+load([paths.results.rsa f2sav '.mat']);
+
+%%
+cond1 = squeeze(out_rsa(:, 1, :, :)); 
+cond2 = squeeze(out_rsa(:, 2, :, :)); 
+
+m1 = squeeze(mean(cond1)); 
+m2 = squeeze(mean(cond2)); 
+
+[h p ci ts] = ttest(cond1, cond2); 
+h = squeeze(h); t = squeeze(ts.tstat);
+
+tiledlayout(1,3);
+nexttile
+imagesc(m1);  axis square
+nexttile
+imagesc(m2);  axis square
+nexttile
+contourf( t, 100, 'linecolor', 'none'); axis square; hold on; %colorbar
+contour( h, 1, 'Color', [0, 0, 0], 'LineWidth', 2);
+
+
+
+%axesHandles = findall(0, 'type', 'axis');
+%set(axesHandles,'equal'); 
+
+
+
+
+
+%% 
 
 
 

@@ -26,9 +26,8 @@ if ~isempty(intersect(c2c, 'A'))
     if evei(2) == 1
         for j = 1:length(oneListIds) % repetitions are needed so should not start at i
            evej =  double(string(oneListIds(j,:)));
-           if evej(2) == 1
-               
-                if ~(evei(1) == evej(1))
+           if ~(evei(1) == evej(1))
+                    if evej(2) == 1
                 
                        if ~(evei(5)== evej(5)) & (evei(8)== evej(8)) % DISV
                             %disp(join(['DISVA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
@@ -44,14 +43,14 @@ if ~isempty(intersect(c2c, 'A'))
                                 countDIDVA = countDIDVA+1;
                              end
                        end
-                       if (evei(5)== evej(5)) & evei(8)== 1 % SICSPA
+                       if (evei(5)== evej(5)) & evei(8)== 1  & evej(8)== 1% SICSPA
                             %disp(join(['SICSP > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
                              if exist('countSICSPA')
                                 new_sicspa{countSICSPA} = [i, j];
                                 countSICSPA = countSICSPA+1;
                              end
                        end
-                      if (evei(5)== evej(5)) & evei(8)== 0 % SICSMA
+                      if (evei(5)== evej(5)) & evei(8)== 0 & evej(8)== 0 % SICSMA
                              %disp(join(['SICSM > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
                              if exist('countSICSMA')
                                 new_sicsma{countSICSMA} = [i, j];
@@ -82,7 +81,7 @@ eval(  ['if exist(''new_' lower(contr2save{ci}) ''') & any(strcmp(contr2save, ''
            'disp ([''new_' lower(contr2save{ci})  ' ' ' '' num2str(length(new_' lower(contr2save{ci}) '))]);' newline...
            ' nTrials = length(new_' lower(contr2save{ci}) '); ' newline ...
            ' if nTrials > batch_bin ' newline ...
-               ' nBatches = ceil(nTrials/batch_bin)' newline ... 
+               ' nBatches = ceil(nTrials/batch_bin);' newline ... 
                contr2save{ci} '{nBatches} = [];' newline ...
                ' for batchi = 1:nBatches ' newline ... 
                    'if strcmp(''' contr2save{ci}(end-1:end) ''', ''EE'')' newline ... 
@@ -164,7 +163,7 @@ out_contrasts.allIDs                    = allIDs;
  
 end
  
-disp ('>> conditions extracted');
+%disp ('>> conditions extracted');
  
  
 %%
