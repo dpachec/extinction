@@ -46,7 +46,7 @@ for subji = 1:length(ALLEEG)
 end
 
 
-mkdir ([paths.results.DNNs]);
+mkdir ([paths.results.rsa]);
 save([paths.results.rsa f2sav '.mat'], 'out_rsa');
 
 t2 = datetime; 
