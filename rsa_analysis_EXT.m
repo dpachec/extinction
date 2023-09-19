@@ -7,6 +7,57 @@ file2load = ['allS_' 'Amygdala' '_C'];
 load ([paths.results.power file2load]); 
 
 
+
+
+
+%% contrast based RSA
+
+%freqs_avTimeFeatVect_freqResolv(0-1)_trials/noTrials_win-width_mf
+clc
+clearvars -except ALLEEG paths file2load
+
+%f2sav = '3-8_1_0_0_50-1_DISVA-DIDVA_TG'; 
+f2sav = '3-8_1_0_0_50-1_SICSPA-SICSMA_TG'; 
+
+cfg = getParams_EXT(f2sav);
+
+t1 = datetime; 
+for subji = 1:length(ALLEEG)
+    
+    EEG = ALLEEG{subji};
+    
+    
+    if ~isempty(EEG)
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        
+        cfg.oneListIds = Ev2; 
+        cfg.oneListPow = EEG.power; 
+
+        out_contrasts = create_contrasts_EXT(cfg)
+
+        out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
+        
+        
+        
+    end
+
+end
+
+
+mkdir ([paths.results.DNNs]);
+save([paths.results.DNNs f2sav '.mat'], 'out_rsa');
+
+t2 = datetime; 
+etime(datevec(t2), datevec(t1))
+
+
+
+
+
+
+
 %% count channels 
 
 clear nChans
@@ -739,52 +790,6 @@ imagesc(d2p); axis square
 figure()
 d2p = squeeze(mean(neuralRDMAllSort, 1, 'omitnan'))
 imagesc(d2p); axis square; colorbar
-
-
-
-
-%% contrast based RSA
-%freqs_avTimeFeatVect_freqResolv(0-1)_trials/noTrials_win-width_mf
-clc
-clearvars -except ALLEEG ALLEEG1 paths file2load
-
-%f2sav = '3-8_1_0_0_50-1_DISVA-DIDVA_TG'; 
-f2sav = '3-8_1_0_0_50-1_SICSPA-SICSMA_TG'; 
-
-cfg = getParams_EXT(f2sav);
-
-t1 = datetime; 
-for subji = 1:length(ALLEEG1)
-    
-    EEG = ALLEEG1{subji};
-    
-    
-    if ~isempty(EEG)
-        Ev = [{EEG.event.type}]';
-        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
-        Ev2 = cat(1, Ev1{:});
-        
-        cfg.oneListIds = Ev2; 
-        cfg.oneListPow = EEG.power; 
-
-        out_contrasts = create_contrasts_EXT(cfg)
-
-        out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
-        
-        
-        
-    end
-
-end
-
-
-mkdir ([paths.results.DNNs]);
-save([paths.results.DNNs f2sav '.mat'], 'out_rsa');
-
-t2 = datetime; 
-etime(datevec(t2), datevec(t1))
-
-
 
 
 
