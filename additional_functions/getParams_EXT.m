@@ -9,7 +9,7 @@ function [cfg] = getParams_EXT(f2sav)
     tParams         = strsplit(f2t{5}, '-');
     cfg.win_width   = double(string((tParams{1})));
     cfg.mf          = double(string((tParams{2})));
-    cfg.TG          = string((f2t{6})); 
+    cfg.TG          = double(string((f2t{6}))); 
     cfg.contr2sav   = strsplit(f2t{7}, '-');
     
 
