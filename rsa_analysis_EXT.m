@@ -47,7 +47,7 @@ end
 
 
 mkdir ([paths.results.DNNs]);
-save([paths.results.DNNs f2sav '.mat'], 'out_rsa');
+save([paths.results.rsa f2sav '.mat'], 'out_rsa');
 
 t2 = datetime; 
 etime(datevec(t2), datevec(t1))
