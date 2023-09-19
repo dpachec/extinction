@@ -3,7 +3,7 @@
 
 clear 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'Amygdala' '_C'];
+file2load = ['allS_' 'orbitofrontal' '_C'];
 load ([paths.results.power file2load]); 
 
 
@@ -18,6 +18,7 @@ clearvars -except ALLEEG paths file2load
 
 %f2sav = '3-8_1_0_0_50-1_DISVA-DIDVA_TG'; 
 f2sav = '39-54_1_0_0_50-1_1_SICSPA-SICSMA'; 
+%f2sav = '39-54_1_0_0_50-1_1_DISCA-DIDCA'; 
 
 cfg = getParams_EXT(f2sav);
 
@@ -33,7 +34,7 @@ for subji = 1:length(ALLEEG)
         Ev2 = cat(1, Ev1{:});
         
         cfg.oneListIds = Ev2; 
-        cfg.oneListPow = EEG.power(:, :, : ,201:550); 
+        cfg.oneListPow = EEG.power(:, :, : ,251:470); 
 
         out_contrasts = create_contrasts_EXT(cfg);
 
@@ -47,7 +48,7 @@ end
 
 
 mkdir ([paths.results.rsa]);
-save([paths.results.rsa f2sav '.mat'], 'out_rsa');
+save([file2load '_' paths.results.rsa f2sav '.mat'], 'out_rsa');
 
 t2 = datetime; 
 etime(datevec(t2), datevec(t1))
@@ -55,7 +56,7 @@ etime(datevec(t2), datevec(t1))
 
 %% 
 clearvars -except ALLEEG f2sav paths
-f2sav = '39-54_1_0_0_50-1_1_SICSPA-SICSMA'; 
+f2sav = [file2load '_' '39-54_1_0_0_50-1_1_SICSPA-SICSMA']; 
 load([paths.results.rsa f2sav '.mat']);
 
 

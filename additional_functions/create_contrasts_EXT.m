@@ -56,6 +56,20 @@ if ~isempty(intersect(c2c, 'A'))
                                 new_sicsma{countSICSMA} = [i, j];
                                 countSICSMA = countSICSMA+1;
                              end
+                      end
+                      if ~(evei(5)== evej(5)) & (evei(3)== evej(3))  % DISC
+                             %disp(join(['DISC > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                             if exist('countDISCA')
+                                new_disca{countDISCA} = [i, j];
+                                countDISCA = countDISCA+1;
+                             end
+                      end
+                      if ~(evei(5)== evej(5)) & ~(evei(3)== evej(3))  % DISC
+                             %disp(join(['DIDC > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                             if exist('countDIDCA')
+                                new_didca{countDIDCA} = [i, j];
+                                countDIDCA = countDIDCA+1;
+                             end
                        end
 
 
@@ -66,7 +80,7 @@ if ~isempty(intersect(c2c, 'A'))
 end
 
 
-% % % % % % ACQUISITION
+% % % % % % EXTINCTION
 if ~isempty(intersect(c2c, 'E'))
     if evei(2) == 2
         for j = 1:length(oneListIds) % repetitions are needed so should not start at i
