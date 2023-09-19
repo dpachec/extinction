@@ -70,7 +70,7 @@ end
 clc
 clearvars -except ALLEEG ALLEEG1 paths file2load
 
-f2sav = '3-8_1_0_0_50-1'; 
+f2sav = '30-54_1_0_0_50-1_DISVA-DIDVA'; 
 cfg = getParams_EXT(f2sav);
 
 
@@ -99,14 +99,16 @@ for subji = 1:length(ALLEEG1)
         
         neuralRDMALL = remDiagRDM_TS(neuralRDMALL); 
 
-        neuralRDMALL2p = mean(neuralRDMALL(:,:,145:155), 3); 
-        nanTr2 = find(all(isnan(neuralRDMALL2p), 2)); %rows id if there are nans 
-        allNTR(subji,:) = length(nanTr2); 
+        %neuralRDMALL2p = mean(neuralRDMALL(:,:,145:155), 3); 
+        %nanTr2 = find(all(isnan(neuralRDMALL2p), 2)); %rows id if there are nans 
+        %allNTR(subji,:) = length(nanTr2); 
+
+
         % % % % plot RDMS
         %if length(nanTr2) < 24
-            neuralRDMAllSort(subji, :, :) = neuralRDMALL2p;
-            figure()
-            imagesc(neuralRDMALL2p)
+            %neuralRDMAllSort(subji, :, :) = neuralRDMALL2p;
+            %figure()
+            %imagesc(neuralRDMALL2p)
         %end
         
 
@@ -149,10 +151,10 @@ for subji = 1:length(ALLEEG1)
             avCorrDIDV(subji, :) = mean(mean(DIDV, 1, 'omitnan'), 2, 'omitnan');
 
 
-            avCorrSI1TR = mean(mean(SI1(:, :,145:155), 1, 'omitnan'), 3, 'omitnan');
-            avCorrSI2TR = mean(mean(SI2(:, :,145:155), 1, 'omitnan'), 3, 'omitnan');
-            avCorrSI3TR = mean(mean(SI3(:, :,145:155), 1, 'omitnan'), 3, 'omitnan');
-            avCorrTRALL(subji, :)= [avCorrSI1TR avCorrSI2TR avCorrSI3TR];
+            %avCorrSI1TR = mean(mean(SI1(:, :,145:155), 1, 'omitnan'), 3, 'omitnan');
+            %avCorrSI2TR = mean(mean(SI2(:, :,145:155), 1, 'omitnan'), 3, 'omitnan');
+            %avCorrSI3TR = mean(mean(SI3(:, :,145:155), 1, 'omitnan'), 3, 'omitnan');
+            %avCorrTRALL(subji, :)= [avCorrSI1TR avCorrSI2TR avCorrSI3TR];
             
 
 
@@ -163,13 +165,14 @@ for subji = 1:length(ALLEEG1)
 end
 
 % % check if subjects have nans in one condition and remove from the others
-cc1 = find(any(isnan(avCorrSI1), 2)); %rows id if there are nans 
-cc2 = find(any(isnan(avCorrSI2), 2)); %rows id if there are nans 
-cc3 = find(any(isnan(avCorrSI3), 2)); %rows id if there are nans 
-ccsv = find(any(isnan(avCorrDISV), 2)); %rows id if there are nans 
-ccdv = find(any(isnan(avCorrDIDV), 2)); %rows id if there are nans 
+cc1 = find(any(isnan(avCorrSI1), 2)   | avCorrSI1(:, 1)==0); %rows id if there are nans 
+cc2 = find(any(isnan(avCorrSI2), 2)   | avCorrSI2(:, 1)==0);
+cc3 = find(any(isnan(avCorrSI3), 2)   | avCorrSI3(:, 1)==0);
+ccsv = find(any(isnan(avCorrDISV), 2) | avCorrDISV(:, 1)==0);
+ccdv = find(any(isnan(avCorrDIDV), 2) | avCorrDIDV(:, 1)==0);
 
-sub2rem = [cc1 cc2 cc3 ccsv ccdv]; 
+sub2rem = unique([cc1;cc2;cc3;ccsv;ccdv]); 
+
 avCorrSI1(sub2rem, : ) = [];
 avCorrSI2(sub2rem, : ) = [];
 avCorrSI3(sub2rem, : ) = [];
@@ -177,40 +180,17 @@ avCorrDISV(sub2rem, : ) = [];
 avCorrDIDV(sub2rem, : ) = [];
 
 
-avCorrSI1 =  avCorrSI1 (any(avCorrSI1 ,2),:);
-avCorrSI2 =  avCorrSI2 (any(avCorrSI2 ,2),:);
-avCorrSI3 =  avCorrSI3 (any(avCorrSI3 ,2),:);
-avCorrDISV =  avCorrDISV (any(avCorrDISV ,2),:);
-avCorrDIDV =  avCorrDIDV (any(avCorrDIDV ,2),:);
-
-if exist('neuralRDMAllSort')
-    neuralRDMAllSort(neuralRDMAllSort == 0) = nan; 
-end
-
 disp('done');
 
 
-%% 
 
 
-
-%% plot examples 
-subj = 13
-d2p = squeeze(neuralRDMAllSort(subj, :, :));
-figure()
-imagesc(d2p); axis square
-
-%% plot GA RDM
-
-figure()
-d2p = squeeze(mean(neuralRDMAllSort, 1, 'omitnan'))
-imagesc(d2p); axis square; colorbar
 
 
 
 %% plot 2 conditions acquisition
 
-sub2exc = [1 5 12];
+sub2exc = [];
 
 avSI1 = avCorrSI1; avSI2 = avCorrSI2; 
 avSICP = squeeze(mean(cat(3, avCorrSI1, avCorrSI2), 3)); 
@@ -224,6 +204,10 @@ mavSICM = mean(avSICM);
 mavDISV = mean(avDISV); 
 mavDIDV = mean(avDIDV); 
 
+itSpec = avSICP - avDISV; 
+maITSPEC = squeeze(mean(itSpec));
+[h p ci ts] = ttest(itSpec); 
+t = ts.tstat; 
 
 times = (-1:.01:2) + .25
 %times = 1:size(mavSICP,2); 
@@ -238,6 +222,15 @@ plot(times, mavDISV, 'r', LineWidth=2); hold on;
 plot(times, mavDIDV, 'k', LineWidth=2); hold on; 
 set(gca, 'xlim' ,[-.5 2], 'Fontsize', 18)
 legend({'DISV' 'DIDV'})
+
+figure(); 
+plot(times, maITSPEC, 'k', LineWidth=2); hold on; 
+hb = h; hb(h==0) = nan; hb(hb==1) = -.002; 
+%plot (times, hb, LineWidth=5)
+scatter(times, hb)
+set(gca, 'xlim' ,[-.5 2], 'Fontsize', 18)
+legend({'Item-specific activity'})
+
 
 
 %% plot SI CS+ SI CS- conditions acquisition variance 
@@ -287,11 +280,15 @@ set(gca, 'FontSize', 24);
 exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 
 
+
+
+
+
 %% plot 2 conditions EXTINCTION
 
-sub2exc = [];
+sub2exc = [4 13];
 
-avSI1 = avCorrSI1; avSI2 = avCorrSI2; 
+avSI1 = avCorrSI1; 
 avSICP = avCorrSI1; 
 avSICM = squeeze(mean(cat(3, avCorrSI2, avCorrSI3), 3)); 
 avDISV = avCorrDISV; avDIDV = avCorrDIDV;
@@ -534,7 +531,7 @@ set(gca, 'FontSize', 16)
 clc
 clearvars -except ALLEEG ALLEEG1 paths file2load
 
-f2sav = '3-8_1_0_50-1'; 
+f2sav = '39-54_1_0_0_50-1'; 
 cfg = getParams_EXT(f2sav);
 
 
@@ -726,6 +723,63 @@ scatter(tObs,0, 100, 'filled','r');
 set(gca, 'FontSize', 16)
 
 
+
+
+
+
+
+%% plot examples 
+subj = 13
+d2p = squeeze(neuralRDMAllSort(subj, :, :));
+figure()
+imagesc(d2p); axis square
+
+%% plot GA RDM
+
+figure()
+d2p = squeeze(mean(neuralRDMAllSort, 1, 'omitnan'))
+imagesc(d2p); axis square; colorbar
+
+
+
+
+%% contrast based RSA
+%freqs_avTimeFeatVect_freqResolv(0-1)_trials/noTrials_win-width_mf
+clc
+clearvars -except ALLEEG ALLEEG1 paths file2load
+
+%f2sav = '3-8_1_0_0_50-1_DISVA-DIDVA_TG'; 
+f2sav = '3-8_1_0_0_50-1_SICSPA-SICSMA_TG'; 
+
+cfg = getParams_EXT(f2sav);
+
+
+for subji = 1:length(ALLEEG1)
+    
+    EEG = ALLEEG1{subji};
+    
+    
+    if ~isempty(EEG)
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        
+        cfg.oneListIds = Ev2; 
+        cfg.oneListPow = EEG.power; 
+
+        out_contrasts = create_contrasts_EXT(cfg)
+
+        out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
+        
+        
+        
+    end
+
+end
+
+
+
+disp('done');
 
 
 
