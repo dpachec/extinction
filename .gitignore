@@ -9,3 +9,4 @@ brain_model/brain_HR.mtl
 brain_model/yaleBA.obj
 brain_model/yaleBA_rot.mtl
 brain_model/yaleBA_rot.obj
+additional_functions/load_paths_EXT.m
