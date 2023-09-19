@@ -17,7 +17,7 @@ clc
 clearvars -except ALLEEG paths file2load
 
 %f2sav = '3-8_1_0_0_50-1_DISVA-DIDVA_TG'; 
-f2sav = '3-8_1_0_0_50-1_SICSPA-SICSMA_TG'; 
+f2sav = '3-8_1_0_0_50-1_1_SICSPA-SICSMA'; 
 
 cfg = getParams_EXT(f2sav);
 
@@ -121,13 +121,13 @@ end
 clc
 clearvars -except ALLEEG ALLEEG1 paths file2load
 
-f2sav = '30-54_1_0_0_50-1_DISVA-DIDVA'; 
+f2sav = '30-54_1_0_0_50-1_DISVA-DIDVA_TG'; 
 cfg = getParams_EXT(f2sav);
 
 
-for subji = 1:length(ALLEEG1)
+for subji = 1:length(ALLEEG)
     
-    EEG = ALLEEG1{subji};
+    EEG = ALLEEG{subji};
     
     
     if ~isempty(EEG)
