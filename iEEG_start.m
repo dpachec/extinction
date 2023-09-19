@@ -5,12 +5,14 @@ paths = load_paths_EXT;
 
 c2u = 'C';
 
-sROI = {'orbitofrontal'}; 
+%sROI = {'orbitofrontal'}; 
+
+%sROI = {'lateraloccipital'}; 
 
 %sROI = {'superiorfrontal' 'rostralmiddlefrontal' 'anteriorcingulate' 'posteriorcingulate' 'precentral' 'caudalmiddlefrontal'}; % case sensitive 
 
-% sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'ctx-lh-fusiform' 'ctx-lh-temporalpole' ...
-%              'inferiorparietal' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
+ sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'fusiform' 'temporalpole' ...
+              'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -82,7 +84,7 @@ cd (paths.github)
 
 %% plot example trial in one subject (ONLY 1 electrode)
 
-EEG = ALLEEG{2}; 
+EEG = ALLEEG{3}; 
 tr =20; 
 
 figure
@@ -95,7 +97,7 @@ contourf(1:700, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
 
 %% plot Mean across trials in one subject (ONLY 1 electrode)
 
-EEG = ALLEEG{2};
+EEG = ALLEEG{3};
 
 figure
 d2p	= squeeze(mean(EEG.power(:, 1 ,:,:), 'omitnan'));
@@ -123,6 +125,8 @@ clear
 
 paths = load_paths_EXT; 
 file2load = ['allS_' 'Amygdala' '_C']; 
+%file2load = ['allS_' 'Hippocampus' '_C']; 
+%file2load = ['allS_' 'orbitofrontal' '_C']; 
 load ([paths.results.power file2load]); 
 
 
@@ -172,7 +176,7 @@ end
 
 %% PLOT grand average for each condition
 
-clearvars -except ALLEEG ALLEEG1 paths  totalChans nChans nSub
+clearvars -except ALLEEG ALLEEG1 paths  totalChans nChans nSub nL
 
 
 
@@ -189,18 +193,21 @@ for subji = 1:length(ALLEEG1)
         Ev2 = cat(1, Ev1{:});
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
 
-% % %         % % Acquisition
-        %ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1');
-        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1');
-                
+
+        % % %   % % Acquisition
+        ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+
         % % % % % % Extinction
-        ids1 = strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '2');
-        ids2 = ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') )   & strcmp(Ev2(:, 2), '2');
+        %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
         
 
-        % % % early and late trials
-        %ids1 = ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) >= 40;
-        %ids2 = strcmp(Ev2(:, 6), '3')  & strcmp(Ev2(:, 2), '1') & double(string(Ev2(:, 1))) >= 40;
+
+        % % %   % % Acquisition only late trials
+        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & double(string(Ev2(:, 1))) > 42;
+        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') & double(string(Ev2(:, 1))) > 42;
+
 
         tfDCH1 = mean(EEG.power(ids1, :, : ,:), 'omitnan'); 
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
@@ -218,6 +225,7 @@ for subji = 1:length(ALLEEG1)
         
         c1(subji, :, :) = tfDTF1; 
         c2(subji, :, :) = tfDTF2; 
+
                 
     end
 
@@ -228,10 +236,12 @@ cd (paths.github)
 
 %%
 
-sub2exc = []
+sub2exc = [];
 
-%c1B = c1(:, 1:30, 201:500); c2B = c2(:, 1:30, 201:500); 
+
+
 c1B = c1(:, 3:8, 201:500); c2B = c2(:, 3:8, 201:500); 
+%c1B = c1(:, 1:30, 201:500); c2B = c2(:, 1:30, 201:500); 
 %c1B = c1(:, 1:54, :); c2B = c2(:, 1:54, :); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 
@@ -253,8 +263,10 @@ end
 max_clust_obs = allSTs(id); 
 
 % 
-h = zeros(6, 300);
-h(clustinfo.PixelIdxList{4}) = 1; 
+
+%h = zeros(6, 300);
+%h(clustinfo.PixelIdxList{4}) = 1; 
+
  
 
 
@@ -289,8 +301,9 @@ xlabel('Time (s)')
 ylabel('Frequency (Hz)')
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 colormap(brewermap([],'*Spectral'))
-%set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 1.75]);
-set(findobj(gcf,'type','axes'),'FontSize',24, 'ytick', [1 6], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
+
+%set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 2]);
+set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
 
 
 %exportgraphics(gcf, [paths.results.power file2load '.png'], 'Resolution',150)
@@ -341,13 +354,13 @@ end
 
 %%
 
-clear p mcsR mcsP
+clear p ratings2u mcsP
 
-mcsR = max_clust_obs; 
+ratings2u = max_clust_obs; 
 mcsP = max_clust_sum_perm;
 
-%allAb = mcsP(mcsP < mcsR);
-allAb = mcsP(abs(mcsP) > abs(mcsR));
+%allAb = mcsP(mcsP < ratings2u);
+allAb = mcsP(abs(mcsP) > abs(ratings2u));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
@@ -368,7 +381,7 @@ exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 %% check only in theta band
 
-sub2exc = []
+sub2exc = [];
 
 c1B = c1(:, 3:8, 201:500); c2B = c2(:, 3:8, 201:500); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
@@ -454,13 +467,13 @@ end
 
 %%
 
-clear p mcsR mcsP
+clear p ratings2u mcsP
 
-mcsR = max_clust_obs; 
+ratings2u = max_clust_obs; 
 mcsP = max_clust_sum_perm;
 
-%allAb = mcsP(mcsP < mcsR);
-allAb = mcsP(abs(mcsP) > abs(mcsR));
+%allAb = mcsP(mcsP < ratings2u);
+allAb = mcsP(abs(mcsP) > abs(ratings2u));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
@@ -474,6 +487,252 @@ scatter(max_clust_obs,0, 200, 'filled','r');
 set(gca, 'FontSize', 14);
 xlabel('T')
 exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
+
+
+
+%% Correlate responses and power in cluster
+
+clearvars -except ALLEEG ALLEEG1 paths clustinfo nL
+close all
+sub2exc = [];
+
+for subji = 1:size(ALLEEG1, 1)
+    EEG = ALLEEG1{subji}; 
+    if ~isempty(EEG) & isempty(intersect(sub2exc, subji))
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
+    
+        % % %   % % Acquisition
+        %ids = strcmp(Ev2(:, 2), '1'); 
+        %ids = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+    
+        % % % % % % Extinction
+        %ids = strcmp(Ev2(:, 2), '2'); 
+        %ids = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
+        
+
+        % % % Acquisition AND Extinction
+        %ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') | ( strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) );
+
+        
+        powH = EEG.power(ids, :, :, :);
+
+        
+        
+        for triali = 1:size(powH, 1)
+            cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
+            thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
+            %cTR = squeeze(mean(powH(triali, :, 3:8, 321:390), 2));
+            %thPow(triali, :) = mean(cTR, 'all');
+    
+        end
+        
+        nNan(subji,:) = sum(isnan(thPow));
+
+        ratings2u = double(string(Ev2(ids, 7)));
+
+        ids2rem = isnan(thPow) | isnan(ratings2u); 
+        thPow(ids2rem) = []; 
+        ratings2u(ids2rem) = []; 
+        allNTR(subji,:) = length(thPow);
+
+
+
+        allRho(subji, :) = corr(thPow, ratings2u, 'type', 'p');
+        
+        
+        %figure()
+        %scatter(thPow, ratings2u, 250, 'filled');
+        %h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
+        %C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
+        %allSlopes(subji, :) = C(2);
+        %allIntercepts(subji, :) = C(1);
+        %set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
+        
+
+
+    end
+
+    
+
+end
+ 
+idF = allRho==0 | isnan(allRho); 
+allRho(idF) = []; 
+%allSlopes(idF) = []; 
+
+[h p ci t] = ttest (allRho);
+disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
+
+
+
+%% plot one bar
+data.data = [allRho]; 
+
+
+figure(2); set(gcf,'Position', [0 0 500 650]); 
+mean_S = mean(data.data, 1, 'omitnan');
+hb = plot ([1], data.data); hold on;
+set(hb, 'lineWidth', 3, 'Marker', '.', 'MarkerSize',35);hold on;
+h = bar (mean_S);hold on;
+set(h,'FaceColor', 'none', 'lineWidth', 3);
+set(gca,'XTick',[1],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 2], 'ylim', [-.85 .85] );
+plot(get(gca,'xlim'), [0 0],'k','lineWidth', 3);
+
+[h p ci t] = ttest (data.data(:,1));
+disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
+
+set(gca, 'LineWidth', 3);
+
+
+%% Extract data 4 LME
+
+clearvars -except ALLEEG ALLEEG1 paths clustinfo nL
+close all
+sub2exc = [];
+
+for subji = 1:size(ALLEEG1, 1)
+    EEG = ALLEEG1{subji}; 
+    if ~isempty(EEG) & isempty(intersect(sub2exc, subji))
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
+    
+        powH = EEG.power;
+        
+        for triali = 1:size(powH, 1)
+            %cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
+            %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
+            cTR = squeeze(mean(powH(triali, :, 3:8, 301:350), 2));
+            thPow(triali, :) = mean(cTR, 'all');
+    
+        end
+        
+        ratings2u = double(string(Ev2(:, 7)));
+
+        ids2rem = isnan(thPow) | isnan(ratings2u); 
+        trialN = double(string(Ev2(:, 1)));
+        exph = double(string(Ev2(:, 2)));
+        trial_type = double(string(Ev2(:, 8)));
+
+        trialN(ids2rem) = []; 
+        trial_type(ids2rem) = []; 
+        exph(ids2rem) = []; 
+        thPow(ids2rem) = []; 
+        ratings2u(ids2rem) = []; 
+        subID = repelem(subji, length(ratings2u))';
+        
+        
+        d4LME = [thPow ratings2u subID trialN exph trial_type];
+        % % remove the testing phase for now
+        d4LME(d4LME(:, 5) == 3,:) = []; 
+
+        allData4LME{subji,:} = d4LME;
+        
+    end
+end
+
+%% 
+d4LME = cat(1, allData4LME{:});
+
+tbl2 = table(d4LME(:,1), d4LME(:,2), d4LME(:,3), d4LME(:,4), d4LME(:,5), d4LME(:,6), ...
+    'VariableNames',{'theta_AMY','Ratings','subID', 'trialN', 'Phase', 'CS'});
+
+
+
+%% fit model
+clc
+
+
+lme = fitlme(tbl2,'Ratings ~ theta_AMY + CS+ Phase+ trialN + (1|subID)'); % random intercept model
+%lme = fitlme(tbl2,'Ratings ~ theta_AMY + CS+ Phase+ trialN + CS*theta_AMY + *theta_AMY + (1|subID)'); % random intercept model
+
+lme
+%lme.Coefficients
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% 
+writetable(tbl2, 'extinction_data', 'FileType','spreadsheet')
+
+
+%% identify learners and no-learners
+
+clearvars -except ALLEEG ALLEEG1 paths clustinfo
+
+for subji = 1:size(ALLEEG1, 1)
+    EEG = ALLEEG1{subji}; 
+    if ~isempty(EEG)
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
+
+        % % %   % % Acquisition
+        ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+
+        % % % % % % Extinction
+        %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
+
+        % % %   % % both
+        %ids1 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '2') ;
+        %ids2 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '2') ;
+
+        mcsP(subji,:) = mean(double(string(Ev2(ids1, 7))), 'omitnan');
+        mcsM(subji, :) = mean(double(string(Ev2(ids2, 7))), 'omitnan');
+
+
+    end
+end
+
+
+
+
+%% plot 2 bar
+mcsP(mcsP==0) = nan; mcsM(mcsM==0) = nan;
+data.data = [mcsP mcsM ];
+
+figure(2); set(gcf,'Position', [0 0 500 650]); 
+mean_S = mean(data.data, 1, 'omitnan');
+hb = plot ([1 2], data.data); hold on;
+set(hb, 'lineWidth', 3, 'Marker', '.', 'MarkerSize',35);hold on;
+h = bar (mean_S);hold on;
+set(h,'FaceColor', 'none', 'lineWidth', 3);
+set(gca,'XTick',[1 2],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 3], 'ylim', [0 5] );
+plot(get(gca,'xlim'), [0 0],'k','lineWidth', 3);
+
+[h p ci t] = ttest (data.data(:,1), data.data(:,2));
+disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
+
+set(gca, 'LineWidth', 3);
+
+%export_fig(2, '_2.png','-transparent', '-r80');
+%close all;   
+
+
+%non-learners
+nL = mcsP > mcsM; 
+
+
+
 
 
 
