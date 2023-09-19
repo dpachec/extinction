@@ -63,7 +63,55 @@ if ~isempty(intersect(c2c, 'A'))
            end
         end
     end
+end
+
+
+% % % % % % ACQUISITION
+if ~isempty(intersect(c2c, 'E'))
+    if evei(2) == 2
+        for j = 1:length(oneListIds) % repetitions are needed so should not start at i
+           evej =  double(string(oneListIds(j,:)));
+           if ~(evei(1) == evej(1))
+                    if evej(2) == 2
+                
+                       if ~(evei(5)== evej(5)) & (evei(8)== evej(8)) % DISV
+                            %disp(join(['DISVA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                             if exist('countDISVE')
+                                new_disve{countDISVE} = [i, j];
+                                countDISVE = countDISVE+1;
+                             end
+                       end
+                       if ~(evei(5)== evej(5)) & ~(evei(8)== evej(8)) % DIDV
+                            %disp(['DISVA> ' oneListIds{i} '//' oneListIds{j}]);   
+                             if exist('countDIDVE')
+                                new_didve{countDIDVE} = [i, j];
+                                countDIDVE = countDIDVE+1;
+                             end
+                       end
+                       if (evei(5)== evej(5)) & evei(8)== 1  & evej(8)== 1% SICSPA
+                            %disp(join(['SICSP > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                             if exist('countSICSPE')
+                                new_sicspe{countSICSPE} = [i, j];
+                                countSICSPE = countSICSPE+1;
+                             end
+                       end
+                      if (evei(5)== evej(5)) & evei(8)== 0 & evej(8)== 0 % SICSMA
+                             %disp(join(['SICSM > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                             if exist('countSICSME')
+                                new_sicsme{countSICSME} = [i, j];
+                                countSICSME = countSICSME+1;
+                             end
+                       end
+
+
+                end
+           end
+        end
     end
+    end
+
+
+
 end
     
  

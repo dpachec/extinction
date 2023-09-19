@@ -17,7 +17,7 @@ clc
 clearvars -except ALLEEG paths file2load
 
 %f2sav = '3-8_1_0_0_50-1_DISVA-DIDVA_TG'; 
-f2sav = '38-54_1_0_0_50-10_1_SICSPA-SICSMA'; 
+f2sav = '39-54_1_0_0_50-10_1_SICSPE-SICSME'; 
 
 cfg = getParams_EXT(f2sav);
 
