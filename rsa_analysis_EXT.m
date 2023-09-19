@@ -17,7 +17,7 @@ clc
 clearvars -except ALLEEG paths file2load
 
 %f2sav = '3-8_1_0_0_50-1_DISVA-DIDVA_TG'; 
-f2sav = '39-54_1_0_0_50-10_1_SICSPE-SICSME'; 
+f2sav = '39-54_1_0_0_50-1_1_SICSPA-SICSMA'; 
 
 cfg = getParams_EXT(f2sav);
 
@@ -33,7 +33,7 @@ for subji = 1:length(ALLEEG)
         Ev2 = cat(1, Ev1{:});
         
         cfg.oneListIds = Ev2; 
-        cfg.oneListPow = EEG.power; 
+        cfg.oneListPow = EEG.power(:, :, : ,201:550); 
 
         out_contrasts = create_contrasts_EXT(cfg);
 
@@ -55,7 +55,9 @@ etime(datevec(t2), datevec(t1))
 
 %% 
 clearvars -except ALLEEG f2sav paths
+f2sav = '39-54_1_0_0_50-1_1_SICSPA-SICSMA'; 
 load([paths.results.rsa f2sav '.mat']);
+
 
 
 %% remove hack 
@@ -84,11 +86,12 @@ h = squeeze(h); t = squeeze(ts.tstat);
 
 tiledlayout(1,3);
 nexttile
-imagesc(m1);  axis square
+%imagesc(m1);  axis square
+contourf( m1, 50, 'linecolor', 'none'); axis square; hold on; %colorbar
 nexttile
-imagesc(m2);  axis square
+contourf( m2, 50, 'linecolor', 'none'); axis square; 
 nexttile
-contourf( t, 100, 'linecolor', 'none'); axis square; hold on; %colorbar
+contourf( t, 50, 'linecolor', 'none'); axis square; hold on; %colorbar
 contour( h, 1, 'Color', [0, 0, 0], 'LineWidth', 2);
 
 
