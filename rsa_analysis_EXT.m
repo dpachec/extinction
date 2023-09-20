@@ -3,9 +3,9 @@
 
 clear 
 paths = load_paths_EXT; 
-%file2load = ['allS_' 'Amygdala' '_C'];
+file2load = ['allS_' 'Amygdala' '_C'];
 %file2load = ['allS_' 'inferiortemporal_middletemporal_superiortemporal_bankssts_fusiform_temporalpole_lateraloccipital_lingual_parahippocampal_cuneus_pericalcarine' '_C'];
-file2load = ['allS_' 'Hippocampus' '_C'];
+%file2load = ['allS_' 'Hippocampus' '_C'];
 load ([paths.results.power file2load]); 
 
 
@@ -16,7 +16,12 @@ clc
 clearvars -except ALLEEG paths file2load
 
 %f2sav = '39-54_1_0_0_50-1_1_SICSPA-SICSMA'; 
-f2sav = '39-54_1_0_0_50-1_1_DISVA-DIDVA'; 
+%f2sav = '1-38_1_0_0_50-1_1_SICSPE-SICSME'; 
+%f2sav = '3-8_1_0_0_50-1_1_SICSPE-DISVE'; 
+%f2sav = '39-54_1_0_0_50-1_1_DISVA-DIDVA'; 
+%f2sav = '39-54_1_0_0_50-1_1_DISCE-DIDCE'; 
+f2sav = '3-8_1_0_0_50-1_1_SCCSPA-DCCSPA-SCCSMA-DCCSMA-SCCSPE-DCCSPE-SCCSME-DCCSME'; 
+
 %f2sav = '3-54_1_0_0_50-1_1_DISCA-DIDCA-SICSPE-SICSME-DISVA-DIDVA_TG'; 
 
 cfg = getParams_EXT(f2sav);
@@ -54,7 +59,12 @@ etime(datevec(t2), datevec(t1))
 
 
 %% 
+%file2load = ['allS_' 'Amygdala' '_C'];
+file2load = ['allS_' 'Hippocampus' '_C'];
+%file2load = ['allS_' 'inferiortemporal_middletemporal_superiortemporal_bankssts_fusiform_temporalpole_lateraloccipital_lingual_parahippocampal_cuneus_pericalcarine' '_C'];
+
 clearvars -except ALLEEG f2sav paths file2load
+%f2sav = [ '39-54_1_0_0_50-1_1_SICSPA-DISVA_' file2load ]; 
 f2sav = [ '39-54_1_0_0_50-1_1_SICSPE-SICSME_' file2load ]; 
 load([paths.results.rsa f2sav '.mat']);
 
@@ -79,11 +89,26 @@ cond2 = squeeze(out_rsa(:, 2, :, :));
 cond1(ids, :, :) = []; 
 cond2(ids, :, :) = []; 
 
-m1 = squeeze(mean(cond1, 'omitnan')); 
-m2 = squeeze(mean(cond2, 'omitnan')); 
 
-[h p ci ts] = ttest(cond1, cond2); 
-h = squeeze(h); t = squeeze(ts.tstat);
+% % % % remove half of the matrix
+for subji = 1:size(cond1, 1)
+    rdm2Tril = squeeze(cond1(subji, :, :)); 
+    rdm2Tril = tril(rdm2Tril);
+    rdm2Tril(rdm2Tril==0) = nan; 
+    cond1TR(subji, :, :) = rdm2Tril;
+
+    rdm2Tril = squeeze(cond2(subji, :, :)); 
+    rdm2Tril = tril(rdm2Tril);
+    rdm2Tril(rdm2Tril==0) = nan; 
+    cond2TR(subji, :, :) = rdm2Tril;
+end
+
+
+m1 = squeeze(mean(cond1TR, 'omitnan')); 
+m2 = squeeze(mean(cond2TR, 'omitnan')); 
+
+[h p ci ts] = ttest(cond1TR, cond2TR); 
+h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
 clustinfo = bwconncomp(h);
 for pxi = 1:length(clustinfo.PixelIdxList)
    allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
@@ -93,20 +118,29 @@ end
 tObs = allSTs(id); 
 
 
+%h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
+
+
+
+
 tiledlayout(1,3);
 nexttile
 %imagesc(m1);  axis square
 contourf( m1, 50, 'linecolor', 'none'); axis square; hold on; %colorbar
+plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
 nexttile
-contourf( m2, 50, 'linecolor', 'none'); axis square; 
+contourf( m2, 50, 'linecolor', 'none'); axis square;hold on;  
+plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
 nexttile
 contourf( t, 50, 'linecolor', 'none'); axis square; hold on; %colorbar
 contour( h, 1, 'Color', [0, 0, 0], 'LineWidth', 2);
+plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
 
 
-
-%axesHandles = findall(0, 'type', 'axis');
-%set(axesHandles,'equal'); 
+axesHandles = findall(0, 'type', 'axes');
+set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', []); 
+exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 
 
 
@@ -116,8 +150,7 @@ nPerm = 1000;
 nSubj =  size(cond1, 1);
 realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
 
-%junts = [avSICP; avSICM];
-junts = cat(1, cond1, cond2);
+junts = cat(1, cond1TR(:, 51:170, 51:170), cond2TR(:, 51:170, 51:170));
 
 clear max_clust_sum_perm
 for permi = 1:nPerm
@@ -132,9 +165,8 @@ for permi = 1:nPerm
     cond2P = junts(fakeCondMapping == 1, :,:);
 
     diffC = cond1P - cond2P; 
-    diffC = diffC(:,51:170, 51:170);
     [h p ci ts] = ttest(diffC); 
-    t = ts.tstat; 
+    h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat); 
     clear allSTs  
     clustinfo = bwconncomp(h);
     for pxi = 1:length(clustinfo.PixelIdxList)
@@ -154,7 +186,7 @@ end
 disp('done')
 
 %% 
-
+%tObs = 
 
 %allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
