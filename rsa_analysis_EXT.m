@@ -3,22 +3,20 @@
 
 clear 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'orbitofrontal' '_C'];
+%file2load = ['allS_' 'Amygdala' '_C'];
+file2load = ['allS_' 'inferiortemporal_middletemporal_superiortemporal_bankssts_fusiform_temporalpole_lateraloccipital_lingual_parahippocampal_cuneus_pericalcarine' '_C'];
 load ([paths.results.power file2load]); 
 
 
-
-
-
-%% contrast based RSA
+%%contrast based RSA
 
 %freqs_avTimeFeatVect_freqResolv(0-1)_trials/noTrials_win-width_mf
 clc
 clearvars -except ALLEEG paths file2load
 
 %f2sav = '3-8_1_0_0_50-1_DISVA-DIDVA_TG'; 
-f2sav = '39-54_1_0_0_50-1_1_SICSPE-SICSME'; 
-%f2sav = '39-54_1_0_0_50-1_1_DISCA-DIDCA'; 
+f2sav = '39-54_1_0_0_50-1_1_SICSPA-SICSMA'; 
+%f2sav = '3-54_1_0_0_50-1_1_DISCA-DIDCA-SICSPE-SICSME-DISVA-DIDVA_TG'; 
 
 cfg = getParams_EXT(f2sav);
 
@@ -55,8 +53,8 @@ etime(datevec(t2), datevec(t1))
 
 
 %% 
-clearvars -except ALLEEG f2sav paths
-f2sav = [ '39-54_1_0_0_50-1_1_SICSPA-SICSMA_' file2load ]; 
+clearvars -except ALLEEG f2sav paths file2load
+f2sav = [ '39-54_1_0_0_50-1_1_SICSPE-SICSME_' file2load ]; 
 load([paths.results.rsa f2sav '.mat']);
 
 
@@ -66,6 +64,7 @@ ids = [];
 for subji = 1:length(ALLEEG)
 
     cond1 = squeeze(out_rsa(subji, 1, :, :)); 
+    cond2 = squeeze(out_rsa(subji, 2, :, :)); 
     if cond1(1) == 0
         ids = [ids subji];
     end
@@ -79,11 +78,19 @@ cond2 = squeeze(out_rsa(:, 2, :, :));
 cond1(ids, :, :) = []; 
 cond2(ids, :, :) = []; 
 
-m1 = squeeze(mean(cond1)); 
-m2 = squeeze(mean(cond2)); 
+m1 = squeeze(mean(cond1, 'omitnan')); 
+m2 = squeeze(mean(cond2, 'omitnan')); 
 
 [h p ci ts] = ttest(cond1, cond2); 
 h = squeeze(h); t = squeeze(ts.tstat);
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+
+[max2u id] = max(abs(allSTs));
+tObs = allSTs(id); 
+
 
 tiledlayout(1,3);
 nexttile
@@ -102,9 +109,85 @@ contour( h, 1, 'Color', [0, 0, 0], 'LineWidth', 2);
 
 
 
+%% PERMUTATIONS
+nPerm = 1000; 
 
+nSubj =  size(cond1, 1);
+realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
+
+%junts = [avSICP; avSICM];
+junts = cat(1, cond1, cond2);
+
+clear max_clust_sum_perm
+for permi = 1:nPerm
+    
+    [M,N] = size(realCondMapping);
+    rowIndex = repmat((1:M)',[1 N]);
+    [~,randomizedColIndex] = sort(rand(M,N),2);
+    newLinearIndex = sub2ind([M,N],rowIndex,randomizedColIndex);
+    fakeCondMapping = realCondMapping(newLinearIndex);
+
+    cond1P = junts(fakeCondMapping == 0, :,:);
+    cond2P = junts(fakeCondMapping == 1, :,:);
+
+    diffC = cond1P - cond2P; 
+    diffC = diffC(:,51:170, 51:170);
+    [h p ci ts] = ttest(diffC); 
+    t = ts.tstat; 
+    clear allSTs  
+    clustinfo = bwconncomp(h);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+    end
+    
+    if exist('allSTs')
+        [max2u id] = max(allSTs);
+        max_clust_sum_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_sum_perm(permi,:) = 0; 
+    end
+
+end
+
+
+disp('done')
 
 %% 
+
+
+%allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
+allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
+
+
+
+%% plot histogram
+figure
+%tObs =  -30.4546%-86.4470;
+histogram(max_clust_sum_perm, 20); hold on; 
+scatter(tObs,0, 100, 'filled','r');
+set(gca, 'FontSize', 16)
+
+
+
+
+
+
+
+%%
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
