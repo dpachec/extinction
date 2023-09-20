@@ -64,35 +64,35 @@ if ~isempty(intersect(c2c, 'A'))
                                 countDISCA = countDISCA+1;
                              end
                       end
-                      if ~(evei(5)== evej(5)) & ~(evei(3)== evej(3))  % DISC
-                             %disp(join(['DIDC > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                      if ~(evei(5)== evej(5)) & ~(evei(3)== evej(3))  % DISCA
+                             %disp(join(['DIDCA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
                              if exist('countDIDCA')
                                 new_didca{countDIDCA} = [i, j];
                                 countDIDCA = countDIDCA+1;
                              end
                       end
-                        if (evei(3)== evej(3)) & evei(8)== 1  & evej(8)== 1 % SCCSP
-                             %disp(join(['SCCSP > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                        if (evei(3)== evej(3)) & evei(8)== 1  & evej(8)== 1 % SCCSPA
+                             %disp(join(['SCCSPA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
                              if exist('countSCCSPA')
                                 new_sccspa{countSCCSPA} = [i, j];
                                 countSCCSPA = countSCCSPA+1;
                              end
                         end
-                        if ~(evei(3)== evej(3)) & evei(8)== 1  & evej(8)== 1 % DCCSP
-                             %disp(join(['DCCSP > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                        if ~(evei(3)== evej(3)) & evei(8)== 1  & evej(8)== 1 % DCCSPA
+                             %disp(join(['DCCSPA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
                              if exist('countDCCSPA')
                                 new_dccspa{countDCCSPA} = [i, j];
                                 countDCCSPA = countDCCSPA+1;
                              end
                         end
-                        if (evei(3)== evej(3)) & evei(8)== 0  & evej(8)== 0 % SCCSM
+                        if (evei(3)== evej(3)) & evei(8)== 0  & evej(8)== 0 % SCCSMA
                              %disp(join(['SCCSMA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
                              if exist('countSCCSMA')
                                 new_sccsma{countSCCSMA} = [i, j];
                                 countSCCSMA = countSCCSMA+1;
                              end
                         end
-                        if ~(evei(3)== evej(3)) & evei(8)== 1  & evej(8)== 1 % DCCSP
+                        if ~(evei(3)== evej(3)) & evei(8)== 0  & evej(8)== 0 % DCCSMA
                              %disp(join(['DCCSMA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
                              if exist('countDCCSMA')
                                 new_dccsma{countDCCSMA} = [i, j];
@@ -180,7 +180,7 @@ if ~isempty(intersect(c2c, 'E'))
                                 countSCCSME = countSCCSME+1;
                              end
                         end
-                        if ~(evei(3)== evej(3)) & evei(8)== 1  & evej(8)== 1 % DCCSPE
+                        if ~(evei(3)== evej(3)) & evei(8)== 0  & evej(8)== 0 % DCCSME
                              %disp(join(['DCCSME > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
                              if exist('countDCCSME')
                                 new_dccsme{countDCCSME} = [i, j];
