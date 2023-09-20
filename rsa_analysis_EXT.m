@@ -4,18 +4,19 @@
 clear 
 paths = load_paths_EXT; 
 %file2load = ['allS_' 'Amygdala' '_C'];
-file2load = ['allS_' 'inferiortemporal_middletemporal_superiortemporal_bankssts_fusiform_temporalpole_lateraloccipital_lingual_parahippocampal_cuneus_pericalcarine' '_C'];
+%file2load = ['allS_' 'inferiortemporal_middletemporal_superiortemporal_bankssts_fusiform_temporalpole_lateraloccipital_lingual_parahippocampal_cuneus_pericalcarine' '_C'];
+file2load = ['allS_' 'Hippocampus' '_C'];
 load ([paths.results.power file2load]); 
 
 
-%%contrast based RSA
+%% contrast based RSA
 
 %freqs_avTimeFeatVect_freqResolv(0-1)_trials/noTrials_win-width_mf
 clc
 clearvars -except ALLEEG paths file2load
 
-%f2sav = '3-8_1_0_0_50-1_DISVA-DIDVA_TG'; 
-f2sav = '39-54_1_0_0_50-1_1_SICSPA-SICSMA'; 
+%f2sav = '39-54_1_0_0_50-1_1_SICSPA-SICSMA'; 
+f2sav = '39-54_1_0_0_50-1_1_DISVA-DIDVA'; 
 %f2sav = '3-54_1_0_0_50-1_1_DISCA-DIDCA-SICSPE-SICSME-DISVA-DIDVA_TG'; 
 
 cfg = getParams_EXT(f2sav);

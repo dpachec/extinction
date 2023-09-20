@@ -10,7 +10,7 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' }';
 
 
-for subji = 26 %18:length(allsubs)
+for subji = 1 %18:length(allsubs)
 
     sub = allsubs{subji}; 
     cd(paths.trlinfo)
@@ -324,7 +324,7 @@ end
 %% just 2 check, plot with original SR (in 4096) and with no cuts
 
 clear, close all
-paths = load_paths; 
+paths = load_paths_EXT; 
 cd (paths.github)
 
 allsubs = {'p_sub01','p_sub02','p_sub03','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
@@ -714,8 +714,12 @@ chans = EEG.chanlocs;
 
 
 
+%% plot example
 
+eventChannel = 'POL DC12';TTL = strmatch(eventChannel, {EEG.chanlocs.labels}, 'exact');chanids = [TTL];
 
+eegplot(EEG.data(chanids,:), 'srate', EEG.srate, 'eloc_file',EEG.chanlocs(chanids), ...
+    'winlength', 50, 'spacing', 10000000, 'events', EEG.event);
 
 
 
