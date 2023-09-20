@@ -3,9 +3,9 @@
 
 clear 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'Amygdala' '_C'];
+%file2load = ['allS_' 'Amygdala' '_C'];
 %file2load = ['allS_' 'inferiortemporal_middletemporal_superiortemporal_bankssts_fusiform_temporalpole_lateraloccipital_lingual_parahippocampal_cuneus_pericalcarine' '_C'];
-%file2load = ['allS_' 'Hippocampus' '_C'];
+file2load = ['allS_' 'Hippocampus' '_C'];
 load ([paths.results.power file2load]); 
 
 
@@ -18,10 +18,10 @@ clearvars -except ALLEEG paths file2load
 %f2sav = '39-54_1_0_0_50-1_1_SICSPA-SICSMA'; 
 %f2sav = '1-38_1_0_0_50-1_1_SICSPE-SICSME'; 
 %f2sav = '3-8_1_0_0_50-1_1_SICSPE-DISVE'; 
-%f2sav = '39-54_1_0_0_50-1_1_DISVA-DIDVA'; 
+f2sav = '3-8_1_0_0_50-5_1_DISVA-DIDVA'; 
 %f2sav = '39-54_1_0_0_50-1_1_DISCE-DIDCE'; 
-f2sav = '3-8_1_0_0_50-1_1_SCCSPA-DCCSPA-SCCSMA-DCCSMA-SCCSPE-DCCSPE-SCCSME-DCCSME'; 
-
+%f2sav = '3-8_1_0_0_50-1_1_SCCSPA-DCCSPA-SCCSMA-DCCSMA-SCCSPE-DCCSPE-SCCSME-DCCSME'; 
+%f2sav = '39-54_1_0_0_50-1_1_SCA-DCA'; 
 %f2sav = '3-54_1_0_0_50-1_1_DISCA-DIDCA-SICSPE-SICSME-DISVA-DIDVA_TG'; 
 
 cfg = getParams_EXT(f2sav);
@@ -39,9 +39,9 @@ for subji = 1:length(ALLEEG)
         
         cfg.oneListIds = Ev2; 
         cfg.oneListPow = EEG.power(:, :, : ,251:470); 
-
+        
         out_contrasts = create_contrasts_EXT(cfg);
-
+        
         out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
         
         
@@ -58,14 +58,16 @@ t2 = datetime;
 etime(datevec(t2), datevec(t1))
 
 
+
+
 %% 
-%file2load = ['allS_' 'Amygdala' '_C'];
-file2load = ['allS_' 'Hippocampus' '_C'];
+file2load = ['allS_' 'Amygdala' '_C'];
+%file2load = ['allS_' 'Hippocampus' '_C'];
 %file2load = ['allS_' 'inferiortemporal_middletemporal_superiortemporal_bankssts_fusiform_temporalpole_lateraloccipital_lingual_parahippocampal_cuneus_pericalcarine' '_C'];
 
 clearvars -except ALLEEG f2sav paths file2load
 %f2sav = [ '39-54_1_0_0_50-1_1_SICSPA-DISVA_' file2load ]; 
-f2sav = [ '39-54_1_0_0_50-1_1_SICSPE-SICSME_' file2load ]; 
+f2sav = [ '3-8_1_0_0_50-1_1_DISVA-DIDVA_' file2load ]; 
 load([paths.results.rsa f2sav '.mat']);
 
 
@@ -118,8 +120,9 @@ end
 tObs = allSTs(id); 
 
 
-%h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
-%h(clustinfo.PixelIdxList{id}) = 1;
+h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
+h(clustinfo.PixelIdxList{id}) = 1;
+h(clustinfo.PixelIdxList{4}) = 1;
 
 
 
@@ -128,14 +131,14 @@ tiledlayout(1,3);
 nexttile
 %imagesc(m1);  axis square
 contourf( m1, 50, 'linecolor', 'none'); axis square; hold on; %colorbar
-plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
 nexttile
 contourf( m2, 50, 'linecolor', 'none'); axis square;hold on;  
-plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
 nexttile
 contourf( t, 50, 'linecolor', 'none'); axis square; hold on; %colorbar
 contour( h, 1, 'Color', [0, 0, 0], 'LineWidth', 2);
-plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
 
 
 axesHandles = findall(0, 'type', 'axes');
@@ -150,7 +153,8 @@ nPerm = 1000;
 nSubj =  size(cond1, 1);
 realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
 
-junts = cat(1, cond1TR(:, 51:170, 51:170), cond2TR(:, 51:170, 51:170));
+%junts = cat(1, cond1TR(:, 51:170, 51:170), cond2TR(:, 51:170, 51:170));
+junts = cat(1, cond1TR, cond2TR);
 
 clear max_clust_sum_perm
 for permi = 1:nPerm
@@ -186,7 +190,7 @@ end
 disp('done')
 
 %% 
-%tObs = 
+%tObs = 102
 
 %allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
