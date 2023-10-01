@@ -14,8 +14,14 @@ currentIds = out_contrasts.allContrastIds;
 
 for i = 1:length(currentContrast)
     if ~isempty(out_contrasts.allContrasts{i})
-        nTimepoints = size (out_contrasts.allContrasts{i}{end}, 5); %%all2all file is stored within this cell array
-        aBins(i,:)  =  floor ( (nTimepoints/mf)- win_width/mf+1 );
+        if strcmp(cfg.tyRSA, 'pRSA')
+            nTimepoints = size (out_contrasts.allContrasts{i}{end}, 5); %%all2all file is stored within this cell array
+            aBins(i,:)  =  floor ( (nTimepoints/mf)- win_width/mf+1 );
+        elseif strcmp(cfg.tyRSA, 'tRSA')
+            nTimepoints = size (out_contrasts.allContrasts{i}{end}, 4); %%all2all file is stored within this cell array
+            aBins(i,:)  =  floor ( (nTimepoints/mf)- win_width/mf+1 );
+        end
+        
     end
 end
 
@@ -36,52 +42,76 @@ for coni = 1:length(currentContrast)
     
         %disp (['Cond ' id '   ' num2str(size(all2all, 1)) ' trials']);
     
-    
-        if aVTime
-                xM = zeros (trialN, bins,  chanN * length(f));
-                yM = zeros (trialN, bins,  chanN * length(f));
-        else 
-                xM = zeros (trialN, bins,  chanN * length(f) * win_width);
-                yM = zeros (trialN, bins,  chanN * length(f) * win_width);
-        end
-                
-        for timei = 1:bins 
-            %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            timeBins = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+        if strcmp(cfg.tyRSA, 'pRSA')
             if aVTime
-                x = mean(all2all(:, 1,:,f, timeBins), 5, 'omitnan');
-                x = reshape (x, [trialN, chanN * length(f)]);
-                y = mean(all2all(:, 2,:,f,timeBins), 5, 'omitnan');
-                y = reshape (y, [trialN, chanN * length(f)]);
-            
-            else
-                x = all2all(:, 1,:,f,timeBins);
-                x = reshape (x, [trialN, chanN * length(f)* win_width]);
-
-                y = all2all(:, 2,:,f,timeBins);
-                y = reshape (y, [trialN, chanN * length(f)* win_width]);
+                    xM = zeros (trialN, bins,  chanN * length(f));
+                    yM = zeros (trialN, bins,  chanN * length(f));
+            else 
+                    xM = zeros (trialN, bins,  chanN * length(f) * win_width);
+                    yM = zeros (trialN, bins,  chanN * length(f) * win_width);
             end
+                    
+            parfor timei = 1:bins 
+                %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+                timeBins = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+                if aVTime
+                    x = mean(all2all(:, 1,:,f, timeBins), 5, 'omitnan');
+                    x = reshape (x, [trialN, chanN * length(f)]);
+                    y = mean(all2all(:, 2,:,f,timeBins), 5, 'omitnan');
+                    y = reshape (y, [trialN, chanN * length(f)]);
+                
+                else
+                    x = all2all(:, 1,:,f,timeBins);
+                    x = reshape (x, [trialN, chanN * length(f)* win_width]);
     
-            xM(:, timei, :) =  x;
-            yM(:, timei, :) =  y;
-            %disp(['size xM >>    ' num2str(size(xM))])
+                    y = all2all(:, 2,:,f,timeBins);
+                    y = reshape (y, [trialN, chanN * length(f)* win_width]);
+                end
+        
+                xM(:, timei, :) =  x;
+                yM(:, timei, :) =  y;
+                %disp(['size xM >>    ' num2str(size(xM))])
+                
+            end
+
+        elseif strcmp(cfg.tyRSA, 'tRSA') % temporal RSA
+
+                xM = zeros (trialN, bins,  chanN *  win_width);
+                yM = zeros (trialN, bins,  chanN *  win_width);
+                
+            parfor timei = 1:bins 
+                %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+                timeBins = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+                x = all2all(:, 1,:,timeBins);
+                x = reshape (x, [trialN, chanN * win_width]);
+
+                y = all2all(:, 2,:,timeBins);
+                y = reshape (y, [trialN, chanN * win_width]);
             
+                xM(:, timei, :) =  x;
+                yM(:, timei, :) =  y;
+                %disp(['size xM >>    ' num2str(size(xM))])
+                
+            end
+
         end
     
         
     
         rsaZ = zeros (trialN, bins, bins);
-        %fprintf('\n'); fprintf('trial correlation:          '); 
         for triali = 1:trialN
-            mX= squeeze(xM(triali,:,:));
-            mY= squeeze(yM(triali,:,:));
-            r = corr (mX', mY','Type', 's'); 
-            %id0 = find(r==0);
-            %r = tril(squeeze(r)); %symmetric so only half is saved
-            %r(r == 0) = nan;r(id0)=0;
-            rsaZ(triali, :, :) = atanh(r);
+            if isempty(find(isnan(xM(triali, :,:)))) & isempty(find(isnan(yM(triali, :,:)))) & isempty(find(xM(triali, :,:)==0)) & isempty(find(yM(triali, :,:)==0))
+                mX= squeeze(xM(triali,:,:));
+                mY= squeeze(yM(triali,:,:));
+                r = corr (mX', mY','Type', 's'); 
+                
+                rsaZ(triali, :, :) = atanh(r);
+            else
+                rsaZ(triali, :, :) = nan(18);
+            end
         end
         
+        %rsaZ(rsaZ==0) = nan; 
         rsaZ(isinf(rsaZ)) = nan;
       
         allRSA{batchi} = rsaZ; 
@@ -94,10 +124,19 @@ for coni = 1:length(currentContrast)
 
 
     if TG==1
-        %filename = ['s' num2str(sessi, '%02.f') '_' id '_gOBO'   '_rsa.mat'];
-        rsaZ = cat(1, allRSA{:});
-        allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
-        %allRSAZ{coni} = rsaZ; 
+        if exist('allRSA')
+            rsaZ = cat(1, allRSA{:});
+            % count nan trials 
+            count = 0; 
+            for triali = 1:size(rsaZ, 1)
+                if isnan(rsaZ(triali, 1, 1))
+                    count = count+1; 
+                end
+            end
+            disp (['number of nan trials = ' num2str(count)])
+            allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
+        end
+        
         
     else %only store the diagonal 
         rsaZ = cat(1, allRSA{:});

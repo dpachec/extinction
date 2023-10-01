@@ -14,7 +14,18 @@ function[EEG] = manual_channel_removal(EEG, sub)
         EEG.chanlocs(id2rem) = []; 
         EEG.data(id2rem, :) = []; 
     end
-    
+    if strcmp(sub, 'c_sub17')
+        chans2rem = {'POL A''3'; 'POL A''4' }; 
+        id2rem = contains({EEG.chanlocs.labels}', chans2rem)
+        EEG.chanlocs(id2rem) = []; 
+        EEG.data(id2rem, :) = []; 
+    end
+    if strcmp(sub, 'c_sub23')
+        chans2rem = {'POL A''1'}; 
+        id2rem = contains({EEG.chanlocs.labels}', chans2rem)
+        EEG.chanlocs(id2rem) = []; 
+        EEG.data(id2rem, :) = []; 
+    end
 
 
 

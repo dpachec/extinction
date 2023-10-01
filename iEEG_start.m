@@ -5,14 +5,14 @@ paths = load_paths_EXT;
 
 c2u = 'C';
 
-%sROI = {'orbitofrontal'}; 
+sROI = {'Amygdala'}; 
 
-sROI = {'superiorfrontal'}; 
+%sROI = {'superiorfrontal'}; 
 
 %sROI = {'superiorfrontal' 'rostralmiddlefrontal' 'anteriorcingulate' 'posteriorcingulate' 'precentral' 'caudalmiddlefrontal'}; % case sensitive 
 
- sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'fusiform' 'temporalpole' ...
-              'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
+ %sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'fusiform' 'temporalpole' ...
+ %             'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -28,7 +28,7 @@ for subji = 1:length(allsubs)
     cd([ paths.iEEG])
     load ([sub '_iEEG.mat']);
 
-    %chansLab = {EEG.chanlocs.fsLabelsR}';
+    EEG = remove_elec_EXT_manually(EEG, subji); %thres channels is 1/5 of 192 = 38
     chansLab = {EEG.chanlocs.fsLabel}';
     selChans = contains(chansLab, sROI);
 
@@ -124,9 +124,11 @@ eegplot(data2check, 'srate', EEG.srate, 'winlength', 50, 'spacing', 1000, 'event
 clear
 
 paths = load_paths_EXT; 
-%file2load = ['allS_' 'Amygdala' '_C']; 
+file2load = ['allS_' 'Amygdala' '_C']; 
 %file2load = ['allS_' 'Hippocampus' '_C']; 
-file2load = ['allS_' 'orbitofrontal' '_C']; 
+%file2load = ['allS_' 'orbitofrontal' '_C']; 
+%file2load = ['allS_' 'superiorfrontal' '_C']; 
+
 load ([paths.results.power file2load]); 
 
 
@@ -137,8 +139,8 @@ load ([paths.results.power file2load]);
 %% count channels 
 
 clear nChans
-for subji = 1:length(ALLEEG1)
-    EEG = ALLEEG1{subji};
+for subji = 1:length(ALLEEG)
+    EEG = ALLEEG{subji};
     if~isempty(EEG)
         nChans(subji,:) = length(EEG.chanlocs);
     end
@@ -157,7 +159,7 @@ for subji = 1:length(ALLEEG)
     if ~isempty(EEG)
         chans = [{EEG.chanlocs.fsLabel}]'; 
         ids2rem1 = []; 
-        %ids2rem1 = contains(chans, 'Right')
+        ids2rem1 = contains(chans, 'Right')
         %ids2rem1 = contains(chans, 'Hippocampus')
         %ids2rem = logical(ids2rem1+ids2rem2)
         ids2rem = ids2rem1; 
@@ -200,8 +202,9 @@ for subji = 1:length(ALLEEG)
 
         % % % % % % Extinction
         %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
-        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
-        
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
 
 
         % % %   % % Acquisition only late trials
@@ -260,83 +263,11 @@ for pxi = 1:length(clustinfo.PixelIdxList)
    allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
 end
 [max2u id] = max(abs(allSTs));
-max_clust_obs = allSTs(id); 
+max_clust_obs = allSTs(id)
 
 % 
 
 %h = zeros(6, 300);
-%h(clustinfo.PixelIdxList{4}) = 1; 
-
- 
-
-
-
-
-
-times = -1:.01:1.99; 
-%times = -3:.01:3.99
-freqs = 1:size(c1B, 2);
-figure()
-tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 900])
-nexttile
-contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.125 .125])
-%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS+')
-xlabel('Time (s)')
-ylabel('Frequency (Hz)')
-nexttile
-contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.125 .125])
-%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS-')
-xlabel('Time (s)')
-ylabel('Frequency (Hz)')
-nexttile
-contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T';
-contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); %set(gca, 'clim', [-4 4])
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS+ vs CS-')
-xlabel('Time (s)')
-ylabel('Frequency (Hz)')
-%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-colormap(brewermap([],'*Spectral'))
-
-%set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 2]);
-set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
-
-
-%exportgraphics(gcf, [paths.results.power file2load '.png'], 'Resolution',150)
-exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
-
-
-
-%% ALL FREQUENCIES
-
-sub2exc = [];
-c1B = c1(:, 1:54, 201:500); c2B = c2(:, 1:54, 201:500); 
-c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
-
-c1B(c1B == 0) = nan; 
-c2B(c2B == 0) = nan; 
-d2p1	= squeeze(mean(c1B, 'omitnan'));
-d2p2	= squeeze(mean(c2B, 'omitnan'));
-
-
-[h p ci ts] = ttest(c1B, c2B); 
-h = squeeze(h); t = squeeze(ts.tstat);
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-[max2u id] = max(abs(allSTs));
-max_clust_obs = allSTs(id); 
-
-% 
-
-h = zeros(54, 300);
 %h(clustinfo.PixelIdxList{id}) = 1; 
 
  
@@ -366,7 +297,7 @@ xlabel('Time (s)')
 ylabel('Frequency (Hz)')
 nexttile
 contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T';
-contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); %set(gca, 'clim', [-4 4])
+contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-3 3])
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 title('CS+ vs CS-')
 xlabel('Time (s)')
@@ -375,6 +306,180 @@ ylabel('Frequency (Hz)')
 colormap(brewermap([],'*Spectral'))
 
 %set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 2]);
+set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
+
+
+%exportgraphics(gcf, [paths.results.power file2load '.png'], 'Resolution',150)
+exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
+
+%% compute in cluster
+
+
+
+
+
+
+%% ALL FREQUENCIES
+
+sub2exc = [];
+c1B = c1(:, 1:54, 251:480); c2B = c2(:, 1:54, 251:480); 
+c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
+
+c1B(c1B == 0) = nan; 
+c2B(c2B == 0) = nan; 
+d2p1	= squeeze(mean(c1B, 'omitnan'));
+d2p2	= squeeze(mean(c2B, 'omitnan'));
+
+
+[h p ci ts] = ttest(c1B, c2B); 
+h = squeeze(h); t = squeeze(ts.tstat);
+
+clear allSTs  
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+[max2u id] = max(abs(allSTs));
+max_clust_obs = allSTs(id); 
+
+% 
+
+%h = zeros(54, 230);
+%h(clustinfo.PixelIdxList{id}) = 1; 
+
+ 
+
+
+
+
+
+times = -.5:.01:1.79; 
+%times = -3:.01:3.99
+freqs = 1:size(c1B, 2);
+figure()
+tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 900])
+nexttile
+contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.125 .125])
+%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+title('CS+')
+xlabel('Time (s)')
+ylabel('Frequency (Hz)')
+nexttile
+contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.125 .125])
+%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+title('CS-')
+xlabel('Time (s)')
+ylabel('Frequency (Hz)')
+nexttile
+contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T';
+contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-4 4])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+title('CS+ vs CS-')
+xlabel('Time (s)')
+ylabel('Frequency (Hz)')
+%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+colormap(brewermap([],'*Spectral'))
+
+set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'}, 'xlim', [-.5 1.75]);
+%set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
+
+
+%exportgraphics(gcf, [paths.results.power file2load '.png'], 'Resolution',150)
+exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
+
+
+
+
+
+%% ALL FREQUENCIES + ERPs
+
+load allERPs
+sub2exc = [];
+c1B = c1(:, 1:54, 251:480); c2B = c2(:, 1:54, 251:480); 
+c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
+
+c1B(c1B == 0) = nan; 
+c2B(c2B == 0) = nan; 
+d2p1	= squeeze(mean(c1B, 'omitnan'));
+d2p2	= squeeze(mean(c2B, 'omitnan'));
+
+
+[h p ci ts] = ttest(c1B, c2B); 
+h = squeeze(h); t = squeeze(ts.tstat);
+
+clear allSTs  
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+[max2u id] = max(abs(allSTs));
+max_clust_obs = allSTs(id); 
+
+% 
+
+%h = zeros(54, 230);
+%h(clustinfo.PixelIdxList{id}) = 1; 
+
+ 
+
+c2p1 = allERPs(:,1);
+c2pm = cellfun(@(x) mean(x, 1), c2p1, 'un', 0);
+c2pm(cellfun('isempty', c2pm))=[]; 
+c2pm1 = cat(1, c2pm{:});
+cp1m = downsample(c2pm1', 10)'; 
+cp1m = cp1m(:,  251:480); 
+d2p1ERP = mean(cp1m); 
+
+c2p2 = allERPs(:, 2);
+c2pm = cellfun(@(x) mean(x, 1), c2p2, 'un', 0);
+c2pm(cellfun('isempty', c2pm))=[]; 
+c2pm2 = cat(1, c2pm{:});
+cp2m = downsample(c2pm2', 10)'; 
+cp2m = cp2m(:,  251:480); 
+d2p2ERP = mean(cp2m); 
+
+
+times = -.5:.01:1.79; 
+%times = -3:.01:3.99
+freqs = 1:size(c1B, 2);
+figure()
+tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 900])
+nexttile
+contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.125 .125]); hold on; 
+yyaxis right
+plot(times, d2p1ERP, 'k', LineWidth=2);
+set(gca, ylim=[-2 2])
+title('CS+')
+xlabel('Time (s)')
+ylabel('Frequency (Hz)')
+
+
+nexttile
+contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.125 .125])
+yyaxis right
+plot(times, d2p2ERP, 'k',LineWidth=2); 
+title('CS-')
+xlabel('Time (s)')
+ylabel('Frequency (Hz)')
+
+
+nexttile
+contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T';
+contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-4 4])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+yyaxis right
+plot(times, d2p1ERP-d2p2ERP,'k', LineWidth=2); 
+title('CS+ vs CS-')
+xlabel('Time (s)')
+ylabel('Frequency (Hz)')
+%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+colormap(brewermap([],'*Spectral'))
+
+set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'}, 'xlim', [-.5 1.75]);
 %set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
 
 
@@ -393,10 +498,10 @@ exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 nPerm = 1000; 
 clear max_clust_sum_perm
 for permi = 1:nPerm
-    c1B = c1(:,1:54,301:480); 
-    c2B = c2(:,1:54,301:480); 
-    %c1B = c1(:,3:8,301:480); 
-    %c2B = c2(:,3:8,301:480); 
+    %c1B = c1(:,1:54,301:480); 
+    %c2B = c2(:,1:54,301:480); 
+    c1B = c1(:,3:8,301:480); 
+    c2B = c2(:,3:8,301:480); 
     c1B(c1B == 0) = nan; 
     c2B(c2B == 0) = nan; 
     for subji = 1:size(c1B, 1)
@@ -508,8 +613,8 @@ exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',150)
 nPerm = 1000; 
 clear max_clust_sum_perm
 for permi = 1:nPerm
-    c1B = squeeze(mc1B); 
-    c2B = squeeze(mc2B);
+    c1B = squeeze(mc1B(:, 51:270)); 
+    c2B = squeeze(mc2B(:, 51:270));
     c1B(c1B == 0) = nan; 
     c2B(c2B == 0) = nan; 
     for subji = 1:size(c1B, 1)
@@ -567,10 +672,10 @@ exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 clearvars -except ALLEEG ALLEEG1 paths clustinfo nL
 close all
-sub2exc = [];
+sub2exc = []; %subj 23-35-38-39-44-45
 
-for subji = 1:size(ALLEEG1, 1)
-    EEG = ALLEEG1{subji}; 
+for subji = 1:size(ALLEEG, 1)
+    EEG = ALLEEG{subji}; 
     if ~isempty(EEG) & isempty(intersect(sub2exc, subji))
         Ev = [{EEG.event.type}]';
         Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
@@ -586,6 +691,8 @@ for subji = 1:size(ALLEEG1, 1)
         %ids = strcmp(Ev2(:, 2), '2'); 
         %ids = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
         %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
+        %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; 
+        %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; 
         
 
         % % % Acquisition AND Extinction
@@ -618,13 +725,13 @@ for subji = 1:size(ALLEEG1, 1)
         allRho(subji, :) = corr(thPow, ratings2u, 'type', 'p');
         
         
-        %figure()
-        %scatter(thPow, ratings2u, 250, 'filled');
-        %h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
-        %C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
-        %allSlopes(subji, :) = C(2);
-        %allIntercepts(subji, :) = C(1);
-        %set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
+% % %         figure()
+% % %         scatter(thPow, ratings2u, 250, 'filled');
+% % %         h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
+% % %         C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
+% % %         allSlopes(subji, :) = C(2);
+% % %         allIntercepts(subji, :) = C(1);
+% % %         set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
         
 
 
@@ -653,13 +760,14 @@ hb = plot ([1], data.data); hold on;
 set(hb, 'lineWidth', 3, 'Marker', '.', 'MarkerSize',35);hold on;
 h = bar (mean_S);hold on;
 set(h,'FaceColor', 'none', 'lineWidth', 3);
-set(gca,'XTick',[1],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 2], 'ylim', [-.85 .85] );
+set(gca,'XTick',[1],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 2], 'ylim', [-1 1] );
 plot(get(gca,'xlim'), [0 0],'k','lineWidth', 3);
 
 [h p ci t] = ttest (data.data(:,1));
 disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
-
 set(gca, 'LineWidth', 3);
+
+exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 
 
 %% Extract data 4 LME

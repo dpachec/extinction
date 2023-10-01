@@ -429,7 +429,7 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
 
 
-for subji = 26 %1:length(allsubs)
+for subji = 1:length(allsubs)
 
     clearvars -except allsubs subji paths
     sub = allsubs{subji}; 
@@ -496,13 +496,13 @@ for subji = 26 %1:length(allsubs)
     
     % % %  Filter
     EEG = add_EEGLAB_fields(EEG);
-    EEG = pop_eegfiltnew (EEG, .1, 400);
+    EEG = pop_eegfiltnew (EEG, .1, 300);
     EEG = pop_eegfiltnew (EEG, 49, 50, [],  1); %notch filter
     EEG = pop_eegfiltnew (EEG, 99, 101, [],  1); %notch filter
     EEG = pop_eegfiltnew (EEG, 149, 150, [],  1); %notch filter
 
     % % % % remove artifacts
-    EEG = artifact_detection_EXT(EEG, 5, 3, 1000, 500);
+    EEG = artifact_detection_EXT(EEG, 6, 4, 1000, 500);
 
    
     EEG = rem_EEGLAB_fields(EEG);

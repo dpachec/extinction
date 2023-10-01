@@ -3,9 +3,10 @@
 
 clear 
 paths = load_paths_EXT; 
-%file2load = ['allS_' 'Amygdala' '_C'];
+file2load = ['allS_' 'Amygdala' '_C'];
 %file2load = ['allS_' 'inferiortemporal_middletemporal_superiortemporal_bankssts_fusiform_temporalpole_lateraloccipital_lingual_parahippocampal_cuneus_pericalcarine' '_C'];
-file2load = ['allS_' 'Hippocampus' '_C'];
+%file2load = ['allS_' 'Hippocampus' '_C'];
+%file2load = ['allS_' 'orbitofrontal' '_C'];
 load ([paths.results.power file2load]); 
 
 
@@ -15,13 +16,12 @@ load ([paths.results.power file2load]);
 clc
 clearvars -except ALLEEG paths file2load
 
-%f2sav = '39-54_1_0_0_50-1_1_SICSPA-SICSMA'; 
-%f2sav = '1-38_1_0_0_50-1_1_SICSPE-SICSME'; 
+%f2sav = '39-54_1_0_0_50-5_1_SICSPE-SICSME'; 
 %f2sav = '3-8_1_0_0_50-1_1_SICSPE-DISVE'; 
-f2sav = '3-8_1_0_0_50-5_1_DISVA-DIDVA'; 
+%f2sav = '39-54_1_0_0_50-5_1_DISCA-DIDCA'; 
 %f2sav = '39-54_1_0_0_50-1_1_DISCE-DIDCE'; 
 %f2sav = '3-8_1_0_0_50-1_1_SCCSPA-DCCSPA-SCCSMA-DCCSMA-SCCSPE-DCCSPE-SCCSME-DCCSME'; 
-%f2sav = '39-54_1_0_0_50-1_1_SCA-DCA'; 
+f2sav = 'POW_1-30_1_0_0_50-10_1_SCA-DCA'; 
 %f2sav = '3-54_1_0_0_50-1_1_DISCA-DIDCA-SICSPE-SICSME-DISVA-DIDVA_TG'; 
 
 cfg = getParams_EXT(f2sav);
@@ -39,11 +39,13 @@ for subji = 1:length(ALLEEG)
         
         cfg.oneListIds = Ev2; 
         cfg.oneListPow = EEG.power(:, :, : ,251:470); 
-        
+        cfg.tyRSA = 'pRSA'; 
+
         out_contrasts = create_contrasts_EXT(cfg);
         
+        tic
         out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
-        
+        toc
         
         
     end
@@ -66,15 +68,16 @@ file2load = ['allS_' 'Amygdala' '_C'];
 %file2load = ['allS_' 'inferiortemporal_middletemporal_superiortemporal_bankssts_fusiform_temporalpole_lateraloccipital_lingual_parahippocampal_cuneus_pericalcarine' '_C'];
 
 clearvars -except ALLEEG f2sav paths file2load
-%f2sav = [ '39-54_1_0_0_50-1_1_SICSPA-DISVA_' file2load ]; 
-f2sav = [ '3-8_1_0_0_50-1_1_DISVA-DIDVA_' file2load ]; 
+f2sav = [ '3-8_1_0_0_50-5_1_DISCA-DIDCA_' file2load ]; 
+
+%f2sav = [ '39-54_1_0_0_50-5_1_DISCA-DIDCA_' file2load ]; 
 load([paths.results.rsa f2sav '.mat']);
 
 
 
 %% remove hack 
 ids = []; 
-for subji = 1:length(ALLEEG)
+for subji = 1:size(out_rsa, 1)
 
     cond1 = squeeze(out_rsa(subji, 1, :, :)); 
     cond2 = squeeze(out_rsa(subji, 2, :, :)); 
@@ -120,9 +123,10 @@ end
 tObs = allSTs(id); 
 
 
-h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
-h(clustinfo.PixelIdxList{id}) = 1;
-h(clustinfo.PixelIdxList{4}) = 1;
+%h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
+
+
 
 
 
@@ -131,18 +135,24 @@ tiledlayout(1,3);
 nexttile
 %imagesc(m1);  axis square
 contourf( m1, 50, 'linecolor', 'none'); axis square; hold on; %colorbar
-plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
 nexttile
 contourf( m2, 50, 'linecolor', 'none'); axis square;hold on;  
-plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
 nexttile
 contourf( t, 50, 'linecolor', 'none'); axis square; hold on; %colorbar
 contour( h, 1, 'Color', [0, 0, 0], 'LineWidth', 2);
 plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+set(gca, 'clim', [-4 4])
 
 
 axesHandles = findall(0, 'type', 'axes');
+%set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 150], 'ylim', [1 150]); 
 set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', []); 
+%colorbar
 exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 
 
@@ -190,8 +200,6 @@ end
 disp('done')
 
 %% 
-%tObs = 102
-
 %allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
@@ -294,7 +302,7 @@ end
 clc
 clearvars -except ALLEEG ALLEEG1 paths file2load
 
-f2sav = '3-8_1_0_0_50-1_DISVA-DIDVA_TG'; 
+f2sav = '39-54_1_0_0_50-1_0_DISVA-DIDVA'; 
 cfg = getParams_EXT(f2sav);
 
 
@@ -307,11 +315,10 @@ for subji = 1:length(ALLEEG)
         Ev = [{EEG.event.type}]';
         Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
         Ev2 = cat(1, Ev1{:});
-        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
-
-        ids1 =  strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '1');
-        ids2 =  strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '2');
-        ids3 =  strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+        
+        ids1 =  strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1');
+        ids2 =  strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '2');
+        ids3 =  strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '3');
 
         
         all1 = EEG.power(ids1, :, : ,201:550); 
@@ -510,7 +517,7 @@ exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 
 %% plot 2 conditions EXTINCTION
 
-sub2exc = [4 13];
+sub2exc = [];
 
 avSI1 = avCorrSI1; 
 avSICP = avCorrSI1; 
