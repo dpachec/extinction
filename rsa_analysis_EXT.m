@@ -21,7 +21,7 @@ clearvars -except ALLEEG paths file2load
 %f2sav = '39-54_1_0_0_50-5_1_DISCA-DIDCA'; 
 %f2sav = '39-54_1_0_0_50-1_1_DISCE-DIDCE'; 
 %f2sav = '3-8_1_0_0_50-1_1_SCCSPA-DCCSPA-SCCSMA-DCCSMA-SCCSPE-DCCSPE-SCCSME-DCCSME'; 
-f2sav = 'POW_1-30_1_0_0_50-10_1_SCA-DCA'; 
+f2sav = 'POW_3-54_0_1_0_50-10_1_SCA-DCA'; 
 %f2sav = '3-54_1_0_0_50-1_1_DISCA-DIDCA-SICSPE-SICSME-DISVA-DIDVA_TG'; 
 
 cfg = getParams_EXT(f2sav);
@@ -44,7 +44,8 @@ for subji = 1:length(ALLEEG)
         out_contrasts = create_contrasts_EXT(cfg);
         
         tic
-        out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
+        %out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
+        out_rsa(subji, :, :, :) = rsa_EXT4(out_contrasts, cfg);
         toc
         
         
@@ -135,12 +136,12 @@ tiledlayout(1,3);
 nexttile
 %imagesc(m1);  axis square
 contourf( m1, 50, 'linecolor', 'none'); axis square; hold on; %colorbar
-%plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
-plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
 nexttile
 contourf( m2, 50, 'linecolor', 'none'); axis square;hold on;  
-%plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
-plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
 nexttile
 contourf( t, 50, 'linecolor', 'none'); axis square; hold on; %colorbar
 contour( h, 1, 'Color', [0, 0, 0], 'LineWidth', 2);

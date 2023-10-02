@@ -107,7 +107,7 @@ for coni = 1:length(currentContrast)
                 
                 rsaZ(triali, :, :) = atanh(r);
             else
-                rsaZ(triali, :, :) = nan(18);
+                rsaZ(triali, :, :) = nan(size(bins));
             end
         end
         

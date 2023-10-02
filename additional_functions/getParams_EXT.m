@@ -2,7 +2,7 @@
 function [cfg] = getParams_EXT(f2sav)
     f2t = strsplit(f2sav, '_'); 
     freqs = strsplit(f2t{2}, '-');
-    if ~strcmp(freqs, 't') & ~strcmp(freqs, 'phRSA') 
+    if ~strcmp(f2t{1}, 'T') 
         cfg.freqs       = [double(string((freqs{1}))) : double(string((freqs{2})))];
     else
         cfg.freqs       = [];
