@@ -19,6 +19,7 @@ function [EEG] = extract_power_NAV (EEG, timeRes)
     cfg.keeptrials   = 'yes'; % keep individual trials or average
     cfg.showcallinfo = 'no';% no log console
     cfg.feedback     = 'no'; 
+    ft_warning('off')
     tf_data_L          = ft_freqanalysis(cfg, data_ft);
     dataL = tf_data_L.powspctrm;
 
@@ -44,7 +45,9 @@ function [EEG] = extract_power_NAV (EEG, timeRes)
     dataLH = cat (3, dataL, dataH);
 
 
-    EEG.power = squeeze(dataLH);
+
+    EEG.power = dataLH;
+
 
 
 

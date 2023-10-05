@@ -1,28 +1,19 @@
 %%
-%% Temporal RSA
+%% Temporal RSA  
+%rsaTYPE_freqs_avTimeFeatVect_freqResolv(0-1)_win-width_mf_TG_contrast
+clc
 clear
 
-paths = load_paths_EXT; 
-file2load = ['TR_' 'Amygdala' '_V']; 
-%file2load = ['allS_' 'Hippocampus' '_C']; 
-%file2load = ['allS_' 'orbitofrontal' '_C']; 
-%file2load = ['allS_' 'superiorfrontal' '_C']; 
-
-load ([paths.results.traces file2load]); 
-
-
-%% 
-
-%rsaTYPE_freqs_avTimeFeatVect_freqResolv(0-1)_trials/noTrials_win-width_mf
-clc
-clearvars -except ALLEEG paths file2load
-
-f2sav =  'T_nan_1_0_0_50-10_1_SCA-DCA';
-%f2sav = 'T_nan_0_0_0_50-10_1_DISVE-DIDVE';
+f2sav =  'TR_AMY_V_nan_0_0_50-10_1_SCA-DCA';
 
 cfg = getParams_EXT(f2sav);
 
 t1 = datetime; 
+paths = load_paths_EXT; 
+
+ALLEEG = loadTracesEXT(cfg.roi, paths);
+
+
 for subji = 1:length(ALLEEG)
     
     EEG = ALLEEG{subji};
@@ -42,25 +33,99 @@ for subji = 1:length(ALLEEG)
 %         plot(d2p)
 
         EEG = normalize_baseline_EXT(EEG, [2501:3000]); 
+        %EEG = normalize_EXT(EEG);  %across trials
         EEG = downsample_EEG_EXT(EEG); 
         cfg.oneListTraces = permute(EEG.data(:, 251:500,:), [3 1 2]); 
         %cfg.oneListTraces = permute(EEG.data(:, 2501:5000,:), [3 1 2]); 
         cfg.tyRSA = 'tRSA'; 
         out_contrasts = create_contrasts_EXT(cfg);
-        
+        ids_prev = out_contrasts.allIDs; 
+        ids = cellfun(@(x) double(string(x)),ids_prev, 'un', 0)
         out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
         
+
     end
 
 end
 
 
 mkdir ([paths.results.rsa]);
-ids = out_contrasts.allIDs; 
-save([ paths.results.rsa f2sav '_' file2load '.mat'], 'out_rsa', 'ids');
+save([ paths.results.rsa f2sav '.mat'], 'out_rsa', 'ids');
 
 t2 = datetime; 
 etime(datevec(t2), datevec(t1))
+
+
+%% Temporal RSA IN LOOP 
+%rsaTYPE_freqs_avTimeFeatVect_freqResolv(0-1)_win-width_mf_TG_contrast
+clear , clc
+
+listF2sav = {
+                'TR_OFC_V_nan_0_0_50-10_1_SCA-DCA';
+                'TR_AMY_V_nan_0_0_50-10_1_SCA-DCA';
+                'TR_HPC_V_nan_0_0_50-10_1_SCA-DCA';
+
+                'TR_OFC_C_nan_0_0_50-10_1_SCA-DCA';
+                'TR_AMY_C_nan_0_0_50-10_1_SCA-DCA';
+                'TR_HPC_C_nan_0_0_50-10_1_SCA-DCA';
+                
+        };   
+
+for listi = 1:length(listF2sav)
+    disp(['File > ' num2str(listi) '      ' listF2sav{listi}]);
+    clearvars -except listF2sav listi 
+        
+    f2sav       = listF2sav{listi}; 
+    cfg = getParams_EXT(f2sav);
+
+    t1 = datetime; 
+    paths = load_paths_EXT; 
+    
+    ALLEEG = loadTracesEXT(cfg.roi, cfg.LT, paths); %LT = locked to
+    
+    
+    for subji = 1:length(ALLEEG)
+        
+        EEG = ALLEEG{subji};
+        
+        
+        if ~isempty(EEG)
+            Ev = [{EEG.event.type}]';
+            Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+            Ev2 = cat(1, Ev1{:});
+            
+            cfg.oneListIds = Ev2; 
+            
+            EEG = add_EEGLAB_fields(EEG); 
+            %EEG = pop_eegfiltnew (EEG, .1,30); %low pass filter up to 30Hz (kunz 2019)
+    %         d2p = squeeze(EEG.data(1, 1:1000, 1))
+    %         figure()
+    %         plot(d2p)
+    
+            EEG = normalize_baseline_EXT(EEG, [2501:3000]); 
+            %EEG = normalize_EXT(EEG);  %across trials
+            EEG = downsample_EEG_EXT(EEG); 
+            cfg.oneListTraces = permute(EEG.data(:, 251:500,:), [3 1 2]); 
+            %cfg.oneListTraces = permute(EEG.data(:, 2501:5000,:), [3 1 2]); 
+            cfg.tyRSA = 'tRSA'; 
+            out_contrasts = create_contrasts_EXT(cfg);
+            ids_prev = out_contrasts.allIDs; 
+            ids = cellfun(@(x) double(string(x)),ids_prev, 'un', 0)
+
+            allIDS{subji,:} 
+            out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
+            
+        end
+    
+    end
+
+    mkdir ([paths.results.rsa]);
+    save([ paths.results.rsa f2sav '.mat'], 'out_rsa', 'ids');
+    
+    t2 = datetime; 
+    etime(datevec(t2), datevec(t1))
+
+end
 
 
 %%
@@ -207,6 +272,239 @@ figure
 histogram(max_clust_sum_perm, 20); hold on; 
 scatter(tObs,0, 100, 'filled','r');
 set(gca, 'FontSize', 16)
+
+
+%% RSA BASED ON POWER
+%rsaTYPE_freqs_avTimeFeatVect_freqResolv(0-1)_win-width_mf_TG_contrasts
+clc
+clearvars -except ALLEEG paths file2load
+
+f2sav =  'POW_3-8_0_0_50-10_0_SCA-DCA';
+
+
+cfg = getParams_EXT(f2sav);
+
+t1 = datetime; 
+for subji = 1:length(ALLEEG)
+    
+    EEG = ALLEEG{subji};
+    
+    
+    if ~isempty(EEG)
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        
+        cfg.oneListIds = Ev2; 
+        
+        EEG = add_EEGLAB_fields(EEG); 
+        
+        EEG = extract_power_EXT(EEG, 0.01); 
+        EEG = normalize_baseline_EXT(EEG, [251:300]); 
+        cfg.oneListPow = EEG.power(:, :, : ,251:470); 
+        cfg.tyRSA = 'pRSA'; 
+        out_contrasts = create_contrasts_EXT(cfg);
+        
+        tic
+        out_rsa(subji, :, :, :) = rsa_EXT4(out_contrasts, cfg);
+        toc
+        
+        
+    end
+
+end
+
+
+mkdir ([paths.results.rsa]);
+ids = out_contrasts.allIDs; 
+save([ paths.results.rsa f2sav '_' file2load '.mat'], 'out_rsa', 'ids');
+
+t2 = datetime; 
+etime(datevec(t2), datevec(t1))
+
+
+
+%%
+clear
+paths = load_paths_EXT; 
+file2load = ['TR_' 'Amygdala' '_V']; 
+f2sav =  'POW_3-54_0_1_50-10_0_SCA-DCA';
+load ([ paths.results.rsa f2sav '_' file2load '.mat']);
+
+
+
+%% remove hack 
+ids = []; 
+for subji = 1:size(out_rsa, 1)
+
+    cond1 = squeeze(out_rsa(subji, 1, :)); 
+    cond2 = squeeze(out_rsa(subji, 2, :)); 
+    if cond1(1) == 0
+        ids = [ids subji];
+    end
+
+end
+
+%% plot two lines power
+cond1 = squeeze(out_rsa(:, 1, :)); 
+cond2 = squeeze(out_rsa(:, 2, :)); 
+
+cond1(ids, :, :) = []; 
+cond2(ids, :, :) = []; 
+
+m1 = squeeze(mean(cond1, 'omitnan')); 
+m2 = squeeze(mean(cond2, 'omitnan')); 
+
+[h p ci ts] = ttest(cond1, cond2); 
+h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+
+%[max2u id] = max(abs(allSTs));
+%tObs = allSTs(id); 
+
+
+%h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
+
+plot(m1); hold on; 
+plot(m2)
+
+%% Plot FREQUENCY BY TIME
+
+
+cond1 = squeeze(out_rsa(:, 1, :, :)); 
+cond2 = squeeze(out_rsa(:, 2, :, :)); 
+
+cond1(ids, :, :) = []; 
+cond2(ids, :, :) = []; 
+
+m1 = squeeze(mean(cond1, 'omitnan')); 
+m2 = squeeze(mean(cond2, 'omitnan')); 
+
+[h p ci ts] = ttest(cond1, cond2); 
+h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+
+[max2u id] = max(abs(allSTs));
+tObs = allSTs(id); 
+
+
+%h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
+
+
+figure(); tiledlayout(1,3);
+nexttile
+%imagesc(m1);  axis square
+contourf( m1, 50, 'linecolor', 'none'); axis square; hold on; colorbar
+plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+%set(gca, 'clim', [-.03 .03])
+
+nexttile
+contourf( m2, 50, 'linecolor', 'none'); axis square;hold on; colorbar 
+plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+%set(gca, 'clim', [-.03 .03])
+
+nexttile
+contourf( t, 50, 'linecolor', 'none'); axis square; hold on; colorbar
+contour( h, 1, 'Color', [0, 0, 0], 'LineWidth', 2);
+plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+set(gca, 'clim', [-4 4])
+
+
+axesHandles = findall(0, 'type', 'axes');
+%set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 150], 'ylim', [1 150]); 
+set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', []); 
+%colorbar
+exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
+
+
+
+
+
+
+
+
+
+
+
+%% PLOT TIME BY TIME
+cond1 = squeeze(out_rsa(:, 1, :, :)); 
+cond2 = squeeze(out_rsa(:, 2, :, :)); 
+
+cond1(ids, :, :) = []; 
+cond2(ids, :, :) = []; 
+
+
+% % % remove half of the matrix
+for subji = 1:size(cond1, 1)
+    rdm2Tril = squeeze(cond1(subji, :, :)); 
+    rdm2Tril = tril(rdm2Tril);
+    rdm2Tril(rdm2Tril==0) = nan; 
+    cond1TR(subji, :, :) = rdm2Tril;
+
+    rdm2Tril = squeeze(cond2(subji, :, :)); 
+    rdm2Tril = tril(rdm2Tril);
+    rdm2Tril(rdm2Tril==0) = nan; 
+    cond2TR(subji, :, :) = rdm2Tril;
+end
+
+
+m1 = squeeze(mean(cond1TR, 'omitnan')); 
+m2 = squeeze(mean(cond2TR, 'omitnan')); 
+
+[h p ci ts] = ttest(cond1TR, cond2TR); 
+h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+
+[max2u id] = max(abs(allSTs));
+tObs = allSTs(id); 
+
+
+%h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
+
+
+figure(); tiledlayout(1,3);
+nexttile
+%imagesc(m1);  axis square
+contourf( m1, 50, 'linecolor', 'none'); axis square; hold on; colorbar
+plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+%set(gca, 'clim', [-.04 .04])
+
+nexttile
+contourf( m2, 50, 'linecolor', 'none'); axis square;hold on; colorbar 
+plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+%set(gca, 'clim', [-.04 .04])
+
+nexttile
+contourf( t, 50, 'linecolor', 'none'); axis square; hold on; colorbar
+contour( h, 1, 'Color', [0, 0, 0], 'LineWidth', 2);
+plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+%set(gca, 'clim', [-3 3])
+
+
+axesHandles = findall(0, 'type', 'axes');
+%set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 150], 'ylim', [1 150]); 
+set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', []); 
+%colorbar
+exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
+
 
 %%
 clear, close all

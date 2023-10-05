@@ -4,9 +4,9 @@
 clear, close all
 paths = load_paths_EXT; 
 
-c2u = 'V';
+c2u = 'C';
 
-sROI = {'Amygdala'}; 
+sROI = {'Hippocampus'}; 
 
 %sROI = {'anteriorcingulate' 'posteriorcingulate' };
 
