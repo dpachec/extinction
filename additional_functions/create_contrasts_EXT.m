@@ -144,20 +144,34 @@ for i = 1:length(oneListIdsB)
                         countDIDVE = countDIDVE+1;
                      end
                end
-               if (evei(5)== evej(5)) & evei(8)== 1  & evej(8)== 1% SICSPA
+               if (evei(5)== evej(5)) & evei(8)== 1  & evej(8)== 1% SICSPE
                     %disp(join(['SICSP > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
                      if exist('countSICSPE')
                         new_sicspe(countSICSPE,:)  = [i, j];
                         countSICSPE = countSICSPE+1;
                      end
                end
-              if (evei(5)== evej(5)) & evei(8)== 0 & evej(8)== 0 % SICSMA
+              if (evei(5)== evej(5)) & evei(8)== 0 & evej(8)== 0 % SICSME
                      %disp(join(['SICSM > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
                      if exist('countSICSME')
                         new_sicsme(countSICSME,:)  = [i, j];
                         countSICSME = countSICSME+1;
                      end
-               end
+              end
+              if (evei(5)== evej(5)) & evei(6)== 2
+                     %disp(join(['SICSMPPE > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                     if exist('countSICSMPPE')
+                        new_sicsmppe(countSICSMPPE,:)  = [i, j];
+                        countSICSMPPE = countSICSMPPE+1;
+                     end
+              end
+              if (evei(5)== evej(5)) & evei(6)== 3
+                     %disp(join(['SICSMPME > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                     if exist('countSICSMPME')
+                        new_sicsmpme(countSICSMPME,:)  = [i, j];
+                        countSICSMPME = countSICSMPME+1;
+                     end
+              end
               if ~(evei(5)== evej(5)) & (evei(3)== evej(3))  % DISC
                      %disp(join(['DISCE > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
                      if exist('countDISCE')
@@ -215,10 +229,92 @@ for i = 1:length(oneListIdsB)
                      end
                 end
            end
-        end
-    end
-    
+       
+       
 
+
+
+   % % % % % % RENEWAL
+    elseif evei(2) == 3 & evej(2) == 3
+
+                if ~(evei(5)== evej(5)) & ( (evei(6)== 1 & evej(6)== 1) | (evei(6)== 3 & evej(6)== 3) ) % DISVR
+                    %disp(join(['DISVR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                     if exist('countDISVR')
+                        new_disvr(countDISVR,:)  = [i, j];
+                        countDISVR = countDISVR+1;
+                     end
+               end
+               if ~(evei(5)== evej(5)) & ( (evei(6)== 1 & evej(6)== 3) | (evei(6)== 3 & evej(6)== 1) ) % DIDVR
+                    %disp(['DISVR> ' oneListIds{i} '//' oneListIds{j}]);   
+                     if exist('countDIDVR')
+                        new_didvr(countDIDVR,:)  = [i, j];
+                        countDIDVR = countDIDVR+1;
+                     end
+               end
+               if (evei(5)== evej(5)) & evei(6)== 1  & evej(6)== 1 %SICSPR
+                    %disp(join(['SICSPR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                     if exist('countSICSPR')
+                        new_sicspr(countSICSPR,:)  = [i, j];
+                        countSICSPR = countSICSPR+1;
+                     end
+               end
+              if (evei(5)== evej(5)) & (evei(6)~=1 & evej(6)~= 1) 
+                     %disp(join(['SICSMR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                     if exist('countSICSMR')
+                        new_sicsmr(countSICSMR,:)  = [i, j];
+                        countSICSMR = countSICSMR+1;
+                     end
+              end
+              if (evei(5)== evej(5)) & evei(6)== 2  & evej(6)== 2
+                     %disp(join(['SICSMPPR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                     if exist('countSICSMPPR')
+                        new_sicsmppr(countSICSMPPR,:)  = [i, j];
+                        countSICSMPPR = countSICSMPPR+1;
+                     end
+              end
+              if (evei(5)== evej(5)) & evei(6)== 3  & evej(6)== 3
+                     %disp(join(['SICSMPMR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                     if exist('countSICSMPMR')
+                        new_sicsmpmr(countSICSMPMR,:)  = [i, j];
+                        countSICSMPMR = countSICSMPMR+1;
+                     end
+              end
+              if ~(evei(5)== evej(5)) & (evei(3)== evej(3))  % DISCR
+                     %disp(join(['DISCR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                     if exist('countDISCR')
+                        new_discr(countDISCR,:)  = [i, j];
+                        countDISCR = countDISCR+1;
+                     end
+              end
+              if ~(evei(5)== evej(5)) & ~(evei(3)== evej(3))  % DIDCR
+                     %disp(join(['DIDCR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                     if exist('countDIDCR')
+                        new_didcr(countDIDCR,:)  = [i, j];
+                        countDIDCR = countDIDCR+1;
+                     end
+              end
+                if (evei(3)== evej(3)) % SCR
+                     %disp(join(['SCR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                     if exist('countSCR')
+                        new_scr(countSCR,:)  = [i, j];
+                        countSCR = countSCR+1;
+                     end
+                end
+                if ~(evei(3)== evej(3)) % DCR
+                     %disp(join(['DCR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
+                     if exist('countDCR')
+                        new_dcr(countDCR,:)  = [i, j];
+                        countDCR = countDCR+1;
+                     end
+                end
+       end
+
+
+
+       
+       
+       end
+   end
 end
 
 

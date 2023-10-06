@@ -4,14 +4,14 @@
 clc
 clear
 
-f2sav =  'TR_AMY_V_nan_0_0_50-10_1_SCA-DCA';
+f2sav =  'TR_VVS_C_nan_0_0_50-10_1_SICSPE-SICSMPPE';
 
 cfg = getParams_EXT(f2sav);
 
 t1 = datetime; 
 paths = load_paths_EXT; 
 
-ALLEEG = loadTracesEXT(cfg.roi, paths);
+ALLEEG = loadTracesEXT(cfg.roi, cfg.LT, paths);
 
 
 for subji = 1:length(ALLEEG)
@@ -40,7 +40,7 @@ for subji = 1:length(ALLEEG)
         cfg.tyRSA = 'tRSA'; 
         out_contrasts = create_contrasts_EXT(cfg);
         ids_prev = out_contrasts.allIDs; 
-        ids = cellfun(@(x) double(string(x)),ids_prev, 'un', 0)
+        ids{subji,:} = cellfun(@(x) double(string(x)),ids_prev, 'un', 0);
         out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
         
 
@@ -61,13 +61,88 @@ etime(datevec(t2), datevec(t1))
 clear , clc
 
 listF2sav = {
+                %contex video acquisition
                 'TR_OFC_V_nan_0_0_50-10_1_SCA-DCA';
                 'TR_AMY_V_nan_0_0_50-10_1_SCA-DCA';
                 'TR_HPC_V_nan_0_0_50-10_1_SCA-DCA';
-
+                'TR_VVS_V_nan_0_0_50-10_1_SCA-DCA';
+                'TR_OCC_V_nan_0_0_50-10_1_SCA-DCA';
+                %contex video extinction
+                'TR_OFC_V_nan_0_0_50-10_1_SCE-DCE';
+                'TR_AMY_V_nan_0_0_50-10_1_SCE-DCE';
+                'TR_HPC_V_nan_0_0_50-10_1_SCE-DCE';
+                'TR_VVS_V_nan_0_0_50-10_1_SCE-DCE';
+                'TR_OCC_V_nan_0_0_50-10_1_SCE-DCE';
+                %contex video renewal
+                'TR_OFC_V_nan_0_0_50-10_1_SCR-DCR';
+                'TR_AMY_V_nan_0_0_50-10_1_SCR-DCR';
+                'TR_HPC_V_nan_0_0_50-10_1_SCR-DCR';
+                'TR_VVS_V_nan_0_0_50-10_1_SCR-DCR';
+                'TR_OCC_V_nan_0_0_50-10_1_SCR-DCR';
+                %contex cue acquisition
                 'TR_OFC_C_nan_0_0_50-10_1_SCA-DCA';
                 'TR_AMY_C_nan_0_0_50-10_1_SCA-DCA';
                 'TR_HPC_C_nan_0_0_50-10_1_SCA-DCA';
+                'TR_VVS_C_nan_0_0_50-10_1_SCA-DCA';
+                'TR_OCC_C_nan_0_0_50-10_1_SCA-DCA';
+                %contex cue extinction
+                'TR_OFC_C_nan_0_0_50-10_1_SCE-DCE';
+                'TR_AMY_C_nan_0_0_50-10_1_SCE-DCE';
+                'TR_HPC_C_nan_0_0_50-10_1_SCE-DCE';
+                'TR_VVS_C_nan_0_0_50-10_1_SCE-DCE';
+                'TR_OCC_C_nan_0_0_50-10_1_SCE-DCE';
+                %contex cue renewal
+                'TR_OFC_C_nan_0_0_50-10_1_SCR-DCR';
+                'TR_AMY_C_nan_0_0_50-10_1_SCR-DCR';
+                'TR_HPC_C_nan_0_0_50-10_1_SCR-DCR';
+                'TR_VVS_C_nan_0_0_50-10_1_SCR-DCR';
+                'TR_OCC_C_nan_0_0_50-10_1_SCR-DCR';
+                %Within item - acquisition
+                'TR_OFC_C_nan_0_0_50-10_1_SICSPA-SICSMA';
+                'TR_AMY_C_nan_0_0_50-10_1_SICSPA-SICSMA';
+                'TR_HPC_C_nan_0_0_50-10_1_SICSPA-SICSMA';
+                'TR_VVS_C_nan_0_0_50-10_1_SICSPA-SICSMA';
+                'TR_OCC_C_nan_0_0_50-10_1_SICSPA-SICSMA';
+                %Within item - extinction
+                'TR_OFC_C_nan_0_0_50-10_1_SICSPE-SICSME';
+                'TR_AMY_C_nan_0_0_50-10_1_SICSPE-SICSME';
+                'TR_HPC_C_nan_0_0_50-10_1_SICSPE-SICSME';
+                'TR_VVS_C_nan_0_0_50-10_1_SICSPE-SICSME';
+                'TR_OCC_C_nan_0_0_50-10_1_SICSPE-SICSME';
+                %Within item - extinction CS++
+                'TR_OFC_C_nan_0_0_50-10_1_SICSPE-SICSMPPE';
+                'TR_AMY_C_nan_0_0_50-10_1_SICSPE-SICSMPPE';
+                'TR_HPC_C_nan_0_0_50-10_1_SICSPE-SICSMPPE';
+                'TR_VVS_C_nan_0_0_50-10_1_SICSPE-SICSMPPE';
+                'TR_OCC_C_nan_0_0_50-10_1_SICSPE-SICSMPPE';
+                %Within item - extinction CS+-
+                'TR_OFC_C_nan_0_0_50-10_1_SICSPE-SICSMPME';
+                'TR_AMY_C_nan_0_0_50-10_1_SICSPE-SICSMPME';
+                'TR_HPC_C_nan_0_0_50-10_1_SICSPE-SICSMPME';
+                'TR_VVS_C_nan_0_0_50-10_1_SICSPE-SICSMPME';
+                'TR_OCC_C_nan_0_0_50-10_1_SICSPE-SICSMPME';
+                %Within item - renewal
+                'TR_OFC_C_nan_0_0_50-10_1_SICSPR-SICSMR';
+                'TR_AMY_C_nan_0_0_50-10_1_SICSPR-SICSMR';
+                'TR_HPC_C_nan_0_0_50-10_1_SICSPR-SICSMR';
+                'TR_VVS_C_nan_0_0_50-10_1_SICSPR-SICSMR';
+                'TR_OCC_C_nan_0_0_50-10_1_SICSPR-SICSMR';
+                %Within item - renewal CS++
+                'TR_OFC_C_nan_0_0_50-10_1_SICSPR-SICSMPPR';
+                'TR_AMY_C_nan_0_0_50-10_1_SICSPR-SICSMPPR';
+                'TR_HPC_C_nan_0_0_50-10_1_SICSPR-SICSMPPR';
+                'TR_VVS_C_nan_0_0_50-10_1_SICSPR-SICSMPPR';
+                'TR_OCC_C_nan_0_0_50-10_1_SICSPR-SICSMPPR';
+                %Within item - renewal CS+-
+                'TR_OFC_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
+                'TR_AMY_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
+                'TR_HPC_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
+                'TR_VVS_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
+                'TR_OCC_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
+
+
+
+                
                 
         };   
 
@@ -110,9 +185,8 @@ for listi = 1:length(listF2sav)
             cfg.tyRSA = 'tRSA'; 
             out_contrasts = create_contrasts_EXT(cfg);
             ids_prev = out_contrasts.allIDs; 
-            ids = cellfun(@(x) double(string(x)),ids_prev, 'un', 0)
+            ids{subji,:} = cellfun(@(x) double(string(x)),ids_prev, 'un', 0);
 
-            allIDS{subji,:} 
             out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
             
         end

@@ -14,13 +14,19 @@ function [ALLEEG] = loadTracesEXT(roi, LT, paths)
             file2load = ['TR_' 'Hippocampus' '_C']; 
         end
         
-    elseif strcmp(roi, 'ORB')
+    elseif strcmp(roi, 'OFC')
         if strcmp(LT, 'V')
-            file2load = ['allS_' 'orbitofrontal' '_V']; 
+            file2load = ['TR_' 'orbitofrontal' '_V']; 
         elseif strcmp(LT, 'C')
-            file2load = ['allS_' 'orbitofrontal' '_C']; 
+            file2load = ['TR_' 'orbitofrontal' '_C']; 
         end
-        
+    
+    elseif strcmp(roi, 'VVS')
+        if strcmp(LT, 'V')
+            file2load = ['TR_' 'VVS' '_V']; 
+        elseif strcmp(LT, 'C')
+            file2load = ['TR_' 'VVS' '_C']; 
+        end
     end
         %file2load = ['allS_' 'superiorfrontal' '_C']; 
         
