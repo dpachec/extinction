@@ -228,9 +228,7 @@ for i = 1:length(oneListIdsB)
                         countDCE = countDCE+1;
                      end
                 end
-           end
-       
-       
+           
 
 
 

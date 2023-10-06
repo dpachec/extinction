@@ -4,7 +4,7 @@
 clc
 clear
 
-f2sav =  'TR_VVS_C_nan_0_0_50-10_1_SICSPE-SICSMPPE';
+f2sav =  'TR_OCC_C_nan_0_0_50-10_1_SCR-DCR';
 
 cfg = getParams_EXT(f2sav);
 

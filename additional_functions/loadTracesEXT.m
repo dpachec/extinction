@@ -27,9 +27,14 @@ function [ALLEEG] = loadTracesEXT(roi, LT, paths)
         elseif strcmp(LT, 'C')
             file2load = ['TR_' 'VVS' '_C']; 
         end
-    end
-        %file2load = ['allS_' 'superiorfrontal' '_C']; 
-        
+    elseif strcmp(roi, 'OCC')
+        if strcmp(LT, 'V')
+            file2load = ['TR_' 'occipital' '_V']; 
+        elseif strcmp(LT, 'C')
+            file2load = ['TR_' 'occipital' '_C']; 
+        end
+    
+    end 
         load ([paths.results.traces file2load]); 
 
 end
