@@ -15,308 +15,96 @@ disp ('>>>>> creating contrasts');
 allContrasts = []; allContrastIds = [];
 
 for ci = 1:length(contr2save)
-    eval(['count' contr2save{ci} '= 1;'])
     eval([contr2save{ci} '= [];'])
 end
 
-cr2c = cellfun(@(x) strsplit(x,'-'), contr2save, 'un', 0);
-c2c = unique(cellfun(@(x) x{1}(end), cr2c, 'un', 0));
+oneListIdsA = double(string(oneListIds));
+idsIt= [1:192]';
+idsIt(:,2:10) = oneListIdsA(:, 1:9); 
+ids = permn(1:192,2); % both directions 
+allComb = [idsIt(ids(:, 1),:) idsIt(ids(:,2),:)];
+
+DT  = (allComb(:,2) ~= allComb(:,12)); 
+ACQ = (allComb(:,3) == 1 & allComb(:,13) == 1); 
+EXT = (allComb(:,3) == 2 & allComb(:,13) == 2); 
+REN = (allComb(:,3) == 3 & allComb(:,13) == 3); 
+DI  = (allComb(:,6) ~= allComb(:,16)); 
+SI  = (allComb(:,6) == allComb(:,16));
+SV  = (allComb(:,9) == allComb(:,19)); 
+DV  = (allComb(:,9) ~= allComb(:,19));
+CSP = (allComb(:,9) == 1 & allComb(:,19) == 1);
+CSM = (allComb(:,9) == 0 & allComb(:,19) == 0);
+CSMPP = (allComb(:,7) == 2 & allComb(:,17) == 2);
+CSMPM = (allComb(:,7) == 3 & allComb(:,17) == 3);
+SC = (allComb(:,4) == allComb(:,14));
+DC = (allComb(:,4) ~= allComb(:,14));
 
 
-oneListIdsB = double(string(oneListIds));
-
-for i = 1:length(oneListIdsB)
-    
-    evei = oneListIdsB(i,:);
-        
-    
-   for j = 1:length(oneListIdsB) % repetitions are needed so should not start at i
-       evej =  oneListIdsB(j,:);
-       if ~(evei(1) == evej(1))
-       
-           % % % % % % ACQUISITION
-            if evei(2) == 1 & evej(2) == 1
-            
-                   if ~(evei(5)== evej(5)) & (evei(8)== evej(8)) % DISV
-                        %disp(join(['DISVA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                         if exist('countDISVA')
-                            new_disva(countDISVA,:) = [i, j];
-                            countDISVA = countDISVA+1;
-                         end
-                   end
-                   if ~(evei(5)== evej(5)) & ~(evei(8)== evej(8)) % DIDV
-                        %disp(['DISVA> ' oneListIds{i} '//' oneListIds{j}]);   
-                         if exist('countDIDVA')
-                            new_didva(countDIDVA,:)  = [i, j];
-                            countDIDVA = countDIDVA+1;
-                         end
-                   end
-                   if (evei(5)== evej(5)) & evei(8)== 1  & evej(8)== 1% SICSPA
-                        %disp(join(['SICSP > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                         if exist('countSICSPA')
-                            new_sicspa(countSICSPA,:)  = [i, j];
-                            countSICSPA = countSICSPA+1;
-                         end
-                   end
-                  if (evei(5)== evej(5)) & evei(8)== 0 & evej(8)== 0 % SICSMA
-                         %disp(join(['SICSM > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                         if exist('countSICSMA')
-                            new_sicsma(countSICSMA,:)  = [i, j];
-                            countSICSMA = countSICSMA+1;
-                         end
-                  end
-                  if ~(evei(5)== evej(5)) & (evei(3)== evej(3))  % DISC
-                         %disp(join(['DISC > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                         if exist('countDISCA')
-                            new_disca(countDISCA,:)  = [i, j];
-                            countDISCA = countDISCA+1;
-                         end
-                  end
-                  if ~(evei(5)== evej(5)) & ~(evei(3)== evej(3))  % DISCA
-                         %disp(join(['DIDCA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                         if exist('countDIDCA')
-                            new_didca(countDIDCA,:)  = [i, j];
-                            countDIDCA = countDIDCA+1;
-                         end
-                  end
-                    if (evei(3)== evej(3)) & evei(8)== 1  & evej(8)== 1 % SCCSPA
-                         %disp(join(['SCCSPA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                         if exist('countSCCSPA')
-                            new_sccspa(countSCCSPA,:)  = [i, j];
-                            countSCCSPA = countSCCSPA+1;
-                         end
-                    end
-                    if ~(evei(3)== evej(3)) & evei(8)== 1  & evej(8)== 1 % DCCSPA
-                         %disp(join(['DCCSPA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                         if exist('countDCCSPA')
-                            new_dccspa(countDCCSPA,:)  = [i, j];
-                            countDCCSPA = countDCCSPA+1;
-                         end
-                    end
-                    if (evei(3)== evej(3)) & evei(8)== 0  & evej(8)== 0 % SCCSMA
-                         %disp(join(['SCCSMA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                         if exist('countSCCSMA')
-                            new_sccsma(countSCCSMA,:)  = [i, j];
-                            countSCCSMA = countSCCSMA+1;
-                         end
-                    end
-                    if ~(evei(3)== evej(3)) & evei(8)== 0  & evej(8)== 0 % DCCSMA
-                         %disp(join(['DCCSMA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                         if exist('countDCCSMA')
-                            new_dccsma(countDCCSMA,:)  = [i, j];
-                            countDCCSMA = countDCCSMA+1;
-                         end
-                    end
-                    if (evei(3)== evej(3)) % SCA
-                         %disp(join(['SCA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                         if exist('countSCA')
-                            new_sca(countSCA,:)  = [i, j];
-                            countSCA = countSCA+1;
-                         end
-                    end
-                    if ~(evei(3)== evej(3)) % DCA
-                         %disp(join(['DCA > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                         if exist('countDCA')
-                            new_dca(countDCA,:)  = [i, j];
-                            countDCA = countDCA+1;
-                         end
-                    end
-
-                
-           
-    
-
-
-    % % % % % % EXTINCTION
-    elseif evei(2) == 2 & evej(2) == 2
-
-                if ~(evei(5)== evej(5)) & (evei(8)== evej(8)) % DISVE
-                    %disp(join(['DISVE > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countDISVE')
-                        new_disve(countDISVE,:)  = [i, j];
-                        countDISVE = countDISVE+1;
-                     end
-               end
-               if ~(evei(5)== evej(5)) & ~(evei(8)== evej(8)) % DIDVE
-                    %disp(['DISVE> ' oneListIds{i} '//' oneListIds{j}]);   
-                     if exist('countDIDVE')
-                        new_didve(countDIDVE,:)  = [i, j];
-                        countDIDVE = countDIDVE+1;
-                     end
-               end
-               if (evei(5)== evej(5)) & evei(8)== 1  & evej(8)== 1% SICSPE
-                    %disp(join(['SICSP > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countSICSPE')
-                        new_sicspe(countSICSPE,:)  = [i, j];
-                        countSICSPE = countSICSPE+1;
-                     end
-               end
-              if (evei(5)== evej(5)) & evei(8)== 0 & evej(8)== 0 % SICSME
-                     %disp(join(['SICSM > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countSICSME')
-                        new_sicsme(countSICSME,:)  = [i, j];
-                        countSICSME = countSICSME+1;
-                     end
-              end
-              if (evei(5)== evej(5)) & evei(6)== 2
-                     %disp(join(['SICSMPPE > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countSICSMPPE')
-                        new_sicsmppe(countSICSMPPE,:)  = [i, j];
-                        countSICSMPPE = countSICSMPPE+1;
-                     end
-              end
-              if (evei(5)== evej(5)) & evei(6)== 3
-                     %disp(join(['SICSMPME > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countSICSMPME')
-                        new_sicsmpme(countSICSMPME,:)  = [i, j];
-                        countSICSMPME = countSICSMPME+1;
-                     end
-              end
-              if ~(evei(5)== evej(5)) & (evei(3)== evej(3))  % DISC
-                     %disp(join(['DISCE > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countDISCE')
-                        new_disce(countDISCE,:)  = [i, j];
-                        countDISCE = countDISCE+1;
-                     end
-              end
-              if ~(evei(5)== evej(5)) & ~(evei(3)== evej(3))  % DISC
-                     %disp(join(['DIDCE > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countDIDCE')
-                        new_didce(countDIDCE,:)  = [i, j];
-                        countDIDCE = countDIDCE+1;
-                     end
-              end
-              if (evei(3)== evej(3)) & evei(8)== 1  & evej(8)== 1 % SCCSPE
-                     %disp(join(['SCCSPE > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countSCCSPE')
-                        new_sccspe(countSCCSPE,:)  = [i, j];
-                        countSCCSPE = countSCCSPE+1;
-                     end
-                end
-                if ~(evei(3)== evej(3)) & evei(8)== 1  & evej(8)== 1 % DCCSPE
-                     %disp(join(['DCCSPE > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countDCCSPE')
-                        new_dccspe(countDCCSPE,:)  = [i, j];
-                        countDCCSPE = countDCCSPE+1;
-                     end
-                end
-                if (evei(3)== evej(3)) & evei(8)== 0  & evej(8)== 0 % SCCSME
-                     %disp(join(['SCCSME > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countSCCSME')
-                        new_sccsme(countSCCSME,:)  = [i, j];
-                        countSCCSME = countSCCSME+1;
-                     end
-                end
-                if ~(evei(3)== evej(3)) & evei(8)== 0  & evej(8)== 0 % DCCSME
-                     %disp(join(['DCCSME > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countDCCSME')
-                        new_dccsme(countDCCSME) = [i, j];
-                        countDCCSME = countDCCSME+1;
-                     end
-                end
-                if (evei(3)== evej(3)) % SCE
-                     %disp(join(['SCE > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countSCE')
-                        new_sce(countSCE,:)  = [i, j];
-                        countSCE = countSCE+1;
-                     end
-                end
-                if ~(evei(3)== evej(3)) % DCE
-                     %disp(join(['DCE > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countDCE')
-                        new_dce(countDCE,:)  = [i, j];
-                        countDCE = countDCE+1;
-                     end
-                end
-           
-
-
-
-   % % % % % % RENEWAL
-    elseif evei(2) == 3 & evej(2) == 3
-
-                if ~(evei(5)== evej(5)) & ( (evei(6)== 1 & evej(6)== 1) | (evei(6)== 3 & evej(6)== 3) ) % DISVR
-                    %disp(join(['DISVR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countDISVR')
-                        new_disvr(countDISVR,:)  = [i, j];
-                        countDISVR = countDISVR+1;
-                     end
-               end
-               if ~(evei(5)== evej(5)) & ( (evei(6)== 1 & evej(6)== 3) | (evei(6)== 3 & evej(6)== 1) ) % DIDVR
-                    %disp(['DISVR> ' oneListIds{i} '//' oneListIds{j}]);   
-                     if exist('countDIDVR')
-                        new_didvr(countDIDVR,:)  = [i, j];
-                        countDIDVR = countDIDVR+1;
-                     end
-               end
-               if (evei(5)== evej(5)) & evei(6)== 1  & evej(6)== 1 %SICSPR
-                    %disp(join(['SICSPR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countSICSPR')
-                        new_sicspr(countSICSPR,:)  = [i, j];
-                        countSICSPR = countSICSPR+1;
-                     end
-               end
-              if (evei(5)== evej(5)) & (evei(6)~=1 & evej(6)~= 1) 
-                     %disp(join(['SICSMR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countSICSMR')
-                        new_sicsmr(countSICSMR,:)  = [i, j];
-                        countSICSMR = countSICSMR+1;
-                     end
-              end
-              if (evei(5)== evej(5)) & evei(6)== 2  & evej(6)== 2
-                     %disp(join(['SICSMPPR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countSICSMPPR')
-                        new_sicsmppr(countSICSMPPR,:)  = [i, j];
-                        countSICSMPPR = countSICSMPPR+1;
-                     end
-              end
-              if (evei(5)== evej(5)) & evei(6)== 3  & evej(6)== 3
-                     %disp(join(['SICSMPMR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countSICSMPMR')
-                        new_sicsmpmr(countSICSMPMR,:)  = [i, j];
-                        countSICSMPMR = countSICSMPMR+1;
-                     end
-              end
-              if ~(evei(5)== evej(5)) & (evei(3)== evej(3))  % DISCR
-                     %disp(join(['DISCR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countDISCR')
-                        new_discr(countDISCR,:)  = [i, j];
-                        countDISCR = countDISCR+1;
-                     end
-              end
-              if ~(evei(5)== evej(5)) & ~(evei(3)== evej(3))  % DIDCR
-                     %disp(join(['DIDCR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countDIDCR')
-                        new_didcr(countDIDCR,:)  = [i, j];
-                        countDIDCR = countDIDCR+1;
-                     end
-              end
-                if (evei(3)== evej(3)) % SCR
-                     %disp(join(['SCR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countSCR')
-                        new_scr(countSCR,:)  = [i, j];
-                        countSCR = countSCR+1;
-                     end
-                end
-                if ~(evei(3)== evej(3)) % DCR
-                     %disp(join(['DCR > ' oneListIds(i,:) '//' oneListIds(j, :)],'_'));   
-                     if exist('countDCR')
-                        new_dcr(countDCR,:)  = [i, j];
-                        countDCR = countDCR+1;
-                     end
-                end
-       end
-
-
-
-       
-       
-       end
-   end
+if exist('DISVA')
+   idF = DT & DI & SV & ACQ; 
+   new_disva = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DIDVA')
+   idF = DT & DI & DV & ACQ; 
+   new_didva = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DISVE')
+  idF = DT & DI & SV & EXT; 
+   new_disve = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DIDVE')
+    idF = DT & DI & DV & EXT; 
+   new_didve = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSPA')
+   idF = DT & SI & CSP & ACQ;
+   new_sicspa = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSMA')
+   idF = DT & SI & CSM & ACQ;
+   new_sicsma = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSPE')
+   idF = DT & SI & CSP & EXT;
+   new_sicspe = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSME')
+   idF = DT & SI & CSM & EXT;
+   new_sicsme = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSMPP')
+   idF = DT & SI & CSMPP & EXT;
+   new_sicsmpp = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSMPM')
+   idF = DT & SI & CSMPM & EXT;
+   new_sicsmpm = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCA')
+   idF = DT & SC & ACQ;
+   new_sca = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCA')
+   idF = DT & DC & ACQ;
+   new_dca = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCE')
+   idF = DT & SC & EXT;
+   new_sce = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCE')
+   idF = DT & DC & EXT;
+   new_dce = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCR')
+   idF = DT & SC & REN;
+   new_sce = [allComb(idF, 1) allComb(idF, 11)];
 end
 
 
-if strcmp(cfg.tyRSA, 'pRSA')
+
+
+if strcmp(cfg.tyRSA, 'POW')
     for ci = 1:length(contr2save)
         eval(  ['if exist(''new_' lower(contr2save{ci}) ''') & any(strcmp(contr2save, ''' contr2save{ci} ''')) ...' newline ...
                'disp ([''new_' lower(contr2save{ci})  ' ' ' '' num2str(length(new_' lower(contr2save{ci}) '))]);' newline...
@@ -347,7 +135,7 @@ if strcmp(cfg.tyRSA, 'pRSA')
                 'end'    ]      );
            
     end
-elseif strcmp(cfg.tyRSA, 'tRSA')
+elseif strcmp(cfg.tyRSA, 'TR') | strcmp(cfg.tyRSA, 'PHA') 
     for ci = 1:length(contr2save)
         eval(  ['if exist(''new_' lower(contr2save{ci}) ''') & any(strcmp(contr2save, ''' contr2save{ci} ''')) ...' newline ...
                'disp ([''new_' lower(contr2save{ci})  ' ' ' '' num2str(length(new_' lower(contr2save{ci}) '))]);' newline...
@@ -412,7 +200,9 @@ allIDs = allIDs';
  
 out_contrasts.allContrasts              = allContrasts;
 out_contrasts.allContrastIds            = allContrastIds ;
-out_contrasts.allIDs                    = allIDs; 
+
+ids = cellfun(@(x) double(string(x)),allIDs, 'un', 0);
+out_contrasts.allIDs                    = ids; 
  
  
 end

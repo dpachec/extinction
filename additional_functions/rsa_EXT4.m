@@ -14,10 +14,10 @@ currentIds = out_contrasts.allContrastIds;
 
 for i = 1:length(currentContrast)
     if ~isempty(out_contrasts.allContrasts{i})
-        if strcmp(cfg.tyRSA, 'pRSA')
+        if strcmp(cfg.tyRSA, 'POW')
             nTimepoints = size (out_contrasts.allContrasts{i}{end}, 5); %%all2all file is stored within this cell array
             aBins(i,:)  =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-        elseif strcmp(cfg.tyRSA, 'tRSA')
+        elseif strcmp(cfg.tyRSA, 'TR')
             nTimepoints = size (out_contrasts.allContrasts{i}{end}, 4); %%all2all file is stored within this cell array
             aBins(i,:)  =  floor ( (nTimepoints/mf)- win_width/mf+1 );
         end
@@ -100,22 +100,15 @@ for coni = 1:length(currentContrast)
                     if isempty(find(isnan(all2all(triali, :,:,:,:))))
                         for timei = 1:bins 
                             timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                        
                             x = all2all(triali, 1,:,f,timeBinsi);
                             x = x(:); 
-            
                             y = all2all(triali, 2,:,f,timeBinsi);
                             y = y(:); 
-                            
-                            %r = corr(x, y, 'type', 's');
-        
                             a = [x y]';
                             n = length(a);
                             a1 = tiedrank(a')'; % tiedrank accepts matrix input, but make sure the matrix is in the correct orientation!!
-                            r = 1-6*sum((a1(1,:)-a1(2,:)).^2)/(n*(n^2-1));
-                            
+                            r = 1-6*sum((a1(1,:)-a1(2,:)).^2)/(n*(n^2-1));                           
                             rsaZ(triali, timei) = atanh(r);
-                            
                         end
                     end
                 end

@@ -62,87 +62,131 @@ clear , clc
 
 listF2sav = {
                 %contex video acquisition
-                'TR_OFC_V_nan_0_0_50-10_1_SCA-DCA';
-                'TR_AMY_V_nan_0_0_50-10_1_SCA-DCA';
-                'TR_HPC_V_nan_0_0_50-10_1_SCA-DCA';
-                'TR_VVS_V_nan_0_0_50-10_1_SCA-DCA';
-                'TR_OCC_V_nan_0_0_50-10_1_SCA-DCA';
+                'POW_OFC_V_3-54_0_1_50-10_0_SCA-DCA';
+                'POW_AMY_V_3-54_0_1_50-10_0_SCA-DCA';
+                'POW_HPC_V_3-54_0_1_50-10_0_SCA-DCA';
+                'POW_VVS_V_3-54_0_1_50-10_0_SCA-DCA';
+                'POW_OCC_V_3-54_0_1_50-10_0_SCA-DCA';
                 %contex video extinction
-                'TR_OFC_V_nan_0_0_50-10_1_SCE-DCE';
-                'TR_AMY_V_nan_0_0_50-10_1_SCE-DCE';
-                'TR_HPC_V_nan_0_0_50-10_1_SCE-DCE';
-                'TR_VVS_V_nan_0_0_50-10_1_SCE-DCE';
-                'TR_OCC_V_nan_0_0_50-10_1_SCE-DCE';
+                'POW_OFC_V_3-54_0_1_50-10_0_SCE-DCE';
+                'POW_AMY_V_3-54_0_1_50-10_0_SCE-DCE';
+                'POW_HPC_V_3-54_0_1_50-10_0_SCE-DCE';
+                'POW_VVS_V_3-54_0_1_50-10_0_SCE-DCE';
+                'POW_OCC_V_3-54_0_1_50-10_0_SCE-DCE';
                 %contex video renewal
-                'TR_OFC_V_nan_0_0_50-10_1_SCR-DCR';
-                'TR_AMY_V_nan_0_0_50-10_1_SCR-DCR';
-                'TR_HPC_V_nan_0_0_50-10_1_SCR-DCR';
-                'TR_VVS_V_nan_0_0_50-10_1_SCR-DCR';
-                'TR_OCC_V_nan_0_0_50-10_1_SCR-DCR';
+                'POW_OFC_V_3-54_0_1_50-10_0_SCR-DCR';
+                'POW_AMY_V_3-54_0_1_50-10_0_SCR-DCR';
+                'POW_HPC_V_3-54_0_1_50-10_0_SCR-DCR';
+                'POW_VVS_V_3-54_0_1_50-10_0_SCR-DCR';
+                'POW_OCC_V_3-54_0_1_50-10_0_SCR-DCR';
                 %contex cue acquisition
-                'TR_OFC_C_nan_0_0_50-10_1_SCA-DCA';
-                'TR_AMY_C_nan_0_0_50-10_1_SCA-DCA';
-                'TR_HPC_C_nan_0_0_50-10_1_SCA-DCA';
-                'TR_VVS_C_nan_0_0_50-10_1_SCA-DCA';
-                'TR_OCC_C_nan_0_0_50-10_1_SCA-DCA';
+                'POW_OFC_C_3-54_0_1_50-10_0_SCA-DCA';
+                'POW_AMY_C_3-54_0_1_50-10_0_SCA-DCA';
+                'POW_HPC_C_3-54_0_1_50-10_0_SCA-DCA';
+                'POW_VVS_C_3-54_0_1_50-10_0_SCA-DCA';
+                'POW_OCC_C_3-54_0_1_50-10_0_SCA-DCA';
                 %contex cue extinction
-                'TR_OFC_C_nan_0_0_50-10_1_SCE-DCE';
-                'TR_AMY_C_nan_0_0_50-10_1_SCE-DCE';
-                'TR_HPC_C_nan_0_0_50-10_1_SCE-DCE';
-                'TR_VVS_C_nan_0_0_50-10_1_SCE-DCE';
-                'TR_OCC_C_nan_0_0_50-10_1_SCE-DCE';
+                'POW_OFC_C_3-54_0_1_50-10_0_SCE-DCE';
+                'POW_AMY_C_3-54_0_1_50-10_0_SCE-DCE';
+                'POW_HPC_C_3-54_0_1_50-10_0_SCE-DCE';
+                'POW_VVS_C_3-54_0_1_50-10_0_SCE-DCE';
+                'POW_OCC_C_3-54_0_1_50-10_0_SCE-DCE';
                 %contex cue renewal
-                'TR_OFC_C_nan_0_0_50-10_1_SCR-DCR';
-                'TR_AMY_C_nan_0_0_50-10_1_SCR-DCR';
-                'TR_HPC_C_nan_0_0_50-10_1_SCR-DCR';
-                'TR_VVS_C_nan_0_0_50-10_1_SCR-DCR';
-                'TR_OCC_C_nan_0_0_50-10_1_SCR-DCR';
+                'POW_OFC_C_3-54_0_1_50-10_0_SCR-DCR';
+                'POW_AMY_C_3-54_0_1_50-10_0_SCR-DCR';
+                'POW_HPC_C_3-54_0_1_50-10_0_SCR-DCR';
+                'POW_VVS_C_3-54_0_1_50-10_0_SCR-DCR';
+                'POW_OCC_C_3-54_0_1_50-10_0_SCR-DCR';
                 %Within item - acquisition
-                'TR_OFC_C_nan_0_0_50-10_1_SICSPA-SICSMA';
-                'TR_AMY_C_nan_0_0_50-10_1_SICSPA-SICSMA';
-                'TR_HPC_C_nan_0_0_50-10_1_SICSPA-SICSMA';
-                'TR_VVS_C_nan_0_0_50-10_1_SICSPA-SICSMA';
-                'TR_OCC_C_nan_0_0_50-10_1_SICSPA-SICSMA';
+                'POW_OFC_C_3-54_0_1_50-10_0_SICSPA-SICSMA';
+                'POW_AMY_C_3-54_0_1_50-10_0_SICSPA-SICSMA';
+                'POW_HPC_C_3-54_0_1_50-10_0_SICSPA-SICSMA';
+                'POW_VVS_C_3-54_0_1_50-10_0_SICSPA-SICSMA';
+                'POW_OCC_C_3-54_0_1_50-10_0_SICSPA-SICSMA';
                 %Within item - extinction
-                'TR_OFC_C_nan_0_0_50-10_1_SICSPE-SICSME';
-                'TR_AMY_C_nan_0_0_50-10_1_SICSPE-SICSME';
-                'TR_HPC_C_nan_0_0_50-10_1_SICSPE-SICSME';
-                'TR_VVS_C_nan_0_0_50-10_1_SICSPE-SICSME';
-                'TR_OCC_C_nan_0_0_50-10_1_SICSPE-SICSME';
+                'POW_OFC_C_3-54_0_1_50-10_0_SICSPE-SICSME';
+                'POW_AMY_C_3-54_0_1_50-10_0_SICSPE-SICSME';
+                'POW_HPC_C_3-54_0_1_50-10_0_SICSPE-SICSME';
+                'POW_VVS_C_3-54_0_1_50-10_0_SICSPE-SICSME';
+                'POW_OCC_C_3-54_0_1_50-10_0_SICSPE-SICSME';
                 %Within item - extinction CS++
-                'TR_OFC_C_nan_0_0_50-10_1_SICSPE-SICSMPPE';
-                'TR_AMY_C_nan_0_0_50-10_1_SICSPE-SICSMPPE';
-                'TR_HPC_C_nan_0_0_50-10_1_SICSPE-SICSMPPE';
-                'TR_VVS_C_nan_0_0_50-10_1_SICSPE-SICSMPPE';
-                'TR_OCC_C_nan_0_0_50-10_1_SICSPE-SICSMPPE';
+                'POW_OFC_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE';
+                'POW_AMY_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE';
+                'POW_HPC_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE';
+                'POW_VVS_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE';
+                'POW_OCC_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE';
                 %Within item - extinction CS+-
-                'TR_OFC_C_nan_0_0_50-10_1_SICSPE-SICSMPME';
-                'TR_AMY_C_nan_0_0_50-10_1_SICSPE-SICSMPME';
-                'TR_HPC_C_nan_0_0_50-10_1_SICSPE-SICSMPME';
-                'TR_VVS_C_nan_0_0_50-10_1_SICSPE-SICSMPME';
-                'TR_OCC_C_nan_0_0_50-10_1_SICSPE-SICSMPME';
-                %Within item - renewal
-                'TR_OFC_C_nan_0_0_50-10_1_SICSPR-SICSMR';
-                'TR_AMY_C_nan_0_0_50-10_1_SICSPR-SICSMR';
-                'TR_HPC_C_nan_0_0_50-10_1_SICSPR-SICSMR';
-                'TR_VVS_C_nan_0_0_50-10_1_SICSPR-SICSMR';
-                'TR_OCC_C_nan_0_0_50-10_1_SICSPR-SICSMR';
-                %Within item - renewal CS++
-                'TR_OFC_C_nan_0_0_50-10_1_SICSPR-SICSMPPR';
-                'TR_AMY_C_nan_0_0_50-10_1_SICSPR-SICSMPPR';
-                'TR_HPC_C_nan_0_0_50-10_1_SICSPR-SICSMPPR';
-                'TR_VVS_C_nan_0_0_50-10_1_SICSPR-SICSMPPR';
-                'TR_OCC_C_nan_0_0_50-10_1_SICSPR-SICSMPPR';
-                %Within item - renewal CS+-
-                'TR_OFC_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
-                'TR_AMY_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
-                'TR_HPC_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
-                'TR_VVS_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
-                'TR_OCC_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
+                'POW_OFC_C_3-54_0_1_50-10_0_SICSPE-SICSMPME';
+                'POW_AMY_C_3-54_0_1_50-10_0_SICSPE-SICSMPME';
+                'POW_HPC_C_3-54_0_1_50-10_0_SICSPE-SICSMPME';
+                'POW_VVS_C_3-54_0_1_50-10_0_SICSPE-SICSMPME';
+                'POW_OCC_C_3-54_0_1_50-10_0_SICSPE-SICSMPME';
+               
 
 
-
-                
+                %contex video acquisition
+                'PHA_OFC_V_3-8_0_0_50-10_1_SCA-DCA';
+                %contex video acquisition
+                'PHA_OFC_V_3-8_0_1_50-10_1_SCA-DCA';
+                'PHA_AMY_V_3-8_0_1_50-10_1_SCA-DCA';
+                'PHA_HPC_V_3-8_0_1_50-10_1_SCA-DCA';
+                'PHA_VVS_V_3-8_0_1_50-10_1_SCA-DCA';
+                'PHA_OCC_V_3-8_0_1_50-10_1_SCA-DCA';
+                %contex video extinction
+                'PHA_OFC_V_3-8_0_1_50-10_1_SCE-DCE';
+                'PHA_AMY_V_3-8_0_1_50-10_1_SCE-DCE';
+                'PHA_HPC_V_3-8_0_1_50-10_1_SCE-DCE';
+                'PHA_VVS_V_3-8_0_1_50-10_1_SCE-DCE';
+                'PHA_OCC_V_3-8_0_1_50-10_1_SCE-DCE';
+                %contex video renewal
+                'PHA_OFC_V_3-8_0_1_50-10_1_SCR-DCR';
+                'PHA_AMY_V_3-8_0_1_50-10_1_SCR-DCR';
+                'PHA_HPC_V_3-8_0_1_50-10_1_SCR-DCR';
+                'PHA_VVS_V_3-8_0_1_50-10_1_SCR-DCR';
+                'PHA_OCC_V_3-8_0_1_50-10_1_SCR-DCR';
+                %contex cue acquisition
+                'PHA_OFC_C_3-8_0_1_50-10_1_SCA-DCA';
+                'PHA_AMY_C_3-8_0_1_50-10_1_SCA-DCA';
+                'PHA_HPC_C_3-8_0_1_50-10_1_SCA-DCA';
+                'PHA_VVS_C_3-8_0_1_50-10_1_SCA-DCA';
+                'PHA_OCC_C_3-8_0_1_50-10_1_SCA-DCA';
+                %contex cue extinction
+                'PHA_OFC_C_3-8_0_1_50-10_1_SCE-DCE';
+                'PHA_AMY_C_3-8_0_1_50-10_1_SCE-DCE';
+                'PHA_HPC_C_3-8_0_1_50-10_1_SCE-DCE';
+                'PHA_VVS_C_3-8_0_1_50-10_1_SCE-DCE';
+                'PHA_OCC_C_3-8_0_1_50-10_1_SCE-DCE';
+                %contex cue renewal
+                'PHA_OFC_C_3-8_0_1_50-10_1_SCR-DCR';
+                'PHA_AMY_C_3-8_0_1_50-10_1_SCR-DCR';
+                'PHA_HPC_C_3-8_0_1_50-10_1_SCR-DCR';
+                'PHA_VVS_C_3-8_0_1_50-10_1_SCR-DCR';
+                'PHA_OCC_C_3-8_0_1_50-10_1_SCR-DCR';
+                %Within item - acquisition
+                'PHA_OFC_C_3-8_0_1_50-10_1_SICSPA-SICSMA';
+                'PHA_AMY_C_3-8_0_1_50-10_1_SICSPA-SICSMA';
+                'PHA_HPC_C_3-8_0_1_50-10_1_SICSPA-SICSMA';
+                'PHA_VVS_C_3-8_0_1_50-10_1_SICSPA-SICSMA';
+                'PHA_OCC_C_3-8_0_1_50-10_1_SICSPA-SICSMA';
+                %Within item - extinction
+                'PHA_OFC_C_3-8_0_1_50-10_1_SICSPE-SICSME';
+                'PHA_AMY_C_3-8_0_1_50-10_1_SICSPE-SICSME';
+                'PHA_HPC_C_3-8_0_1_50-10_1_SICSPE-SICSME';
+                'PHA_VVS_C_3-8_0_1_50-10_1_SICSPE-SICSME';
+                'PHA_OCC_C_3-8_0_1_50-10_1_SICSPE-SICSME';
+                %Within item - extinction CS++
+                'PHA_OFC_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE';
+                'PHA_AMY_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE';
+                'PHA_HPC_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE';
+                'PHA_VVS_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE';
+                'PHA_OCC_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE';
+                %Within item - extinction CS+-
+                'PHA_OFC_C_3-8_0_1_50-10_1_SICSPE-SICSMPME';
+                'PHA_AMY_C_3-8_0_1_50-10_1_SICSPE-SICSMPME';
+                'PHA_HPC_C_3-8_0_1_50-10_1_SICSPE-SICSMPME';
+                'PHA_VVS_C_3-8_0_1_50-10_1_SICSPE-SICSMPME';
+                'PHA_OCC_C_3-8_0_1_50-10_1_SICSPE-SICSMPME';
+               
                 
         };   
 
@@ -172,22 +216,29 @@ for listi = 1:length(listF2sav)
             cfg.oneListIds = Ev2; 
             
             EEG = add_EEGLAB_fields(EEG); 
-            %EEG = pop_eegfiltnew (EEG, .1,30); %low pass filter up to 30Hz (kunz 2019)
-    %         d2p = squeeze(EEG.data(1, 1:1000, 1))
-    %         figure()
-    %         plot(d2p)
-    
-            EEG = normalize_baseline_EXT(EEG, [2501:3000]); 
-            %EEG = normalize_EXT(EEG);  %across trials
-            EEG = downsample_EEG_EXT(EEG); 
-            cfg.oneListTraces = permute(EEG.data(:, 251:500,:), [3 1 2]); 
-            %cfg.oneListTraces = permute(EEG.data(:, 2501:5000,:), [3 1 2]); 
-            cfg.tyRSA = 'tRSA'; 
-            out_contrasts = create_contrasts_EXT(cfg);
-            ids_prev = out_contrasts.allIDs; 
-            ids{subji,:} = cellfun(@(x) double(string(x)),ids_prev, 'un', 0);
 
-            out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
+            if strcmp(cfg.tyRSA, 'TR')
+                EEG = normalize_baseline_EXT(EEG, [2501:3000]); 
+                %EEG = normalize_EXT(EEG);  %across trials
+                EEG = downsample_EEG_EXT(EEG); 
+                cfg.oneListTraces = permute(EEG.data(:, 251:500,:), [3 1 2]); 
+                out_contrasts = create_contrasts_EXT(cfg);
+                out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
+            elseif strcmp(cfg.tyRSA, 'POW')
+                EEG = extract_power_EXT(EEG, 0.01); 
+                %EEG = normalize_baseline_EXT(EEG, [251:300]); 
+                EEG = normalize_EXT(EEG);  %across trials
+                cfg.oneListPow = EEG.power(:, :, : ,251:470); 
+                out_contrasts = create_contrasts_EXT(cfg);
+                out_rsa(subji, :, :, :) = rsa_EXT4(out_contrasts, cfg);
+            elseif strcmp(cfg.tyRSA, 'PHA')
+                EEG = normalize_EXT(EEG);  %across trials
+                phaTS = extract_pha_EXT(EEG, cfg);
+                cfg.oneListTraces = phaTS(:, :, 251:500); 
+                out_contrasts = create_contrasts_EXT(cfg);
+                out_rsa(subji, :, :, :) = rsa_EXT3(out_contrasts, cfg);
+            end
+            
             
         end
     
@@ -205,13 +256,20 @@ end
 %%
 clear
 paths = load_paths_EXT; 
-file2load = ['TR_' 'Amygdala' '_C']; 
-f2sav = 'T_nan_0_0_0_50-10_1_DISVE-DIDVE';
-load ([ paths.results.rsa f2sav '_' file2load '.mat']);
+f2sav =   'TR_OCC_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
+
+% %Within item - renewal CS+-
+% 
+% 'TR_AMY_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
+% 'TR_HPC_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
+% 'TR_VVS_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
+% 'TR_OCC_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
+
+load ([ paths.results.rsa f2sav '.mat']);
 
 
 
-%% remove hack 
+% % % % %  remove hack 
 ids = []; 
 for subji = 1:size(out_rsa, 1)
 
@@ -223,7 +281,7 @@ for subji = 1:size(out_rsa, 1)
 
 end
 
-%%
+
 cond1 = squeeze(out_rsa(:, 1, :, :)); 
 cond2 = squeeze(out_rsa(:, 2, :, :)); 
 
@@ -255,12 +313,14 @@ for pxi = 1:length(clustinfo.PixelIdxList)
    allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
 end
 
-[max2u id] = max(abs(allSTs));
-tObs = allSTs(id); 
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    tObs = allSTs(id); 
+end
 
 
-h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
-h(clustinfo.PixelIdxList{id}) = 1;
+%h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
 
 
 figure(); tiledlayout(1,3);
@@ -353,7 +413,7 @@ set(gca, 'FontSize', 16)
 clc
 clearvars -except ALLEEG paths file2load
 
-f2sav =  'POW_3-8_0_0_50-10_0_SCA-DCA';
+f2sav =  'POW_3-54_0_1_50-10_1_SCA-DCA';
 
 
 cfg = getParams_EXT(f2sav);
@@ -402,7 +462,7 @@ etime(datevec(t2), datevec(t1))
 clear
 paths = load_paths_EXT; 
 file2load = ['TR_' 'Amygdala' '_V']; 
-f2sav =  'POW_3-54_0_1_50-10_0_SCA-DCA';
+f2sav =  'POW_3-54_0_1_50-10_1_SCA-DCA';
 load ([ paths.results.rsa f2sav '_' file2load '.mat']);
 
 

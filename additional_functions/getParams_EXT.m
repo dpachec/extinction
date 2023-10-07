@@ -1,10 +1,11 @@
 
 function [cfg] = getParams_EXT(f2sav)
     f2t = strsplit(f2sav, '_'); 
+    cfg_prev.tyRSA = f2t{1};
     cfg_prev.roi = f2t{2};
     freqs = strsplit(f2t{4}, '-');
     cfg_prev.LT         = f2t{3}; 
-    if ~strcmp(f2t{1}, 'TR') 
+    if ~( strcmp(f2t{1}, 'TR') | strcmp(f2t{1}, 'POW') )
         cfg_prev.freqs       = [double(string((freqs{1}))) : double(string((freqs{2})))];
     else
         cfg_prev.freqs       = [];

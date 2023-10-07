@@ -17,7 +17,7 @@ for i = 1:length(currentContrast)
         if strcmp(cfg.tyRSA, 'pRSA')
             nTimepoints = size (out_contrasts.allContrasts{i}{end}, 5); %%all2all file is stored within this cell array
             aBins(i,:)  =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-        elseif strcmp(cfg.tyRSA, 'tRSA')
+        elseif strcmp(cfg.tyRSA, 'TR') | strcmp(cfg.tyRSA, 'PHA') 
             nTimepoints = size (out_contrasts.allContrasts{i}{end}, 4); %%all2all file is stored within this cell array
             aBins(i,:)  =  floor ( (nTimepoints/mf)- win_width/mf+1 );
         end
@@ -37,39 +37,73 @@ for coni = 1:length(currentContrast)
             all2all = currentContrast{coni}{batchi};
         end
     
+
         trialN = size(all2all, 1);    
         chanN = size(all2all, 3);
         nFreq = size(all2all, 4);
-    
-   
 
     
-        parfor triali = 1:trialN
-            if isempty(find(isnan(all2all(triali, :,:,:,:))))
-            for freqi = 1:nFreq
-                for timei = 1:bins 
-                    timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                
-                    x = all2all(triali, 1,:,freqi,timeBinsi);
-                    x = x(:); 
-    
-                    y = all2all(triali, 2,:,freqi,timeBinsi);
-                    y = y(:); 
+        if cfg.fR
+            for triali = 1:trialN
+                if isempty(find(isnan(all2all(triali, :,:,:,:))))
+                for freqi = 1:nFreq
+                    for timei = 1:bins 
+                        timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
                     
-                    r = circ_corrcc(x, y);
-                    rsaZ(triali, freqi, timei) = atanh(r);
-                    
+                        x = all2all(triali, 1,:,freqi,timeBinsi);
+                        x = x(:); 
+        
+                        y = all2all(triali, 2,:,freqi,timeBinsi);
+                        y = y(:); 
+                        
+                        r = circ_corrcc(x, y);
+                        rsaZ(triali, freqi, timei) = atanh(r);
+                        
+                    end
+                end
                 end
             end
+
+        else
+            if cfg.TG
+                for triali = 1:trialN
+                    if isempty(find(isnan(all2all(triali, :,:,:,:))))
+                        for timei = 1:bins 
+                            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+                            x = all2all(triali, 1,:,timeBinsi);
+                            x = x(:); 
+                            for timej = timei:bins
+                                timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
+                                y = all2all(triali, 2,:,timeBinsj);
+                                y = y(:); 
+                                r = circ_corrcc(x, y);
+                                rsaZ(triali, timei, timej) = atanh(r);
+                            end
+                            
+                        end
+                    end
+                end
+            else 
+                for triali = 1:trialN
+                    if isempty(find(isnan(all2all(triali, :,:,:,:))))
+                        for timei = 1:bins 
+                            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+                            x = all2all(triali, 1,:,timeBinsi);
+                            x = x(:); 
+                            y = all2all(triali, 2,:,timeBinsi);
+                            y = y(:); 
+                            r = circ_corrcc(x, y);
+                            rsaZ(triali, timei) = atanh(r);
+                            
+                        end
+                    end
+                end
             end
         end
 
         
     
         if exist('rsaZ')
-            mT = mean(rsaZ(:,:,1:5),3,'omitnan');
-            stdT = std(rsaZ(:,:,1:5),[],3, 'omitnan');
-            rsaZ = bsxfun(@rdivide, bsxfun(@minus, rsaZ, mT), stdT);  
             rsaZ(rsaZ==0) = nan; 
             rsaZ(isinf(rsaZ)) = nan;
             allRSA{batchi} = rsaZ; 
@@ -83,7 +117,6 @@ for coni = 1:length(currentContrast)
 
 
     if TG==1
-        %filename = ['s' num2str(sessi, '%02.f') '_' id '_gOBO'   '_rsa.mat'];
         if exist('allRSA')
             rsaZ = cat(1, allRSA{:});
             % count nan trials 
@@ -93,20 +126,12 @@ for coni = 1:length(currentContrast)
                     count = count+1; 
                 end
             end
-            disp (['number of nan trials = ' num2str(count)])
+            disp (['number of nan trials = ' num2str(count) ' of ' num2str(size(rsaZ,1))])
             allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
         end
-        
-
-        
     else %only store the diagonal 
-        rsaZ = cat(1, allRSA{:});
-        parfor triali = 1:size(rsaZ, 1)
-            rsaN(triali, :) = diag(squeeze(rsaZ(triali, :, :)));
-        end
-        rsaZ = rsaN;
-        filename = ['s' num2str(sessi, '%02.f') '_' id '_dOBO'   '_rsa.mat'];
-        save (filename, 'rsaZ', 'allIDs'); %, 'timeBins'
+        
+        
     end
 
 
