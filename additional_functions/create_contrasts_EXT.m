@@ -19,9 +19,9 @@ for ci = 1:length(contr2save)
 end
 
 oneListIdsA = double(string(oneListIds));
-idsIt= [1:192]';
+idsIt= [1:length(oneListIdsA)]';
 idsIt(:,2:10) = oneListIdsA(:, 1:9); 
-ids = permn(1:192,2); % both directions 
+ids = permn(1:length(oneListIdsA),2); % both directions 
 allComb = [idsIt(ids(:, 1),:) idsIt(ids(:,2),:)];
 
 DT  = (allComb(:,2) ~= allComb(:,12)); 
