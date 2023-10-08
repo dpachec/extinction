@@ -42,7 +42,7 @@ for coni = 1:length(currentContrast)
     
         %disp (['Cond ' id '   ' num2str(size(all2all, 1)) ' trials']);
     
-        if strcmp(cfg.tyRSA, 'pRSA')
+        if strcmp(cfg.tyRSA, 'POW')
             if aVTime
                     xM = zeros (trialN, bins,  chanN * length(f));
                     yM = zeros (trialN, bins,  chanN * length(f));
@@ -74,7 +74,7 @@ for coni = 1:length(currentContrast)
                 
             end
 
-        elseif strcmp(cfg.tyRSA, 'tRSA') % temporal RSA
+        elseif strcmp(cfg.tyRSA, 'TR') % temporal RSA
 
                 xM = zeros (trialN, bins,  chanN *  win_width);
                 yM = zeros (trialN, bins,  chanN *  win_width);

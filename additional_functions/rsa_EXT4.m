@@ -60,13 +60,15 @@ for coni = 1:length(currentContrast)
         
                             a = [x y]';
                             n = length(a);
-                            a1 = tiedrank(a')'; % tiedrank accepts matrix input, but make sure the matrix is in the correct orientation!!
+                            a1 = tiedrank(a')'; 
                             r = 1-6*sum((a1(1,:)-a1(2,:)).^2)/(n*(n^2-1));
                             
                             rsaZ(triali, freqi, timei) = atanh(r);
                             
                         end
                     end
+                else
+                     rsaZ = nan(trialN, nTimepoints, nTimepoints); 
                 end
             end
         else
@@ -86,7 +88,7 @@ for coni = 1:length(currentContrast)
             
                                 a = [x y]';
                                 n = length(a);
-                                a1 = tiedrank(a')'; % tiedrank accepts matrix input, but make sure the matrix is in the correct orientation!!
+                                a1 = tiedrank(a')'; 
                                 r = 1-6*sum((a1(1,:)-a1(2,:)).^2)/(n*(n^2-1));
                                 
                                 rsaZ(triali, timei, timej) = atanh(r);

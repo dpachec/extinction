@@ -60,132 +60,157 @@ etime(datevec(t2), datevec(t1))
 clear , clc
 
 listF2sav = {
-                %contex video acquisition
-                'POW_OFC_V_3-54_0_1_50-10_0_SCA-DCA';
-                'POW_AMY_V_3-54_0_1_50-10_0_SCA-DCA';
-                'POW_HPC_V_3-54_0_1_50-10_0_SCA-DCA';
-                'POW_VVS_V_3-54_0_1_50-10_0_SCA-DCA';
-                'POW_OCC_V_3-54_0_1_50-10_0_SCA-DCA';
-                %contex video extinction
-                'POW_OFC_V_3-54_0_1_50-10_0_SCE-DCE';
-                'POW_AMY_V_3-54_0_1_50-10_0_SCE-DCE';
-                'POW_HPC_V_3-54_0_1_50-10_0_SCE-DCE';
-                'POW_VVS_V_3-54_0_1_50-10_0_SCE-DCE';
-                'POW_OCC_V_3-54_0_1_50-10_0_SCE-DCE';
-                %contex video renewal
-                'POW_OFC_V_3-54_0_1_50-10_0_SCR-DCR';
-                'POW_AMY_V_3-54_0_1_50-10_0_SCR-DCR';
-                'POW_HPC_V_3-54_0_1_50-10_0_SCR-DCR';
-                'POW_VVS_V_3-54_0_1_50-10_0_SCR-DCR';
-                'POW_OCC_V_3-54_0_1_50-10_0_SCR-DCR';
-                %contex cue acquisition
-                'POW_OFC_C_3-54_0_1_50-10_0_SCA-DCA';
-                'POW_AMY_C_3-54_0_1_50-10_0_SCA-DCA';
-                'POW_HPC_C_3-54_0_1_50-10_0_SCA-DCA';
-                'POW_VVS_C_3-54_0_1_50-10_0_SCA-DCA';
-                'POW_OCC_C_3-54_0_1_50-10_0_SCA-DCA';
-                %contex cue extinction
-                'POW_OFC_C_3-54_0_1_50-10_0_SCE-DCE';
-                'POW_AMY_C_3-54_0_1_50-10_0_SCE-DCE';
-                'POW_HPC_C_3-54_0_1_50-10_0_SCE-DCE';
-                'POW_VVS_C_3-54_0_1_50-10_0_SCE-DCE';
-                'POW_OCC_C_3-54_0_1_50-10_0_SCE-DCE';
-                %contex cue renewal
-                'POW_OFC_C_3-54_0_1_50-10_0_SCR-DCR';
-                'POW_AMY_C_3-54_0_1_50-10_0_SCR-DCR';
-                'POW_HPC_C_3-54_0_1_50-10_0_SCR-DCR';
-                'POW_VVS_C_3-54_0_1_50-10_0_SCR-DCR';
-                'POW_OCC_C_3-54_0_1_50-10_0_SCR-DCR';
-                %Within item - acquisition
-                'POW_OFC_C_3-54_0_1_50-10_0_SICSPA-SICSMA';
-                'POW_AMY_C_3-54_0_1_50-10_0_SICSPA-SICSMA';
-                'POW_HPC_C_3-54_0_1_50-10_0_SICSPA-SICSMA';
-                'POW_VVS_C_3-54_0_1_50-10_0_SICSPA-SICSMA';
-                'POW_OCC_C_3-54_0_1_50-10_0_SICSPA-SICSMA';
-                %Within item - extinction
-                'POW_OFC_C_3-54_0_1_50-10_0_SICSPE-SICSME';
-                'POW_AMY_C_3-54_0_1_50-10_0_SICSPE-SICSME';
-                'POW_HPC_C_3-54_0_1_50-10_0_SICSPE-SICSME';
-                'POW_VVS_C_3-54_0_1_50-10_0_SICSPE-SICSME';
-                'POW_OCC_C_3-54_0_1_50-10_0_SICSPE-SICSME';
-                %Within item - extinction CS++
-                'POW_OFC_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE';
-                'POW_AMY_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE';
-                'POW_HPC_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE';
-                'POW_VVS_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE';
-                'POW_OCC_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE';
-                %Within item - extinction CS+-
-                'POW_OFC_C_3-54_0_1_50-10_0_SICSPE-SICSMPME';
-                'POW_AMY_C_3-54_0_1_50-10_0_SICSPE-SICSMPME';
-                'POW_HPC_C_3-54_0_1_50-10_0_SICSPE-SICSMPME';
-                'POW_VVS_C_3-54_0_1_50-10_0_SICSPE-SICSMPME';
-                'POW_OCC_C_3-54_0_1_50-10_0_SICSPE-SICSMPME';
-               
+%contex video acquisition 
+'POW_OFC_V_3-54_0_1_50-10_0_SCA-DCA'; 
+'POW_AMY_V_3-54_0_1_50-10_0_SCA-DCA'; 
+'POW_HPC_V_3-54_0_1_50-10_0_SCA-DCA'; 
+'POW_VVS_V_3-54_0_1_50-10_0_SCA-DCA'; 
+'POW_OCC_V_3-54_0_1_50-10_0_SCA-DCA'; 
+%contex video extinction 
+'POW_OFC_V_3-54_0_1_50-10_0_SCE-DCE'; 
+'POW_AMY_V_3-54_0_1_50-10_0_SCE-DCE'; 
+'POW_HPC_V_3-54_0_1_50-10_0_SCE-DCE'; 
+'POW_VVS_V_3-54_0_1_50-10_0_SCE-DCE'; 
+'POW_OCC_V_3-54_0_1_50-10_0_SCE-DCE'; 
+%contex video renewal 
+'POW_OFC_V_3-54_0_1_50-10_0_SCR-DCR'; 
+'POW_AMY_V_3-54_0_1_50-10_0_SCR-DCR'; 
+'POW_HPC_V_3-54_0_1_50-10_0_SCR-DCR'; 
+'POW_VVS_V_3-54_0_1_50-10_0_SCR-DCR'; 
+'POW_OCC_V_3-54_0_1_50-10_0_SCR-DCR'; 
+%contex cue acquisition 
+'POW_OFC_C_3-54_0_1_50-10_0_SCA-DCA'; 
+'POW_AMY_C_3-54_0_1_50-10_0_SCA-DCA'; 
+'POW_HPC_C_3-54_0_1_50-10_0_SCA-DCA'; 
+'POW_VVS_C_3-54_0_1_50-10_0_SCA-DCA';
+'POW_OCC_C_3-54_0_1_50-10_0_SCA-DCA'; 
+%contex cue extinction 
+'POW_OFC_C_3-54_0_1_50-10_0_SCE-DCE'; 
+'POW_AMY_C_3-54_0_1_50-10_0_SCE-DCE'; 
+'POW_HPC_C_3-54_0_1_50-10_0_SCE-DCE'; 
+'POW_VVS_C_3-54_0_1_50-10_0_SCE-DCE'; 
+'POW_OCC_C_3-54_0_1_50-10_0_SCE-DCE'; 
+%contex cue renewal 
+'POW_OFC_C_3-54_0_1_50-10_0_SCR-DCR'; 
+'POW_AMY_C_3-54_0_1_50-10_0_SCR-DCR';
+'POW_HPC_C_3-54_0_1_50-10_0_SCR-DCR'; 
+'POW_VVS_C_3-54_0_1_50-10_0_SCR-DCR'; 
+'POW_OCC_C_3-54_0_1_50-10_0_SCR-DCR'; 
+%Within item - acquisition 
+'POW_OFC_C_3-54_0_1_50-10_0_SICSPA-SICSMA'; 
+'POW_AMY_C_3-54_0_1_50-10_0_SICSPA-SICSMA'; 
+'POW_HPC_C_3-54_0_1_50-10_0_SICSPA-SICSMA'; 
+'POW_VVS_C_3-54_0_1_50-10_0_SICSPA-SICSMA'; 
+'POW_OCC_C_3-54_0_1_50-10_0_SICSPA-SICSMA'; 
+%Within item - extinction 
+'POW_OFC_C_3-54_0_1_50-10_0_SICSPE-SICSME'; 
+'POW_AMY_C_3-54_0_1_50-10_0_SICSPE-SICSME'; 
+'POW_HPC_C_3-54_0_1_50-10_0_SICSPE-SICSME'; 
+'POW_VVS_C_3-54_0_1_50-10_0_SICSPE-SICSME'; 
+'POW_OCC_C_3-54_0_1_50-10_0_SICSPE-SICSME'; 
+%Within item - extinction CS++ 
+'POW_OFC_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE'; 
+'POW_AMY_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE'; 
+'POW_HPC_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE'; 
+'POW_VVS_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE'; 
+'POW_OCC_C_3-54_0_1_50-10_0_SICSPE-SICSMPPE'; 
+%Within item - extinction CS+- 
+'POW_OFC_C_3-54_0_1_50-10_0_SICSPE-SICSMPME'; 
+'POW_AMY_C_3-54_0_1_50-10_0_SICSPE-SICSMPME'; 
+'POW_HPC_C_3-54_0_1_50-10_0_SICSPE-SICSMPME'; 
+'POW_VVS_C_3-54_0_1_50-10_0_SICSPE-SICSMPME'; 
+'POW_OCC_C_3-54_0_1_50-10_0_SICSPE-SICSMPME'; 
+%contex video acquisition 
+'PHA_OFC_V_3-8_0_0_50-10_1_SCA-DCA'; 
+'PHA_AMY_V_3-8_0_1_50-10_1_SCA-DCA'; 
+'PHA_HPC_V_3-8_0_1_50-10_1_SCA-DCA'; 
+'PHA_VVS_V_3-8_0_1_50-10_1_SCA-DCA'; 
+'PHA_OCC_V_3-8_0_1_50-10_1_SCA-DCA'; 
+%contex video extinction 
+'PHA_OFC_V_3-8_0_1_50-10_1_SCE-DCE'; 
+'PHA_AMY_V_3-8_0_1_50-10_1_SCE-DCE'; 
+'PHA_HPC_V_3-8_0_1_50-10_1_SCE-DCE'; 
+'PHA_VVS_V_3-8_0_1_50-10_1_SCE-DCE'; 
+'PHA_OCC_V_3-8_0_1_50-10_1_SCE-DCE'; 
+%contex video renewal 
+'PHA_OFC_V_3-8_0_1_50-10_1_SCR-DCR'; 
+'PHA_AMY_V_3-8_0_1_50-10_1_SCR-DCR'; 
+'PHA_HPC_V_3-8_0_1_50-10_1_SCR-DCR'; 
+'PHA_VVS_V_3-8_0_1_50-10_1_SCR-DCR'; 
+'PHA_OCC_V_3-8_0_1_50-10_1_SCR-DCR'; 
+%contex cue acquisition 
+'PHA_OFC_C_3-8_0_1_50-10_1_SCA-DCA'; 
+'PHA_AMY_C_3-8_0_1_50-10_1_SCA-DCA'; 
+'PHA_HPC_C_3-8_0_1_50-10_1_SCA-DCA'; 
+'PHA_VVS_C_3-8_0_1_50-10_1_SCA-DCA'; 
+'PHA_OCC_C_3-8_0_1_50-10_1_SCA-DCA'; 
+%contex cue extinction 
+'PHA_OFC_C_3-8_0_1_50-10_1_SCE-DCE'; 
+'PHA_AMY_C_3-8_0_1_50-10_1_SCE-DCE'; 
+'PHA_HPC_C_3-8_0_1_50-10_1_SCE-DCE'; 
+'PHA_VVS_C_3-8_0_1_50-10_1_SCE-DCE'; 
+'PHA_OCC_C_3-8_0_1_50-10_1_SCE-DCE'; 
+%contex cue renewal 
+'PHA_OFC_C_3-8_0_1_50-10_1_SCR-DCR'; 
+'PHA_AMY_C_3-8_0_1_50-10_1_SCR-DCR'; 
+'PHA_HPC_C_3-8_0_1_50-10_1_SCR-DCR'; 
+'PHA_VVS_C_3-8_0_1_50-10_1_SCR-DCR'; 
+'PHA_OCC_C_3-8_0_1_50-10_1_SCR-DCR'; 
+%Within item - acquisition 
+'PHA_OFC_C_3-8_0_1_50-10_1_SICSPA-SICSMA'; 
+'PHA_AMY_C_3-8_0_1_50-10_1_SICSPA-SICSMA'; 
+'PHA_HPC_C_3-8_0_1_50-10_1_SICSPA-SICSMA'; 
+'PHA_VVS_C_3-8_0_1_50-10_1_SICSPA-SICSMA'; 
+'PHA_OCC_C_3-8_0_1_50-10_1_SICSPA-SICSMA'; 
+%Within item - extinction 
+'PHA_OFC_C_3-8_0_1_50-10_1_SICSPE-SICSME'; 
+'PHA_AMY_C_3-8_0_1_50-10_1_SICSPE-SICSME'; 
+'PHA_HPC_C_3-8_0_1_50-10_1_SICSPE-SICSME'; 
+'PHA_VVS_C_3-8_0_1_50-10_1_SICSPE-SICSME'; 
+'PHA_OCC_C_3-8_0_1_50-10_1_SICSPE-SICSME'; 
+%Within item - extinction CS++ 
+'PHA_OFC_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE'; 
+'PHA_AMY_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE'; 
+'PHA_HPC_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE'; 
+'PHA_VVS_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE'; 
+'PHA_OCC_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE'; 
+%Within item - extinction CS+- 
+'PHA_OFC_C_3-8_0_1_50-10_1_SICSPE-SICSMPME'; 
+'PHA_AMY_C_3-8_0_1_50-10_1_SICSPE-SICSMPME'; 
+'PHA_HPC_C_3-8_0_1_50-10_1_SICSPE-SICSMPME'; 
+'PHA_VVS_C_3-8_0_1_50-10_1_SICSPE-SICSMPME'; 
+'PHA_OCC_C_3-8_0_1_50-10_1_SICSPE-SICSMPME'; 
 
-
-                %contex video acquisition
-                'PHA_OFC_V_3-8_0_0_50-10_1_SCA-DCA';
-                %contex video acquisition
-                'PHA_OFC_V_3-8_0_1_50-10_1_SCA-DCA';
-                'PHA_AMY_V_3-8_0_1_50-10_1_SCA-DCA';
-                'PHA_HPC_V_3-8_0_1_50-10_1_SCA-DCA';
-                'PHA_VVS_V_3-8_0_1_50-10_1_SCA-DCA';
-                'PHA_OCC_V_3-8_0_1_50-10_1_SCA-DCA';
-                %contex video extinction
-                'PHA_OFC_V_3-8_0_1_50-10_1_SCE-DCE';
-                'PHA_AMY_V_3-8_0_1_50-10_1_SCE-DCE';
-                'PHA_HPC_V_3-8_0_1_50-10_1_SCE-DCE';
-                'PHA_VVS_V_3-8_0_1_50-10_1_SCE-DCE';
-                'PHA_OCC_V_3-8_0_1_50-10_1_SCE-DCE';
-                %contex video renewal
-                'PHA_OFC_V_3-8_0_1_50-10_1_SCR-DCR';
-                'PHA_AMY_V_3-8_0_1_50-10_1_SCR-DCR';
-                'PHA_HPC_V_3-8_0_1_50-10_1_SCR-DCR';
-                'PHA_VVS_V_3-8_0_1_50-10_1_SCR-DCR';
-                'PHA_OCC_V_3-8_0_1_50-10_1_SCR-DCR';
-                %contex cue acquisition
-                'PHA_OFC_C_3-8_0_1_50-10_1_SCA-DCA';
-                'PHA_AMY_C_3-8_0_1_50-10_1_SCA-DCA';
-                'PHA_HPC_C_3-8_0_1_50-10_1_SCA-DCA';
-                'PHA_VVS_C_3-8_0_1_50-10_1_SCA-DCA';
-                'PHA_OCC_C_3-8_0_1_50-10_1_SCA-DCA';
-                %contex cue extinction
-                'PHA_OFC_C_3-8_0_1_50-10_1_SCE-DCE';
-                'PHA_AMY_C_3-8_0_1_50-10_1_SCE-DCE';
-                'PHA_HPC_C_3-8_0_1_50-10_1_SCE-DCE';
-                'PHA_VVS_C_3-8_0_1_50-10_1_SCE-DCE';
-                'PHA_OCC_C_3-8_0_1_50-10_1_SCE-DCE';
-                %contex cue renewal
-                'PHA_OFC_C_3-8_0_1_50-10_1_SCR-DCR';
-                'PHA_AMY_C_3-8_0_1_50-10_1_SCR-DCR';
-                'PHA_HPC_C_3-8_0_1_50-10_1_SCR-DCR';
-                'PHA_VVS_C_3-8_0_1_50-10_1_SCR-DCR';
-                'PHA_OCC_C_3-8_0_1_50-10_1_SCR-DCR';
-                %Within item - acquisition
-                'PHA_OFC_C_3-8_0_1_50-10_1_SICSPA-SICSMA';
-                'PHA_AMY_C_3-8_0_1_50-10_1_SICSPA-SICSMA';
-                'PHA_HPC_C_3-8_0_1_50-10_1_SICSPA-SICSMA';
-                'PHA_VVS_C_3-8_0_1_50-10_1_SICSPA-SICSMA';
-                'PHA_OCC_C_3-8_0_1_50-10_1_SICSPA-SICSMA';
-                %Within item - extinction
-                'PHA_OFC_C_3-8_0_1_50-10_1_SICSPE-SICSME';
-                'PHA_AMY_C_3-8_0_1_50-10_1_SICSPE-SICSME';
-                'PHA_HPC_C_3-8_0_1_50-10_1_SICSPE-SICSME';
-                'PHA_VVS_C_3-8_0_1_50-10_1_SICSPE-SICSME';
-                'PHA_OCC_C_3-8_0_1_50-10_1_SICSPE-SICSME';
-                %Within item - extinction CS++
-                'PHA_OFC_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE';
-                'PHA_AMY_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE';
-                'PHA_HPC_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE';
-                'PHA_VVS_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE';
-                'PHA_OCC_C_3-8_0_1_50-10_1_SICSPE-SICSMPPE';
-                %Within item - extinction CS+-
-                'PHA_OFC_C_3-8_0_1_50-10_1_SICSPE-SICSMPME';
-                'PHA_AMY_C_3-8_0_1_50-10_1_SICSPE-SICSMPME';
-                'PHA_HPC_C_3-8_0_1_50-10_1_SICSPE-SICSMPME';
-                'PHA_VVS_C_3-8_0_1_50-10_1_SICSPE-SICSMPME';
-                'PHA_OCC_C_3-8_0_1_50-10_1_SICSPE-SICSMPME';
-               
+%                 'TR_OFC_C_nan_0_0_50-10_1_SI-DI';
+%                 'TR_OFC_C_nan_0_0_50-10_1_SIA-DIA';
+%                 'TR_OFC_C_nan_0_0_50-10_1_SIE-DIE';
+%                 'TR_OFC_C_nan_0_0_50-10_1_SISV-DISV';
+%                 'TR_OFC_C_nan_0_0_50-10_1_SISVA-DISVA';
+%                 'TR_OFC_C_nan_0_0_50-10_1_SISVE-DISVE';
+%                 'TR_AMY_C_nan_0_0_50-10_1_SIA-DIA';
+                % 'TR_AMY_C_nan_0_0_50-10_1_SI-DI';
+%                 'TR_AMY_C_nan_0_0_50-10_1_SIE-DIE';
+%                 'TR_AMY_C_nan_0_0_50-10_1_SISV-DISV';
+%                 'TR_AMY_C_nan_0_0_50-10_1_SISVA-DISVA';
+%                 'TR_AMY_C_nan_0_0_50-10_1_SISVE-DISVE';
+                 %'TR_HPC_C_nan_0_0_50-10_1_SI-DI';
+%                 'TR_HPC_C_nan_0_0_50-10_1_SIA-DIA';
+%                 'TR_HPC_C_nan_0_0_50-10_1_SIE-DIE';
+%                 'TR_HPC_C_nan_0_0_50-10_1_SISV-DISV';
+%                 'TR_HPC_C_nan_0_0_50-10_1_SISVA-DISVA';
+%                 'TR_HPC_C_nan_0_0_50-10_1_SISVE-DISVE';
+%                 'TR_VVS_C_nan_0_0_50-10_1_SIA-DIA';
+                  %'TR_VVS_C_nan_0_0_50-10_1_SI-DI';
+%                 'TR_VVS_C_nan_0_0_50-10_1_SIE-DIE';
+%                 'TR_VVS_C_nan_0_0_50-10_1_SISV-DISV';
+%                 'TR_VVS_C_nan_0_0_50-10_1_SISVA-DISVA';
+%                 'TR_VVS_C_nan_0_0_50-10_1_SISVE-DISVE';
+                  %'TR_OCC_C_nan_0_0_50-10_1_SI-DI';
+%                 'TR_OCC_C_nan_0_0_50-10_1_SIA-DIA';
+%                 'TR_OCC_C_nan_0_0_50-10_1_SIE-DIE';
+%                 'TR_OCC_C_nan_0_0_50-10_1_SISV-DISV';
+%                 'TR_OCC_C_nan_0_0_50-10_1_SISVA-DISVA';
+%                 'TR_OCC_C_nan_0_0_50-10_1_SISVE-DISVE';
                 
         };   
 
@@ -256,14 +281,34 @@ end
 %%
 clear
 paths = load_paths_EXT; 
-f2sav =   'TR_OCC_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
+f2sav =   'TR_AMY_C_nan_0_0_50-10_1_SISVE-DISVE';
 
-% %Within item - renewal CS+-
 % 
-% 'TR_AMY_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
-% 'TR_HPC_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
-% 'TR_VVS_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
-% 'TR_OCC_C_nan_0_0_50-10_1_SICSPR-SICSMPMR';
+% 'TR_OFC_C_nan_0_0_50-10_1_SIE-DIE';
+% 'TR_OFC_C_nan_0_0_50-10_1_SISV-DISV';
+% 'TR_OFC_C_nan_0_0_50-10_1_SISVA-DISVA';
+% 'TR_OFC_C_nan_0_0_50-10_1_SISVE-DISVE';
+% 'TR_AMY_C_nan_0_0_50-10_1_SIA-DIA';
+% 'TR_AMY_C_nan_0_0_50-10_1_SIE-DIE';
+% 'TR_AMY_C_nan_0_0_50-10_1_SISV-DISV';
+% 'TR_AMY_C_nan_0_0_50-10_1_SISVA-DISVA';
+% 'TR_AMY_C_nan_0_0_50-10_1_SISVE-DISVE';
+% 'TR_HPC_C_nan_0_0_50-10_1_SIA-DIA';
+% 'TR_HPC_C_nan_0_0_50-10_1_SIE-DIE';
+% 'TR_HPC_C_nan_0_0_50-10_1_SISV-DISV';
+% 'TR_HPC_C_nan_0_0_50-10_1_SISVA-DISVA';
+% 'TR_HPC_C_nan_0_0_50-10_1_SISVE-DISVE';
+% 'TR_VVS_C_nan_0_0_50-10_1_SIA-DIA';
+% 'TR_VVS_C_nan_0_0_50-10_1_SIE-DIE';
+% 'TR_VVS_C_nan_0_0_50-10_1_SISV-DISV';
+% 'TR_VVS_C_nan_0_0_50-10_1_SISVA-DISVA';
+% 'TR_VVS_C_nan_0_0_50-10_1_SISVE-DISVE';
+% 'TR_OCC_C_nan_0_0_50-10_1_SIA-DIA';
+% 'TR_OCC_C_nan_0_0_50-10_1_SIE-DIE';
+% 'TR_OCC_C_nan_0_0_50-10_1_SISV-DISV';
+% 'TR_OCC_C_nan_0_0_50-10_1_SISVA-DISVA';
+% 'TR_OCC_C_nan_0_0_50-10_1_SISVE-DISVE';
+
 
 load ([ paths.results.rsa f2sav '.mat']);
 
@@ -288,6 +333,7 @@ cond2 = squeeze(out_rsa(:, 2, :, :));
 cond1(ids, :, :) = []; 
 cond2(ids, :, :) = []; 
 
+diff = cond1-cond2; 
 
 % % % remove half of the matrix
 for subji = 1:size(cond1, 1)
@@ -350,6 +396,82 @@ axesHandles = findall(0, 'type', 'axes');
 set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', []); 
 %colorbar
 exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
+
+
+%% CHECK CONTEXT DURING ACQ AND EXT > GENERALIZATION
+clear
+paths = load_paths_EXT; 
+f2sav =   'TR_OCC_C_nan_0_0_50-10_1_SCA-DCA';
+load ([ paths.results.rsa f2sav '.mat']);
+out_rsa_ACQ = out_rsa; 
+f2sav =   'TR_OCC_C_nan_0_0_50-10_1_SCE-DCE';
+load ([ paths.results.rsa f2sav '.mat']);
+out_rsa_EXT = out_rsa; 
+
+
+% % % % %  remove hack 
+ids = []; 
+for subji = 1:size(out_rsa, 1)
+    cond1 = squeeze(out_rsa(subji, 1, :, :)); 
+    cond2 = squeeze(out_rsa(subji, 2, :, :)); 
+    if cond1(1) == 0
+        ids = [ids subji];
+    end
+end
+
+cond1A = squeeze(out_rsa_ACQ(:, 1, :, :)); cond1A(ids, :, :) = []; 
+cond2A = squeeze(out_rsa_ACQ(:, 2, :, :)); cond2A(ids, :, :) = []; 
+cond1E = squeeze(out_rsa_EXT(:, 1, :, :)); cond1E(ids, :, :) = []; 
+cond2E = squeeze(out_rsa_EXT(:, 2, :, :)); cond2E(ids, :, :) = []; 
+diffA = cond1A-cond2A; 
+diffE = cond1E-cond2E; 
+m1 = squeeze(mean(diffA, 'omitnan')); 
+m2 = squeeze(mean(diffE, 'omitnan')); 
+
+[h p ci ts] = ttest(diffA, diffE); 
+h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    tObs = allSTs(id); 
+end
+
+
+%h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
+
+
+figure(); tiledlayout(1,3);
+nexttile
+contourf( m1, 50, 'linecolor', 'none'); axis square; hold on; colorbar
+plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+set(gca, 'clim', [-.04 .04])
+
+nexttile
+contourf( m2, 50, 'linecolor', 'none'); axis square;hold on; colorbar 
+plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+set(gca, 'clim', [-.04 .04])
+
+nexttile
+contourf( t, 50, 'linecolor', 'none'); axis square; hold on; colorbar
+contour( h, 1, 'Color', [0, 0, 0], 'LineWidth', 2);
+plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
+set(gca, 'clim', [-3 3])
+
+
+axesHandles = findall(0, 'type', 'axes');
+%set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 150], 'ylim', [1 150]); 
+set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', []); 
+%colorbar
+exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
+
 
 
 %% PERMUTATIONS
