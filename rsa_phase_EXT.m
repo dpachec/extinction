@@ -39,8 +39,6 @@ for subji = 1:length(ALLEEG)
         %cfg.oneListTraces = permute(EEG.data(:, 2501:5000,:), [3 1 2]); 
         cfg.tyRSA = 'tRSA'; 
         out_contrasts = create_contrasts_EXT(cfg);
-        ids_prev = out_contrasts.allIDs; 
-        ids{subji,:} = cellfun(@(x) double(string(x)),ids_prev, 'un', 0);
         out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
         
 
@@ -50,6 +48,7 @@ end
 
 
 mkdir ([paths.results.rsa]);
+ids = out_contrasts.allIDs;
 save([ paths.results.rsa f2sav '.mat'], 'out_rsa', 'ids');
 
 t2 = datetime; 
@@ -245,6 +244,7 @@ for listi = 1:length(listF2sav)
     end
 
     mkdir ([paths.results.rsa]);
+    ids = out_contrasts.allIDs;
     save([ paths.results.rsa f2sav '.mat'], 'out_rsa', 'ids');
     
     t2 = datetime; 
