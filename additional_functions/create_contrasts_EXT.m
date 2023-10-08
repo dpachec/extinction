@@ -68,17 +68,17 @@ if exist('SISV')
    idF = DT & SI2 & SV; 
    new_sisv = [allComb(idF, 1) allComb(idF, 11)];
 end
-if exist('SISVA')
-   idF = DT & SI2 & SV & ACQ; 
-   new_sisva = [allComb(idF, 1) allComb(idF, 11)];
-end
 if exist('DISV')
    idF = DT & DI2 & SV; 
    new_disv = [allComb(idF, 1) allComb(idF, 11)];
 end
-if exist('DISVA')
-   idF = DT & DI2 & SV & ACQ; 
-   new_disva = [allComb(idF, 1) allComb(idF, 11)];
+if exist('DIDV')
+   idF = DT & DI2 & DV; 
+   new_didv = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SISVA')
+   idF = DT & SI2 & SV & ACQ; 
+   new_sisva = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SISVE')
    idF = DT & SI2 & SV & EXT;
@@ -124,6 +124,14 @@ if exist('SICSMPM')
    idF = DT & SI2 & CSMPM & EXT;
    new_sicsmpm = [allComb(idF, 1) allComb(idF, 11)];
 end
+if exist('SC')
+   idF = DT & SC; 
+   new_sc = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DC')
+   idF = DT & DC; 
+   new_dc = [allComb(idF, 1) allComb(idF, 11)];
+end
 if exist('SCA')
    idF = DT & SC & ACQ;
    new_sca = [allComb(idF, 1) allComb(idF, 11)];
@@ -142,6 +150,10 @@ if exist('DCE')
 end
 if exist('SCR')
    idF = DT & SC & REN;
+   new_sce = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCR')
+   idF = DT & DC & REN;
    new_sce = [allComb(idF, 1) allComb(idF, 11)];
 end
 
