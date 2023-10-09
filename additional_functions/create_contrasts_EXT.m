@@ -191,7 +191,7 @@ if strcmp(cfg.tyRSA, 'POW')
                 'end'    ]      );
            
     end
-elseif strcmp(cfg.tyRSA, 'TR') | strcmp(cfg.tyRSA, 'PHA') 
+elseif strcmp(cfg.tyRSA, 'TR') | strcmp(cfg.tyRSA, 'PHA')  | strcmp(cfg.tyRSA, 'PLV') 
     for ci = 1:length(contr2save)
         eval(  ['if exist(''new_' lower(contr2save{ci}) ''') & any(strcmp(contr2save, ''' contr2save{ci} ''')) ...' newline ...
                'disp ([''new_' lower(contr2save{ci})  ' ' ' '' num2str(length(new_' lower(contr2save{ci}) '))]);' newline...

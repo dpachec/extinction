@@ -14,10 +14,10 @@ currentIds = out_contrasts.allContrastIds;
 
 for i = 1:length(currentContrast)
     if ~isempty(out_contrasts.allContrasts{i})
-        if strcmp(cfg.tyRSA, 'pRSA')
+        if strcmp(cfg.tyRSA, 'POW')
             nTimepoints = size (out_contrasts.allContrasts{i}{end}, 5); %%all2all file is stored within this cell array
             aBins(i,:)  =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-        elseif strcmp(cfg.tyRSA, 'tRSA')
+        elseif strcmp(cfg.tyRSA, 'TR')| strcmp(cfg.tyRSA, 'PHA')  | strcmp(cfg.tyRSA, 'PLV') 
             nTimepoints = size (out_contrasts.allContrasts{i}{end}, 4); %%all2all file is stored within this cell array
             aBins(i,:)  =  floor ( (nTimepoints/mf)- win_width/mf+1 );
         end
@@ -39,43 +39,55 @@ for coni = 1:length(currentContrast)
     
         nTrials = size(all2all, 1);    
         nChans = size(all2all, 3);
-        nFreq = size(all2all, 4);
-    
-   
+        
 
-        for chani = 1:nChans
-            for triali = 1:nTrials
-                if isempty(find(isnan(all2all(triali, :,chani,:,:))))
-                    for freqi = 1:nFreq
-                        for timei = 1:bins 
-                            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                        
-                            x = all2all(triali, 1,chani,freqi,timeBinsi);
-                            x = x(:); 
-            
-                            y = all2all(triali, 2,chani,freqi,timeBinsi);
+        if cfg.TG 
+            for chani = 1:nChans
+                for triali = 1:nTrials
+                    for timei = 1:bins 
+                        timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+                        x = all2all(triali, 1,chani,timeBinsi);
+                        x = x(:); 
+                        for timej = timei:bins
+                            timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
+                            y = all2all(triali, 2,chani,timeBinsj);
                             y = y(:); 
                             
                             diffPha = angle(hilbert(x)) - angle(hilbert(y));
                             PLV2U = abs(mean(exp(1i*(diffPha))));
                             
-                            rsaZ(chani, triali, freqi, timei) = PLV2U;
-                            
+                            rsaZ(chani, triali, timei, timej) = PLV2U;
                         end
                     end
-                else
-                        rsaZ(chani, triali, :, :) = nan(nFreq,bins);
+                end
+            end
+
+        else
+            for chani = 1:nChans
+                for triali = 1:nTrials
+                    for timei = 1:bins 
+                        timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+                    
+                        x = all2all(triali, 1,chani,timeBinsi);
+                        x = x(:); 
+        
+                        y = all2all(triali, 2,chani,timeBinsi);
+                        y = y(:); 
+                        
+                        diffPha = angle(hilbert(x)) - angle(hilbert(y));
+                        PLV2U = abs(mean(exp(1i*(diffPha))));
+                        
+                        rsaZ(chani, triali, timei) = PLV2U;
+    
+                    end
                 end
             end
         end
             
-            % % normalize
-            rsaZ = normalize_rsaZ_EXT(rsaZ, 1:5);
-
-            rsaZ(rsaZ==1) = nan; 
-            %rsaZ = squeeze(mean(rsaZ, 'omitnan'));
-            rsaZ = mean(rsaZ, 'omitnan');
-            allRSA{batchi} = rsaZ; 
+        %rsaZ(rsaZ==1) = nan; 
+        %rsaZ = squeeze(mean(rsaZ, 'omitnan'));
+        rsaZ = mean(rsaZ, 'omitnan');
+        allRSA{batchi} = rsaZ; 
         
      
         
@@ -88,17 +100,11 @@ for coni = 1:length(currentContrast)
    
     
         rsaZ = squeeze(cat(2, allRSA{:}));
-        % count nan trials 
-        count = 0; 
-        for triali = 1:size(rsaZ, 1)
-            if isnan(rsaZ(triali, 10, 10))
-                count = count+1; 
-            end
+        if ndims(rsaZ) == 2
+            allRSAZ(coni, :) = squeeze(mean(rsaZ, 'omitnan')); 
+        elseif ndims(rsaZ) == 3
+            allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
         end
-        disp (['number of nan trials = ' num2str(count)])
-        allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
-
-
        
 
     end 
