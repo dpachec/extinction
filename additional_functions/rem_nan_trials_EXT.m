@@ -13,6 +13,7 @@ function[EEG] = rem_nan_trials_EXT (EEG)
         disp (['removing ' num2str(length(id2rem)) ' trials'])
         EEG.data(:, :, id2rem) = []; 
         EEG.event(id2rem) = []; 
+        EEG.nan = length(id2rem); 
     end
 
 end

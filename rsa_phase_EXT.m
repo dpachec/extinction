@@ -57,8 +57,8 @@ end
 
 
 mkdir ([paths.results.rsa]);
-ids = out_contrasts.allIDs;
-save([ paths.results.rsa f2sav '.mat'], 'out_rsa', 'ids');
+ids = out_contrasts.allIDs; nnans = EEG.nan; 
+save([ paths.results.rsa f2sav '.mat'], 'out_rsa', 'ids', 'nnans');
 
 t2 = datetime; 
 etime(datevec(t2), datevec(t1))
