@@ -36,8 +36,8 @@ CSP = (allComb(:,9) == 1 & allComb(:,19) == 1);
 CSM = (allComb(:,9) == 0 & allComb(:,19) == 0);
 CSMPP = (allComb(:,7) == 2 & allComb(:,17) == 2);
 CSMPM = (allComb(:,7) == 3 & allComb(:,17) == 3);
-SC = (allComb(:,4) == allComb(:,14));
-DC = (allComb(:,4) ~= allComb(:,14));
+SC2 = (allComb(:,4) == allComb(:,14));
+DC2 = (allComb(:,4) ~= allComb(:,14));
 
 
 if exist('SI')
@@ -125,35 +125,35 @@ if exist('SICSMPM')
    new_sicsmpm = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SC')
-   idF = DT & SC; 
+   idF = DT & SC2; 
    new_sc = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('DC')
-   idF = DT & DC; 
+   idF = DT & DC2; 
    new_dc = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SCA')
-   idF = DT & SC & ACQ;
+   idF = DT & SC2 & ACQ;
    new_sca = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('DCA')
-   idF = DT & DC & ACQ;
+   idF = DT & DC2 & ACQ;
    new_dca = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SCE')
-   idF = DT & SC & EXT;
+   idF = DT & SC2 & EXT;
    new_sce = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('DCE')
-   idF = DT & DC & EXT;
+   idF = DT & DC2 & EXT;
    new_dce = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SCR')
-   idF = DT & SC & REN;
+   idF = DT & SC2 & REN;
    new_sce = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('DCR')
-   idF = DT & DC & REN;
+   idF = DT & DC2 & REN;
    new_sce = [allComb(idF, 1) allComb(idF, 11)];
 end
 
