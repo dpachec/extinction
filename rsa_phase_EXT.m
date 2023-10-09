@@ -4,7 +4,7 @@
 clc
 clear
 
-f2sav =  'PLV_OCC_C_nan_0_0_50-10_1_SCR-DCR';
+f2sav =  'TR_OFC_C_3-8_0_0_50-10_1_SIA-DIA'; 
 
 cfg = getParams_EXT(f2sav);
 
@@ -15,36 +15,45 @@ ALLEEG = loadTracesEXT(cfg.roi, cfg.LT, paths);
 
 
 for subji = 1:length(ALLEEG)
-    
-    EEG = ALLEEG{subji};
-    
-    
-    if ~isempty(EEG)
-        Ev = [{EEG.event.type}]';
-        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
-        Ev2 = cat(1, Ev1{:});
         
-        cfg.oneListIds = Ev2; 
+    EEG = ALLEEG{subji};
+        
+        
+    if ~isempty(EEG)
         
         EEG = add_EEGLAB_fields(EEG); 
-        %EEG = pop_eegfiltnew (EEG, .1,30); %low pass filter up to 30Hz (kunz 2019)
-%         d2p = squeeze(EEG.data(1, 1:1000, 1))
-%         figure()
-%         plot(d2p)
+        EEG = rem_nan_trials_EXT(EEG);
+        Ev = [{EEG.event.type}]';Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        cfg.oneListIds = Ev2;
 
-        EEG = normalize_baseline_EXT(EEG, [2501:3000]); 
-        %EEG = normalize_EXT(EEG);  %across trials
-        EEG = downsample_EEG_EXT(EEG); 
-        cfg.oneListTraces = permute(EEG.data(:, 251:500,:), [3 1 2]); 
-        %cfg.oneListTraces = permute(EEG.data(:, 2501:5000,:), [3 1 2]); 
-        cfg.tyRSA = 'tRSA'; 
-        out_contrasts = create_contrasts_EXT(cfg);
-        out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
+        if strcmp(cfg.tyRSA, 'TR')
+            EEG = normalize_baseline_EXT(EEG, [2501:3000]); 
+            %EEG = normalize_EXT(EEG);  %across trials
+            EEG = downsample_EEG_EXT(EEG); 
+            cfg.oneListTraces = permute(EEG.data(:, 251:500,:), [3 1 2]); 
+            out_contrasts = create_contrasts_EXT(cfg);
+            out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
+        elseif strcmp(cfg.tyRSA, 'POW')
+            EEG = extract_power_EXT(EEG, 0.01); 
+            %EEG = normalize_baseline_EXT(EEG, [251:300]); 
+            EEG = normalize_EXT(EEG);  %across trials
+            cfg.oneListPow = EEG.power(:, :, : ,251:470); 
+            out_contrasts = create_contrasts_EXT(cfg);
+            out_rsa(subji, :, :, :) = rsa_EXT4(out_contrasts, cfg);
+        elseif strcmp(cfg.tyRSA, 'PHA')
+            EEG = normalize_EXT(EEG);  %across trials
+            phaTS = extract_pha_EXT(EEG, cfg);
+            cfg.oneListTraces = phaTS(:, :, 251:500); 
+            out_contrasts = create_contrasts_EXT(cfg);
+            out_rsa(subji, :, :, :) = rsa_EXT3(out_contrasts, cfg);
+        end
         
-
+        
     end
-
+    
 end
+
 
 
 mkdir ([paths.results.rsa]);
@@ -365,13 +374,14 @@ for listi = 1:length(listF2sav)
         
         
         if ~isempty(EEG)
-            Ev = [{EEG.event.type}]';
-            Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
-            Ev2 = cat(1, Ev1{:});
-            
-            cfg.oneListIds = Ev2; 
+
             
             EEG = add_EEGLAB_fields(EEG); 
+            EEG = rem_nan_trials_EXT(EEG); 
+
+            Ev = [{EEG.event.type}]';Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+            Ev2 = cat(1, Ev1{:});
+            cfg.oneListIds = Ev2; 
 
             if strcmp(cfg.tyRSA, 'TR')
                 EEG = normalize_baseline_EXT(EEG, [2501:3000]); 
