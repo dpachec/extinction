@@ -127,13 +127,13 @@ for coni = 1:length(currentContrast)
         if exist('allRSA')
             rsaZ = cat(1, allRSA{:});
             % count nan trials 
-            count = 0; 
-            for triali = 1:size(rsaZ, 1)
-                if isnan(rsaZ(triali, 1, 1))
-                    count = count+1; 
-                end
-            end
-            disp (['number of nan trials = ' num2str(count)])
+%             count = 0; 
+%             for triali = 1:size(rsaZ, 1)
+%                 if isnan(rsaZ(triali, 1, 1))
+%                     count = count+1; 
+%                 end
+%             end
+%             disp (['number of nan trials = ' num2str(count)])
             allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
         end
         
