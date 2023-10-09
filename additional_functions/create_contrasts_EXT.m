@@ -150,11 +150,11 @@ if exist('DCE')
 end
 if exist('SCR')
    idF = DT & SC2 & REN;
-   new_sce = [allComb(idF, 1) allComb(idF, 11)];
+   new_scr = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('DCR')
    idF = DT & DC2 & REN;
-   new_sce = [allComb(idF, 1) allComb(idF, 11)];
+   new_dcr = [allComb(idF, 1) allComb(idF, 11)];
 end
 
 
