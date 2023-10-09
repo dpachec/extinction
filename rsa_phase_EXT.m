@@ -4,7 +4,7 @@
 clc
 clear
 
-f2sav =  'TR_OCC_C_nan_0_0_50-10_1_SCR-DCR';
+f2sav =  'PLV_OCC_C_nan_0_0_50-10_1_SCR-DCR';
 
 cfg = getParams_EXT(f2sav);
 
@@ -248,13 +248,6 @@ listF2sav = {
 'POW_TMP_C_3-54_0_1_50-10_0_SICSPE-SICSMPME'; 
 'POW_OCC_C_3-54_0_1_50-10_0_SICSPE-SICSMPME';
 
-
-
-
-
-
-
-
 %item-specificity
 'PHA_OFC_C_3-8_0_0_50-10_1_SIA-DIA';
 'PHA_OFC_C_3-8_0_0_50-10_1_SIE-DIE';
@@ -355,7 +348,7 @@ listF2sav = {
 t1 = datetime; 
 for listi = 1:length(listF2sav)
     disp(['File > ' num2str(listi) '      ' listF2sav{listi}]);
-    clearvars -except listF2sav listi 
+    clearvars -except listF2sav listi t1
         
     f2sav       = listF2sav{listi}; 
     cfg = getParams_EXT(f2sav);
