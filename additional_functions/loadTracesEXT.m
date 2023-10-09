@@ -21,7 +21,7 @@ function [ALLEEG] = loadTracesEXT(roi, LT, paths)
             file2load = ['TR_' 'OFC' '_C']; 
         end
     
-    elseif strcmp(roi, 'VVS')
+    elseif strcmp(roi, 'TMP')
         if strcmp(LT, 'V')
             file2load = ['TR_' 'TMP' '_V']; 
         elseif strcmp(LT, 'C')

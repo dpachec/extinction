@@ -10,7 +10,7 @@ if isfield(cfg, 'oneListTraces')
 end
 batch_bin               =       500; 
 
-%disp ('>>>>> creating contrasts');
+disp ('>>>>> creating contrasts');
  
 allContrasts = []; allContrastIds = [];
 
@@ -19,9 +19,9 @@ for ci = 1:length(contr2save)
 end
 
 oneListIdsA = double(string(oneListIds));
-idsIt= [1:length(oneListIdsA)]';
+idsIt= [1:size(oneListIdsA,1)]';
 idsIt(:,2:10) = oneListIdsA(:, 1:9); 
-ids = permn(1:length(oneListIdsA),2); % both directions 
+ids = permn(1:size(oneListIdsA, 1),2); % both directions 
 allComb = [idsIt(ids(:, 1),:) idsIt(ids(:,2),:)];
 
 DT  = (allComb(:,2) ~= allComb(:,12)); 
