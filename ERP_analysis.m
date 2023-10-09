@@ -1,18 +1,196 @@
 %% 
-%%
+%% EXPORT TRACES IN LOOP
 
-clear, close all
+clear , clc
+
+c2u = 'V';
+
+listF2sav = {   {'Amygdala'}; 
+                {'Hippocampus'}; 
+                {'orbitofrontal'}; 
+                {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'parahippocampal' 'entorhinal' };
+                {'occipital' 'cuneus' 'lingual' 'pericalcarine' 'bankssts'}; 
+            };   
+n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'};
+
+
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+
 paths = load_paths_EXT; 
+for listi = 1:length(listF2sav)
+    disp(['File > ' num2str(listi) '      ' listF2sav{listi}]);
+    clearvars -except listF2sav listi paths n2SAV c2u allsubs
+
+    sROI       = listF2sav{listi}; 
+
+    
+    
+    for subji = 1:length(allsubs)
+        subji
+        sub = allsubs{subji}; 
+        cd([ paths.iEEG])
+        load ([sub '_iEEG.mat']);
+    
+        EEG = remove_elec_EXT_manually(EEG, subji); 
+    
+        %chansLab = {EEG.chanlocs.fsLabelsR}';
+        chansLab = {EEG.chanlocs.fsLabel}';
+        selChans = contains(chansLab, sROI);
+    
+        
+        if find(selChans)
+            
+            EEG.chanlocs = EEG.chanlocs(selChans);
+            EEG.data = EEG.data(selChans, :); %contains nans
+            
+            %epoch data
+            Ev = [{EEG.event.type}]'; 
+            Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+            clen = cellfun(@length, Ev1); 
+            EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
+            Ev2 = cat(1, Ev1{:});
+           
+            Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
+            ids = strcmp(Ev2(:, 10), c2u); 
+            EEG.event = EEG.event(ids);
+    
+            %epoch data and markers
+            [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+            
+            EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+    
+    
+            if ~isempty(EEG.data)
+                nChans(subji, :) = size(EEG.data, 2);
+                ALLEEG{subji,:} = EEG; 
+            end
+        
+        end
+    
+    
+    end
+    
+    mkdir(paths.results.traces)
+    filename = [paths.results.traces 'TR_' n2SAV{listi} '_' c2u];
+    nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
+    totalChans = sum(nChans);
+    save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
+    
+    
+    
+end
+disp('done all files');
+cd (paths.github)
+
+
+%%EXPORT TRACES IN LOOP
+
+clear , clc
 
 c2u = 'C';
 
+listF2sav = {   {'Amygdala'}; 
+                {'Hippocampus'}; 
+                {'orbitofrontal'}; 
+                {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'parahippocampal' 'entorhinal' };
+                {'occipital' 'cuneus' 'lingual' 'pericalcarine' 'bankssts'}; 
+            };   
+n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'};
+
+
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+
+paths = load_paths_EXT; 
+for listi = 1:length(listF2sav)
+    disp(['File > ' num2str(listi) '      ' listF2sav{listi}]);
+    clearvars -except listF2sav listi paths n2SAV c2u allsubs
+
+    sROI       = listF2sav{listi}; 
+
+    
+    
+    for subji = 1:length(allsubs)
+        subji
+        sub = allsubs{subji}; 
+        cd([ paths.iEEG])
+        load ([sub '_iEEG.mat']);
+    
+        EEG = remove_elec_EXT_manually(EEG, subji); 
+    
+        %chansLab = {EEG.chanlocs.fsLabelsR}';
+        chansLab = {EEG.chanlocs.fsLabel}';
+        selChans = contains(chansLab, sROI);
+    
+        
+        if find(selChans)
+            
+            EEG.chanlocs = EEG.chanlocs(selChans);
+            EEG.data = EEG.data(selChans, :); %contains nans
+            
+            %epoch data
+            Ev = [{EEG.event.type}]'; 
+            Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+            clen = cellfun(@length, Ev1); 
+            EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
+            Ev2 = cat(1, Ev1{:});
+           
+            Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
+            ids = strcmp(Ev2(:, 10), c2u); 
+            EEG.event = EEG.event(ids);
+    
+            %epoch data and markers
+            [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+            
+            EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+    
+    
+            if ~isempty(EEG.data)
+                nChans(subji, :) = size(EEG.data, 2);
+                ALLEEG{subji,:} = EEG; 
+            end
+        
+        end
+    
+    
+    end
+    
+    mkdir(paths.results.traces)
+    filename = [paths.results.traces 'TR_' n2SAV{listi} '_' c2u];
+    nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
+    totalChans = sum(nChans);
+    save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
+    
+    
+    
+end
+disp('done all files');
+cd (paths.github)
+
+%%
+clear, close all
+paths = load_paths_EXT; 
+
+c2u = 'V';
+
+sROI = {'Amygdala'}; 
+
 %sROI = {'Hippocampus'}; 
 
-sROI = {'occipital'}; 
+%sROI = {'orbitofrontal'}; 
 
-%sROI = {'anteriorcingulate' 'posteriorcingulate' };
+%sROI = {'occipital'}; 
 
-%sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'fusiform' 'temporalpole' 'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
+%sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'fusiform' 'temporalpole' 'occipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
 
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
@@ -83,10 +261,10 @@ cd (paths.github)
 clear
 
 paths = load_paths_EXT; 
-file2load = ['TR_' 'Amygdala' '_C']; 
-%file2load = ['allS_' 'Hippocampus' '_C']; 
-%file2load = ['allS_' 'orbitofrontal' '_C']; 
-%file2load = ['allS_' 'superiorfrontal' '_C']; 
+%file2load = ['TR_' 'VVS' '_C']; 
+%file2load = ['TR_' 'Hippocampus' '_C']; 
+%file2load = ['TR_' 'orbitofrontal' '_C']; 
+file2load = ['TR_' 'occipital' '_C']; 
 
 load ([paths.results.traces file2load]); 
 
@@ -151,6 +329,72 @@ for subji = 1:length(ALLEEG)
 
 
 end
+
+disp ('done plotting traces')
+
+%% Plot all SPECTROGRAMS
+
+for subji = 1:length(ALLEEG)
+
+    EEG = ALLEEG{subji}; 
+
+    if ~isempty(EEG)
+        
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        
+        % % %   % % Acquisition
+        ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+
+        % % % % % % Extinction
+        ids3 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
+        ids4 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
+        ids5 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
+
+        EEG = extract_power_EXT(EEG, 0.01); 
+        EEG = normalize_EXT(EEG);  %across trials
+
+        tfDCH1 = mean(EEG.power(ids1, :, :, :), 1, 'omitnan'); 
+        tfDCH2 = mean(EEG.power(ids2, :, :, :), 1, 'omitnan'); 
+        tfDCH3 = mean(EEG.power(ids3, :, :, :), 1, 'omitnan'); 
+        tfDCH4 = mean(EEG.power(ids4, :, :, :), 1, 'omitnan'); 
+        tfDCH5 = mean(EEG.power(ids5, :, :, :), 1, 'omitnan'); 
+
+        nChans = size(EEG.data, 1);
+        for chani = 1:nChans
+
+            t = tiledlayout(5, 1); set(gcf, 'Position', [100 100 500 1000])
+            nexttile
+            imagesc(squeeze(tfDCH1(:, chani, :,:)));
+            nexttile
+            imagesc(squeeze(tfDCH2(:, chani, :,:))); 
+            nexttile
+            imagesc(squeeze(tfDCH3(:, chani, :,:))); 
+            nexttile
+            imagesc(squeeze(tfDCH4(:, chani, :,:))); 
+            nexttile
+            imagesc(squeeze(tfDCH5(:, chani, :,:))); 
+            
+            figName = [num2str(subji) '_' num2str(chani)]; 
+            title(t, figName, 'Interpreter','none'); 
+            exportgraphics(gcf, [paths.results.tracesPlots figName '.png'], 'Resolution', 150); 
+            close all; 
+
+        end
+        
+        %c1{subji,:} = tfDCH1; 
+        %2{subji,:} = tfDCH2; 
+
+    end
+
+
+
+end
+
+disp ('done plotting spectrograms')
 
 %% Save without plotting
 

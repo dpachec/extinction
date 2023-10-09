@@ -67,7 +67,7 @@ for coni = 1:length(currentContrast)
         else
             if cfg.TG
                 for triali = 1:trialN
-                    if isempty(find(isnan(all2all(triali, :,:,:,:))))
+                    if isempty(find(isnan(all2all(triali, :,:,:)))) & isempty(find(all2all(triali, :,:,:) == 0))
                         for timei = 1:bins 
                             timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
                             x = all2all(triali, 1,:,timeBinsi);
@@ -81,6 +81,8 @@ for coni = 1:length(currentContrast)
                             end
                             
                         end
+                    else
+                         rsaZ = nan(trialN, nTimepoints, nTimepoints); 
                     end
                 end
             else 
