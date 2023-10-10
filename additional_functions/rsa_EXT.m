@@ -25,6 +25,8 @@ for i = 1:length(currentContrast)
     end
 end
 
+idEmpty = cell2mat(cellfun(@(x) isempty(x), currentContrast, 'un', 0))
+currentContrast(idEmpty) = []; 
 for coni = 1:length(currentContrast)
     bins = aBins(coni);
     allIDs = out_contrasts.allIDs{coni};
