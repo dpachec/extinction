@@ -146,6 +146,14 @@ for coni = 1:length(currentContrast)
             elseif ndims(rsaZ) == 3
                 allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
             end
+        else 
+            if cfg.fR
+                allRSAZ(coni, :, :) = nan(nFreq, bins); 
+            end
+            if cfg.TG
+                allRSAZ(coni, :, :) = nan(bins, bins); 
+            end
+
         end
         
 
