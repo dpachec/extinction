@@ -99,11 +99,9 @@ for coni = 1:length(currentContrast)
 
    
     
-        rsaZ = squeeze(cat(2, allRSA{:}));
-        if ndims(rsaZ) == 2
-            allRSAZ(coni, :) = squeeze(mean(rsaZ, 'omitnan')); 
-        elseif ndims(rsaZ) == 3
-            allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
+        rsaZ = cat(2, allRSA{:});
+        if cfg.TG
+            allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 2,'omitnan')); 
         end
        
 
