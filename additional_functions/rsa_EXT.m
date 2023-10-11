@@ -137,15 +137,27 @@ for coni = 1:length(currentContrast)
 %             end
 %             disp (['number of nan trials = ' num2str(count)])
             allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
+        
+        else 
+            if cfg.fR
+                allRSAZ(coni, :, :) = nan (nFreq, bins);
+            end
+            if cfg.TG
+                allRSAZ(coni, :, :) = nan (bins, bins);
+            end        
         end
         
         
     else %only store the diagonal 
-        rsaZ = cat(1, allRSA{:});
-        parfor triali = 1:size(rsaZ, 1)
-            rsaN(triali, :) = diag(squeeze(rsaZ(triali, :, :)));
+        if exist('allRSA')
+            rsaZ = cat(1, allRSA{:});
+            parfor triali = 1:size(rsaZ, 1)
+                rsaN(triali, :) = diag(squeeze(rsaZ(triali, :, :)));
+            end
+            allRSAZ(coni, :) = squeeze(mean(rsaN, 'omitnan')); 
+        else 
+            allRSAZ(coni, :) = nan (bins);
         end
-        allRSAZ(coni, :) = squeeze(mean(rsaN, 'omitnan')); 
     end
 
 

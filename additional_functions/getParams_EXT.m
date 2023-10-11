@@ -5,7 +5,7 @@ function [cfg] = getParams_EXT(f2sav)
     cfg.roi = f2t{2};
     freqs = strsplit(f2t{4}, '-');
     cfg.LT         = f2t{3}; 
-    if ~( strcmp(f2t{1}, 'TR') | strcmp(f2t{1}, 'POW') )
+    if ~( strcmp(f2t{1}, 'TR') )
         cfg.freqs       = [double(string((freqs{1}))) : double(string((freqs{2})))];
     else
         cfg.freqs       = [];

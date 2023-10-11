@@ -98,20 +98,19 @@ for coni = 1:length(currentContrast)
                 end
 
             else
-                for triali = 1:trialN
-                    if isempty(find(isnan(all2all(triali, :,:,:,:))))
-                        for timei = 1:bins 
-                            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                            x = all2all(triali, 1,:,f,timeBinsi);
-                            x = x(:); 
-                            y = all2all(triali, 2,:,f,timeBinsi);
-                            y = y(:); 
-                            a = [x y]';
-                            n = length(a);
-                            a1 = tiedrank(a')'; % tiedrank accepts matrix input, but make sure the matrix is in the correct orientation!!
-                            r = 1-6*sum((a1(1,:)-a1(2,:)).^2)/(n*(n^2-1));                           
-                            rsaZ(triali, timei) = atanh(r);
-                        end
+                parfor triali = 1:trialN
+                
+                    for timei = 1:bins 
+                        timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+                        x = all2all(triali, 1,:,f,timeBinsi);
+                        x = x(:); 
+                        y = all2all(triali, 2,:,f,timeBinsi);
+                        y = y(:); 
+                        a = [x y]';
+                        n = length(a);
+                        a1 = tiedrank(a')'; % tiedrank accepts matrix input, but make sure the matrix is in the correct orientation!!
+                        r = 1-6*sum((a1(1,:)-a1(2,:)).^2)/(n*(n^2-1));                           
+                        rsaZ(triali, timei) = atanh(r);
                     end
                 end
             end
