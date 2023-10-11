@@ -98,30 +98,31 @@ listF2sav = {
                 'TR_HPC_V_nan_0_0_50-10_0_SCR-DCR';
                 'TR_TMP_V_nan_0_0_50-10_0_SCR-DCR';
                 'TR_OCC_V_nan_0_0_50-10_0_SCR-DCR';
-                
-                'PHA_OFC_V_3-8_0_0_50-10_0_SC-DC';
-                'PHA_AMY_V_3-8_0_0_50-10_0_SC-DC';
-                'PHA_HPC_V_3-8_0_0_50-10_0_SC-DC';
-                'PHA_TMP_V_3-8_0_0_50-10_0_SC-DC';
-                'PHA_OCC_V_3-8_0_0_50-10_0_SC-DC';
 
-                'PHA_OFC_V_3-8_0_0_50-10_0_SCA-DCA';
-                'PHA_AMY_V_3-8_0_0_50-10_0_SCA-DCA';
-                'PHA_HPC_V_3-8_0_0_50-10_0_SCA-DCA';
-                'PHA_TMP_V_3-8_0_0_50-10_0_SCA-DCA';
-                'PHA_OCC_V_3-8_0_0_50-10_0_SCA-DCA';
 
-                'PHA_OFC_V_3-8_0_0_50-10_0_SCE-DCE';
-                'PHA_AMY_V_3-8_0_0_50-10_0_SCE-DCE';
-                'PHA_HPC_V_3-8_0_0_50-10_0_SCE-DCE';
-                'PHA_TMP_V_3-8_0_0_50-10_0_SCE-DCE';
-                'PHA_OCC_V_3-8_0_0_50-10_0_SCE-DCE';
+                'PHA_OFC_V_3-54_0_0_50-10_0_SC-DC';
+                'PHA_AMY_V_3-54_0_0_50-10_0_SC-DC';
+                'PHA_HPC_V_3-54_0_0_50-10_0_SC-DC';
+                'PHA_TMP_V_3-54_0_0_50-10_0_SC-DC';
+                'PHA_OCC_V_3-54_0_0_50-10_0_SC-DC';
 
-                'PHA_OFC_V_3-8_0_0_50-10_0_SCR-DCR';
-                'PHA_AMY_V_3-8_0_0_50-10_0_SCR-DCR';
-                'PHA_HPC_V_3-8_0_0_50-10_0_SCR-DCR';
-                'PHA_TMP_V_3-8_0_0_50-10_0_SCR-DCR';
-                'PHA_OCC_V_3-8_0_0_50-10_0_SCR-DCR';
+                'PHA_OFC_V_3-54_0_0_50-10_0_SCA-DCA';
+                'PHA_AMY_V_3-54_0_0_50-10_0_SCA-DCA';
+                'PHA_HPC_V_3-54_0_0_50-10_0_SCA-DCA';
+                'PHA_TMP_V_3-54_0_0_50-10_0_SCA-DCA';
+                'PHA_OCC_V_3-54_0_0_50-10_0_SCA-DCA';
+
+                'PHA_OFC_V_3-54_0_0_50-10_0_SCE-DCE';
+                'PHA_AMY_V_3-54_0_0_50-10_0_SCE-DCE';
+                'PHA_HPC_V_3-54_0_0_50-10_0_SCE-DCE';
+                'PHA_TMP_V_3-54_0_0_50-10_0_SCE-DCE';
+                'PHA_OCC_V_3-54_0_0_50-10_0_SCE-DCE';
+
+                'PHA_OFC_V_3-54_0_0_50-10_0_SCR-DCR';
+                'PHA_AMY_V_3-54_0_0_50-10_0_SCR-DCR';
+                'PHA_HPC_V_3-54_0_0_50-10_0_SCR-DCR';
+                'PHA_TMP_V_3-54_0_0_50-10_0_SCR-DCR';
+                'PHA_OCC_V_3-54_0_0_50-10_0_SCR-DCR';
                
 
         };   
@@ -161,7 +162,9 @@ for listi = 1:length(listF2sav)
                 EEG = downsample_EEG_EXT(EEG); 
                 cfg.oneListTraces = permute(EEG.data(:, 251:500,:), [3 1 2]); 
                 out_contrasts = create_contrasts_EXT(cfg);
+                tic
                 out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
+                toc
             elseif strcmp(cfg.tyRSA, 'POW')
                 EEG = extract_power_EXT(EEG, 0.01); 
                 %EEG = normalize_baseline_EXT(EEG, [251:300]); 
@@ -188,11 +191,10 @@ for listi = 1:length(listF2sav)
             end
             
         end
-    
+        ids{subji} = out_contrasts.allIDs; nnans{subji} = EEG.nan; 
     end
 
     mkdir ([paths.results.rsa]);
-    ids = out_contrasts.allIDs; nnans = EEG.nan; 
     save([ paths.results.rsa f2sav '.mat'], 'out_rsa', 'ids', 'nnans');
     
     
@@ -242,10 +244,10 @@ plot(m1); hold on;
 plot(m2)
 exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 
-%%
+%% plot TG
 clear
 paths = load_paths_EXT; 
-f2sav = 'PHA_OFC_V_3-8_0_0_50-10_1_SC-DC';
+f2sav = 'TR_OCC_V_nan_0_0_50-10_1_SCR-DCR';
 
 load ([ paths.results.rsa f2sav '.mat']);
 
@@ -257,20 +259,8 @@ cond1(ids, :, :) = [];
 cond2(ids, :, :) = []; 
 
 diff = cond1-cond2; 
-% 
-% % % remove half of the matrix
-% for subji = 1:size(cond1, 1)
-%     rdm2Tril = squeeze(cond1(subji, :, :)); 
-%     rdm2Tril = tril(rdm2Tril);
-%     rdm2Tril(rdm2Tril==0) = nan; 
-%     cond1TR(subji, :, :) = rdm2Tril;
-% 
-%     rdm2Tril = squeeze(cond2(subji, :, :)); 
-%     rdm2Tril = tril(rdm2Tril);
-%     rdm2Tril(rdm2Tril==0) = nan; 
-%     cond2TR(subji, :, :) = rdm2Tril;
-% end
 
+[cond1 cond2] = rem_half_matrix(cond1, cond2);
 
 m1 = squeeze(mean(cond1, 'omitnan')); 
 m2 = squeeze(mean(cond2, 'omitnan')); 
@@ -321,6 +311,62 @@ set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'x
 %colorbar
 exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 
+%% PERMUTATIONS
+nPerm = 1000; 
+
+nSubj =  size(cond1, 1);
+realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
+
+junts = cat(1, cond1(:, 6:15, 6:15), cond2(:, 6:15, 6:15));
+
+clear max_clust_sum_perm
+for permi = 1:nPerm
+    
+    [M,N] = size(realCondMapping);
+    rowIndex = repmat((1:M)',[1 N]);
+    [~,randomizedColIndex] = sort(rand(M,N),2);
+    newLinearIndex = sub2ind([M,N],rowIndex,randomizedColIndex);
+    fakeCondMapping = realCondMapping(newLinearIndex);
+
+    cond1P = junts(fakeCondMapping == 0, :,:);
+    cond2P = junts(fakeCondMapping == 1, :,:);
+
+    diffC = cond1P - cond2P; 
+    [h p ci ts] = ttest(diffC); 
+    h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat); 
+    clear allSTs  
+    clustinfo = bwconncomp(h);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+    end
+    
+    if exist('allSTs')
+        [max2u id] = max(allSTs);
+        max_clust_sum_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_sum_perm(permi,:) = 0; 
+    end
+
+end
+
+
+disp('done')
+
+%% 
+%allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
+allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
+
+
+
+%% plot histogram
+figure
+%tObs =  -30.4546%-86.4470;
+histogram(max_clust_sum_perm, 20); hold on; 
+scatter(tObs,0, 100, 'filled','r');
+set(gca, 'FontSize', 16)
+
+
 %% PLV 200
 clear
 paths = load_paths_EXT; 
@@ -351,12 +397,12 @@ boxplot(allC)
 disp (['t: ' num2str(t) ' //  p = ' num2str(p)])
 
 %% CHECK CONTEXT DURING ACQ AND EXT > GENERALIZATION
-clear
+clear, clc
 paths = load_paths_EXT; 
-f2sav =   'TR_OCC_C_nan_0_0_50-10_1_SCA-DCA';
+f2sav =   'TR_HPC_V_nan_0_0_50-10_1_SCA-DCA';
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_ACQ = out_rsa; 
-f2sav =   'TR_OCC_C_nan_0_0_50-10_1_SCE-DCE';
+f2sav =   'TR_HPC_V_nan_0_0_50-10_1_SCE-DCE';
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_EXT = out_rsa; 
 
@@ -429,10 +475,10 @@ exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 %% PERMUTATIONS
 nPerm = 1000; 
 
-nSubj =  size(cond1, 1);
+nSubj =  size(diffA, 1);
 realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
 
-junts = cat(1, cond1TR(:, 6:15, 6:15), cond2TR(:, 6:15, 6:15));
+junts = cat(1, diffA(:, 6:15, 6:15), diffE(:, 6:15, 6:15));
 
 clear max_clust_sum_perm
 for permi = 1:nPerm

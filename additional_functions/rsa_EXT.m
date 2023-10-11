@@ -102,15 +102,15 @@ for coni = 1:length(currentContrast)
     
         rsaZ = zeros (trialN, bins, bins);
         for triali = 1:trialN
-            if isempty(find(isnan(xM(triali, :,:)))) & isempty(find(isnan(yM(triali, :,:)))) & isempty(find(xM(triali, :,:)==0)) & isempty(find(yM(triali, :,:)==0))
+            %if isempty(find(isnan(xM(triali, :,:)))) & isempty(find(isnan(yM(triali, :,:)))) & isempty(find(xM(triali, :,:)==0)) & isempty(find(yM(triali, :,:)==0))
                 mX= squeeze(xM(triali,:,:));
                 mY= squeeze(yM(triali,:,:));
                 r = corr (mX', mY','Type', 's'); 
                 
                 rsaZ(triali, :, :) = atanh(r);
-            else
-                rsaZ(triali, :, :) = nan(size(bins));
-            end
+            %else
+            %    rsaZ(triali, :, :) = nan(size(bins));
+            %end
         end
         
         %rsaZ(rsaZ==0) = nan; 
@@ -145,7 +145,7 @@ for coni = 1:length(currentContrast)
         parfor triali = 1:size(rsaZ, 1)
             rsaN(triali, :) = diag(squeeze(rsaZ(triali, :, :)));
         end
-        allRSAZ(coni, :,:) = squeeze(mean(rsaZ, 'omitnan')); 
+        allRSAZ(coni, :) = squeeze(mean(rsaN, 'omitnan')); 
     end
 
 
