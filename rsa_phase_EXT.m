@@ -1,129 +1,26 @@
 %%
-%% Temporal RSA  
-%rsaTYPE_freqs_avTimeFeatVect_freqResolv(0-1)_win-width_mf_TG_contrast
-clc
-clear
-
-f2sav =  'PLV_OFC_C_3-8_0_0_50-10_1_SIA-DIA'; 
-
-cfg = getParams_EXT(f2sav);
-
-t1 = datetime; 
-paths = load_paths_EXT; 
-
-ALLEEG = loadTracesEXT(cfg.roi, cfg.LT, paths);
-
-
-for subji = 1:length(ALLEEG)
-        
-    EEG = ALLEEG{subji};
-        
-        
-    if ~isempty(EEG)
-        
-        EEG = add_EEGLAB_fields(EEG); 
-        EEG = rem_nan_trials_EXT(EEG);
-        Ev = [{EEG.event.type}]';Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
-        Ev2 = cat(1, Ev1{:});
-        cfg.oneListIds = Ev2;
-
-        if strcmp(cfg.tyRSA, 'TR')
-            EEG = normalize_baseline_EXT(EEG, [2501:3000]); 
-            %EEG = normalize_EXT(EEG);  %across trials
-            EEG = downsample_EEG_EXT(EEG); 
-            cfg.oneListTraces = permute(EEG.data(:, 251:500,:), [3 1 2]); 
-            out_contrasts = create_contrasts_EXT(cfg);
-            out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
-        elseif strcmp(cfg.tyRSA, 'POW')
-            EEG = extract_power_EXT(EEG, 0.01); 
-            %EEG = normalize_baseline_EXT(EEG, [251:300]); 
-            EEG = normalize_EXT(EEG);  %across trials
-            cfg.oneListPow = EEG.power(:, :, : ,251:470); 
-            out_contrasts = create_contrasts_EXT(cfg);
-            out_rsa(subji, :, :, :) = rsa_EXT4(out_contrasts, cfg);
-        elseif strcmp(cfg.tyRSA, 'PHA')
-            EEG = normalize_EXT(EEG);  %across trials
-            phaTS = extract_pha_EXT(EEG, cfg);
-            cfg.oneListTraces = phaTS(:, :, 251:500); 
-            out_contrasts = create_contrasts_EXT(cfg);
-            out_rsa(subji, :, :, :) = rsa_EXT3(out_contrasts, cfg);
-        elseif strcmp(cfg.tyRSA, 'PLV')
-            EEG = normalize_EXT(EEG);  %across trials
-            phaTS = extract_pha_EXT(EEG, cfg);
-            cfg.oneListTraces = phaTS(:, :, 251:500); 
-            out_contrasts = create_contrasts_EXT(cfg);
-            out_rsa(subji, :, :, :) = rsa_EXT5(out_contrasts, cfg);
-        end
-        
-    end
-    
-end
-
-
-
-mkdir ([paths.results.rsa]);
-ids = out_contrasts.allIDs; nnans = EEG.nan; 
-save([ paths.results.rsa f2sav '.mat'], 'out_rsa', 'ids', 'nnans');
-
-t2 = datetime; 
-etime(datevec(t2), datevec(t1))
-
-
 %% Temporal RSA IN LOOP 
 %rsaTYPE_freqs_avTimeFeatVect_freqResolv(0-1)_win-width_mf_TG_contrast
 clear , clc
 
 listF2sav = {
 
-                'TR_OFC_V_nan_0_0_50-10_0_SC-DC';
-                'TR_AMY_V_nan_0_0_50-10_0_SC-DC';
-                'TR_HPC_V_nan_0_0_50-10_0_SC-DC';
-                'TR_TMP_V_nan_0_0_50-10_0_SC-DC';
-                'TR_OCC_V_nan_0_0_50-10_0_SC-DC';
-
-                'TR_OFC_V_nan_0_0_50-10_0_SCA-DCA';
-                'TR_AMY_V_nan_0_0_50-10_0_SCA-DCA';
-                'TR_HPC_V_nan_0_0_50-10_0_SCA-DCA';
-                'TR_TMP_V_nan_0_0_50-10_0_SCA-DCA';
-                'TR_OCC_V_nan_0_0_50-10_0_SCA-DCA';
-
-                'TR_OFC_V_nan_0_0_50-10_0_SCE-DCE';
-                'TR_AMY_V_nan_0_0_50-10_0_SCE-DCE';
-                'TR_HPC_V_nan_0_0_50-10_0_SCE-DCE';
-                'TR_TMP_V_nan_0_0_50-10_0_SCE-DCE';
-                'TR_OCC_V_nan_0_0_50-10_0_SCE-DCE';
-
-                'TR_OFC_V_nan_0_0_50-10_0_SCR-DCR';
-                'TR_AMY_V_nan_0_0_50-10_0_SCR-DCR';
-                'TR_HPC_V_nan_0_0_50-10_0_SCR-DCR';
-                'TR_TMP_V_nan_0_0_50-10_0_SCR-DCR';
-                'TR_OCC_V_nan_0_0_50-10_0_SCR-DCR';
+                  'POW_AMY_C_39-54_1_0_50-1_0_SICSPE-SICSME';
+                
+                 'POW_OFC_V_39-54_1_0_50-1_0_SCA-DCA';
+                 'POW_AMY_V_39-54_1_0_50-1_0_SCA-DCA';
+                 'POW_HPC_V_39-54_1_0_50-1_0_SCA-DCA';
+                 'POW_TMP_V_39-54_1_0_50-1_0_SCA-DCA';
+                 'POW_OCC_V_39-54_1_0_50-1_0_SCA-DCA';
+% 
+% 
+                 'POW_OFC_V_39-54_1_0_50-1_0_SCE-DCE';
+                 'POW_AMY_V_39-54_1_0_50-1_0_SCE-DCE';
+                 'POW_HPC_V_39-54_1_0_50-1_0_SCE-DCE';
+                 'POW_TMP_V_39-54_1_0_50-1_0_SCE-DCE';
+                 'POW_OCC_V_39-54_1_0_50-1_0_SCE-DCE';
 
 
-                'PHA_OFC_V_3-54_0_0_50-10_0_SC-DC';
-                'PHA_AMY_V_3-54_0_0_50-10_0_SC-DC';
-                'PHA_HPC_V_3-54_0_0_50-10_0_SC-DC';
-                'PHA_TMP_V_3-54_0_0_50-10_0_SC-DC';
-                'PHA_OCC_V_3-54_0_0_50-10_0_SC-DC';
-
-                'PHA_OFC_V_3-54_0_0_50-10_0_SCA-DCA';
-                'PHA_AMY_V_3-54_0_0_50-10_0_SCA-DCA';
-                'PHA_HPC_V_3-54_0_0_50-10_0_SCA-DCA';
-                'PHA_TMP_V_3-54_0_0_50-10_0_SCA-DCA';
-                'PHA_OCC_V_3-54_0_0_50-10_0_SCA-DCA';
-
-                'PHA_OFC_V_3-54_0_0_50-10_0_SCE-DCE';
-                'PHA_AMY_V_3-54_0_0_50-10_0_SCE-DCE';
-                'PHA_HPC_V_3-54_0_0_50-10_0_SCE-DCE';
-                'PHA_TMP_V_3-54_0_0_50-10_0_SCE-DCE';
-                'PHA_OCC_V_3-54_0_0_50-10_0_SCE-DCE';
-
-                'PHA_OFC_V_3-54_0_0_50-10_0_SCR-DCR';
-                'PHA_AMY_V_3-54_0_0_50-10_0_SCR-DCR';
-                'PHA_HPC_V_3-54_0_0_50-10_0_SCR-DCR';
-                'PHA_TMP_V_3-54_0_0_50-10_0_SCR-DCR';
-                'PHA_OCC_V_3-54_0_0_50-10_0_SCR-DCR';
-               
 
         };   
 
@@ -171,7 +68,8 @@ for listi = 1:length(listF2sav)
                 EEG = normalize_EXT(EEG);  %across trials
                 cfg.oneListPow = EEG.power(:, :, : ,251:470); 
                 out_contrasts = create_contrasts_EXT(cfg);
-                out_rsa(subji, :, :, :) = rsa_EXT4(out_contrasts, cfg);
+                %out_rsa(subji, :, :, :) = rsa_EXT4(out_contrasts, cfg);
+                out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
             elseif strcmp(cfg.tyRSA, 'PHA')
                 EEG = normalize_EXT(EEG);  %across trials
                 phaTS = extract_pha_EXT(EEG, cfg);
@@ -207,8 +105,8 @@ end
 %% plot 2 lines
 clear
 paths = load_paths_EXT; 
-f2sav = 'PHA_OFC_V_3-8_0_0_50-10_0_SC-DC';
-
+f2sav = 'POW_AMY_C_03-08_1_0_50-1_0_SICSPA-SICSMA';
+        
 load ([ paths.results.rsa f2sav '.mat']);
 
 ids = rem_nan_subj_EXT(out_rsa); 
@@ -225,6 +123,7 @@ m2 = squeeze(mean(cond2, 'omitnan'));
 
 [h p ci ts] = ttest(cond1, cond2); 
 h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
+hb = h; hb(h==0) = nan; hb(hb==1) = -.01; 
 clustinfo = bwconncomp(h);
 for pxi = 1:length(clustinfo.PixelIdxList)
    allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
@@ -243,7 +142,70 @@ end
 figure(); 
 plot(m1); hold on; 
 plot(m2)
+plot(hb ,LineWidth=3)
 exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
+
+
+%% permutations 2D (line plot)
+
+nPerm = 1000; 
+clear max_clust_sum_perm
+for permi = 1:nPerm
+    c1B = squeeze(cond1(:, 51:170)); 
+    c2B = squeeze(cond2(:, 51:170));
+    c1B(c1B == 0) = nan; 
+    c2B(c2B == 0) = nan; 
+    for subji = 1:size(c1B, 1)
+        if rand>.5
+           tmp = c1B(subji, :);
+           c1B(subji, :) = c2B(subji, :);
+           c2B(subji, :) = tmp; 
+        end
+    end
+    
+    [hPerm p ci tsPerm] = ttest(c1B, c2B); 
+    hPerm = squeeze(hPerm); tPerm = squeeze(tsPerm.tstat);
+
+    clear allSTs  
+    clustinfo = bwconncomp(hPerm);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+        allSTs(pxi,:) = sum(tPerm(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs') & ~isempty(clustinfo.PixelIdxList)
+        [max2u id] = min(allSTs);
+        max_clust_sum_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_sum_perm(permi,:) = 0; 
+    end
+    
+
+end
+%%
+
+clear p ratings2u mcsP
+
+ratings2u = tObs; 
+mcsP = max_clust_sum_perm;
+
+%allAb = mcsP(mcsP < ratings2u);
+allAb = mcsP(abs(mcsP) > abs(ratings2u));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
+
+
+
+
+
+%% 
+figure
+histogram(max_clust_sum_perm); hold on; 
+scatter(max_clust_obs,0, 200, 'filled','r');
+set(gca, 'FontSize', 14);
+xlabel('T')
+exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
+
+
+
+
 
 %% plot TG
 clear

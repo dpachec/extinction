@@ -14,7 +14,7 @@ currentIds = out_contrasts.allContrastIds;
 
 for i = 1:length(currentContrast)
     if ~isempty(out_contrasts.allContrasts{i})
-        if strcmp(cfg.tyRSA, 'pRSA')
+        if strcmp(cfg.tyRSA, 'POW')
             nTimepoints = size (out_contrasts.allContrasts{i}{end}, 5); %%all2all file is stored within this cell array
             aBins(i,:)  =  floor ( (nTimepoints/mf)- win_width/mf+1 );
         elseif strcmp(cfg.tyRSA, 'TR')
