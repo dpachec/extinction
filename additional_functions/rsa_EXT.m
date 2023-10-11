@@ -25,7 +25,7 @@ for i = 1:length(currentContrast)
     end
 end
 
-idEmpty = cell2mat(cellfun(@(x) isempty(x), currentContrast, 'un', 0))
+idEmpty = cell2mat(cellfun(@(x) isempty(x), currentContrast, 'un', 0));
 currentContrast(idEmpty) = []; 
 for coni = 1:length(currentContrast)
     bins = aBins(coni);
@@ -145,9 +145,7 @@ for coni = 1:length(currentContrast)
         parfor triali = 1:size(rsaZ, 1)
             rsaN(triali, :) = diag(squeeze(rsaZ(triali, :, :)));
         end
-        rsaZ = rsaN;
-        filename = ['s' num2str(sessi, '%02.f') '_' id '_dOBO'   '_rsa.mat'];
-        save (filename, 'rsaZ', 'allIDs'); %, 'timeBins'
+        allRSAZ(coni, :,:) = squeeze(mean(rsaZ, 'omitnan')); 
     end
 
 
