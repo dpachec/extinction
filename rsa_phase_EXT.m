@@ -189,9 +189,10 @@ for listi = 1:length(listF2sav)
                 out_rsa(subji, :, :, :) = rsa_EXT5(out_contrasts, cfg);
                 toc
             end
-            
+        
+            ids{subji} = out_contrasts.allIDs; nnans{subji} = EEG.nan; 
         end
-        ids{subji} = out_contrasts.allIDs; nnans{subji} = EEG.nan; 
+        
     end
 
     mkdir ([paths.results.rsa]);
