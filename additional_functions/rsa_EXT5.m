@@ -86,8 +86,10 @@ for coni = 1:length(currentContrast)
             
         %rsaZ(rsaZ==1) = nan; 
         %rsaZ = squeeze(mean(rsaZ, 'omitnan'));
-        rsaZ = mean(rsaZ, 'omitnan');
-        allRSA{batchi} = rsaZ; 
+        if exist('rsaZ')
+            rsaZ = mean(rsaZ, 'omitnan');
+            allRSA{batchi} = rsaZ; 
+        end
         
      
         
@@ -96,12 +98,16 @@ for coni = 1:length(currentContrast)
  
  
 
-
-   
-    
-        rsaZ = cat(2, allRSA{:});
-        if cfg.TG
-            allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 2,'omitnan')); 
+ 
+        if exist('rsaZ')
+            rsaZ = cat(2, allRSA{:});
+            if cfg.TG
+                allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 2,'omitnan')); 
+            end
+        else
+            if cfg.TG
+                allRSAZ(coni, :, :) = nan(bins); 
+            end
         end
        
 
