@@ -75,23 +75,59 @@ clear , clc
 
 listF2sav = {
 
-                'TR_OFC_V_nan_0_0_50-10_1_SCA-DCA';
-                'TR_AMY_V_nan_0_0_50-10_1_SCA-DCA';
-                'TR_HPC_V_nan_0_0_50-10_1_SCA-DCA';
-                'TR_TMP_V_nan_0_0_50-10_1_SCA-DCA';
-                'TR_OCC_V_nan_0_0_50-10_1_SCA-DCA';
+                'TR_OFC_V_nan_0_0_50-10_0_SC-DC';
+                'TR_AMY_V_nan_0_0_50-10_0_SC-DC';
+                'TR_HPC_V_nan_0_0_50-10_0_SC-DC';
+                'TR_TMP_V_nan_0_0_50-10_0_SC-DC';
+                'TR_OCC_V_nan_0_0_50-10_0_SC-DC';
 
-                'TR_OFC_V_nan_0_0_50-10_1_SCE-DCE';
-                'TR_AMY_V_nan_0_0_50-10_1_SCE-DCE';
-                'TR_HPC_V_nan_0_0_50-10_1_SCE-DCE';
-                'TR_TMP_V_nan_0_0_50-10_1_SCE-DCE';
-                'TR_OCC_V_nan_0_0_50-10_1_SCE-DCE';
+                'TR_OFC_V_nan_0_0_50-10_0_SCA-DCA';
+                'TR_AMY_V_nan_0_0_50-10_0_SCA-DCA';
+                'TR_HPC_V_nan_0_0_50-10_0_SCA-DCA';
+                'TR_TMP_V_nan_0_0_50-10_0_SCA-DCA';
+                'TR_OCC_V_nan_0_0_50-10_0_SCA-DCA';
+
+                'TR_OFC_V_nan_0_0_50-10_0_SCE-DCE';
+                'TR_AMY_V_nan_0_0_50-10_0_SCE-DCE';
+                'TR_HPC_V_nan_0_0_50-10_0_SCE-DCE';
+                'TR_TMP_V_nan_0_0_50-10_0_SCE-DCE';
+                'TR_OCC_V_nan_0_0_50-10_0_SCE-DCE';
+
+                'TR_OFC_V_nan_0_0_50-10_0_SCR-DCR';
+                'TR_AMY_V_nan_0_0_50-10_0_SCR-DCR';
+                'TR_HPC_V_nan_0_0_50-10_0_SCR-DCR';
+                'TR_TMP_V_nan_0_0_50-10_0_SCR-DCR';
+                'TR_OCC_V_nan_0_0_50-10_0_SCR-DCR';
+                
+                'PHA_OFC_V_3-8_0_0_50-10_0_SC-DC';
+                'PHA_AMY_V_3-8_0_0_50-10_0_SC-DC';
+                'PHA_HPC_V_3-8_0_0_50-10_0_SC-DC';
+                'PHA_TMP_V_3-8_0_0_50-10_0_SC-DC';
+                'PHA_OCC_V_3-8_0_0_50-10_0_SC-DC';
+
+                'PHA_OFC_V_3-8_0_0_50-10_0_SCA-DCA';
+                'PHA_AMY_V_3-8_0_0_50-10_0_SCA-DCA';
+                'PHA_HPC_V_3-8_0_0_50-10_0_SCA-DCA';
+                'PHA_TMP_V_3-8_0_0_50-10_0_SCA-DCA';
+                'PHA_OCC_V_3-8_0_0_50-10_0_SCA-DCA';
+
+                'PHA_OFC_V_3-8_0_0_50-10_0_SCE-DCE';
+                'PHA_AMY_V_3-8_0_0_50-10_0_SCE-DCE';
+                'PHA_HPC_V_3-8_0_0_50-10_0_SCE-DCE';
+                'PHA_TMP_V_3-8_0_0_50-10_0_SCE-DCE';
+                'PHA_OCC_V_3-8_0_0_50-10_0_SCE-DCE';
+
+                'PHA_OFC_V_3-8_0_0_50-10_0_SCR-DCR';
+                'PHA_AMY_V_3-8_0_0_50-10_0_SCR-DCR';
+                'PHA_HPC_V_3-8_0_0_50-10_0_SCR-DCR';
+                'PHA_TMP_V_3-8_0_0_50-10_0_SCR-DCR';
+                'PHA_OCC_V_3-8_0_0_50-10_0_SCR-DCR';
+               
 
         };   
 
 t1 = datetime; 
 for listi = 1:length(listF2sav)
-    disp(['File > ' num2str(listi) '      ' listF2sav{listi}]);
     clearvars -except listF2sav listi t1
         
     f2sav       = listF2sav{listi}; 
@@ -104,6 +140,7 @@ for listi = 1:length(listF2sav)
     
     
     for subji = 1:length(ALLEEG)
+        disp(['File > ' num2str(listi) '      ' listF2sav{listi} '    Subject > ' num2str(subji)]);
         
         EEG = ALLEEG{subji};
         
@@ -137,7 +174,9 @@ for listi = 1:length(listF2sav)
                 phaTS = extract_pha_EXT(EEG, cfg);
                 cfg.oneListTraces = phaTS(:, :, 251:500); 
                 out_contrasts = create_contrasts_EXT(cfg);
+                tic
                 out_rsa(subji, :, :, :) = rsa_EXT3(out_contrasts, cfg);
+                toc
             elseif strcmp(cfg.tyRSA, 'PLV')
                 EEG = normalize_EXT(EEG);  %across trials
                 phaTS = extract_pha_EXT(EEG, cfg);
@@ -162,11 +201,51 @@ for listi = 1:length(listF2sav)
 
 end
 
+%% plot 2 lines
+clear
+paths = load_paths_EXT; 
+f2sav = 'PHA_OFC_V_3-8_0_0_50-10_0_SC-DC';
+
+load ([ paths.results.rsa f2sav '.mat']);
+
+ids = rem_nan_subj_EXT(out_rsa); 
+cond1 = squeeze(out_rsa(:, 1, :, :)); 
+cond2 = squeeze(out_rsa(:, 2, :, :)); 
+
+cond1(ids, :, :) = []; 
+cond2(ids, :, :) = []; 
+
+diff = cond1-cond2; 
+
+m1 = squeeze(mean(cond1, 'omitnan')); 
+m2 = squeeze(mean(cond2, 'omitnan')); 
+
+[h p ci ts] = ttest(cond1, cond2); 
+h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    tObs = allSTs(id); 
+end
+
+
+%h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
+
+
+figure(); 
+plot(m1); hold on; 
+plot(m2)
+exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 
 %%
 clear
 paths = load_paths_EXT; 
-f2sav =   'TR_OCC_V_nan_0_0_50-10_1_SCA-DCA';
+f2sav = 'PHA_OFC_V_3-8_0_0_50-10_1_SC-DC';
 
 load ([ paths.results.rsa f2sav '.mat']);
 
@@ -217,27 +296,28 @@ figure(); tiledlayout(1,3);
 nexttile
 %imagesc(m1);  axis square
 contourf( m1, 50, 'linecolor', 'none'); axis square; hold on; colorbar
-plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+plot(get(gca,'xlim'), [7.5 7.5],'k', 'linewidth', 1); plot([7.5 7.5], get(gca,'ylim'),'k', 'linewidth', 1); 
 %plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
-set(gca, 'clim', [-.04 .04])
+%set(gca, 'clim', [-.04 .04])
 
 nexttile
 contourf( m2, 50, 'linecolor', 'none'); axis square;hold on; colorbar 
-plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+plot(get(gca,'xlim'), [7.5 7.5],'k', 'linewidth', 1); plot([7.5 7.5], get(gca,'ylim'),'k', 'linewidth', 1); 
 %plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
-set(gca, 'clim', [-.04 .04])
+%set(gca, 'clim', [-.04 .04])
 
 nexttile
 contourf( t, 50, 'linecolor', 'none'); axis square; hold on; colorbar
 contour( h, 1, 'Color', [0, 0, 0], 'LineWidth', 2);
-plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
+plot(get(gca,'xlim'), [7.5 7.5],'k', 'linewidth', 1); plot([7.5 7.5], get(gca,'ylim'),'k', 'linewidth', 1); 
 %plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
 set(gca, 'clim', [-3 3])
 
 
 axesHandles = findall(0, 'type', 'axes');
 %set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 150], 'ylim', [1 150]); 
-set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', []); 
+%set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', []); 
+set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [3 21], 'ylim', [3 21]); 
 %colorbar
 exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 

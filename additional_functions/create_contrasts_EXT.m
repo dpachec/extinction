@@ -10,7 +10,7 @@ if isfield(cfg, 'oneListTraces')
 end
 batch_bin               =       500; 
 
-disp ('>>>>> creating contrasts');
+%disp ('>>>>> creating contrasts');
  
 allContrasts = []; allContrastIds = [];
 

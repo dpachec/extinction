@@ -66,7 +66,7 @@ for coni = 1:length(currentContrast)
 
         else
             if cfg.TG
-                for triali = 1:trialN
+                parfor triali = 1:trialN
                     if isempty(find(isnan(all2all(triali, :,:,:)))) & isempty(find(all2all(triali, :,:,:) == 0))
                         for timei = 1:bins 
                             timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
@@ -86,7 +86,7 @@ for coni = 1:length(currentContrast)
                     end
                 end
             else 
-                for triali = 1:trialN
+                parfor triali = 1:trialN
                     if isempty(find(isnan(all2all(triali, :,:,:,:))))
                         for timei = 1:bins 
                             timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
@@ -132,7 +132,8 @@ for coni = 1:length(currentContrast)
             allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
         end
     else %only store the diagonal 
-        
+            rsaZ = cat(1, allRSA{:});
+            allRSAZ(coni, :) = squeeze(mean(rsaZ, 'omitnan')); 
         
     end
 
