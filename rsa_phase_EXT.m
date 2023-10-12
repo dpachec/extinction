@@ -4,12 +4,125 @@
 clear , clc
 
 listF2sav = {
-                'POW_OCC_V_3-8_1_0_50-1_1_SC-DC';
-                'POW_OCC_V_9-12_1_0_50-1_1_SC-DC';
-                'POW_OCC_V_13-29_1_0_50-1_1_SC-DC';
-                'POW_OCC_V_30-38_1_0_50-1_1_SC-DC';
-                'POW_OCC_V_39-54_1_0_50-1_1_SC-DC';
-                'POW_OCC_V_3-54_1_0_50-1_1_SC-DC';
+                'POW_OCC_V_03-08_0_0_50-10_1_SC-DC';
+                'POW_OCC_V_09-12_0_0_50-10_1_SC-DC';
+                'POW_OCC_V_13-29_0_0_50-10_1_SC-DC';
+                'POW_OCC_V_30-38_0_0_50-10_1_SC-DC';
+                'POW_OCC_V_39-54_0_0_50-10_1_SC-DC';
+                'POW_OCC_V_03-54_0_0_50-10_1_SC-DC';
+
+                'POW_OCC_V_03-08_0_0_50-10_1_SCA-DCA';
+                'POW_OCC_V_09-12_0_0_50-10_1_SCA-DCA';
+                'POW_OCC_V_13-29_0_0_50-10_1_SCA-DCA';
+                'POW_OCC_V_30-38_0_0_50-10_1_SCA-DCA';
+                'POW_OCC_V_39-54_0_0_50-10_1_SCA-DCA';
+                'POW_OCC_V_03-54_0_0_50-10_1_SCA-DCA';
+
+                'POW_OFC_V_03-08_0_0_50-10_1_SCA-DCA';
+                'POW_OFC_V_09-12_0_0_50-10_1_SCA-DCA';
+                'POW_OFC_V_13-29_0_0_50-10_1_SCA-DCA';
+                'POW_OFC_V_30-38_0_0_50-10_1_SCA-DCA';
+                'POW_OFC_V_39-54_0_0_50-10_1_SCA-DCA';
+                'POW_OFC_V_03-54_0_0_50-10_1_SCA-DCA';
+
+                'POW_AMY_V_03-08_0_0_50-10_1_SCA-DCA';
+                'POW_AMY_V_09-12_0_0_50-10_1_SCA-DCA';
+                'POW_AMY_V_13-29_0_0_50-10_1_SCA-DCA';
+                'POW_AMY_V_30-38_0_0_50-10_1_SCA-DCA';
+                'POW_AMY_V_39-54_0_0_50-10_1_SCA-DCA';
+                'POW_AMY_V_03-54_0_0_50-10_1_SCA-DCA';
+
+                'POW_HPC_V_03-08_0_0_50-10_1_SCA-DCA';
+                'POW_HPC_V_09-12_0_0_50-10_1_SCA-DCA';
+                'POW_HPC_V_13-29_0_0_50-10_1_SCA-DCA';
+                'POW_HPC_V_30-38_0_0_50-10_1_SCA-DCA';
+                'POW_HPC_V_39-54_0_0_50-10_1_SCA-DCA';
+                'POW_HPC_V_03-54_0_0_50-10_1_SCA-DCA';
+
+                'POW_TMP_V_03-08_0_0_50-10_1_SCA-DCA';
+                'POW_TMP_V_09-12_0_0_50-10_1_SCA-DCA';
+                'POW_TMP_V_13-29_0_0_50-10_1_SCA-DCA';
+                'POW_TMP_V_30-38_0_0_50-10_1_SCA-DCA';
+                'POW_TMP_V_39-54_0_0_50-10_1_SCA-DCA';
+                'POW_TMP_V_03-54_0_0_50-10_1_SCA-DCA';
+
+                
+
+                'POW_OCC_V_03-08_0_0_50-10_1_SCE-DCE';
+                'POW_OCC_V_09-12_0_0_50-10_1_SCE-DCE';
+                'POW_OCC_V_13-29_0_0_50-10_1_SCE-DCE';
+                'POW_OCC_V_30-38_0_0_50-10_1_SCE-DCE';
+                'POW_OCC_V_39-54_0_0_50-10_1_SCE-DCE';
+                'POW_OCC_V_03-54_0_0_50-10_1_SCE-DCE';
+
+                'POW_OFC_V_03-08_0_0_50-10_1_SCE-DCE';
+                'POW_OFC_V_09-12_0_0_50-10_1_SCE-DCE';
+                'POW_OFC_V_13-29_0_0_50-10_1_SCE-DCE';
+                'POW_OFC_V_30-38_0_0_50-10_1_SCE-DCE';
+                'POW_OFC_V_39-54_0_0_50-10_1_SCE-DCE';
+                'POW_OFC_V_03-54_0_0_50-10_1_SCE-DCE';
+
+                'POW_AMY_V_03-08_0_0_50-10_1_SCE-DCE';
+                'POW_AMY_V_09-12_0_0_50-10_1_SCE-DCE';
+                'POW_AMY_V_13-29_0_0_50-10_1_SCE-DCE';
+                'POW_AMY_V_30-38_0_0_50-10_1_SCE-DCE';
+                'POW_AMY_V_39-54_0_0_50-10_1_SCE-DCE';
+                'POW_AMY_V_03-54_0_0_50-10_1_SCE-DCE';
+
+                'POW_HPC_V_03-08_0_0_50-10_1_SCE-DCE';
+                'POW_HPC_V_09-12_0_0_50-10_1_SCE-DCE';
+                'POW_HPC_V_13-29_0_0_50-10_1_SCE-DCE';
+                'POW_HPC_V_30-38_0_0_50-10_1_SCE-DCE';
+                'POW_HPC_V_39-54_0_0_50-10_1_SCE-DCE';
+                'POW_HPC_V_03-54_0_0_50-10_1_SCE-DCE';
+
+                'POW_TMP_V_03-08_0_0_50-10_1_SCE-DCE';
+                'POW_TMP_V_09-12_0_0_50-10_1_SCE-DCE';
+                'POW_TMP_V_13-29_0_0_50-10_1_SCE-DCE';
+                'POW_TMP_V_30-38_0_0_50-10_1_SCE-DCE';
+                'POW_TMP_V_39-54_0_0_50-10_1_SCE-DCE';
+                'POW_TMP_V_03-54_0_0_50-10_1_SCE-DCE';
+
+                
+
+
+                'POW_OCC_V_03-08_0_0_50-10_1_SCR-DCR';
+                'POW_OCC_V_09-12_0_0_50-10_1_SCR-DCR';
+                'POW_OCC_V_13-29_0_0_50-10_1_SCR-DCR';
+                'POW_OCC_V_30-38_0_0_50-10_1_SCR-DCR';
+                'POW_OCC_V_39-54_0_0_50-10_1_SCR-DCR';
+                'POW_OCC_V_03-54_0_0_50-10_1_SCR-DCR';
+
+                'POW_OFC_V_03-08_0_0_50-10_1_SCR-DCR';
+                'POW_OFC_V_09-12_0_0_50-10_1_SCR-DCR';
+                'POW_OFC_V_13-29_0_0_50-10_1_SCR-DCR';
+                'POW_OFC_V_30-38_0_0_50-10_1_SCR-DCR';
+                'POW_OFC_V_39-54_0_0_50-10_1_SCR-DCR';
+                'POW_OFC_V_03-54_0_0_50-10_1_SCR-DCR';
+
+                'POW_AMY_V_03-08_0_0_50-10_1_SCR-DCR';
+                'POW_AMY_V_09-12_0_0_50-10_1_SCR-DCR';
+                'POW_AMY_V_13-29_0_0_50-10_1_SCR-DCR';
+                'POW_AMY_V_30-38_0_0_50-10_1_SCR-DCR';
+                'POW_AMY_V_39-54_0_0_50-10_1_SCR-DCR';
+                'POW_AMY_V_03-54_0_0_50-10_1_SCR-DCR';
+
+                'POW_HPC_V_03-08_0_0_50-10_1_SCR-DCR';
+                'POW_HPC_V_09-12_0_0_50-10_1_SCR-DCR';
+                'POW_HPC_V_13-29_0_0_50-10_1_SCR-DCR';
+                'POW_HPC_V_30-38_0_0_50-10_1_SCR-DCR';
+                'POW_HPC_V_39-54_0_0_50-10_1_SCR-DCR';
+                'POW_HPC_V_03-54_0_0_50-10_1_SCR-DCR';
+
+                'POW_TMP_V_03-08_0_0_50-10_1_SCR-DCR';
+                'POW_TMP_V_09-12_0_0_50-10_1_SCR-DCR';
+                'POW_TMP_V_13-29_0_0_50-10_1_SCR-DCR';
+                'POW_TMP_V_30-38_0_0_50-10_1_SCR-DCR';
+                'POW_TMP_V_39-54_0_0_50-10_1_SCR-DCR';
+                'POW_TMP_V_03-54_0_0_50-10_1_SCR-DCR';
+
+
+
                 
                 
         };   
