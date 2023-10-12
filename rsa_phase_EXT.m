@@ -5,8 +5,7 @@ clear , clc
 
 listF2sav = {
 
-                'PHA_OCC_V_3-54_0_0_50-10_1_SC-DC';
-                'PLV_OCC_V_3-54_0_0_50-10_1_SC-DC';
+                'PHA_OCC_V_3-8_0_0_50-10_1_SC-DC';
 
         };   
 
@@ -194,7 +193,7 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 %% plot TG
 clear
 paths = load_paths_EXT; 
-f2sav =   'PLV_AMY_V_3-8_0_0_200-10_1_SCA-DCA';
+f2sav = 'PHA_OCC_V_3-8_0_0_50-10_1_SC-DC';
  
 
 load ([ paths.results.rsa f2sav '.mat']);
@@ -206,7 +205,7 @@ cond1(ids, :, :) = [];
 cond2(ids, :, :) = []; 
 diff = cond1-cond2; 
 
-[cond1 cond2] = rem_half_matrix(cond1, cond2);
+%[cond1 cond2] = rem_half_matrix(cond1, cond2);
 
 m1 = squeeze(mean(cond1, 'omitnan')); 
 m2 = squeeze(mean(cond2, 'omitnan')); 

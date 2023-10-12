@@ -128,7 +128,7 @@ for coni = 1:length(currentContrast)
 
 
     if TG==1
-        if ~isempty(rsaZ)
+        if exist('rsaZ') & ~isempty(rsaZ)
             allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
         else 
             if cfg.fR
@@ -141,7 +141,7 @@ for coni = 1:length(currentContrast)
         
         
     else %only store the diagonal 
-        if ~isempty(rsaZ)
+        if exist('rsaZ') & ~isempty(rsaZ)
             rsaZ = cat(1, allRSA{:});
             parfor triali = 1:size(rsaZ, 1)
                rsaN(triali, :) = diag(squeeze(rsaZ(triali, :, :)));

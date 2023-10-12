@@ -66,27 +66,23 @@ for coni = 1:length(currentContrast)
 
         else
             if cfg.TG
-                parfor triali = 1:trialN
-                    if isempty(find(isnan(all2all(triali, :,:,:)))) & isempty(find(all2all(triali, :,:,:) == 0))
-                        for timei = 1:bins 
-                            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                            x = all2all(triali, 1,:,timeBinsi);
-                            x = x(:); 
-                            for timej = timei:bins
-                                timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                                y = all2all(triali, 2,:,timeBinsj);
-                                y = y(:); 
-                                r = circ_corrcc(x, y);
-                                rsaZ(triali, timei, timej) = atanh(r);
-                            end
-                            
+                for triali = 1:trialN
+                    for timei = 1:bins 
+                        timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+                        x = all2all(triali, 1,:,timeBinsi);
+                        x = x(:); 
+                        for timej = timei:bins
+                            timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
+                            y = all2all(triali, 2,:,timeBinsj);
+                            y = y(:); 
+                            r = circ_corrcc(x, y);
+                            rsaZ(triali, timei, timej) = atanh(r);
                         end
-                    else
-                         rsaZ = nan(trialN, nTimepoints, nTimepoints); 
                     end
+                
                 end
             else 
-                parfor triali = 1:trialN
+                for triali = 1:trialN
                     if isempty(find(isnan(all2all(triali, :,:,:,:))))
                         for timei = 1:bins 
                             timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
@@ -115,25 +111,29 @@ for coni = 1:length(currentContrast)
     end
     
  
- 
+    if exist('allRSA')
+        rsaZ = cat(1, allRSA{:});
+    end
 
 
     if TG==1
-        if exist('allRSA')
-            rsaZ = cat(1, allRSA{:});
-% %             % % % % count nan trials 
-% %             count = 0; 
-% %             for triali = 1:size(rsaZ, 1)
-% %                 if isnan(rsaZ(triali, 1, 1))
-% %                     count = count+1; 
-% %                 end
-% %             end
-% %             disp (['number of nan trials = ' num2str(count) ' of ' num2str(size(rsaZ,1))])
+        if exist('rsaZ') & ~isempty(rsaZ)
             allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
+         else 
+            if cfg.fR
+                allRSAZ(coni, :, :) = nan (nFreq, bins);
+            end
+            if cfg.TG
+                allRSAZ(coni, :, :) = nan (bins);
+            end        
         end
     else %only store the diagonal 
-            rsaZ = cat(1, allRSA{:});
+        if exist('rsaZ') & ~isempty(rsaZ)
             allRSAZ(coni, :) = squeeze(mean(rsaZ, 'omitnan')); 
+         else 
+                allRSAZ(coni, :, :) = nan (bins);
+        end
+          
         
     end
 
