@@ -144,8 +144,8 @@ for coni = 1:length(currentContrast)
         if ~isempty(rsaZ)
             rsaZ = cat(1, allRSA{:});
             parfor triali = 1:size(rsaZ, 1)
-                rsaN(triali, :) = diag(squeeze(rsaZ(triali, :, :)));
-            end
+               rsaN(triali, :) = diag(squeeze(rsaZ(triali, :, :)));
+            end           
             allRSAZ(coni, :) = squeeze(mean(rsaN, 'omitnan')); 
         else 
             allRSAZ(coni, :) = nan (1, bins);

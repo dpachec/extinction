@@ -5,22 +5,8 @@ clear , clc
 
 listF2sav = {
 
-                  'POW_AMY_C_39-54_1_0_50-1_0_SICSPE-SICSME';
-                
-                 'POW_OFC_V_39-54_1_0_50-1_0_SCA-DCA';
-                 'POW_AMY_V_39-54_1_0_50-1_0_SCA-DCA';
-                 'POW_HPC_V_39-54_1_0_50-1_0_SCA-DCA';
-                 'POW_TMP_V_39-54_1_0_50-1_0_SCA-DCA';
-                 'POW_OCC_V_39-54_1_0_50-1_0_SCA-DCA';
-% 
-% 
-                 'POW_OFC_V_39-54_1_0_50-1_0_SCE-DCE';
-                 'POW_AMY_V_39-54_1_0_50-1_0_SCE-DCE';
-                 'POW_HPC_V_39-54_1_0_50-1_0_SCE-DCE';
-                 'POW_TMP_V_39-54_1_0_50-1_0_SCE-DCE';
-                 'POW_OCC_V_39-54_1_0_50-1_0_SCE-DCE';
-
-
+                'PHA_OCC_V_3-54_0_0_50-10_1_SC-DC';
+                'PLV_OCC_V_3-54_0_0_50-10_1_SC-DC';
 
         };   
 
@@ -68,7 +54,6 @@ for listi = 1:length(listF2sav)
                 EEG = normalize_EXT(EEG);  %across trials
                 cfg.oneListPow = EEG.power(:, :, : ,251:470); 
                 out_contrasts = create_contrasts_EXT(cfg);
-                %out_rsa(subji, :, :, :) = rsa_EXT4(out_contrasts, cfg);
                 out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
             elseif strcmp(cfg.tyRSA, 'PHA')
                 EEG = normalize_EXT(EEG);  %across trials
@@ -105,8 +90,12 @@ end
 %% plot 2 lines
 clear
 paths = load_paths_EXT; 
-f2sav = 'POW_AMY_C_03-08_1_0_50-1_0_SICSPA-SICSMA';
-        
+f2sav =   'PHA_OFC_V_3-8_0_0_50-10_0_SC-DC';
+
+
+ 
+
+
 load ([ paths.results.rsa f2sav '.mat']);
 
 ids = rem_nan_subj_EXT(out_rsa); 
@@ -118,12 +107,15 @@ cond2(ids, :, :) = [];
 
 diff = cond1-cond2; 
 
-m1 = squeeze(mean(cond1, 'omitnan')); 
-m2 = squeeze(mean(cond2, 'omitnan')); 
+d2pm1	= squeeze(mean(cond1,'omitnan'));
+d2pm2	= squeeze(mean(cond2,'omitnan'));
+d2pstd1	= std(cond1, 'omitnan');
+d2pstd2	= std(cond2, 'omitnan');
+se1 = d2pstd1/sqrt(size(cond1, 1))
+se2 = d2pstd2/sqrt(size(cond1, 1))
 
 [h p ci ts] = ttest(cond1, cond2); 
 h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
-hb = h; hb(h==0) = nan; hb(hb==1) = -.01; 
 clustinfo = bwconncomp(h);
 for pxi = 1:length(clustinfo.PixelIdxList)
    allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
@@ -135,15 +127,23 @@ if exist('allSTs')
 end
 
 
-%h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
+%h = zeros(1, size(cond1, 2)); 
 %h(clustinfo.PixelIdxList{id}) = 1;
+hb = h; hb(h==0) = nan; hb(hb==1) = -.03; 
 
-
+%times = (-.5:.01:1.20) + .25;
+times = 1:21
 figure(); 
-plot(m1); hold on; 
-plot(m2)
-plot(hb ,LineWidth=3)
+colors2use = brewermap([6],'*Set1')*0.75;
+shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(1,:)}, 1); hold on; 
+shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(2,:)}, 1); hold on; 
+plot(times, hb, LineWidth=6)
+plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 1);
+plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 1);
+%set(gca, 'xlim', [-.25 1.4],'Fontsize', 18);%'ylim', [-.032 .035], 
+title(f2sav, 'Interpreter','none')
 exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
+
 
 
 %% permutations 2D (line plot)
@@ -180,10 +180,8 @@ for permi = 1:nPerm
     
 
 end
-%%
 
 clear p ratings2u mcsP
-
 ratings2u = tObs; 
 mcsP = max_clust_sum_perm;
 
@@ -193,34 +191,19 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
 
-
-
-%% 
-figure
-histogram(max_clust_sum_perm); hold on; 
-scatter(max_clust_obs,0, 200, 'filled','r');
-set(gca, 'FontSize', 14);
-xlabel('T')
-exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
-
-
-
-
-
 %% plot TG
 clear
 paths = load_paths_EXT; 
-f2sav = 'TR_OCC_V_nan_0_0_50-10_1_SCR-DCR';
+f2sav =   'PLV_AMY_V_3-8_0_0_200-10_1_SCA-DCA';
+ 
 
 load ([ paths.results.rsa f2sav '.mat']);
 
 ids = rem_nan_subj_EXT(out_rsa); 
 cond1 = squeeze(out_rsa(:, 1, :, :)); 
 cond2 = squeeze(out_rsa(:, 2, :, :)); 
-
 cond1(ids, :, :) = []; 
 cond2(ids, :, :) = []; 
-
 diff = cond1-cond2; 
 
 [cond1 cond2] = rem_half_matrix(cond1, cond2);
@@ -241,38 +224,13 @@ if exist('allSTs')
 end
 
 
-%h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
+%h = zeros(size(cond1, 2),size(cond1, 2)); 
 %h(clustinfo.PixelIdxList{id}) = 1;
 
 
-figure(); tiledlayout(1,3);
-nexttile
-%imagesc(m1);  axis square
-contourf( m1, 50, 'linecolor', 'none'); axis square; hold on; colorbar
-plot(get(gca,'xlim'), [7.5 7.5],'k', 'linewidth', 1); plot([7.5 7.5], get(gca,'ylim'),'k', 'linewidth', 1); 
-%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
-%set(gca, 'clim', [-.04 .04])
-
-nexttile
-contourf( m2, 50, 'linecolor', 'none'); axis square;hold on; colorbar 
-plot(get(gca,'xlim'), [7.5 7.5],'k', 'linewidth', 1); plot([7.5 7.5], get(gca,'ylim'),'k', 'linewidth', 1); 
-%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
-%set(gca, 'clim', [-.04 .04])
-
-nexttile
-contourf( t, 50, 'linecolor', 'none'); axis square; hold on; colorbar
-contour( h, 1, 'Color', [0, 0, 0], 'LineWidth', 2);
-plot(get(gca,'xlim'), [7.5 7.5],'k', 'linewidth', 1); plot([7.5 7.5], get(gca,'ylim'),'k', 'linewidth', 1); 
-%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
-set(gca, 'clim', [-3 3])
-
-
-axesHandles = findall(0, 'type', 'axes');
-%set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 150], 'ylim', [1 150]); 
-%set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', []); 
-set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [3 21], 'ylim', [3 21]); 
-%colorbar
-exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
+tRes = strsplit(f2sav, '_'); tRes = strsplit(tRes{7}, '-'); tRes = double(string(tRes{2}));
+plot_TG_map(m1, m2, h, t, tRes, f2sav)
+exportgraphics(gcf, [paths.results.rsa  '_myP.png'], 'Resolution',150)
 
 %% PERMUTATIONS
 nPerm = 1000; 
@@ -280,7 +238,8 @@ nPerm = 1000;
 nSubj =  size(cond1, 1);
 realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
 
-junts = cat(1, cond1(:, 6:15, 6:15), cond2(:, 6:15, 6:15));
+junts = cat(1, cond1(:, 3:21, 3:21), cond2(:, 3:21, 3:21));
+%junts = cat(1, cond1(:, 3:18, 3:18), cond2(:, 3:18, 3:18));
 
 clear max_clust_sum_perm
 for permi = 1:nPerm
@@ -315,7 +274,7 @@ end
 
 disp('done')
 
-%% 
+ 
 %allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
@@ -362,10 +321,10 @@ disp (['t: ' num2str(t) ' //  p = ' num2str(p)])
 %% CHECK CONTEXT DURING ACQ AND EXT > GENERALIZATION
 clear, clc
 paths = load_paths_EXT; 
-f2sav =   'TR_HPC_V_nan_0_0_50-10_1_SCA-DCA';
+f2sav =   'TR_OCC_V_nan_0_0_50-10_1_SCA-DCA';
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_ACQ = out_rsa; 
-f2sav =   'TR_HPC_V_nan_0_0_50-10_1_SCE-DCE';
+f2sav =   'TR_OCC_V_nan_0_0_50-10_1_SCE-DCE';
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_EXT = out_rsa; 
 
@@ -402,36 +361,12 @@ if exist('allSTs')
 end
 
 
-%h = zeros(size(cond1TR, 2),size(cond1TR, 2)); 
+h = zeros(size(cond1, 2),size(cond1, 2)); 
 %h(clustinfo.PixelIdxList{id}) = 1;
 
-
-figure(); tiledlayout(1,3);
-nexttile
-contourf( m1, 50, 'linecolor', 'none'); axis square; hold on; colorbar
-plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
-%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
-set(gca, 'clim', [-.04 .04])
-
-nexttile
-contourf( m2, 50, 'linecolor', 'none'); axis square;hold on; colorbar 
-plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
-%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
-set(gca, 'clim', [-.04 .04])
-
-nexttile
-contourf( t, 50, 'linecolor', 'none'); axis square; hold on; colorbar
-contour( h, 1, 'Color', [0, 0, 0], 'LineWidth', 2);
-plot(get(gca,'xlim'), [5 5],'k', 'linewidth', 1); plot([5 5], get(gca,'ylim'),'k', 'linewidth', 1); 
-%plot(get(gca,'xlim'), [25 25],'k', 'linewidth', 1); plot([25 25], get(gca,'ylim'),'k', 'linewidth', 1); 
-set(gca, 'clim', [-3 3])
-
-
-axesHandles = findall(0, 'type', 'axes');
-%set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 150], 'ylim', [1 150]); 
-set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', []); 
-%colorbar
-exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
+tRes = strsplit(f2sav, '_'); tRes = strsplit(tRes{7}, '-'); tRes = double(string(tRes{2}));
+plot_TG_map(m1, m2, h, t, tRes); 
+exportgraphics(gcf, [paths.results.rsa  '_myP.png'], 'Resolution',150)
 
 
 
@@ -476,7 +411,7 @@ end
 
 disp('done')
 
-%% 
+ 
 %allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
