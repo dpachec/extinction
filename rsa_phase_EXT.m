@@ -4,15 +4,14 @@
 clear , clc
 
 listF2sav = {
-                'PHA_OCC_V_3-8_0_0_50-10_1_SC-DC';
-                'PHA_OCC_V_9-12_0_0_50-10_1_SC-DC';
-                'PHA_OCC_V_13-29_0_0_50-10_1_SC-DC';
-                'PHA_OCC_V_30-54_0_0_50-10_1_SC-DC';
-                'PHA_OCC_V_30-38_0_0_50-10_1_SC-DC';
-                'PHA_OCC_V_39-54_0_0_50-10_1_SC-DC';
+                'POW_OCC_V_3-8_0_0_50-1_1_SC-DC';
+                'POW_OCC_V_9-12_0_0_50-1_1_SC-DC';
+                'POW_OCC_V_13-29_0_0_50-1_1_SC-DC';
+                'POW_OCC_V_30-38_0_0_50-1_1_SC-DC';
+                'POW_OCC_V_39-54_0_0_50-1_1_SC-DC';
+                'POW_OCC_V_3-54_0_0_50-1_1_SC-DC';
                 
                 
-
         };   
 
 t1 = datetime; 
@@ -48,7 +47,7 @@ for listi = 1:length(listF2sav)
                 EEG = normalize_baseline_EXT(EEG, [2501:3000]); 
                 %EEG = normalize_EXT(EEG);  %across trials
                 EEG = downsample_EEG_EXT(EEG); 
-                cfg.oneListTraces = permute(EEG.data(:, 251:500,:), [3 1 2]); 
+                cfg.oneListTraces = permute(EEG.data(:, 251:550,:), [3 1 2]); 
                 out_contrasts = create_contrasts_EXT(cfg);
                 tic
                 out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
@@ -57,13 +56,15 @@ for listi = 1:length(listF2sav)
                 EEG = extract_power_EXT(EEG, 0.01); 
                 %EEG = normalize_baseline_EXT(EEG, [251:300]); 
                 EEG = normalize_EXT(EEG);  %across trials
-                cfg.oneListPow = EEG.power(:, :, : ,251:470); 
+                cfg.oneListPow = EEG.power(:, :, : ,251:550); 
                 out_contrasts = create_contrasts_EXT(cfg);
+                tic
                 out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
+                toc
             elseif strcmp(cfg.tyRSA, 'PHA')
                 EEG = normalize_EXT(EEG);  %across trials
                 phaTS = extract_pha_EXT(EEG, cfg);
-                cfg.oneListTraces = phaTS(:, :, 251:500); 
+                cfg.oneListTraces = phaTS(:, :, 251:550); 
                 out_contrasts = create_contrasts_EXT(cfg);
                 tic
                 out_rsa(subji, :, :, :) = rsa_EXT3(out_contrasts, cfg);
@@ -199,8 +200,10 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 %% plot TG
 clear
 paths = load_paths_EXT; 
-f2sav = 'PHA_OCC_V_3-54_0_0_50-10_1_SC-DC';
- 
+
+f2sav = 'POW_OCC_V_3-8_0_0_50-1_1_SC-DC';
+
+
 
 load ([ paths.results.rsa f2sav '.mat']);
 
