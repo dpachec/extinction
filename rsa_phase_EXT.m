@@ -4,12 +4,12 @@
 clear , clc
 
 listF2sav = {
-                'POW_OCC_V_3-8_0_0_50-1_1_SC-DC';
-                'POW_OCC_V_9-12_0_0_50-1_1_SC-DC';
-                'POW_OCC_V_13-29_0_0_50-1_1_SC-DC';
-                'POW_OCC_V_30-38_0_0_50-1_1_SC-DC';
-                'POW_OCC_V_39-54_0_0_50-1_1_SC-DC';
-                'POW_OCC_V_3-54_0_0_50-1_1_SC-DC';
+                'POW_OCC_V_3-8_1_0_50-1_1_SC-DC';
+                'POW_OCC_V_9-12_1_0_50-1_1_SC-DC';
+                'POW_OCC_V_13-29_1_0_50-1_1_SC-DC';
+                'POW_OCC_V_30-38_1_0_50-1_1_SC-DC';
+                'POW_OCC_V_39-54_1_0_50-1_1_SC-DC';
+                'POW_OCC_V_3-54_1_0_50-1_1_SC-DC';
                 
                 
         };   
