@@ -4,126 +4,142 @@
 clear , clc
 
 listF2sav = {
-                'POW_OCC_V_03-08_0_0_50-10_1_SC-DC';
-                'POW_OCC_V_09-12_0_0_50-10_1_SC-DC';
-                'POW_OCC_V_13-29_0_0_50-10_1_SC-DC';
-                'POW_OCC_V_30-38_0_0_50-10_1_SC-DC';
-                'POW_OCC_V_39-54_0_0_50-10_1_SC-DC';
-                'POW_OCC_V_03-54_0_0_50-10_1_SC-DC';
 
-                'POW_OCC_V_03-08_0_0_50-10_1_SCA-DCA';
-                'POW_OCC_V_09-12_0_0_50-10_1_SCA-DCA';
-                'POW_OCC_V_13-29_0_0_50-10_1_SCA-DCA';
-                'POW_OCC_V_30-38_0_0_50-10_1_SCA-DCA';
-                'POW_OCC_V_39-54_0_0_50-10_1_SCA-DCA';
-                'POW_OCC_V_03-54_0_0_50-10_1_SCA-DCA';
+                 'POW_OFC_C_39-54_0_0_50-10_1_DISV-DIDV';
+                 'POW_AMY_C_39-54_0_0_50-10_1_DISV-DIDV';
+                 'POW_HPC_C_39-54_0_0_50-10_1_DISV-DIDV';
+                 'POW_TMP_C_39-54_0_0_50-10_1_DISV-DIDV';
+                 'POW_OCC_C_39-54_0_0_50-10_1_DISV-DIDV';
 
-                'POW_OFC_V_03-08_0_0_50-10_1_SCA-DCA';
-                'POW_OFC_V_09-12_0_0_50-10_1_SCA-DCA';
-                'POW_OFC_V_13-29_0_0_50-10_1_SCA-DCA';
-                'POW_OFC_V_30-38_0_0_50-10_1_SCA-DCA';
-                'POW_OFC_V_39-54_0_0_50-10_1_SCA-DCA';
-                'POW_OFC_V_03-54_0_0_50-10_1_SCA-DCA';
+                 'POW_OFC_C_39-54_0_0_50-10_1_DISVA-DIDVA';
+                 'POW_AMY_C_39-54_0_0_50-10_1_DISVA-DIDVA';
+                 'POW_HPC_C_39-54_0_0_50-10_1_DISVA-DIDVA';
+                 'POW_TMP_C_39-54_0_0_50-10_1_DISVA-DIDVA';
+                 'POW_OCC_C_39-54_0_0_50-10_1_DISVA-DIDVA';
 
-                'POW_AMY_V_03-08_0_0_50-10_1_SCA-DCA';
-                'POW_AMY_V_09-12_0_0_50-10_1_SCA-DCA';
-                'POW_AMY_V_13-29_0_0_50-10_1_SCA-DCA';
-                'POW_AMY_V_30-38_0_0_50-10_1_SCA-DCA';
-                'POW_AMY_V_39-54_0_0_50-10_1_SCA-DCA';
-                'POW_AMY_V_03-54_0_0_50-10_1_SCA-DCA';
+                 'POW_OFC_C_39-54_0_0_50-10_1_DISVE-DIDVE';
+                 'POW_AMY_C_39-54_0_0_50-10_1_DISVE-DIDVE';
+                 'POW_HPC_C_39-54_0_0_50-10_1_DISVE-DIDVE';
+                 'POW_TMP_C_39-54_0_0_50-10_1_DISVE-DIDVE';
+                 'POW_OCC_C_39-54_0_0_50-10_1_DISVE-DIDVE';
 
-                'POW_HPC_V_03-08_0_0_50-10_1_SCA-DCA';
-                'POW_HPC_V_09-12_0_0_50-10_1_SCA-DCA';
-                'POW_HPC_V_13-29_0_0_50-10_1_SCA-DCA';
-                'POW_HPC_V_30-38_0_0_50-10_1_SCA-DCA';
-                'POW_HPC_V_39-54_0_0_50-10_1_SCA-DCA';
-                'POW_HPC_V_03-54_0_0_50-10_1_SCA-DCA';
+                 'POW_OFC_C_39-54_0_0_50-10_1_SICSPA-SICSMA';
+                 'POW_AMY_C_39-54_0_0_50-10_1_SICSPA-SICSMA';
+                 'POW_HPC_C_39-54_0_0_50-10_1_SICSPA-SICSMA';
+                 'POW_TMP_C_39-54_0_0_50-10_1_SICSPA-SICSMA';
+                 'POW_OCC_C_39-54_0_0_50-10_1_SICSPA-SICSMA';
 
-                'POW_TMP_V_03-08_0_0_50-10_1_SCA-DCA';
-                'POW_TMP_V_09-12_0_0_50-10_1_SCA-DCA';
-                'POW_TMP_V_13-29_0_0_50-10_1_SCA-DCA';
-                'POW_TMP_V_30-38_0_0_50-10_1_SCA-DCA';
-                'POW_TMP_V_39-54_0_0_50-10_1_SCA-DCA';
-                'POW_TMP_V_03-54_0_0_50-10_1_SCA-DCA';
+                 'POW_OFC_C_39-54_0_0_50-10_1_SICSPE-SICSME';
+                 'POW_AMY_C_39-54_0_0_50-10_1_SICSPE-SICSME';
+                 'POW_HPC_C_39-54_0_0_50-10_1_SICSPE-SICSME';
+                 'POW_TMP_C_39-54_0_0_50-10_1_SICSPE-SICSME';
+                 'POW_OCC_C_39-54_0_0_50-10_1_SICSPE-SICSME';
+                 
+                 'POW_OFC_C_39-54_0_0_50-10_1_SICSPE-SICSMPP';
+                 'POW_AMY_C_39-54_0_0_50-10_1_SICSPE-SICSMPP';
+                 'POW_HPC_C_39-54_0_0_50-10_1_SICSPE-SICSMPP';
+                 'POW_TMP_C_39-54_0_0_50-10_1_SICSPE-SICSMPP';
+                 'POW_OCC_C_39-54_0_0_50-10_1_SICSPE-SICSMPP';
 
-                
+                 'POW_OFC_C_39-54_0_0_50-10_1_SICSPE-SICSMPM';
+                 'POW_AMY_C_39-54_0_0_50-10_1_SICSPE-SICSMPM';
+                 'POW_HPC_C_39-54_0_0_50-10_1_SICSPE-SICSMPM';
+                 'POW_TMP_C_39-54_0_0_50-10_1_SICSPE-SICSMPM';
+                 'POW_OCC_C_39-54_0_0_50-10_1_SICSPE-SICSMPM';
 
-                'POW_OCC_V_03-08_0_0_50-10_1_SCE-DCE';
-                'POW_OCC_V_09-12_0_0_50-10_1_SCE-DCE';
-                'POW_OCC_V_13-29_0_0_50-10_1_SCE-DCE';
-                'POW_OCC_V_30-38_0_0_50-10_1_SCE-DCE';
-                'POW_OCC_V_39-54_0_0_50-10_1_SCE-DCE';
-                'POW_OCC_V_03-54_0_0_50-10_1_SCE-DCE';
+                 'POW_OFC_C_39-54_0_0_50-10_1_SIA-DIA';
+                 'POW_AMY_C_39-54_0_0_50-10_1_SIA-DIA';
+                 'POW_HPC_C_39-54_0_0_50-10_1_SIA-DIA';                 
+                 'POW_TMP_C_39-54_0_0_50-10_1_SIA-DIA';                 
+                 'POW_OCC_C_39-54_0_0_50-10_1_SIA-DIA';
 
-                'POW_OFC_V_03-08_0_0_50-10_1_SCE-DCE';
-                'POW_OFC_V_09-12_0_0_50-10_1_SCE-DCE';
-                'POW_OFC_V_13-29_0_0_50-10_1_SCE-DCE';
-                'POW_OFC_V_30-38_0_0_50-10_1_SCE-DCE';
-                'POW_OFC_V_39-54_0_0_50-10_1_SCE-DCE';
-                'POW_OFC_V_03-54_0_0_50-10_1_SCE-DCE';
+                 'POW_OFC_C_39-54_0_0_50-10_1_SIE-DIE';
+                 'POW_AMY_C_39-54_0_0_50-10_1_SIE-DIE';
+                 'POW_HPC_C_39-54_0_0_50-10_1_SIE-DIE';                 
+                 'POW_TMP_C_39-54_0_0_50-10_1_SIE-DIE';                 
+                 'POW_OCC_C_39-54_0_0_50-10_1_SIE-DIE';
 
-                'POW_AMY_V_03-08_0_0_50-10_1_SCE-DCE';
-                'POW_AMY_V_09-12_0_0_50-10_1_SCE-DCE';
-                'POW_AMY_V_13-29_0_0_50-10_1_SCE-DCE';
-                'POW_AMY_V_30-38_0_0_50-10_1_SCE-DCE';
-                'POW_AMY_V_39-54_0_0_50-10_1_SCE-DCE';
-                'POW_AMY_V_03-54_0_0_50-10_1_SCE-DCE';
+                 'POW_OFC_C_39-54_0_0_50-10_1_SISV-DISV';
+                 'POW_AMY_C_39-54_0_0_50-10_1_SISV-DISV';
+                 'POW_HPC_C_39-54_0_0_50-10_1_SISV-DISV';
+                 'POW_TMP_C_39-54_0_0_50-10_1_SISV-DISV';
+                 'POW_OCC_C_39-54_0_0_50-10_1_SISV-DISV';
 
-                'POW_HPC_V_03-08_0_0_50-10_1_SCE-DCE';
-                'POW_HPC_V_09-12_0_0_50-10_1_SCE-DCE';
-                'POW_HPC_V_13-29_0_0_50-10_1_SCE-DCE';
-                'POW_HPC_V_30-38_0_0_50-10_1_SCE-DCE';
-                'POW_HPC_V_39-54_0_0_50-10_1_SCE-DCE';
-                'POW_HPC_V_03-54_0_0_50-10_1_SCE-DCE';
+                 'POW_OFC_C_39-54_0_0_50-10_1_SISVA-DISVA'
+                 'POW_AMY_C_39-54_0_0_50-10_1_SISVA-DISVA'
+                 'POW_HPC_C_39-54_0_0_50-10_1_SISVA-DISVA'
+                 'POW_TMP_C_39-54_0_0_50-10_1_SISVA-DISVA'
+                 'POW_OCC_C_39-54_0_0_50-10_1_SISVA-DISVA'
 
-                'POW_TMP_V_03-08_0_0_50-10_1_SCE-DCE';
-                'POW_TMP_V_09-12_0_0_50-10_1_SCE-DCE';
-                'POW_TMP_V_13-29_0_0_50-10_1_SCE-DCE';
-                'POW_TMP_V_30-38_0_0_50-10_1_SCE-DCE';
-                'POW_TMP_V_39-54_0_0_50-10_1_SCE-DCE';
-                'POW_TMP_V_03-54_0_0_50-10_1_SCE-DCE';
-
-                
-
-
-                'POW_OCC_V_03-08_0_0_50-10_1_SCR-DCR';
-                'POW_OCC_V_09-12_0_0_50-10_1_SCR-DCR';
-                'POW_OCC_V_13-29_0_0_50-10_1_SCR-DCR';
-                'POW_OCC_V_30-38_0_0_50-10_1_SCR-DCR';
-                'POW_OCC_V_39-54_0_0_50-10_1_SCR-DCR';
-                'POW_OCC_V_03-54_0_0_50-10_1_SCR-DCR';
-
-                'POW_OFC_V_03-08_0_0_50-10_1_SCR-DCR';
-                'POW_OFC_V_09-12_0_0_50-10_1_SCR-DCR';
-                'POW_OFC_V_13-29_0_0_50-10_1_SCR-DCR';
-                'POW_OFC_V_30-38_0_0_50-10_1_SCR-DCR';
-                'POW_OFC_V_39-54_0_0_50-10_1_SCR-DCR';
-                'POW_OFC_V_03-54_0_0_50-10_1_SCR-DCR';
-
-                'POW_AMY_V_03-08_0_0_50-10_1_SCR-DCR';
-                'POW_AMY_V_09-12_0_0_50-10_1_SCR-DCR';
-                'POW_AMY_V_13-29_0_0_50-10_1_SCR-DCR';
-                'POW_AMY_V_30-38_0_0_50-10_1_SCR-DCR';
-                'POW_AMY_V_39-54_0_0_50-10_1_SCR-DCR';
-                'POW_AMY_V_03-54_0_0_50-10_1_SCR-DCR';
-
-                'POW_HPC_V_03-08_0_0_50-10_1_SCR-DCR';
-                'POW_HPC_V_09-12_0_0_50-10_1_SCR-DCR';
-                'POW_HPC_V_13-29_0_0_50-10_1_SCR-DCR';
-                'POW_HPC_V_30-38_0_0_50-10_1_SCR-DCR';
-                'POW_HPC_V_39-54_0_0_50-10_1_SCR-DCR';
-                'POW_HPC_V_03-54_0_0_50-10_1_SCR-DCR';
-
-                'POW_TMP_V_03-08_0_0_50-10_1_SCR-DCR';
-                'POW_TMP_V_09-12_0_0_50-10_1_SCR-DCR';
-                'POW_TMP_V_13-29_0_0_50-10_1_SCR-DCR';
-                'POW_TMP_V_30-38_0_0_50-10_1_SCR-DCR';
-                'POW_TMP_V_39-54_0_0_50-10_1_SCR-DCR';
-                'POW_TMP_V_03-54_0_0_50-10_1_SCR-DCR';
+                 'POW_OFC_C_39-54_0_0_50-10_1_SISVE-DISVE'
+                 'POW_AMY_C_39-54_0_0_50-10_1_SISVE-DISVE'
+                 'POW_HPC_C_39-54_0_0_50-10_1_SISVE-DISVE'
+                 'POW_TMP_C_39-54_0_0_50-10_1_SISVE-DISVE'
+                 'POW_OCC_C_39-54_0_0_50-10_1_SISVE-DISVE'
 
 
 
-                
+
+                 'TR_OFC_C_nan_0_0_50-10_1_DISV-DIDV';
+                 'TR_AMY_C_nan_0_0_50-10_1_DISV-DIDV';
+                 'TR_HPC_C_nan_0_0_50-10_1_DISV-DIDV';
+                 'TR_TMP_C_nan_0_0_50-10_1_DISV-DIDV';
+                 'TR_OCC_C_nan_0_0_50-10_1_DISV-DIDV';
+
+                 'TR_OFC_C_nan_0_0_50-10_1_DISVA-DIDVA';
+                 'TR_AMY_C_nan_0_0_50-10_1_DISVA-DIDVA';
+                 'TR_HPC_C_nan_0_0_50-10_1_DISVA-DIDVA';
+                 'TR_TMP_C_nan_0_0_50-10_1_DISVA-DIDVA';
+                 'TR_OCC_C_nan_0_0_50-10_1_DISVA-DIDVA';
+                 
+                 'TR_OFC_C_nan_0_0_50-10_1_DISVE-DIDVE';
+                 'TR_AMY_C_nan_0_0_50-10_1_DISVE-DIDVE';
+                 'TR_HPC_C_nan_0_0_50-10_1_DISVE-DIDVE';
+                 'TR_TMP_C_nan_0_0_50-10_1_DISVE-DIDVE';
+                 'TR_OCC_C_nan_0_0_50-10_1_DISVE-DIDVE';
+
+                 'TR_OFC_C_nan_0_0_50-10_1_SISV-DISV';
+                 'TR_AMY_C_nan_0_0_50-10_1_SISV-DISV';
+                 'TR_HPC_C_nan_0_0_50-10_1_SISV-DISV';
+                 'TR_TMP_C_nan_0_0_50-10_1_SISV-DISV';
+                 'TR_OCC_C_nan_0_0_50-10_1_SISV-DISV';
+
+                 'TR_OFC_C_nan_0_0_50-10_1_SISVA-DISVA'
+                 'TR_AMY_C_nan_0_0_50-10_1_SISVA-DISVA'
+                 'TR_HPC_C_nan_0_0_50-10_1_SISVA-DISVA'
+                 'TR_TMP_C_nan_0_0_50-10_1_SISVA-DISVA'
+                 'TR_OCC_C_nan_0_0_50-10_1_SISVA-DISVA'
+
+                 'TR_OFC_C_nan_0_0_50-10_1_SISVE-DISVE'
+                 'TR_AMY_C_nan_0_0_50-10_1_SISVE-DISVE'
+                 'TR_HPC_C_nan_0_0_50-10_1_SISVE-DISVE'
+                 'TR_TMP_C_nan_0_0_50-10_1_SISVE-DISVE'
+                 'TR_OCC_C_nan_0_0_50-10_1_SISVE-DISVE'
+
+                 'TR_OFC_C_nan_0_0_50-10_1_SICSPE-SICSMPP';
+                 'TR_AMY_C_nan_0_0_50-10_1_SICSPE-SICSMPP';
+                 'TR_HPC_C_nan_0_0_50-10_1_SICSPE-SICSMPP';
+                 'TR_TMP_C_nan_0_0_50-10_1_SICSPE-SICSMPP';
+                 'TR_OCC_C_nan_0_0_50-10_1_SICSPE-SICSMPP';
+
+                 'TR_OFC_C_nan_0_0_50-10_1_SICSPE-SICSMPM';
+                 'TR_AMY_C_nan_0_0_50-10_1_SICSPE-SICSMPM';
+                 'TR_HPC_C_nan_0_0_50-10_1_SICSPE-SICSMPM';
+                 'TR_TMP_C_nan_0_0_50-10_1_SICSPE-SICSMPM';
+                 'TR_OCC_C_nan_0_0_50-10_1_SICSPE-SICSMPM';
+
+                 'TR_OFC_C_nan_0_0_50-10_1_SIA-DIA';
+                 'TR_AMY_C_nan_0_0_50-10_1_SIA-DIA';
+                 'TR_HPC_C_nan_0_0_50-10_1_SIA-DIA';                 
+                 'TR_TMP_C_nan_0_0_50-10_1_SIA-DIA';                 
+                 'TR_OCC_C_nan_0_0_50-10_1_SIA-DIA';
+
+                 'TR_OFC_C_nan_0_0_50-10_1_SIE-DIE';
+                 'TR_AMY_C_nan_0_0_50-10_1_SIE-DIE';
+                 'TR_HPC_C_nan_0_0_50-10_1_SIE-DIE';                 
+                 'TR_TMP_C_nan_0_0_50-10_1_SIE-DIE';                 
+                 'TR_OCC_C_nan_0_0_50-10_1_SIE-DIE';
+
                 
         };   
 
@@ -314,8 +330,7 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 clear
 paths = load_paths_EXT; 
 
-f2sav = 'POW_OCC_V_3-8_0_0_50-1_1_SC-DC';
-
+f2sav = 'POW_OCC_V_03-08_1_0_50-10_1_SC-DC';
 
 
 load ([ paths.results.rsa f2sav '.mat']);
@@ -349,9 +364,16 @@ end
 %h(clustinfo.PixelIdxList{id}) = 1;
 
 
+clim = [-.03 .03];
 tRes = strsplit(f2sav, '_'); tRes = strsplit(tRes{7}, '-'); tRes = double(string(tRes{2}));
-plot_TG_map(m1, m2, h, t, tRes, f2sav)
+plot_TG_map(m1, m2, h, t, tRes, f2sav, clim)
 exportgraphics(gcf, [paths.results.rsa  '_myP.png'], 'Resolution',150)
+
+
+
+
+
+
 
 %% PERMUTATIONS
 nPerm = 1000; 
