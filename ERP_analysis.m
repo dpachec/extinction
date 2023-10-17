@@ -258,13 +258,13 @@ disp('done');
 cd (paths.github)
 
 %% % % % % % % % FIRST LOAD FILE - > START HERE
-clear
+clear, clc
 
 paths = load_paths_EXT; 
 %file2load = ['TR_' 'VVS' '_C']; 
-%file2load = ['TR_' 'Hippocampus' '_C']; 
-%file2load = ['TR_' 'orbitofrontal' '_C']; 
-file2load = ['TR_' 'occipital' '_C']; 
+%file2load = ['TR_' 'HPC' '_C']; 
+%file2load = ['TR_' 'OFC' '_C']; 
+file2load = ['TR_' 'OCC' '_C']; 
 
 load ([paths.results.traces file2load]); 
 

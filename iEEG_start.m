@@ -52,7 +52,7 @@ for subji = 1:length(allsubs)
         %epoch data and markers
         [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
         
-        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+        %EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
         
 
         if ~isempty(EEG.data)
@@ -82,42 +82,6 @@ cd (paths.github)
 
 
 
-%% plot example trial in one subject (ONLY 1 electrode)
-
-EEG = ALLEEG{3}; 
-tr =20; 
-
-figure
-d2p	= squeeze(EEG.power(tr, 1 ,:,:));
-myCmap = colormap(brewermap([],'YlOrRd'));
-colormap(myCmap)
-contourf(1:700, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
-
-
-
-%% plot Mean across trials in one subject (ONLY 1 electrode)
-
-EEG = ALLEEG{3};
-
-figure
-d2p	= squeeze(mean(EEG.power(:, 1 ,:,:), 'omitnan'));
-myCmap = colormap(brewermap([],'YlOrRd'));
-colormap(myCmap)
-contourf(1:700, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
-
-
-
-%% delete trigger labels in events
-
-x = [{EEG2.event.type}]; 
-ids2rem = strcmp(x, 'trigger');
-EEG2.event(ids2rem) = []; 
-
-%% check that markers are ok
-%data2check = [EEG.data(1, :); EEG.markers_artifacts(1,:)*1000]; 
-data2check = [EEG.data(1, :)]; 
-eegplot(data2check, 'srate', EEG.srate, 'winlength', 50, 'spacing', 1000, 'events', EEG.event);
-
 
 
 %% % % % % % % % FIRST LOAD FILE - > START HERE
@@ -133,7 +97,10 @@ load ([paths.results.power file2load]);
 
 
 
+%% load traces
 
+file2load = ['TR_' 'AMY' '_C']; 
+load ([paths.results.traces file2load]); 
 
 
 %% count channels 
@@ -202,9 +169,9 @@ for subji = 1:length(ALLEEG)
 
         % % % % % % Extinction
         ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
-        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
-        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
-        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
+        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
+        ids3 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
 
 
         % % %   % % Acquisition only late trials
@@ -216,6 +183,8 @@ for subji = 1:length(ALLEEG)
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
         tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
         tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
+        tfDCH3 = mean(EEG.power(ids3, :, : ,:), 'omitnan'); 
+        tfDTF3 = squeeze(mean(tfDCH3, 2, 'omitnan'));
 
 
 
@@ -228,6 +197,7 @@ for subji = 1:length(ALLEEG)
         
         c1(subji, :, :) = tfDTF1; 
         c2(subji, :, :) = tfDTF2; 
+        c3(subji, :, :) = tfDTF3; 
 
                 
     end
@@ -244,14 +214,18 @@ sub2exc = [];
 
 
 c1B = c1(:, 3:8, 201:500); c2B = c2(:, 3:8, 201:500); 
+c3B = c3(:, 3:8, 201:500); 
 %c1B = c1(:, 1:30, 201:500); c2B = c2(:, 1:30, 201:500); 
 %c1B = c1(:, 1:54, :); c2B = c2(:, 1:54, :); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
+c3B(sub2exc,:,:) = []; 
 
 c1B(c1B == 0) = nan; 
 c2B(c2B == 0) = nan; 
+c3B(c3B == 0) = nan; 
 d2p1	= squeeze(mean(c1B, 'omitnan'));
 d2p2	= squeeze(mean(c2B, 'omitnan'));
+d2p3	= squeeze(mean(c3B, 'omitnan'));
 
 
 [h p ci ts] = ttest(c1B, c2B); 
@@ -312,7 +286,43 @@ set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3
 %exportgraphics(gcf, [paths.results.power file2load '.png'], 'Resolution',150)
 exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 
-%% compute in cluster
+
+%% take in cluster only
+
+
+for subji = 1:47
+
+    c1BS = squeeze(c1B(subji,:,:));
+    c2BS = squeeze(c2B(subji,:,:));
+    c3BS = squeeze(c3B(subji,:,:));
+    cSP(subji,:) = mean(c1BS(clustinfo.PixelIdxList{4}), 'all');
+    cSMPP(subji,:) = mean(c2BS(clustinfo.PixelIdxList{4}), 'all');
+    cSMPM(subji,:) = mean(c3BS(clustinfo.PixelIdxList{4}), 'all');
+
+end
+
+
+%% 
+d2p = [cSP cSMPP cSMPM]
+
+[~,~,stats] = anova1(d2p)
+%[c,~,~,gnames] = multcompare(stats);
+
+%%
+clc
+
+[h p ci ts] = ttest(cSP, cSMPP)
+[h p ci ts] = ttest(cSP, cSMPM)
+
+%%
+d4ANOVA = [cSP; cSMPP ;cSMPM];
+d4ANOVA(:,2) = [ones(1,47) ones(1,47)*2 ones(1,47)*3];
+d4ANOVA(any(isnan(d4ANOVA), 2), :) = [];
+d4ANOVA(:,3) = [1:32 1:32 1:32];
+
+x = RMAOV1(d4ANOVA);
+
+
 
 
 
@@ -500,8 +510,10 @@ clear max_clust_sum_perm
 for permi = 1:nPerm
     %c1B = c1(:,1:54,301:480); 
     %c2B = c2(:,1:54,301:480); 
-    c1B = c1(:,3:8,301:480); 
-    c2B = c2(:,3:8,301:480); 
+    %c1B = c1(:,3:8,301:480); 
+    %c2B = c2(:,3:8,301:480); 
+    c1B = c1(:,3:8,301:400); % first second only
+    c2B = c2(:,3:8,301:400); 
     c1B(c1B == 0) = nan; 
     c2B(c2B == 0) = nan; 
     for subji = 1:size(c1B, 1)
@@ -776,8 +788,8 @@ clearvars -except ALLEEG ALLEEG1 paths clustinfo nL
 close all
 sub2exc = [];
 
-for subji = 1:size(ALLEEG1, 1)
-    EEG = ALLEEG1{subji}; 
+for subji = 1:size(ALLEEG, 1)
+    EEG = ALLEEG{subji}; 
     if ~isempty(EEG) & isempty(intersect(sub2exc, subji))
         Ev = [{EEG.event.type}]';
         Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
@@ -787,10 +799,10 @@ for subji = 1:size(ALLEEG1, 1)
         powH = EEG.power;
         
         for triali = 1:size(powH, 1)
-            %cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
-            %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
-            cTR = squeeze(mean(powH(triali, :, 3:8, 301:350), 2));
-            thPow(triali, :) = mean(cTR, 'all');
+            cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
+            thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
+            %cTR = squeeze(mean(powH(triali, :, 3:8, 301:401), 2));
+            %thPow(triali, :) = mean(cTR, 'all');
     
         end
         
@@ -799,17 +811,19 @@ for subji = 1:size(ALLEEG1, 1)
         ids2rem = isnan(thPow) | isnan(ratings2u); 
         trialN = double(string(Ev2(:, 1)));
         exph = double(string(Ev2(:, 2)));
-        trial_type = double(string(Ev2(:, 8)));
+        currCS = double(string(Ev2(:, 8)));
+        trial_type = double(string(Ev2(:, 6)));
 
         trialN(ids2rem) = []; 
         trial_type(ids2rem) = []; 
+        currCS(ids2rem) = []; 
         exph(ids2rem) = []; 
         thPow(ids2rem) = []; 
         ratings2u(ids2rem) = []; 
         subID = repelem(subji, length(ratings2u))';
         
         
-        d4LME = [thPow ratings2u subID trialN exph trial_type];
+        d4LME = [thPow ratings2u subID trialN exph currCS trial_type];
         % % remove the testing phase for now
         d4LME(d4LME(:, 5) == 3,:) = []; 
 
@@ -821,8 +835,8 @@ end
 %% 
 d4LME = cat(1, allData4LME{:});
 
-tbl2 = table(d4LME(:,1), d4LME(:,2), d4LME(:,3), d4LME(:,4), d4LME(:,5), d4LME(:,6), ...
-    'VariableNames',{'theta_AMY','Ratings','subID', 'trialN', 'Phase', 'CS'});
+tbl2 = table(d4LME(:,1), d4LME(:,2), d4LME(:,3), d4LME(:,4), d4LME(:,5), d4LME(:,6), d4LME(:,7),...
+    'VariableNames',{'theta_AMY','Ratings','subID', 'trialN', 'Phase', 'currCS', 'trial_type'});
 
 
 
@@ -830,9 +844,10 @@ tbl2 = table(d4LME(:,1), d4LME(:,2), d4LME(:,3), d4LME(:,4), d4LME(:,5), d4LME(:
 clc
 
 
-lme = fitlme(tbl2,'Ratings ~ theta_AMY + CS+ Phase+ trialN + (1|subID)'); % random intercept model
-%lme = fitlme(tbl2,'Ratings ~ theta_AMY + CS+ Phase+ trialN + CS*theta_AMY + *theta_AMY + (1|subID)'); % random intercept model
-
+%lme = fitlme(tbl2,'Ratings ~ theta_AMY + trial_type + Phase + trialN + (1|subID)'); % random intercept model
+%lme = fitlme(tbl2,'Ratings ~ theta_AMY + currCS+ Phase+ trialN + currCS*theta_AMY + Phase*theta_AMY + (1|subID)'); % random intercept model
+lme = fitlme(tbl2,'theta_AMY ~ Ratings + currCS + Phase+ trialN + (1|subID)'); % random intercept model
+%lme = fitlme(tbl2,'Ratings ~ theta_AMY + currCS + Phase+ trialN + (1|subID)'); % random intercept model
 lme
 %lme.Coefficients
 

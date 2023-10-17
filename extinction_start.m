@@ -2,7 +2,7 @@
 %% read in log file information (for trialinfo & for behavioral data analysis)
 clear 
 
-paths = load_paths; % call this function to define path variables (path_data, path_info, path_out)
+paths = load_paths_EXT; % call this function to define path variables (path_data, path_info, path_out)
 
 % 1. what trial number (position in presentation)?
 % 2. which Phase?
@@ -260,8 +260,8 @@ end
 % trlinfo(:,7)=5-trlinfo(:,7);
 % end
 
-mkdir(paths.trlinfo)
-save(strcat(paths.trlinfo,sel_sub,'_trlinfo'),'trlinfo')
+%mkdir(paths.trlinfo)
+%save(strcat(paths.trlinfo,sel_sub,'_trlinfo'),'trlinfo')
 
 
 end

@@ -38,13 +38,14 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
 responses = [];
 
 
-for subji=2:2%1:numel(allsubs)
+for subji=1:numel(allsubs)
 
     sub=allsubs{subji};
     info_file=strcat(paths.trlinfo,sub,'_trlinfo');
     load(info_file)  
     trialinfo = trlinfo; 
-    
+    allTrialinfo{subji,:} = trlinfo;
+
     label={'Dangerous','Safe'};
     
     
@@ -67,30 +68,31 @@ for subji=2:2%1:numel(allsubs)
     %     title(types{type_item(i)})
     % end
     
-    figure
-    for ty=1:3
-        avg_response_type(ty,:)=nanmean(responses(type_item==ty,:),1) 
-        avg_us(ty,:)=us_vec(type_item==ty,:);
-        subplot(2,2,ty)
-        hold on
-        rectangle('Position',[0 0 24 4],'FaceColor',[1 .9 .9])
-        rectangle('Position',[24 0 24 4],'FaceColor',[0.9 .9 .9])
-        rectangle('Position',[48 0 16 4],'FaceColor',[1 .8 1])
-        rectangle('Position',[64 0 16 4],'FaceColor',[1 1 .8])
-        
-        
-        stem(avg_response_type(ty,:))
-        title(types{ty})
-        h=gca;
-        h.YTick=[0.1;4-(0.2*4)];
-        h.YTickLabel=label;
-        h.YTickLabelRotation=90;
-    
-    end
-    
-    mkdir(paths.results.behavior)
-    filename = [paths.results.behavior sub '_behav.png']
-    exportgraphics(gca, filename, 'Resolution',300)
+    % % % uncomnment to plot one fig per subject
+% % % % %     figure
+% % % % %     for ty=1:3
+% % % % %         avg_response_type(ty,:)=nanmean(responses(type_item==ty,:),1) 
+% % % % %         avg_us(ty,:)=us_vec(type_item==ty,:);
+% % % % %         subplot(2,2,ty)
+% % % % %         hold on
+% % % % %         rectangle('Position',[0 0 24 4],'FaceColor',[1 .9 .9])
+% % % % %         rectangle('Position',[24 0 24 4],'FaceColor',[0.9 .9 .9])
+% % % % %         rectangle('Position',[48 0 16 4],'FaceColor',[1 .8 1])
+% % % % %         rectangle('Position',[64 0 16 4],'FaceColor',[1 1 .8])
+% % % % %         
+% % % % %         
+% % % % %         stem(avg_response_type(ty,:))
+% % % % %         title(types{ty})
+% % % % %         h=gca;
+% % % % %         h.YTick=[0.1;4-(0.2*4)];
+% % % % %         h.YTickLabel=label;
+% % % % %         h.YTickLabelRotation=90;
+% % % % %     
+% % % % %     end
+% % % % %     
+% % % % %     mkdir(paths.results.behavior)
+% % % % %     filename = [paths.results.behavior sub '_behav.png']
+% % % % %     exportgraphics(gca, filename, 'Resolution',300)
     %close all
 
 end

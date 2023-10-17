@@ -31,13 +31,17 @@ if tRes == 1
 else
     plot(get(gca,'xlim'), [3 3],'k', 'linewidth', 1); plot([3 3], get(gca,'ylim'),'k', 'linewidth', 1); 
 end
-set(gca, 'clim', [-3 3])
+set(gca, 'clim', [-4 4])
 
 
 axesHandles = findall(0, 'type', 'axes');
 %set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 150], 'ylim', [1 150]); 
 if tRes == 1
-    set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', []); 
+    if strcmp(f2t{3}, 'C')
+        set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 220], 'ylim', [1 220]); 
+    elseif strcmp(f2t{3}, 'V')
+        set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 250], 'ylim', [1 250]); 
+    end
 elseif tRes == 10
     if strcmp(f2t{3}, 'C')
         set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 17], 'ylim', [1 17]); 

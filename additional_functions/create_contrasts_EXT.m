@@ -39,6 +39,9 @@ CSMPM = (allComb(:,7) == 3 & allComb(:,17) == 3);
 SC2 = (allComb(:,4) == allComb(:,14));
 DC2 = (allComb(:,4) ~= allComb(:,14));
 
+EPP = (allComb(:,7) == 1 & allComb(:,17) == 3) | (allComb(:,7) == 3 & allComb(:,17) == 1);
+EPM = (allComb(:,7) == 1 & allComb(:,17) == 2) | (allComb(:,7) == 2 & allComb(:,17) == 1);
+
 
 if exist('SI')
    idF = DT & SI2; 
@@ -68,14 +71,6 @@ if exist('SISV')
    idF = DT & SI2 & SV; 
    new_sisv = [allComb(idF, 1) allComb(idF, 11)];
 end
-if exist('DISV')
-   idF = DT & DI2 & SV; 
-   new_disv = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('DIDV')
-   idF = DT & DI2 & DV; 
-   new_didv = [allComb(idF, 1) allComb(idF, 11)];
-end
 if exist('SISVA')
    idF = DT & SI2 & SV & ACQ; 
    new_sisva = [allComb(idF, 1) allComb(idF, 11)];
@@ -100,6 +95,14 @@ if exist('DIDVE')
     idF = DT & DI2 & DV & EXT; 
    new_didve = [allComb(idF, 1) allComb(idF, 11)];
 end
+if exist('DIDVEPP') % % TAG
+   idF = DT & DI2 & EPP & EXT; 
+   new_didvepp = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DIDVEPM') % % TAG
+   idF = DT & DI2 & EPM & EXT; 
+   new_didvepm = [allComb(idF, 1) allComb(idF, 11)];
+end
 if exist('SICSPA')
    idF = DT & SI2 & CSP & ACQ;
    new_sicspa = [allComb(idF, 1) allComb(idF, 11)];
@@ -115,6 +118,18 @@ end
 if exist('SICSME')
    idF = DT & SI2 & CSM & EXT;
    new_sicsme = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSPEL')
+   idF = DT & SI2 & CSP & EXT;
+   nI = ceil(length(idF)/2);
+   idF = idF(nI:end);
+   new_sicspel = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSMEL')
+   idF = DT & SI2 & CSM & EXT;
+   nI = ceil(length(idF)/2);
+   idF = idF(nI:end);
+   new_sicsmel = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SICSMPP')
    idF = DT & SI2 & CSMPP & EXT;
