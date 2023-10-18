@@ -4,7 +4,19 @@
 clear , clc
 
 listF2sav = {
-                    'POW_HPC_C_39-54_1_0_50-1_1_DISVE-DIDVEPM';
+                    'TR_OFC_C_nan_0_0_50-1_1_SICSPA-SICSMA';
+                    'TR_AMY_C_nan_0_0_50-1_1_SICSPA-SICSMA';
+                    'TR_HPC_C_nan_0_0_50-1_1_SICSPA-SICSMA';
+                    'TR_TMP_C_nan_0_0_50-1_1_SICSPA-SICSMA';
+                    'TR_OCC_C_nan_0_0_50-1_1_SICSPA-SICSMA';
+
+                    'TR_OFC_C_nan_0_0_50-1_1_SICSPE-SICSME';
+                    'TR_AMY_C_nan_0_0_50-1_1_SICSPE-SICSME';
+                    'TR_HPC_C_nan_0_0_50-1_1_SICSPE-SICSME';
+                    'TR_TMP_C_nan_0_0_50-1_1_SICSPE-SICSME';
+                    'TR_OCC_C_nan_0_0_50-1_1_SICSPE-SICSME';
+
+
                     
                     
                 
@@ -92,7 +104,7 @@ end
 %% plot 2 lines
 clear
 paths = load_paths_EXT; 
-f2sav =   'PHA_OFC_C_3-8_0_0_50-10_0_SC-DC';
+f2sav =  'TR_OFC_C_nan_0_0_50-1_1_SICSPA-SICSMA';
 
 
  
@@ -197,7 +209,8 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 clear, clc
 paths = load_paths_EXT; 
 
-f2sav = 'POW_HPC_C_39-54_1_0_50-10_1_DISVA-DIDVA';
+%f2sav = 'POW_AMY_C_3-8_1_0_50-10_1_SICSPA-SICSMA';
+f2sav = 'TR_OFC_C_nan_0_0_50-1_1_SICSPE-SICSME';
                     
 
 load ([ paths.results.rsa f2sav '.mat']);
@@ -227,8 +240,8 @@ if exist('allSTs')
 end
 
 
-%h = zeros(size(cond1, 2),size(cond1, 2)); 
-h(clustinfo.PixelIdxList{id}) = 1;
+h = zeros(size(cond1, 2),size(cond1, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
 
 
 clim = [-.03 .03];
@@ -299,7 +312,8 @@ realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
 %junts = cat(1, cond1(:, 4:18, 4:18), cond2(:, 4:18, 4:18));
 %junts = cat(1, cond1(:, 4:13, 4:13), cond2(:, 4:13, 4:13));
 %junts = cat(1, cond1(:, 51:end, 51:end), cond2(:, 51:end, 51:end));
-junts = cat(1, cond1(:, 51:151, 51:151), cond2(:, 51:151, 51:151));
+%junts = cat(1, cond1(:, 51:151, 51:151), cond2(:, 51:151, 51:151));
+junts = cat(1, cond1(:, 26:225, 26:225), cond2(:, 26:225, 26:225));
 
 clear max_clust_sum_perm
 for permi = 1:nPerm
@@ -493,7 +507,10 @@ set(gca, 'FontSize', 16)
 clear , clc
 
 listF2sav = {
-                'POW_AMY_C_39-54_1_0_50-1_1_CSME-TR';
+                'POW_OFC_C_39-54_1_0_50-1_1_CSPA-TR';
+                'POW_OFC_C_39-54_1_0_50-1_1_CSPA-TR';
+                'POW_HPC_C_39-54_1_0_50-1_1_CSPA-TR';
+                'POW_HPC_C_39-54_1_0_50-1_1_CSPA-TR';
                 
         };   
 
@@ -520,7 +537,7 @@ for listi = 1:length(listF2sav)
 
             
             EEG = add_EEGLAB_fields(EEG); 
-            %EEG = rem_nan_trials_EXT(EEG); %can't remove nan trials here or the order is lost
+            EEG = rem_nan_trials_EXT(EEG); %can't remove nan trials here or the order is lost
 
             Ev = [{EEG.event.type}]';Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
             Ev2 = cat(1, Ev1{:});
@@ -547,7 +564,7 @@ for listi = 1:length(listF2sav)
             end
         
             ids{subji,:} = out_contrasts.allIDs;
-            %nnans{subji} = EEG.nan; 
+            nnans{subji} = EEG.nan; 
         end
         
     end
@@ -562,23 +579,33 @@ for listi = 1:length(listF2sav)
 end
 
 
-%% plot TG
+%% COMPUTE TRIAL LEVEL CORRELATIONS
 clear, clc
 paths = load_paths_EXT; 
 
-f2sav =  'POW_AMY_C_39-54_1_0_50-1_1_CSME-TR';
+%f2sav =  'POW_AMY_C_39-54_1_0_50-1_1_CSPE-TR';
+f2sav =  'POW_HPC_C_39-54_1_0_50-1_1_CSPE-TR';
 
 load ([ paths.results.rsa f2sav '.mat']);
 
 load clustinfoRSA2
 
 out_rsa = out_rsa(~cellfun('isempty', out_rsa));
+ids = ids(~cellfun('isempty', ids));
 
 for subji = 1:length(out_rsa)
+
+
+    idsH = ids{subji}{1};
+    %ratings = idsH(:, 7); 
+    ratings = idsH(:, 7) - idsH(:,17);
+    %ratings = mean([idsH(:, 7) idsH(:,17)], 2); 
+    
+
     orS = out_rsa{subji}; 
     %orS2 = squeeze(mean(mean(orS(:,:,3:23, 3:23), 4), 3));
     %orS2 = squeeze(mean(mean(orS(:,:,51:150, 51:150), 4), 3));
-  clear orS2
+    clear orS2
     for triali = 1:size(orS, 2)
         orS2a = squeeze(orS(:,triali,:,:));
         orS2(triali,:) = mean(orS2a(clustinfo.PixelIdxList{9}));
@@ -586,21 +613,44 @@ for subji = 1:length(out_rsa)
         %dv = diag(orS2a); dv = dv(51:151);
         %orS2(triali,:) = mean(dv);
     end
-    allORS2(subji, :) = orS2;
-    figure()
-    plot(orS2); hold on; 
-    scatter(1:length(orS2), orS2); hold on; 
-    h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
-    C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
-    allSlopes(subji, :) = C(2);
-    allIntercepts(subji, :) = C(1);
-    %set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
-    close all
+    %allORS2(subji, :) = orS2;
+
+    idN = isnan(orS2); 
+    orS2(idN) = []; 
+    ratings(idN) = []; 
+    allRS(subji, :) = corr(orS2, ratings, 'type', 's' ); 
+        
+% %         figure()
+% %         %plot(ratings, orS2); hold on; 
+% %         scatter(orS2, ratings); hold on; 
+% %         h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
+% %         C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
+% %         allSlopes(subji, :) = C(2);
+% %         allIntercepts(subji, :) = C(1);
+% %         %set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
+% %         
+
+% %     figure()
+% %     plot(orS2); hold on; 
+% %     scatter(1:length(orS2), orS2); hold on; 
+% %     h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
+% %     C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
+% %     allSlopes(subji, :) = C(2);
+% %     allIntercepts(subji, :) = C(1);
+% %     %set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
+% %     close all
+
+
+
 
 end
 
-boxplot(allSlopes)
-[h p ci ts] = ttest(allSlopes); 
+%boxplot(allSlopes)
+%[h p ci ts] = ttest(allSlopes); 
+
+figure()
+boxplot(allRS)
+[h p ci ts] = ttest(allRS); 
 disp(['T > ' num2str(ts.tstat) '  P > ' num2str(p)])
 
 %%

@@ -169,8 +169,8 @@ for subji = 1:length(ALLEEG)
 
         % % % % % % Extinction
         ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
-        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
-        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
+        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
         ids3 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
 
 
@@ -801,6 +801,7 @@ for subji = 1:size(ALLEEG, 1)
         for triali = 1:size(powH, 1)
             cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
             thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
+            
             %cTR = squeeze(mean(powH(triali, :, 3:8, 301:401), 2));
             %thPow(triali, :) = mean(cTR, 'all');
     
@@ -838,7 +839,12 @@ d4LME = cat(1, allData4LME{:});
 tbl2 = table(d4LME(:,1), d4LME(:,2), d4LME(:,3), d4LME(:,4), d4LME(:,5), d4LME(:,6), d4LME(:,7),...
     'VariableNames',{'theta_AMY','Ratings','subID', 'trialN', 'Phase', 'currCS', 'trial_type'});
 
+tbl2.Ratings = ordinal(tbl2.Ratings);
 
+%%
+VarDecompTbl = colldiag(d4LME)
+% That can be passed along for visualization
+colldiag_tableplot(VarDecompTbl);
 
 %% fit model
 clc
@@ -846,8 +852,12 @@ clc
 
 %lme = fitlme(tbl2,'Ratings ~ theta_AMY + trial_type + Phase + trialN + (1|subID)'); % random intercept model
 %lme = fitlme(tbl2,'Ratings ~ theta_AMY + currCS+ Phase+ trialN + currCS*theta_AMY + Phase*theta_AMY + (1|subID)'); % random intercept model
-lme = fitlme(tbl2,'theta_AMY ~ Ratings + currCS + Phase+ trialN + (1|subID)'); % random intercept model
+%lme = fitlme(tbl2,'theta_AMY ~ Ratings + currCS + Phase+ trialN + (1|subID)'); % random intercept model
 %lme = fitlme(tbl2,'Ratings ~ theta_AMY + currCS + Phase+ trialN + (1|subID)'); % random intercept model
+
+
+lme = fitlme(tbl2,'theta_AMY ~ Ratings + currCS + Phase + Phase*currCS + (1|subID)'); % random intercept model
+
 lme
 %lme.Coefficients
 
