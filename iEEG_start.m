@@ -5,7 +5,8 @@ paths = load_paths_EXT;
 
 c2u = 'C';
 
-sROI = {'Amygdala'}; 
+%sROI = {'Amygdala'}; 
+sROI = {'Hippocampus'}; 
 
 %sROI = {'superiorfrontal'}; 
 
@@ -49,15 +50,21 @@ for subji = 1:length(allsubs)
         ids = strcmp(Ev2(:, 10), c2u); 
         EEG.event = EEG.event(ids);
 
+        % % % remove renewal trials 
+        %id2r3 = strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2'); 
+        %EEG.event = EEG.event(ids & id2r3);
+
         %epoch data and markers
         [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
         
-        %EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+
         
 
         if ~isempty(EEG.data)
             
             EEG = extract_power_EXT(EEG, 0.01); 
+            
             EEG = normalize_EXT(EEG);
             EEG = rmfield(EEG, 'data');
             nChans(subji, :) = size(EEG.power, 2);
@@ -81,6 +88,254 @@ cd (paths.github)
 
 
 
+ 
+clear, close all
+paths = load_paths_EXT; 
+
+c2u = 'C';
+
+%sROI = {'Amygdala'}; 
+sROI = {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'parahippocampal' 'entorhinal' };
+
+%sROI = {'superiorfrontal'}; 
+
+%sROI = {'superiorfrontal' 'rostralmiddlefrontal' 'anteriorcingulate' 'posteriorcingulate' 'precentral' 'caudalmiddlefrontal'}; % case sensitive 
+
+ %sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'fusiform' 'temporalpole' ...
+ %             'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
+
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+
+
+for subji = 1:length(allsubs)
+    subji
+    sub = allsubs{subji}; 
+    cd([ paths.iEEG])
+    load ([sub '_iEEG.mat']);
+
+    EEG = remove_elec_EXT_manually(EEG, subji); %thres channels is 1/5 of 192 = 38
+    chansLab = {EEG.chanlocs.fsLabel}';
+    selChans = contains(chansLab, sROI);
+
+    
+    if find(selChans)
+        
+        EEG.chanlocs = EEG.chanlocs(selChans);
+        EEG.data = EEG.data(selChans, :); %contains nans
+        
+        %epoch data
+        Ev = [{EEG.event.type}]'; 
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        clen = cellfun(@length, Ev1); 
+        EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
+        Ev2 = cat(1, Ev1{:});
+       
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
+        ids = strcmp(Ev2(:, 10), c2u); 
+        EEG.event = EEG.event(ids);
+
+        % % % remove renewal trials 
+        %id2r3 = strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2'); 
+        %EEG.event = EEG.event(ids & id2r3);
+
+        %epoch data and markers
+        [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+        
+        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+
+        
+
+        if ~isempty(EEG.data)
+            
+            EEG = extract_power_EXT(EEG, 0.01); 
+            
+            EEG = normalize_EXT(EEG);
+            EEG = rmfield(EEG, 'data');
+            nChans(subji, :) = size(EEG.power, 2);
+            ALLEEG{subji,:} = EEG; 
+
+        end
+    
+    end
+
+
+end
+
+sROI = char(join(sROI, '_'));
+mkdir(paths.results.power)
+filename = [paths.results.power 'allS_' sROI '_' c2u];
+nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
+totalChans = sum(nChans);
+save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
+
+cd (paths.github)
+
+
+
+clear, close all
+paths = load_paths_EXT; 
+
+c2u = 'C';
+
+sROI = {'orbitofrontal'}; 
+
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+
+
+for subji = 1:length(allsubs)
+    subji
+    sub = allsubs{subji}; 
+    cd([ paths.iEEG])
+    load ([sub '_iEEG.mat']);
+
+    EEG = remove_elec_EXT_manually(EEG, subji); %thres channels is 1/5 of 192 = 38
+    chansLab = {EEG.chanlocs.fsLabel}';
+    selChans = contains(chansLab, sROI);
+
+    
+    if find(selChans)
+        
+        EEG.chanlocs = EEG.chanlocs(selChans);
+        EEG.data = EEG.data(selChans, :); %contains nans
+        
+        %epoch data
+        Ev = [{EEG.event.type}]'; 
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        clen = cellfun(@length, Ev1); 
+        EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
+        Ev2 = cat(1, Ev1{:});
+       
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
+        ids = strcmp(Ev2(:, 10), c2u); 
+        EEG.event = EEG.event(ids);
+
+        % % % remove renewal trials 
+        %id2r3 = strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2'); 
+        %EEG.event = EEG.event(ids & id2r3);
+
+        %epoch data and markers
+        [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+        
+        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+
+        
+
+        if ~isempty(EEG.data)
+            
+            EEG = extract_power_EXT(EEG, 0.01); 
+            
+            EEG = normalize_EXT(EEG);
+            EEG = rmfield(EEG, 'data');
+            nChans(subji, :) = size(EEG.power, 2);
+            ALLEEG{subji,:} = EEG; 
+
+        end
+    
+    end
+
+
+end
+
+sROI = char(join(sROI, '_'));
+mkdir(paths.results.power)
+filename = [paths.results.power 'allS_' sROI '_' c2u];
+nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
+totalChans = sum(nChans);
+save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
+
+cd (paths.github)
+
+
+
+
+clear, close all
+paths = load_paths_EXT; 
+
+c2u = 'C';
+
+sROI = {'occipital' 'cuneus' 'lingual' 'pericalcarine' 'bankssts'}
+
+
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+
+
+for subji = 1:length(allsubs)
+    subji
+    sub = allsubs{subji}; 
+    cd([ paths.iEEG])
+    load ([sub '_iEEG.mat']);
+
+    EEG = remove_elec_EXT_manually(EEG, subji); %thres channels is 1/5 of 192 = 38
+    chansLab = {EEG.chanlocs.fsLabel}';
+    selChans = contains(chansLab, sROI);
+
+    
+    if find(selChans)
+        
+        EEG.chanlocs = EEG.chanlocs(selChans);
+        EEG.data = EEG.data(selChans, :); %contains nans
+        
+        %epoch data
+        Ev = [{EEG.event.type}]'; 
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        clen = cellfun(@length, Ev1); 
+        EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
+        Ev2 = cat(1, Ev1{:});
+       
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
+        ids = strcmp(Ev2(:, 10), c2u); 
+        EEG.event = EEG.event(ids);
+
+        % % % remove renewal trials 
+        %id2r3 = strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2'); 
+        %EEG.event = EEG.event(ids & id2r3);
+
+        %epoch data and markers
+        [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+        
+        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+
+        
+
+        if ~isempty(EEG.data)
+            
+            EEG = extract_power_EXT(EEG, 0.01); 
+            
+            EEG = normalize_EXT(EEG);
+            EEG = rmfield(EEG, 'data');
+            nChans(subji, :) = size(EEG.power, 2);
+            ALLEEG{subji,:} = EEG; 
+
+        end
+    
+    end
+
+
+end
+
+sROI = char(join(sROI, '_'));
+mkdir(paths.results.power)
+filename = [paths.results.power 'allS_' sROI '_' c2u];
+nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
+totalChans = sum(nChans);
+save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
+
+cd (paths.github)
 
 
 
@@ -171,7 +426,7 @@ for subji = 1:length(ALLEEG)
         ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
         ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
         %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
-        ids3 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
+        %ids3 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
 
 
         % % %   % % Acquisition only late trials
@@ -183,8 +438,8 @@ for subji = 1:length(ALLEEG)
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
         tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
         tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
-        tfDCH3 = mean(EEG.power(ids3, :, : ,:), 'omitnan'); 
-        tfDTF3 = squeeze(mean(tfDCH3, 2, 'omitnan'));
+        %tfDCH3 = mean(EEG.power(ids3, :, : ,:), 'omitnan'); 
+        %tfDTF3 = squeeze(mean(tfDCH3, 2, 'omitnan'));
 
 
 
@@ -197,7 +452,7 @@ for subji = 1:length(ALLEEG)
         
         c1(subji, :, :) = tfDTF1; 
         c2(subji, :, :) = tfDTF2; 
-        c3(subji, :, :) = tfDTF3; 
+        %c3(subji, :, :) = tfDTF3; 
 
                 
     end
@@ -214,18 +469,18 @@ sub2exc = [];
 
 
 c1B = c1(:, 3:8, 201:500); c2B = c2(:, 3:8, 201:500); 
-c3B = c3(:, 3:8, 201:500); 
+%c3B = c3(:, 3:8, 201:500); 
 %c1B = c1(:, 1:30, 201:500); c2B = c2(:, 1:30, 201:500); 
 %c1B = c1(:, 1:54, :); c2B = c2(:, 1:54, :); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
-c3B(sub2exc,:,:) = []; 
+%c3B(sub2exc,:,:) = []; 
 
 c1B(c1B == 0) = nan; 
 c2B(c2B == 0) = nan; 
-c3B(c3B == 0) = nan; 
+%c3B(c3B == 0) = nan; 
 d2p1	= squeeze(mean(c1B, 'omitnan'));
 d2p2	= squeeze(mean(c2B, 'omitnan'));
-d2p3	= squeeze(mean(c3B, 'omitnan'));
+%d2p3	= squeeze(mean(c3B, 'omitnan'));
 
 
 [h p ci ts] = ttest(c1B, c2B); 
@@ -542,10 +797,7 @@ for permi = 1:nPerm
 
 end
 
-%%
-
 clear p ratings2u mcsP
-
 ratings2u = max_clust_obs; 
 mcsP = max_clust_sum_perm;
 
@@ -569,7 +821,7 @@ exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 
 
-%% check only in theta band
+%% THETA BAND - LINE PLOTS
 
 sub2exc = [];
 
@@ -625,8 +877,8 @@ exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',150)
 nPerm = 1000; 
 clear max_clust_sum_perm
 for permi = 1:nPerm
-    c1B = squeeze(mc1B(:, 51:270)); 
-    c2B = squeeze(mc2B(:, 51:270));
+    c1B = squeeze(mc1B(:, 51:200)); 
+    c2B = squeeze(mc2B(:, 51:200));
     c1B(c1B == 0) = nan; 
     c2B(c2B == 0) = nan; 
     for subji = 1:size(c1B, 1)
@@ -681,8 +933,8 @@ exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 
 %% Correlate responses and power in cluster
-
-clearvars -except ALLEEG ALLEEG1 paths clustinfo nL
+load clustinfoAB
+clearvars -except ALLEEG paths clustinfo nL pi2u
 close all
 sub2exc = []; %subj 23-35-38-39-44-45
 
@@ -697,14 +949,14 @@ for subji = 1:size(ALLEEG, 1)
         % % %   % % Acquisition
         %ids = strcmp(Ev2(:, 2), '1'); 
         %ids = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
-        ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+        %ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
     
         % % % % % % Extinction
-        %ids = strcmp(Ev2(:, 2), '2'); 
+        ids = strcmp(Ev2(:, 2), '2'); 
         %ids = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
-        %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
+        ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
         %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; 
-        %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; 
+        %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; 
         
 
         % % % Acquisition AND Extinction
@@ -717,7 +969,8 @@ for subji = 1:size(ALLEEG, 1)
         
         for triali = 1:size(powH, 1)
             cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
-            thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
+            %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
+            thPow(triali, :) = mean(cTR(pi2u), 'all');
             %cTR = squeeze(mean(powH(triali, :, 3:8, 321:390), 2));
             %thPow(triali, :) = mean(cTR, 'all');
     
@@ -734,7 +987,7 @@ for subji = 1:size(ALLEEG, 1)
 
 
 
-        allRho(subji, :) = corr(thPow, ratings2u, 'type', 'p');
+        allRho(subji, :) = corr(thPow, ratings2u, 'type', 'k');
         
         
 % % %         figure()
@@ -784,7 +1037,7 @@ exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 
 %% Extract data 4 LME
 
-clearvars -except ALLEEG ALLEEG1 paths clustinfo nL
+clearvars -except ALLEEG ALLEEG1 paths clustinfo nL pi2u
 close all
 sub2exc = [];
 
@@ -800,9 +1053,10 @@ for subji = 1:size(ALLEEG, 1)
         
         for triali = 1:size(powH, 1)
             cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
-            thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
+            %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
+            thPow(triali, :) = mean(cTR(pi2u), 'all');
             
-            %cTR = squeeze(mean(powH(triali, :, 3:8, 301:401), 2));
+            %cTR = squeeze(mean(powH(triali, :, 3:8, 301:470), 2));
             %thPow(triali, :) = mean(cTR, 'all');
     
         end

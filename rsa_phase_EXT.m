@@ -4,22 +4,11 @@
 clear , clc
 
 listF2sav = {
-                    'TR_OFC_C_nan_0_0_50-1_1_SICSPA-SICSMA';
-                    'TR_AMY_C_nan_0_0_50-1_1_SICSPA-SICSMA';
-                    'TR_HPC_C_nan_0_0_50-1_1_SICSPA-SICSMA';
-                    'TR_TMP_C_nan_0_0_50-1_1_SICSPA-SICSMA';
-                    'TR_OCC_C_nan_0_0_50-1_1_SICSPA-SICSMA';
-
-                    'TR_OFC_C_nan_0_0_50-1_1_SICSPE-SICSME';
-                    'TR_AMY_C_nan_0_0_50-1_1_SICSPE-SICSME';
-                    'TR_HPC_C_nan_0_0_50-1_1_SICSPE-SICSME';
-                    'TR_TMP_C_nan_0_0_50-1_1_SICSPE-SICSME';
-                    'TR_OCC_C_nan_0_0_50-1_1_SICSPE-SICSME';
-
-
+                    'POW_OFC_V_39-54_1_0_50-1_1_SC-DC';
+                    'POW_AMY_V_39-54_1_0_50-1_1_SC-DC';
+                    'POW_HPC_V_39-54_1_0_50-1_1_SC-DC';
+                    'POW_TMP_V_39-54_1_0_50-1_1_SC-DC';
                     
-                    
-                
         };   
 
 t1 = datetime; 
@@ -209,8 +198,8 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 clear, clc
 paths = load_paths_EXT; 
 
-%f2sav = 'POW_AMY_C_3-8_1_0_50-10_1_SICSPA-SICSMA';
-f2sav = 'TR_OFC_C_nan_0_0_50-1_1_SICSPE-SICSME';
+f2sav = 'POW_OFC_V_39-54_1_0_50-10_1_SC-DC';
+%f2sav = 'TR_OFC_C_nan_0_0_50-1_1_SICSPE-SICSME';
                     
 
 load ([ paths.results.rsa f2sav '.mat']);
@@ -240,7 +229,7 @@ if exist('allSTs')
 end
 
 
-h = zeros(size(cond1, 2),size(cond1, 2)); 
+%h = zeros(size(cond1, 2),size(cond1, 2)); 
 %h(clustinfo.PixelIdxList{id}) = 1;
 
 
@@ -507,11 +496,10 @@ set(gca, 'FontSize', 16)
 clear , clc
 
 listF2sav = {
-                'POW_OFC_C_39-54_1_0_50-1_1_CSPA-TR';
-                'POW_OFC_C_39-54_1_0_50-1_1_CSPA-TR';
-                'POW_HPC_C_39-54_1_0_50-1_1_CSPA-TR';
-                'POW_HPC_C_39-54_1_0_50-1_1_CSPA-TR';
-                
+                'POW_AMY_C_39-54_1_0_50-1_1_ALLE-TR';
+                'POW_OFC_C_39-54_1_0_50-1_1_ALLE-TR';
+                'POW_HPC_C_39-54_1_0_50-1_1_ALLE-TR';
+                                
         };   
 
 t1 = datetime; 
@@ -583,8 +571,8 @@ end
 clear, clc
 paths = load_paths_EXT; 
 
-%f2sav =  'POW_AMY_C_39-54_1_0_50-1_1_CSPE-TR';
-f2sav =  'POW_HPC_C_39-54_1_0_50-1_1_CSPE-TR';
+f2sav =  'POW_AMY_C_39-54_1_0_50-1_1_ALLE-TR';
+%f2sav =  'POW_HPC_C_39-54_1_0_50-1_1_ALLE-TR';
 
 load ([ paths.results.rsa f2sav '.mat']);
 
@@ -598,7 +586,8 @@ for subji = 1:length(out_rsa)
 
     idsH = ids{subji}{1};
     %ratings = idsH(:, 7); 
-    ratings = idsH(:, 7) - idsH(:,17);
+    %ratings = idsH(:, 17) ;
+    ratings = abs ( idsH(:, 7) - idsH(:,17) );
     %ratings = mean([idsH(:, 7) idsH(:,17)], 2); 
     
 
@@ -618,7 +607,7 @@ for subji = 1:length(out_rsa)
     idN = isnan(orS2); 
     orS2(idN) = []; 
     ratings(idN) = []; 
-    allRS(subji, :) = corr(orS2, ratings, 'type', 's' ); 
+    allRS(subji, :) = corr(orS2, ratings, 'type', 'k' ); 
         
 % %         figure()
 % %         %plot(ratings, orS2); hold on; 
@@ -628,7 +617,7 @@ for subji = 1:length(out_rsa)
 % %         allSlopes(subji, :) = C(2);
 % %         allIntercepts(subji, :) = C(1);
 % %         %set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
-% %         
+        
 
 % %     figure()
 % %     plot(orS2); hold on; 
