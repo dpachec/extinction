@@ -5,6 +5,7 @@ clear , clc
 
 listF2sav = {
                 'POW_AMY_C_39-54_1_0_50-1_1_SISV-DISV';
+                'POW_AMY_C_39-54_1_0_50-1_1_SISVAE-DISVAE';
         };   
 
 t1 = datetime; 

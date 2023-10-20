@@ -76,6 +76,10 @@ if exist('SISV')
    idF = DT & SI2 & SV; 
    new_sisv = [allComb(idF, 1) allComb(idF, 11)];
 end
+if exist('SISVAE')
+   idF = DT & SI2 & SV & (ACQ | EXT); 
+   new_sisvae = [allComb(idF, 1) allComb(idF, 11)];
+end
 if exist('SISVA')
    idF = DT & SI2 & SV & ACQ; 
    new_sisva = [allComb(idF, 1) allComb(idF, 11)];
@@ -84,10 +88,19 @@ if exist('SISVE')
    idF = DT & SI2 & SV & EXT;
    new_sisve = [allComb(idF, 1) allComb(idF, 11)];
 end
+if exist('DISV')
+   idF = DT & DI2 & SV; 
+   new_disv = [allComb(idF, 1) allComb(idF, 11)];
+end
 if exist('DISVA')
    idF = DT & DI2 & SV & ACQ; 
    new_disva = [allComb(idF, 1) allComb(idF, 11)];
 end
+if exist('DISVAE')
+   idF = DT & DI2 & SV & (ACQ | EXT); 
+   new_disvae = [allComb(idF, 1) allComb(idF, 11)];
+end
+
 if exist('DIDVA')
    idF = DT & DI2 & DV & ACQ; 
    new_didva = [allComb(idF, 1) allComb(idF, 11)];
