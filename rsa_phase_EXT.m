@@ -4,7 +4,7 @@
 clear , clc
 
 listF2sav = {
-                'POW_AMY_C_39-54_1_0_50-1_0_SICSPE-SICSME';
+                'POW_AMY_C_39-54_1_0_50-1_1_SISV-DISV';
         };   
 
 t1 = datetime; 
@@ -47,8 +47,8 @@ for listi = 1:length(listF2sav)
                 toc
             elseif strcmp(cfg.tyRSA, 'POW')
                 EEG = extract_power_EXT(EEG, 0.01); 
-                EEG = normalize_baseline_EXT(EEG, [251:300]); 
-                %EEG = normalize_EXT(EEG);  %across trials
+                %EEG = normalize_baseline_EXT(EEG, [251:300]); 
+                EEG = normalize_EXT(EEG);  %across trials
                 cfg.oneListPow = EEG.power(:, :, : ,251:550); 
                 out_contrasts = create_contrasts_EXT(cfg);
                 tic
@@ -197,7 +197,7 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 clear, clc
 paths = load_paths_EXT; 
 
-f2sav =   'POW_AMY_C_39-54_1_0_50-10_1_SICSPE-SICSME';
+f2sav = 'POW_AMY_C_39-54_1_0_50-1_1_SISVA-DISVA';
 %f2sav = 'TR_OFC_C_nan_0_0_50-1_1_SICSPE-SICSME';
                     
 
@@ -230,7 +230,7 @@ end
 
 %h = zeros(size(cond1, 2),size(cond1, 2)); 
 %h(clustinfo.PixelIdxList{id}) = 1;
-
+%h(clustinfo.PixelIdxList{19}) = 1;
 
 clim = [-.03 .03];
 tRes = strsplit(f2sav, '_'); tRes = strsplit(tRes{7}, '-'); tRes = double(string(tRes{2}));
@@ -306,13 +306,13 @@ nPerm = 1000;
 nSubj =  size(cond1, 1);
 realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
 
-junts = cat(1, cond1(:, 3:21, 3:21), cond2(:, 3:21, 3:21));
+%junts = cat(1, cond1(:, 3:21, 3:21), cond2(:, 3:21, 3:21));
 %junts = cat(1, cond1(:, 4:18, 4:18), cond2(:, 4:18, 4:18));
 %junts = cat(1, cond1(:, 4:13, 4:13), cond2(:, 4:13, 4:13));
 %junts = cat(1, cond1(:, 51:end, 51:end), cond2(:, 51:end, 51:end));
 %junts = cat(1, cond1(:, 51:151, 51:151), cond2(:, 51:151, 51:151));
 %junts = cat(1, cond1(:, 26:225, 26:225), cond2(:, 26:225, 26:225));
-%junts = cat(1, cond1(:, 26:125, 26:125), cond2(:, 26:125, 26:125));
+junts = cat(1, cond1(:, 26:125, 26:125), cond2(:, 26:125, 26:125));
 
 clear max_clust_sum_perm
 for permi = 1:nPerm

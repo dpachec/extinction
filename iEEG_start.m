@@ -86,10 +86,10 @@ cd (paths.github)
 
 
 %% % % % % % % % FIRST LOAD FILE - > START HERE
-clear
+clear, clc
 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'TMP' '_C']; 
+file2load = ['allS_' 'HPC' '_C']; 
 
 load ([paths.results.power file2load]); 
 
