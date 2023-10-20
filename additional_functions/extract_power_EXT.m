@@ -47,6 +47,7 @@ function [EEG] = extract_power_NAV (EEG, timeRes)
 
 
     EEG.power = dataLH;
+    EEG = rmfield(EEG, 'data'); 
 
 
 

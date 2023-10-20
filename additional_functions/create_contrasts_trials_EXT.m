@@ -18,165 +18,57 @@ for ci = 1:length(contr2save)
     eval([contr2save{ci} '= [];'])
 end
 
-oneListIdsA = double(string(oneListIds));
-idsIt= [1:size(oneListIdsA,1)]';
-idsIt(:,2:10) = oneListIdsA(:, 1:9); 
-ids = permn(1:size(oneListIdsA, 1),2); % both directions 
-allComb = [idsIt(ids(:, 1),:) idsIt(ids(:,2),:)];
+oneListIdsA = [[1:size(oneListIds,1)]' double(string(oneListIds))];
 
-DT  = (allComb(:,2) ~= allComb(:,12)); 
-ACQ = (allComb(:,3) == 1 & allComb(:,13) == 1); 
-EXT = (allComb(:,3) == 2 & allComb(:,13) == 2); 
-REN = (allComb(:,3) == 3 & allComb(:,13) == 3); 
-DI2  = (allComb(:,6) ~= allComb(:,16)); 
-SI2  = (allComb(:,6) == allComb(:,16));
-SV  = (allComb(:,9) == allComb(:,19)); 
-DV  = (allComb(:,9) ~= allComb(:,19));
-CSP = (allComb(:,9) == 1 & allComb(:,19) == 1);
-CSM = (allComb(:,9) == 0 & allComb(:,19) == 0);
-CSMPP = (allComb(:,7) == 2 & allComb(:,17) == 2);
-CSMPM = (allComb(:,7) == 3 & allComb(:,17) == 3);
-SC2 = (allComb(:,4) == allComb(:,14));
-DC2 = (allComb(:,4) ~= allComb(:,14));
 
-EPP = (allComb(:,7) == 1 & allComb(:,17) == 3) | (allComb(:,7) == 3 & allComb(:,17) == 1);
-EPM = (allComb(:,7) == 1 & allComb(:,17) == 2) | (allComb(:,7) == 2 & allComb(:,17) == 1);
+CSP = oneListIdsA(:,9) == 1; 
+CSM = oneListIdsA(:,9) == 0;
+ACQ = oneListIdsA(:,3) == 1; 
+EXT = oneListIdsA(:,3) == 2; 
+REN = oneListIdsA(:,3) == 3;
+CSMPP2 = oneListIdsA(:,7) == 2;
+CSMPM2 = oneListIdsA(:,7) == 3;
 
 
 
 if exist('ALLE')
-   idF = DT & EXT;
-   new_alle = [allComb(idF, 1) allComb(idF, 11)];
+   idF = EXT; 
+   new_alle = [oneListIdsA(idF, 1)];
+   new_alle(:, 2) = new_alle(:, 1) + 1; 
 end
-if exist('SI')
-   idF = DT & SI2; 
-   new_si = [allComb(idF, 1) allComb(idF, 11)];
+if exist('CSPA')
+   idF = CSP & ACQ; 
+   new_cspa = [oneListIdsA(idF, 1)];
+   new_cspa(:, 2) = new_cspa(:, 1) + 1; 
 end
-if exist('DI')
-   idF = DT & DI2; 
-   new_di = [allComb(idF, 1) allComb(idF, 11)];
+if exist('CSMA')
+   idF = CSM & ACQ; 
+   new_csma = [oneListIdsA(idF, 1)];
+   new_csma(:, 2) = new_csma(:, 1) + 1; 
 end
-if exist('SIA')
-   idF = DT & SI2 & ACQ; 
-   new_sia = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('DIA')
-   idF = DT & DI2 & ACQ; 
-   new_dia = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SIE')
-   idF = DT & SI2 & EXT;
-   new_sie = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('DIE')
-   idF = DT & DI2 & EXT; 
-   new_die = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SISV')
-   idF = DT & SI2 & SV; 
-   new_sisv = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SISVA')
-   idF = DT & SI2 & SV & ACQ; 
-   new_sisva = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SISVE')
-   idF = DT & SI2 & SV & EXT;
-   new_sisve = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('DISVA')
-   idF = DT & DI2 & SV & ACQ; 
-   new_disva = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('DIDVA')
-   idF = DT & DI2 & DV & ACQ; 
-   new_didva = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('DISVE')
-  idF = DT & DI2 & SV & EXT; 
-   new_disve = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('DIDVE')
-    idF = DT & DI2 & DV & EXT; 
-   new_didve = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('DIDVEPP') % % TAG
-   idF = DT & DI2 & EPP & EXT; 
-   new_didvepp = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('DIDVEPM') % % TAG
-   idF = DT & DI2 & EPM & EXT; 
-   new_didvepm = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SICSPA')
-   idF = DT & SI2 & CSP & ACQ;
-   new_sicspa = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SICSMA')
-   idF = DT & SI2 & CSM & ACQ;
-   new_sicsma = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SICSPE')
-   idF = DT & SI2 & CSP & EXT;
-   new_sicspe = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SICSME')
-   idF = DT & SI2 & CSM & EXT;
-   new_sicsme = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SICSPEL')
-   idF = DT & SI2 & CSP & EXT;
-   nI = ceil(length(idF)/2);
-   idF = idF(nI:end);
-   new_sicspel = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SICSMEL')
-   idF = DT & SI2 & CSM & EXT;
-   nI = ceil(length(idF)/2);
-   idF = idF(nI:end);
-   new_sicsmel = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SICSMPP')
-   idF = DT & SI2 & CSMPP & EXT;
-   new_sicsmpp = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SICSMPM')
-   idF = DT & SI2 & CSMPM & EXT;
-   new_sicsmpm = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SC')
-   idF = DT & SC2; 
-   new_sc = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('DC')
-   idF = DT & DC2; 
-   new_dc = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SCA')
-   idF = DT & SC2 & ACQ;
-   new_sca = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('DCA')
-   idF = DT & DC2 & ACQ;
-   new_dca = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SCE')
-   idF = DT & SC2 & EXT;
-   new_sce = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('DCE')
-   idF = DT & DC2 & EXT;
-   new_dce = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SCR')
-   idF = DT & SC2 & REN;
-   new_scr = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('DCR')
-   idF = DT & DC2 & REN;
-   new_dcr = [allComb(idF, 1) allComb(idF, 11)];
+if exist('CSPE')
+   idF = CSP & EXT; 
+   new_cspe = [oneListIdsA(idF, 1)];
+   new_cspe(:, 2) = new_cspe(:, 1) + 1; 
 end
 
+if exist('CSME')
+   idF = CSM & EXT; 
+   new_csme = [oneListIdsA(idF, 1)];
+   new_csme(:, 2) = new_csme(:, 1) + 1; 
+end
+
+if exist('CSMPP')
+   idF = CSMPP2 & EXT; 
+   new_csmpp = [oneListIdsA(idF, 1)];
+   new_csmpp(:, 2) = new_csmpp(:, 1) + 1; 
+end
+
+if exist('CSMPM')
+   idF = CSMPM2 & EXT; 
+   new_csmpm = [oneListIdsA(idF, 1)];
+   new_csmpm(:, 2) = new_csmpm(:, 1) + 1; 
+end
 
 
 

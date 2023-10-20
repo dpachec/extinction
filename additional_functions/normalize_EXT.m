@@ -5,8 +5,6 @@ if isfield(EEG, 'power')
       tmp(:, 1, :, :) = EEG.power; 
       EEG.power = tmp; 
   end
-
-
   % % % % % % across trials
   mT = mean(EEG.power,1, 'omitnan');
   stdT = std(EEG.power,[], 1, 'omitnan');

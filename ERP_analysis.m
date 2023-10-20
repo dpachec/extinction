@@ -261,12 +261,21 @@ cd (paths.github)
 clear, clc
 
 paths = load_paths_EXT; 
-%file2load = ['TR_' 'VVS' '_C']; 
+file2load = ['TR_' 'AMY' '_C']; 
 %file2load = ['TR_' 'HPC' '_C']; 
 %file2load = ['TR_' 'OFC' '_C']; 
-file2load = ['TR_' 'OCC' '_C']; 
+%file2load = ['TR_' 'OCC' '_C']; 
 
 load ([paths.results.traces file2load]); 
+
+%%
+count = 0; 
+for subji = 1:47
+    if ~isempty(ALLEEG_AMY{subji}) & ~isempty(ALLEEG_HPC{subji})
+        count = count+1; 
+    end
+
+end
 
 %% Plot all ERPs
 
