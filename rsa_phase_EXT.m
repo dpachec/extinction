@@ -4,9 +4,20 @@
 clear , clc
 
 listF2sav = {
-                'POW_AMY_C_39-54_1_0_50-1_1_SISV-DISV';
-                'POW_AMY_C_39-54_1_0_50-1_1_SISVAE-DISVAE';
-        };   
+
+'POW_OFC_C_39-54_1_0_50-1_1_SISVA-DISVA';
+'POW_HPC_C_39-54_1_0_50-1_1_SISVA-DISVA';
+'POW_TMP_C_39-54_1_0_50-1_1_SISVA-DISVA';
+'POW_OCC_C_39-54_1_0_50-1_1_SISVA-DISVA';
+
+'POW_OFC_C_39-54_1_0_50-1_1_SISVE-DISVE';
+'POW_HPC_C_39-54_1_0_50-1_1_SISVE-DISVE';
+'POW_TMP_C_39-54_1_0_50-1_1_SISVE-DISVE';
+'POW_OCC_C_39-54_1_0_50-1_1_SISVE-DISVE';
+
+                
+};   
+
 
 t1 = datetime; 
 for listi = 1:length(listF2sav)
@@ -88,109 +99,6 @@ for listi = 1:length(listF2sav)
 end
 
 
-%% plot 2 lines from TG 
-clear
-paths = load_paths_EXT; 
-f2sav =   'POW_AMY_C_39-54_1_0_50-1_1_SICSPE-SICSME';
-load ([ paths.results.rsa f2sav '.mat']);
-
-ids = rem_nan_subj_EXT(out_rsa); 
-cond1 = squeeze(out_rsa(:, 1, :, :)); 
-cond2 = squeeze(out_rsa(:, 2, :, :)); 
-
-cond1(ids, :, :) = []; 
-cond2(ids, :, :) = []; 
-
-diff = cond1-cond2; 
-
-for subji = 1:size(cond1, 1)
-   cond1B(subji, :) = diag(squeeze(cond1(subji, :, :)));
-   cond2B(subji, :) = diag(squeeze(cond2(subji, :, :)));
-end       
-cond1 = cond1B; cond2 = cond2B; 
-
-
-d2pm1	= squeeze(mean(cond1,'omitnan'));
-d2pm2	= squeeze(mean(cond2,'omitnan'));
-d2pstd1	= std(cond1, 'omitnan');
-d2pstd2	= std(cond2, 'omitnan');
-se1 = d2pstd1/sqrt(size(cond1, 1))
-se2 = d2pstd2/sqrt(size(cond1, 1))
-
-[h p ci ts] = ttest(cond1, cond2); 
-h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    tObs = allSTs(id); 
-end
-
-
-%h = zeros(1, size(cond1, 2)); 
-%h(clustinfo.PixelIdxList{id}) = 1;
-hb = h; hb(h==0) = nan; hb(hb==1) = -.03; 
-
-times = (-.5:.01:2) + .25;
-%times = 1:21
-figure(); 
-colors2use = brewermap([6],'*Set1')*0.75;
-shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(1,:)}, 1); hold on; 
-shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(2,:)}, 1); hold on; 
-plot(times, hb, LineWidth=6)
-plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 1);
-plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 1);
-%set(gca, 'xlim', [-.25 1.4],'Fontsize', 18);%'ylim', [-.032 .035], 
-title(f2sav, 'Interpreter','none')
-exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
-
-%% permutations 2D (line plot)
-
-nPerm = 1000; 
-clear max_clust_sum_perm
-for permi = 1:nPerm
-    %c1B = squeeze(cond1(:, 51:220)); 
-    %c2B = squeeze(cond2(:, 51:220));
-    c1B = squeeze(cond1(:, 51:151)); 
-    c2B = squeeze(cond2(:, 51:151));
-    c1B(c1B == 0) = nan; 
-    c2B(c2B == 0) = nan; 
-    for subji = 1:size(c1B, 1)
-        if rand>.5
-           tmp = c1B(subji, :);
-           c1B(subji, :) = c2B(subji, :);
-           c2B(subji, :) = tmp; 
-        end
-    end
-    
-    [hPerm p ci tsPerm] = ttest(c1B, c2B); 
-    hPerm = squeeze(hPerm); tPerm = squeeze(tsPerm.tstat);
-
-    clear allSTs  
-    clustinfo = bwconncomp(hPerm);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-        allSTs(pxi,:) = sum(tPerm(clustinfo.PixelIdxList{pxi}));% 
-    end
-    if exist('allSTs') & ~isempty(clustinfo.PixelIdxList)
-        [max2u id] = min(allSTs);
-        max_clust_sum_perm(permi,:) = allSTs(id); 
-    else
-        max_clust_sum_perm(permi,:) = 0; 
-    end
-    
-
-end
-
-clear p ratings2u mcsP
-ratings2u = tObs; 
-mcsP = max_clust_sum_perm;
-
-%allAb = mcsP(mcsP < ratings2u);
-allAb = mcsP(abs(mcsP) > abs(ratings2u));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
 
@@ -198,7 +106,8 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 clear, clc
 paths = load_paths_EXT; 
 
-f2sav = 'POW_AMY_C_39-54_1_0_50-1_1_SISVA-DISVA';
+%f2sav = 'POW_OFC_C_39-54_1_0_50-1_1_SISVA-DISVA';
+f2sav = 'POW_AMY_C_39-54_1_0_50-1_1_SISVE-DISVE';
 %f2sav = 'TR_OFC_C_nan_0_0_50-1_1_SICSPE-SICSME';
                     
 
@@ -361,6 +270,111 @@ figure
 histogram(max_clust_sum_perm, 20); hold on; 
 scatter(tObs,0, 100, 'filled','r');
 set(gca, 'FontSize', 16)
+
+
+%% plot 2 lines from TG 
+clear
+paths = load_paths_EXT; 
+f2sav =   'POW_AMY_C_39-54_1_0_50-1_1_SICSPE-SICSME';
+load ([ paths.results.rsa f2sav '.mat']);
+
+ids = rem_nan_subj_EXT(out_rsa); 
+cond1 = squeeze(out_rsa(:, 1, :, :)); 
+cond2 = squeeze(out_rsa(:, 2, :, :)); 
+
+cond1(ids, :, :) = []; 
+cond2(ids, :, :) = []; 
+
+diff = cond1-cond2; 
+
+for subji = 1:size(cond1, 1)
+   cond1B(subji, :) = diag(squeeze(cond1(subji, :, :)));
+   cond2B(subji, :) = diag(squeeze(cond2(subji, :, :)));
+end       
+cond1 = cond1B; cond2 = cond2B; 
+
+
+d2pm1	= squeeze(mean(cond1,'omitnan'));
+d2pm2	= squeeze(mean(cond2,'omitnan'));
+d2pstd1	= std(cond1, 'omitnan');
+d2pstd2	= std(cond2, 'omitnan');
+se1 = d2pstd1/sqrt(size(cond1, 1))
+se2 = d2pstd2/sqrt(size(cond1, 1))
+
+[h p ci ts] = ttest(cond1, cond2); 
+h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    tObs = allSTs(id); 
+end
+
+
+%h = zeros(1, size(cond1, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
+hb = h; hb(h==0) = nan; hb(hb==1) = -.03; 
+
+times = (-.5:.01:2) + .25;
+%times = 1:21
+figure(); 
+colors2use = brewermap([6],'*Set1')*0.75;
+shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(1,:)}, 1); hold on; 
+shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(2,:)}, 1); hold on; 
+plot(times, hb, LineWidth=6)
+plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 1);
+plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 1);
+%set(gca, 'xlim', [-.25 1.4],'Fontsize', 18);%'ylim', [-.032 .035], 
+title(f2sav, 'Interpreter','none')
+exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
+
+%% permutations 2D (line plot)
+
+nPerm = 1000; 
+clear max_clust_sum_perm
+for permi = 1:nPerm
+    %c1B = squeeze(cond1(:, 51:220)); 
+    %c2B = squeeze(cond2(:, 51:220));
+    c1B = squeeze(cond1(:, 51:151)); 
+    c2B = squeeze(cond2(:, 51:151));
+    c1B(c1B == 0) = nan; 
+    c2B(c2B == 0) = nan; 
+    for subji = 1:size(c1B, 1)
+        if rand>.5
+           tmp = c1B(subji, :);
+           c1B(subji, :) = c2B(subji, :);
+           c2B(subji, :) = tmp; 
+        end
+    end
+    
+    [hPerm p ci tsPerm] = ttest(c1B, c2B); 
+    hPerm = squeeze(hPerm); tPerm = squeeze(tsPerm.tstat);
+
+    clear allSTs  
+    clustinfo = bwconncomp(hPerm);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+        allSTs(pxi,:) = sum(tPerm(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs') & ~isempty(clustinfo.PixelIdxList)
+        [max2u id] = min(allSTs);
+        max_clust_sum_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_sum_perm(permi,:) = 0; 
+    end
+    
+
+end
+
+clear p ratings2u mcsP
+ratings2u = tObs; 
+mcsP = max_clust_sum_perm;
+
+%allAb = mcsP(mcsP < ratings2u);
+allAb = mcsP(abs(mcsP) > abs(ratings2u));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
 %% PLV 200
@@ -749,7 +763,7 @@ end
 clear, clc
 paths = load_paths_EXT; 
 
-f2sav =  'POW_AMY_C_39-54_1_0_50-1_1_ALLE-ATR';
+f2sav =  'POW_AMY_C_39-54_1_0_50-1_1_SICSMPM-ATR';
 
 
 load ([ paths.results.rsa f2sav '.mat']);
@@ -767,19 +781,18 @@ for subji = 1:length(out_rsa)
     
     orS = out_rsa{subji}; 
     %orS2 = squeeze(mean(mean(orS(:,:,3:23, 3:23), 4), 3));
-    %orS2 = squeeze(mean(mean(orS(:,:,26:100, 26:100), 4), 3))';
+    orS2 = squeeze(mean(mean(orS(:,26:100, 26:100), 3), 2));
     
-    clear orS2
-    for triali = 1:size(orS, 1)
-        orS2a = squeeze(orS(triali,:,:));
-        orS2(triali,:) = mean(orS2a(clustinfo.PixelIdxList{11}));
-
-        %orS2a = squeeze(orS(triali,:,:));
-        %dv = diag(orS2a); dv = dv(26:125);
-        %orS2(triali,:) = mean(dv);
-    end
-    %allORS2(subji, :) = orS2;
-
+%     clear orS2
+%     for triali = 1:size(orS, 1)
+%         orS2a = squeeze(orS(triali,:,:));
+%         orS2(triali,:) = mean(orS2a(clustinfo.PixelIdxList{11}));
+% 
+%         %orS2a = squeeze(orS(triali,:,:));
+%         %dv = diag(orS2a); dv = dv(26:125);
+%         %orS2(triali,:) = mean(dv);
+%     end
+    
     idM = isnan(ratings);
     idN = isnan(orS2); 
     orS2(idN | idM) = []; 

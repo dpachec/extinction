@@ -125,6 +125,10 @@ if exist('SICSPA')
    idF = DT & SI2 & CSP & ACQ;
    new_sicspa = [allComb(idF, 1) allComb(idF, 11)];
 end
+if exist('DICSPA')
+   idF = DT & DI2 & CSP & ACQ;
+   new_dicspa = [allComb(idF, 1) allComb(idF, 11)];
+end
 if exist('SICSMA')
    idF = DT & SI2 & CSM & ACQ;
    new_sicsma = [allComb(idF, 1) allComb(idF, 11)];
@@ -136,6 +140,10 @@ end
 if exist('SICSME')
    idF = DT & SI2 & CSM & EXT;
    new_sicsme = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DICSME')
+   idF = DT & DI2 & CSM & EXT;
+   new_dicsme = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SICSPEL')
    idF = DT & SI2 & CSP & EXT;
