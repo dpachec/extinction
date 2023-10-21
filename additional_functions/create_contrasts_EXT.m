@@ -43,6 +43,8 @@ EPP = (allComb(:,7) == 1 & allComb(:,17) == 3) | (allComb(:,7) == 3 & allComb(:,
 EPM = (allComb(:,7) == 1 & allComb(:,17) == 2) | (allComb(:,7) == 2 & allComb(:,17) == 1);
 
 
+
+
 if exist('ALLA')
    idF = ACQ; 
    new_alla = [oneListIdsA(idF, 1)];
@@ -125,17 +127,92 @@ if exist('DIDVEPM') % % TAG
    idF = DT & DI2 & EPM & EXT; 
    new_didvepm = [allComb(idF, 1) allComb(idF, 11)];
 end
+
+if exist('SICSPAE')
+   idF = DT & SI2 & CSP & (ACQ | EXT); 
+   new_sicspae = [allComb(idF, 1) allComb(idF, 11)];
+end
+
+if exist('SICSMAE')
+   idF = DT & SI2 & CSM & (ACQ | EXT); 
+   new_sicsmae = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCCSP')
+   idF = DT & SC2 & CSP; 
+   new_sccsp = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCCSM')
+   idF = DT & SC2 & CSM; 
+   new_sccsm = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCCSP')
+   idF = DT & DC2 & CSP; 
+   new_dccsp = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCCSM')
+   idF = DT & DC2 & CSM; 
+   new_dccsm = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCCSPA')
+   idF = DT & DC2 & CSP & ACQ; 
+   new_dccspa = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCCSMA')
+   idF = DT & DC2 & CSM & ACQ; 
+   new_dccsma = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCCSPE')
+   idF = DT & DC2 & CSP & EXT; 
+   new_dccspe = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCCSME')
+   idF = DT & DC2 & CSM & EXT; 
+   new_dccsme = [allComb(idF, 1) allComb(idF, 11)];
+end
+
+if exist('DCCSPA')
+   idF = DT & DC2 & CSP & ACQ; 
+   new_dccspa = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCCSPE')
+   idF = DT & DC2 & CSP & EXT; 
+   new_dccspe = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCCSPAE')
+   idF = DT & SC2 & CSP & (ACQ | EXT); 
+   new_sccspae = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCCSMAE')
+   idF = DT & SC2 & CSM  & (ACQ | EXT); 
+   new_sccsmae = [allComb(idF, 1) allComb(idF, 11)];
+end
 if exist('SICSPA')
    idF = DT & SI2 & CSP & ACQ;
    new_sicspa = [allComb(idF, 1) allComb(idF, 11)];
 end
-if exist('DICSPA')
-   idF = DT & DI2 & CSP & ACQ;
-   new_dicspa = [allComb(idF, 1) allComb(idF, 11)];
-end
 if exist('SICSMA')
    idF = DT & SI2 & CSM & ACQ;
    new_sicsma = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCCSPA')
+   idF = DT & SC2 & CSP & ACQ;
+   new_sccspa = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCCSMA')
+   idF = DT & SC2 & CSM & ACQ;
+   new_sccsma = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCCSPE')
+   idF = DT & SC2 & CSP & EXT;
+   new_sccspe = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCCSME')
+   idF = DT & SC2 & CSM & EXT;
+   new_sccsme = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DICSPA')
+   idF = DT & DI2 & CSP & ACQ;
+   new_dicspa = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SICSPE')
    idF = DT & SI2 & CSP & EXT;

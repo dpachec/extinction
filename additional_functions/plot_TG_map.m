@@ -35,10 +35,11 @@ set(gca, 'clim', [-4 4])
 
 
 axesHandles = findall(0, 'type', 'axes');
-%set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 150], 'ylim', [1 150]); 
+
 if tRes == 1
     if strcmp(f2t{3}, 'C')
-        set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 220], 'ylim', [1 220]); 
+        set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 125], 'ylim', [1 125]); 
+        %set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 200], 'ylim', [1 200]); 
     elseif strcmp(f2t{3}, 'V')
         set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 225], 'ylim', [1 225]); 
     end
