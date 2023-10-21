@@ -30,6 +30,11 @@ CSMPP2 = oneListIdsA(:,7) == 2;
 CSMPM2 = oneListIdsA(:,7) == 3;
 
 
+IT1 = oneListIdsA(:,7) == 1;
+IT2 = oneListIdsA(:,7) == 2;
+IT3 = oneListIdsA(:,7) == 3;
+
+
 
 if exist('ALLE')
    idF = EXT; 
@@ -69,7 +74,26 @@ if exist('CSMPM')
    new_csmpm = [oneListIdsA(idF, 1)];
    new_csmpm(:, 2) = new_csmpm(:, 1) + 1; 
 end
-
+if exist('IT1CSPA')
+   idF = IT1 & ACQ; 
+   new_it1cspa = [oneListIdsA(idF, 1)];
+   new_it1cspa(:, 2) = new_it1cspa(:, 1) + 1; 
+end
+if exist('IT2CSPA')
+   idF = IT2 & ACQ; 
+   new_it2cspa = [oneListIdsA(idF, 1)];
+   new_it2cspa(:, 2) = new_it2cspa(:, 1) + 1; 
+end
+if exist('IT2CSME')
+   idF = IT2 & ACQ; 
+   new_it2csme = [oneListIdsA(idF, 1)];
+   new_it2csme(:, 2) = new_it1csme(:, 1) + 1; 
+end
+if exist('IT3CSME')
+   idF = IT3 & ACQ; 
+   new_it3csme = [oneListIdsA(idF, 1)];
+   new_it3csme(:, 2) = new_it3csme(:, 1) + 1; 
+end
 
 
 if strcmp(cfg.tyRSA, 'POW')

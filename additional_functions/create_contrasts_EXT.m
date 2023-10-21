@@ -43,7 +43,11 @@ EPP = (allComb(:,7) == 1 & allComb(:,17) == 3) | (allComb(:,7) == 3 & allComb(:,
 EPM = (allComb(:,7) == 1 & allComb(:,17) == 2) | (allComb(:,7) == 2 & allComb(:,17) == 1);
 
 
-
+if exist('ALLA')
+   idF = ACQ; 
+   new_alla = [oneListIdsA(idF, 1)];
+   new_alla(:, 2) = new_alla(:, 1) + 1; 
+end
 if exist('ALLE')
    idF = DT & EXT;
    new_alle = [allComb(idF, 1) allComb(idF, 11)];

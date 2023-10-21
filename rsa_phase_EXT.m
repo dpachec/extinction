@@ -5,16 +5,15 @@ clear , clc
 
 listF2sav = {
 
-'POW_OFC_C_39-54_1_0_50-1_1_SISVA-DISVA';
-'POW_HPC_C_39-54_1_0_50-1_1_SISVA-DISVA';
-'POW_TMP_C_39-54_1_0_50-1_1_SISVA-DISVA';
-'POW_OCC_C_39-54_1_0_50-1_1_SISVA-DISVA';
+'POW_AMY_V_39-54_1_0_50-1_1_SCA-DCA';
+'POW_TMP_V_39-54_1_0_50-1_1_SCA-DCA';
+'POW_OCC_V_39-54_1_0_50-1_1_SCA-DCA';
 
-'POW_OFC_C_39-54_1_0_50-1_1_SISVE-DISVE';
-'POW_HPC_C_39-54_1_0_50-1_1_SISVE-DISVE';
-'POW_TMP_C_39-54_1_0_50-1_1_SISVE-DISVE';
-'POW_OCC_C_39-54_1_0_50-1_1_SISVE-DISVE';
-
+'POW_OFC_V_39-54_1_0_50-1_1_SCE-DCE';
+'POW_HPC_V_39-54_1_0_50-1_1_SCE-DCE';
+'POW_AMY_V_39-54_1_0_50-1_1_SCE-DCE';
+'POW_TMP_V_39-54_1_0_50-1_1_SCE-DCE';
+'POW_OCC_V_39-54_1_0_50-1_1_SCE-DCE';
                 
 };   
 
@@ -106,9 +105,8 @@ end
 clear, clc
 paths = load_paths_EXT; 
 
-%f2sav = 'POW_OFC_C_39-54_1_0_50-1_1_SISVA-DISVA';
-f2sav = 'POW_AMY_C_39-54_1_0_50-1_1_SISVE-DISVE';
-%f2sav = 'TR_OFC_C_nan_0_0_50-1_1_SICSPE-SICSME';
+f2sav = 'POW_AMY_V_39-54_1_0_50-10_1_SCR-DCR';
+
                     
 
 load ([ paths.results.rsa f2sav '.mat']);
@@ -127,6 +125,7 @@ m2 = squeeze(mean(cond2, 'omitnan'));
 
 [h p ci ts] = ttest(cond1, cond2); 
 h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
+h(1:26,1:2) = 0;  % % % no clusters before baseline
 clustinfo = bwconncomp(h);
 for pxi = 1:length(clustinfo.PixelIdxList)
    allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
@@ -134,13 +133,14 @@ end
 
 if exist('allSTs')
     [max2u id] = max(abs(allSTs));
+    %[max2u id] = max((allSTs));
     tObs = allSTs(id); 
 end
 
 
-%h = zeros(size(cond1, 2),size(cond1, 2)); 
-%h(clustinfo.PixelIdxList{id}) = 1;
-%h(clustinfo.PixelIdxList{19}) = 1;
+h = zeros(size(cond1, 2),size(cond1, 2)); 
+h(clustinfo.PixelIdxList{id}) = 1;
+
 
 clim = [-.03 .03];
 tRes = strsplit(f2sav, '_'); tRes = strsplit(tRes{7}, '-'); tRes = double(string(tRes{2}));
@@ -148,6 +148,69 @@ plot_TG_map(m1, m2, h, t, tRes, f2sav, clim)
 exportgraphics(gcf, [paths.results.rsa  '_myP.png'], 'Resolution',150)
 
 
+
+
+
+%% PERMUTATIONS
+nPerm = 1000; 
+
+nSubj =  size(cond1, 1);
+realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
+
+junts = cat(1, cond1(:, 3:22, 3:22), cond2(:, 3:22, 3:22));
+%junts = cat(1, cond1(:, 4:18, 4:18), cond2(:, 4:18, 4:18));
+%junts = cat(1, cond1(:, 4:13, 4:13), cond2(:, 4:13, 4:13));
+%junts = cat(1, cond1(:, 51:end, 51:end), cond2(:, 51:end, 51:end));
+%junts = cat(1, cond1(:, 51:151, 51:151), cond2(:, 51:151, 51:151));
+%junts = cat(1, cond1(:, 26:225, 26:225), cond2(:, 26:225, 26:225));
+%junts = cat(1, cond1(:, 26:125, 26:125), cond2(:, 26:125, 26:125));
+
+clear max_clust_sum_perm
+for permi = 1:nPerm
+    
+    [M,N] = size(realCondMapping);
+    rowIndex = repmat((1:M)',[1 N]);
+    [~,randomizedColIndex] = sort(rand(M,N),2);
+    newLinearIndex = sub2ind([M,N],rowIndex,randomizedColIndex);
+    fakeCondMapping = realCondMapping(newLinearIndex);
+
+    cond1P = junts(fakeCondMapping == 0, :,:);
+    cond2P = junts(fakeCondMapping == 1, :,:);
+
+    diffC = cond1P - cond2P; 
+    [h p ci ts] = ttest(diffC); 
+    h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat); 
+    clear allSTs  
+    clustinfo = bwconncomp(h);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+    end
+    
+    if exist('allSTs')
+        [max2u id] = max(abs(allSTs));
+        max_clust_sum_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_sum_perm(permi,:) = 0; 
+    end
+
+end
+
+
+disp('done')
+
+ 
+%allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
+allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
+
+
+
+%% plot histogram
+figure
+%tObs =  -30.4546%-86.4470;
+histogram(max_clust_sum_perm, 20); hold on; 
+scatter(tObs,0, 100, 'filled','r');
+set(gca, 'FontSize', 16)
 
 
 %% take mean in cluster 
@@ -210,66 +273,6 @@ x = RMAOV1(d4ANOVA);
 [h p ci ts] = ttest(mcCSPE, mcCSMPP)
 %[h p ci ts] = ttest(mcCSPE, mcCSMPM)
 
-%% PERMUTATIONS
-nPerm = 1000; 
-
-nSubj =  size(cond1, 1);
-realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
-
-%junts = cat(1, cond1(:, 3:21, 3:21), cond2(:, 3:21, 3:21));
-%junts = cat(1, cond1(:, 4:18, 4:18), cond2(:, 4:18, 4:18));
-%junts = cat(1, cond1(:, 4:13, 4:13), cond2(:, 4:13, 4:13));
-%junts = cat(1, cond1(:, 51:end, 51:end), cond2(:, 51:end, 51:end));
-%junts = cat(1, cond1(:, 51:151, 51:151), cond2(:, 51:151, 51:151));
-%junts = cat(1, cond1(:, 26:225, 26:225), cond2(:, 26:225, 26:225));
-junts = cat(1, cond1(:, 26:125, 26:125), cond2(:, 26:125, 26:125));
-
-clear max_clust_sum_perm
-for permi = 1:nPerm
-    
-    [M,N] = size(realCondMapping);
-    rowIndex = repmat((1:M)',[1 N]);
-    [~,randomizedColIndex] = sort(rand(M,N),2);
-    newLinearIndex = sub2ind([M,N],rowIndex,randomizedColIndex);
-    fakeCondMapping = realCondMapping(newLinearIndex);
-
-    cond1P = junts(fakeCondMapping == 0, :,:);
-    cond2P = junts(fakeCondMapping == 1, :,:);
-
-    diffC = cond1P - cond2P; 
-    [h p ci ts] = ttest(diffC); 
-    h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat); 
-    clear allSTs  
-    clustinfo = bwconncomp(h);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-       allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-    end
-    
-    if exist('allSTs')
-        [max2u id] = max(allSTs);
-        max_clust_sum_perm(permi,:) = allSTs(id); 
-    else
-        max_clust_sum_perm(permi,:) = 0; 
-    end
-
-end
-
-
-disp('done')
-
- 
-%allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
-allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
-
-
-
-%% plot histogram
-figure
-%tObs =  -30.4546%-86.4470;
-histogram(max_clust_sum_perm, 20); hold on; 
-scatter(tObs,0, 100, 'filled','r');
-set(gca, 'FontSize', 16)
 
 
 %% plot 2 lines from TG 
@@ -521,9 +524,54 @@ set(gca, 'FontSize', 16)
 clear , clc
 
 listF2sav = {
-                'POW_AMY_C_39-54_1_0_50-1_1_ALLE-TR';
-                'POW_OFC_C_39-54_1_0_50-1_1_ALLE-TR';
-                'POW_HPC_C_39-54_1_0_50-1_1_ALLE-TR';
+                'POW_OFC_C_39-54_1_0_50-1_1_CSPA-STR';
+                'POW_AMY_C_39-54_1_0_50-1_1_CSPA-STR';
+                'POW_HPC_C_39-54_1_0_50-1_1_CSPA-STR';
+                'POW_TMP_C_39-54_1_0_50-1_1_CSPA-STR';
+                'POW_OCC_C_39-54_1_0_50-1_1_CSPA-STR';
+
+                'POW_OFC_C_39-54_1_0_50-1_1_IT1CSPA-STR';
+                'POW_AMY_C_39-54_1_0_50-1_1_IT1CSPA-STR';
+                'POW_HPC_C_39-54_1_0_50-1_1_IT1CSPA-STR';
+                'POW_TMP_C_39-54_1_0_50-1_1_IT1CSPA-STR';
+                'POW_OCC_C_39-54_1_0_50-1_1_IT1CSPA-STR';
+
+                'POW_OFC_C_39-54_1_0_50-1_1_IT2CSPA-STR';
+                'POW_AMY_C_39-54_1_0_50-1_1_IT2CSPA-STR';
+                'POW_HPC_C_39-54_1_0_50-1_1_IT2CSPA-STR';
+                'POW_TMP_C_39-54_1_0_50-1_1_IT2CSPA-STR';
+                'POW_OCC_C_39-54_1_0_50-1_1_IT2CSPA-STR';
+
+                'POW_OFC_C_39-54_1_0_50-1_1_CSPE-STR';
+                'POW_AMY_C_39-54_1_0_50-1_1_CSPE-STR';
+                'POW_HPC_C_39-54_1_0_50-1_1_CSPE-STR';
+                'POW_TMP_C_39-54_1_0_50-1_1_CSPE-STR';
+                'POW_OCC_C_39-54_1_0_50-1_1_CSPE-STR';
+
+                'POW_OFC_C_39-54_1_0_50-1_1_CSMA-STR';
+                'POW_AMY_C_39-54_1_0_50-1_1_CSMA-STR';
+                'POW_HPC_C_39-54_1_0_50-1_1_CSMA-STR';
+                'POW_TMP_C_39-54_1_0_50-1_1_CSMA-STR';
+                'POW_OCC_C_39-54_1_0_50-1_1_CSMA-STR';
+
+                'POW_OFC_C_39-54_1_0_50-1_1_CSME-STR';
+                'POW_AMY_C_39-54_1_0_50-1_1_CSME-STR';
+                'POW_HPC_C_39-54_1_0_50-1_1_CSME-STR';
+                'POW_TMP_C_39-54_1_0_50-1_1_CSME-STR';
+                'POW_OCC_C_39-54_1_0_50-1_1_CSME-STR';
+
+                'POW_OFC_C_39-54_1_0_50-1_1_IT2CSME-STR';
+                'POW_AMY_C_39-54_1_0_50-1_1_IT2CSME-STR';
+                'POW_HPC_C_39-54_1_0_50-1_1_IT2CSME-STR';
+                'POW_TMP_C_39-54_1_0_50-1_1_IT2CSME-STR';
+                'POW_OCC_C_39-54_1_0_50-1_1_IT2CSME-STR';
+                
+                'POW_OFC_C_39-54_1_0_50-1_1_IT2CSME-STR';
+                'POW_AMY_C_39-54_1_0_50-1_1_IT2CSME-STR';
+                'POW_HPC_C_39-54_1_0_50-1_1_IT2CSME-STR';
+                'POW_TMP_C_39-54_1_0_50-1_1_IT2CSME-STR';
+                'POW_OCC_C_39-54_1_0_50-1_1_IT2CSME-STR';
+
                                 
         };   
 
@@ -596,12 +644,13 @@ end
 clear, clc
 paths = load_paths_EXT; 
 
-f2sav =  'POW_AMY_C_39-54_1_0_50-1_1_CSMPM-STR';
-%f2sav =  'POW_HPC_C_39-54_1_0_50-1_1_ALLE-STR';
+%f2sav =  'POW_AMY_C_39-54_1_0_50-1_1_CSPA-STR';
+f2sav =  'POW_HPC_C_39-54_1_0_50-1_1_CSME-STR';
 
 load ([ paths.results.rsa f2sav '.mat']);
 
-load clustinfoRSA3
+%load clustinfo_AMY_SICSPE-SICSME_50-1
+load clustinfo_HPC_DISVA-DIDVA_50-1
 
 out_rsa = out_rsa(~cellfun('isempty', out_rsa));
 ids = ids(~cellfun('isempty', ids));
@@ -618,17 +667,18 @@ for subji = 1:length(out_rsa)
 
     orS = out_rsa{subji}; 
     %orS2 = squeeze(mean(mean(orS(:,:,3:23, 3:23), 4), 3));
-    orS2 = squeeze(mean(mean(orS(:,:,26:100, 26:100), 4), 3))';
+    %orS2 = squeeze(mean(mean(orS(:,:,26:100, 26:100), 4), 3))';
     
-% %     clear orS2
-% %     for triali = 1:size(orS, 2)
-% %         orS2a = squeeze(orS(:,triali,:,:));
-% %         orS2(triali,:) = mean(orS2a(clustinfo.PixelIdxList{11}));
-% % 
-% %         %dv = diag(orS2a); dv = dv(51:151);
-% %         %orS2(triali,:) = mean(dv);
-% %     end
-% %     %allORS2(subji, :) = orS2;
+    clear orS2
+    for triali = 1:size(orS, 2)
+        orS2a = squeeze(orS(:,triali,:,:));
+        %orS2(triali,:) = mean(orS2a(clustinfo.PixelIdxList{11}));
+        orS2(triali,:) = mean(orS2a(clustinfo.PixelIdxList{1}));
+
+        %orS2a = squeeze(orS(:,triali,:,:));
+        %dv = diag(orS2a); dv = dv(26:100);
+        %orS2(triali,:) = mean(dv);
+    end
 
     idN = isnan(orS2); 
     orS2(idN) = []; 
@@ -674,14 +724,12 @@ disp(['T > ' num2str(ts.tstat) '  P > ' num2str(p)])
 clear , clc
 
 listF2sav = {
-                'POW_OFC_C_39-54_1_0_50-1_1_ALLE-ATR';
-                'POW_HPC_C_39-54_1_0_50-1_1_ALLE-ATR';
-                'POW_AMY_C_39-54_1_0_50-1_1_SICSPE-ATR';
-                'POW_AMY_C_39-54_1_0_50-1_1_SICSME-ATR';
-                'POW_AMY_C_39-54_1_0_50-1_1_SICSMPP-ATR';
-                'POW_AMY_C_39-54_1_0_50-1_1_SICSMPM-ATR';
-                                
-        };   
+
+
+'POW_HPC_C_39-54_1_0_50-1_1_ALLA-ATR';
+
+
+};   
 
 t1 = datetime; 
 for listi = 1:length(listF2sav)
@@ -763,12 +811,13 @@ end
 clear, clc
 paths = load_paths_EXT; 
 
-f2sav =  'POW_AMY_C_39-54_1_0_50-1_1_SICSMPM-ATR';
+f2sav =  'POW_HPC_C_39-54_1_0_50-1_1_ALLE-ATR';
 
 
 load ([ paths.results.rsa f2sav '.mat']);
 
-load clustinfoRSA3
+%load clustinfo_AMY_SICSPE-SICSME_50-1
+load clustinfo_HPC_DISVA-DIDVA_50-1
 
 out_rsa = out_rsa(~cellfun('isempty', out_rsa));
 id2new = id2new(~cellfun('isempty', id2new));
@@ -781,17 +830,18 @@ for subji = 1:length(out_rsa)
     
     orS = out_rsa{subji}; 
     %orS2 = squeeze(mean(mean(orS(:,:,3:23, 3:23), 4), 3));
-    orS2 = squeeze(mean(mean(orS(:,26:100, 26:100), 3), 2));
+    %orS2 = squeeze(mean(mean(orS(:,26:100, 26:100), 3), 2));
     
-%     clear orS2
-%     for triali = 1:size(orS, 1)
-%         orS2a = squeeze(orS(triali,:,:));
-%         orS2(triali,:) = mean(orS2a(clustinfo.PixelIdxList{11}));
-% 
-%         %orS2a = squeeze(orS(triali,:,:));
-%         %dv = diag(orS2a); dv = dv(26:125);
-%         %orS2(triali,:) = mean(dv);
-%     end
+    clear orS2
+    for triali = 1:size(orS, 1)
+        orS2a = squeeze(orS(triali,:,:));
+        %orS2(triali,:) = mean(orS2a(clustinfo.PixelIdxList{11}));
+        orS2(triali,:) = mean(orS2a(clustinfo.PixelIdxList{1}));
+
+        %orS2a = squeeze(orS(triali,:,:));
+        %dv = diag(orS2a); dv = dv(26:125);
+        %orS2(triali,:) = mean(dv);
+    end
     
     idM = isnan(ratings);
     idN = isnan(orS2); 
