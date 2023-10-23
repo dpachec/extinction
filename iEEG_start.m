@@ -6,8 +6,8 @@ paths = load_paths_EXT;
 
 c2u = 'C';
 
-%sROI = {'Amygdala'}; 
-sROI = {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'parahippocampal' 'entorhinal' };
+sROI = {'Amygdala'}; 
+%sROI = {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'parahippocampal' 'entorhinal' };
 
 %sROI = {'occipital' 'cuneus' 'lingual' 'pericalcarine' 'bankssts'}
 
@@ -62,8 +62,8 @@ for subji = 1:length(allsubs)
 
         if ~isempty(EEG.data)
             
-            EEG = extract_power_EXT(EEG, 0.01); 
-            
+            %EEG = extract_power_EXT(EEG, 0.01); 
+            EEG = extract_theta_power_EXT(EEG); %HILBERT
             EEG = normalize_EXT(EEG);
             nChans(subji, :) = size(EEG.power, 2);
             ALLEEG{subji,:} = EEG; 
@@ -77,7 +77,7 @@ end
 
 sROI = char(join(sROI, '_'));
 mkdir(paths.results.power)
-filename = [paths.results.power 'allS_' sROI '_' c2u];
+filename = [paths.results.power 'HILB_' sROI '_' c2u];
 nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
 totalChans = sum(nChans);
 save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
@@ -89,7 +89,8 @@ cd (paths.github)
 clear, clc
 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'HPC' '_C']; 
+file2load = ['allS_' 'AMY' '_C']; 
+%file2load = ['HILB_' 'Amygdala' '_C']; 
 
 load ([paths.results.power file2load]); 
 
@@ -320,6 +321,108 @@ d4ANOVA(:,3) = [1:32 1:32 1:32];
 
 x = RMAOV1(d4ANOVA);
 
+%% Correlate responses and power in cluster
+load clustinfoAB
+clearvars -except ALLEEG paths clustinfo nL pi2u
+close all
+sub2exc = []; %subj 23-35-38-39-44-45
+
+for subji = 1:size(ALLEEG, 1)
+    EEG = ALLEEG{subji}; 
+    if ~isempty(EEG) & isempty(intersect(sub2exc, subji))
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
+    
+        % % %   % % Acquisition
+        %ids = strcmp(Ev2(:, 2), '1'); 
+        %ids = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        %ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+    
+        % % % % % % Extinction
+        %ids = strcmp(Ev2(:, 2), '2'); 
+        %ids = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
+        %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; 
+        %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; 
+        
+
+        % % % Acquisition AND Extinction
+        %ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') | ( strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) );
+
+        
+        powH = EEG.power(ids, :, :, :);
+
+        
+        
+        for triali = 1:size(powH, 1)
+            cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
+            thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
+            %thPow(triali, :) = mean(cTR(pi2u), 'all');
+
+            
+            %thPow(triali, :) = mean(cTR, 'all');
+    
+        end
+        
+        nNan(subji,:) = sum(isnan(thPow));
+
+        ratings2u = double(string(Ev2(ids, 7)));
+
+        ids2rem = isnan(thPow) | isnan(ratings2u); 
+        thPow(ids2rem) = []; 
+        ratings2u(ids2rem) = []; 
+        allNTR(subji,:) = length(thPow);
+
+
+
+        allRho(subji, :) = corr(thPow, ratings2u, 'type', 'k');
+        
+        
+% % %         figure()
+% % %         scatter(thPow, ratings2u, 250, 'filled');
+% % %         h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
+% % %         C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
+% % %         allSlopes(subji, :) = C(2);
+% % %         allIntercepts(subji, :) = C(1);
+% % %         set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
+        
+
+
+    end
+
+    
+
+end
+ 
+idF = allRho==0 | isnan(allRho); 
+allRho(idF) = []; 
+%allSlopes(idF) = []; 
+
+[h p ci t] = ttest (allRho);
+disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
+
+
+
+%% plot one bar
+data.data = [allRho]; 
+
+
+figure(2); set(gcf,'Position', [0 0 500 650]); 
+mean_S = mean(data.data, 1, 'omitnan');
+hb = plot ([1], data.data); hold on;
+set(hb, 'lineWidth', 3, 'Marker', '.', 'MarkerSize',35);hold on;
+h = bar (mean_S);hold on;
+set(h,'FaceColor', 'none', 'lineWidth', 3);
+set(gca,'XTick',[1],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 2], 'ylim', [-1 1] );
+plot(get(gca,'xlim'), [0 0],'k','lineWidth', 3);
+
+[h p ci t] = ttest (data.data(:,1));
+disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
+set(gca, 'LineWidth', 3);
+
+exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 
 
 
@@ -615,6 +718,59 @@ set(gca, 'xlim', [-.5 1.75])
 set(gca, 'FontSize', 24);
 
 exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',150)
+
+
+%% THETA BAND - LINE PLOTS 2
+
+sub2exc = [];
+
+c1B = c1(:, 2001:5000); c2B = c2(:, 2001:5000); 
+c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
+
+c1B(c1B == 0) = nan; 
+c2B(c2B == 0) = nan; 
+c1B(any(isnan(c1B), 2), :) = [];
+c2B(any(isnan(c2B), 2), :) = [];
+
+d2pm1	= squeeze(mean(c1B,'omitnan'));
+d2pm2	= squeeze(mean(c2B,'omitnan'));
+d2pstd1	= std(c1B);
+d2pstd2	= std(c2B);
+se1 = d2pstd1/sqrt(size(c1B, 1))
+se2 = d2pstd2/sqrt(size(c2B, 1))
+
+[h p ci ts] = ttest(c1B, c2B); 
+h = squeeze(h); t = squeeze(ts.tstat);
+
+clear allSTs  
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+[max2u id] = max(abs(allSTs));
+max_clust_obs = allSTs(id); 
+
+h(1:150) = 0;
+
+hb = h; hb(h==0) = nan; hb(hb==1) = -.01; 
+times = (-1:.001:1.999) + .25;
+
+colors2use = brewermap([6],'*Set1')*0.75;
+shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(1,:)}, 1); hold on; 
+shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(2,:)}, 1); hold on; 
+
+%plot(times, d2p1); hold on; 
+%plot(times, d2p2); hold on; 
+
+xlabel('Time (s)')
+ylabel('Theta Power')
+plot (times, hb, 'Linewidth', 7)
+%set(gca, 'xlim', [-.5 1.75])
+set(gca, 'FontSize', 24);
+
+exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',150)
+
+
 %% permutations 2D (line plot)
 
 nPerm = 1000; 
@@ -675,107 +831,6 @@ exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 
 
-%% Correlate responses and power in cluster
-load clustinfoAB
-clearvars -except ALLEEG paths clustinfo nL pi2u
-close all
-sub2exc = []; %subj 23-35-38-39-44-45
-
-for subji = 1:size(ALLEEG, 1)
-    EEG = ALLEEG{subji}; 
-    if ~isempty(EEG) & isempty(intersect(sub2exc, subji))
-        Ev = [{EEG.event.type}]';
-        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
-        Ev2 = cat(1, Ev1{:});
-        Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
-    
-        % % %   % % Acquisition
-        %ids = strcmp(Ev2(:, 2), '1'); 
-        %ids = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
-        %ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
-    
-        % % % % % % Extinction
-        ids = strcmp(Ev2(:, 2), '2'); 
-        %ids = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
-        ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
-        %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; 
-        %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; 
-        
-
-        % % % Acquisition AND Extinction
-        %ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') | ( strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) );
-
-        
-        powH = EEG.power(ids, :, :, :);
-
-        
-        
-        for triali = 1:size(powH, 1)
-            cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
-            %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
-            thPow(triali, :) = mean(cTR(pi2u), 'all');
-            %cTR = squeeze(mean(powH(triali, :, 3:8, 321:390), 2));
-            %thPow(triali, :) = mean(cTR, 'all');
-    
-        end
-        
-        nNan(subji,:) = sum(isnan(thPow));
-
-        ratings2u = double(string(Ev2(ids, 7)));
-
-        ids2rem = isnan(thPow) | isnan(ratings2u); 
-        thPow(ids2rem) = []; 
-        ratings2u(ids2rem) = []; 
-        allNTR(subji,:) = length(thPow);
-
-
-
-        allRho(subji, :) = corr(thPow, ratings2u, 'type', 'k');
-        
-        
-% % %         figure()
-% % %         scatter(thPow, ratings2u, 250, 'filled');
-% % %         h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
-% % %         C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
-% % %         allSlopes(subji, :) = C(2);
-% % %         allIntercepts(subji, :) = C(1);
-% % %         set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
-        
-
-
-    end
-
-    
-
-end
- 
-idF = allRho==0 | isnan(allRho); 
-allRho(idF) = []; 
-%allSlopes(idF) = []; 
-
-[h p ci t] = ttest (allRho);
-disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
-
-
-
-%% plot one bar
-data.data = [allRho]; 
-
-
-figure(2); set(gcf,'Position', [0 0 500 650]); 
-mean_S = mean(data.data, 1, 'omitnan');
-hb = plot ([1], data.data); hold on;
-set(hb, 'lineWidth', 3, 'Marker', '.', 'MarkerSize',35);hold on;
-h = bar (mean_S);hold on;
-set(h,'FaceColor', 'none', 'lineWidth', 3);
-set(gca,'XTick',[1],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 2], 'ylim', [-1 1] );
-plot(get(gca,'xlim'), [0 0],'k','lineWidth', 3);
-
-[h p ci t] = ttest (data.data(:,1));
-disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
-set(gca, 'LineWidth', 3);
-
-exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 
 
 %% Extract data 4 LME
@@ -845,9 +900,9 @@ tbl2 = table(d4LME(:,1), d4LME(:,2), d4LME(:,3), d4LME(:,4), d4LME(:,5), d4LME(:
     'VariableNames',{'theta_AMY','Ratings','subID', 'trialN', 'Phase', 'currCS', 'trial_type'});
 
 tbl2.Ratings = ordinal(tbl2.Ratings);
-tbl2.currCS= categorical(tbl2.currCS);
+%tbl2.currCS= categorical(tbl2.currCS);
 tbl2.trial_type= categorical(tbl2.trial_type);
-tbl2.Phase= categorical(tbl2.Phase);
+%tbl2.Phase= categorical(tbl2.Phase);
 
 
 %%

@@ -5,107 +5,31 @@ clear , clc
 
 listF2sav = {
 
-'POW_OFC_C_39-54_1_0_50-1_1_SICSPAE-SICSMAE';
-'POW_HPC_C_39-54_1_0_50-1_1_SICSPAE-SICSMAE';
-'POW_AMY_C_39-54_1_0_50-1_1_SICSPAE-SICSMAE';
-'POW_TMP_C_39-54_1_0_50-1_1_SICSPAE-SICSMAE';
-'POW_OCC_C_39-54_1_0_50-1_1_SICSPAE-SICSMAE';
+'POW_OFC_C_39-54_1_0_50-1_1_SCCSP-DCCSP';
+'POW_AMY_C_39-54_1_0_50-1_1_SCCSP-DCCSP';
+'POW_HPC_C_39-54_1_0_50-1_1_SCCSP-DCCSP';
+'POW_TMP_C_39-54_1_0_50-1_1_SCCSP-DCCSP';
+'POW_OCC_C_39-54_1_0_50-1_1_SCCSP-DCCSP';
 
-'POW_OFC_C_39-54_1_0_50-1_1_SICSPA-SICSMA';
-'POW_HPC_C_39-54_1_0_50-1_1_SICSPA-SICSMA';
-'POW_AMY_C_39-54_1_0_50-1_1_SICSPA-SICSMA';
-'POW_TMP_C_39-54_1_0_50-1_1_SICSPA-SICSMA';
-'POW_OCC_C_39-54_1_0_50-1_1_SICSPA-SICSMA';
+'POW_OFC_C_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
+'POW_AMY_C_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
+'POW_HPC_C_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
+'POW_TMP_C_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
+'POW_OCC_C_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
 
-'POW_OFC_C_39-54_1_0_50-1_1_SICSPE-SICSME';
-'POW_HPC_C_39-54_1_0_50-1_1_SICSPE-SICSME';
-'POW_AMY_C_39-54_1_0_50-1_1_SICSPE-SICSME';
-'POW_TMP_C_39-54_1_0_50-1_1_SICSPE-SICSME';
-'POW_OCC_C_39-54_1_0_50-1_1_SICSPE-SICSME';
+'POW_OFC_C_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
+'POW_AMY_C_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
+'POW_HPC_C_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
+'POW_TMP_C_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
+'POW_OCC_C_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
 
-'POW_OFC_C_39-54_1_0_50-1_1_DISVA-DIDVA';
-'POW_HPC_C_39-54_1_0_50-1_1_DISVA-DIDVA';
-'POW_AMY_C_39-54_1_0_50-1_1_DISVA-DIDVA';
-'POW_TMP_C_39-54_1_0_50-1_1_DISVA-DIDVA';
-'POW_OCC_C_39-54_1_0_50-1_1_DISVA-DIDVA';
-
-'POW_OFC_C_39-54_1_0_50-1_1_DISVE-DIDVE';
-'POW_HPC_C_39-54_1_0_50-1_1_DISVE-DIDVE';
-'POW_AMY_C_39-54_1_0_50-1_1_DISVE-DIDVE';
-'POW_TMP_C_39-54_1_0_50-1_1_DISVE-DIDVE';
-'POW_OCC_C_39-54_1_0_50-1_1_DISVE-DIDVE';
-
-'POW_OFC_V_39-54_1_0_50-1_1_SCA-DCA';
-'POW_HPC_V_39-54_1_0_50-1_1_SCA-DCA';
-'POW_AMY_V_39-54_1_0_50-1_1_SCA-DCA';
-'POW_TMP_V_39-54_1_0_50-1_1_SCA-DCA';
-'POW_OCC_V_39-54_1_0_50-1_1_SCA-DCA';
-
-'POW_OFC_V_39-54_1_0_50-1_1_SCE-DCE';
-'POW_HPC_V_39-54_1_0_50-1_1_SCE-DCE';
-'POW_AMY_V_39-54_1_0_50-1_1_SCE-DCE';
-'POW_TMP_V_39-54_1_0_50-1_1_SCE-DCE';
-'POW_OCC_V_39-54_1_0_50-1_1_SCE-DCE';
+'POW_OFC_C_39-54_1_0_50-1_1_SCCSP-SCCSM';
+'POW_AMY_C_39-54_1_0_50-1_1_SCCSP-SCCSM';
+'POW_HPC_C_39-54_1_0_50-1_1_SCCSP-SCCSM';
+'POW_TMP_C_39-54_1_0_50-1_1_SCCSP-SCCSM';
+'POW_OCC_C_39-54_1_0_50-1_1_SCCSP-SCCSM';
 
 
-
-% 'POW_OFC_V_39-54_1_0_50-1_1_SCCSPAE-SCCSMAE';
-% 'POW_HPC_V_39-54_1_0_50-1_1_SCCSPAE-SCCSMAE';
-% 'POW_AMY_V_39-54_1_0_50-1_1_SCCSPAE-SCCSMAE';
-% 'POW_TMP_V_39-54_1_0_50-1_1_SCCSPAE-SCCSMAE';
-% 'POW_OCC_V_39-54_1_0_50-1_1_SCCSPAE-SCCSMAE';
-% 
-% 'POW_OFC_V_39-54_1_0_50-1_1_SCCSPA-SCCSMA';
-% 'POW_HPC_V_39-54_1_0_50-1_1_SCCSPA-SCCSMA';
-% 'POW_AMY_V_39-54_1_0_50-1_1_SCCSPA-SCCSMA';
-% 'POW_TMP_V_39-54_1_0_50-1_1_SCCSPA-SCCSMA';
-% 'POW_OCC_V_39-54_1_0_50-1_1_SCCSPA-SCCSMA';
-% 
-% 'POW_OFC_V_39-54_1_0_50-1_1_SCCSPE-SCCSME';
-% 'POW_HPC_V_39-54_1_0_50-1_1_SCCSPE-SCCSME';
-% 'POW_AMY_V_39-54_1_0_50-1_1_SCCSPE-SCCSME';
-% 'POW_TMP_V_39-54_1_0_50-1_1_SCCSPE-SCCSME';
-% 'POW_OCC_V_39-54_1_0_50-1_1_SCCSPE-SCCSME';
-% 
-% 'POW_OFC_V_39-54_1_0_50-1_1_SCCSP-DCCSP';
-% 'POW_HPC_V_39-54_1_0_50-1_1_SCCSP-DCCSP';
-% 'POW_AMY_V_39-54_1_0_50-1_1_SCCSP-DCCSP';
-% 'POW_TMP_V_39-54_1_0_50-1_1_SCCSP-DCCSP';
-% 'POW_OCC_V_39-54_1_0_50-1_1_SCCSP-DCCSP';
-% 
-% 'POW_OFC_V_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
-% 'POW_HPC_V_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
-% 'POW_AMY_V_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
-% 'POW_TMP_V_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
-% 'POW_OCC_V_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
-% 
-% 'POW_OFC_V_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
-% 'POW_HPC_V_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
-% 'POW_AMY_V_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
-% 'POW_TMP_V_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
-% 'POW_OCC_V_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
-% 
-% 'POW_OFC_V_39-54_1_0_50-1_1_SCCSM-DCCSM';
-% 'POW_HPC_V_39-54_1_0_50-1_1_SCCSM-DCCSM';
-% 'POW_AMY_V_39-54_1_0_50-1_1_SCCSM-DCCSM';
-% 'POW_TMP_V_39-54_1_0_50-1_1_SCCSM-DCCSM';
-% 'POW_OCC_V_39-54_1_0_50-1_1_SCCSM-DCCSM';
-% 
-% 'POW_OFC_V_39-54_1_0_50-1_1_SCCSMA-DCCSMA';
-% 'POW_HPC_V_39-54_1_0_50-1_1_SCCSMA-DCCSMA';
-% 'POW_AMY_V_39-54_1_0_50-1_1_SCCSMA-DCCSMA';
-% 'POW_TMP_V_39-54_1_0_50-1_1_SCCSMA-DCCSMA';
-% 'POW_OCC_V_39-54_1_0_50-1_1_SCCSMA-DCCSMA';
-% 
-% 'POW_OFC_V_39-54_1_0_50-1_1_SCCSME-DCCSME';
-% 'POW_HPC_V_39-54_1_0_50-1_1_SCCSME-DCCSME';
-% 'POW_AMY_V_39-54_1_0_50-1_1_SCCSME-DCCSME';
-% 'POW_TMP_V_39-54_1_0_50-1_1_SCCSME-DCCSME';
-% 'POW_OCC_V_39-54_1_0_50-1_1_SCCSME-DCCSME';
-
-
-
-                
 };   
 
 
@@ -196,7 +120,7 @@ end
 clear, clc
 paths = load_paths_EXT; 
 
-f2sav = 'POW_OCC_V_39-54_1_0_50-1_1_SCCSME-DCCSME';
+f2sav = 'POW_AMY_C_30-54_1_0_50-1_1_SICSPE-SICSME';
 
                     
 
@@ -216,21 +140,23 @@ m2 = squeeze(mean(cond2, 'omitnan'));
 
 [h p ci ts] = ttest(cond1, cond2); 
 h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
-h(1:26,1:2) = 0;  % % % no clusters before baseline
+%h(1:26,1:2) = 0;  % % % no clusters before baseline
+%h(1:251,1:26) = 0;  % % % no clusters before baseline
 clustinfo = bwconncomp(h);
 for pxi = 1:length(clustinfo.PixelIdxList)
    allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
 end
 
 if exist('allSTs')
-    %[max2u id] = max(abs(allSTs));
-    [max2u id] = max((allSTs));
+    [max2u id] = max(abs(allSTs));
+    %[max2u id] = max((allSTs));
     tObs = allSTs(id); 
 end
 
 
-%h = zeros(size(cond1, 2),size(cond1, 2)); 
-%h(clustinfo.PixelIdxList{id}) = 1;
+h = zeros(size(cond1, 2),size(cond1, 2)); 
+h(clustinfo.PixelIdxList{id}) = 1;
+
 
 
 clim = [-.03 .03];
@@ -249,12 +175,9 @@ nSubj =  size(cond1, 1);
 realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
 
 %junts = cat(1, cond1(:, 3:22, 3:22), cond2(:, 3:22, 3:22));
-%junts = cat(1, cond1(:, 4:18, 4:18), cond2(:, 4:18, 4:18));
-%junts = cat(1, cond1(:, 4:13, 4:13), cond2(:, 4:13, 4:13));
-%junts = cat(1, cond1(:, 51:end, 51:end), cond2(:, 51:end, 51:end));
-%junts = cat(1, cond1(:, 51:151, 51:151), cond2(:, 51:151, 51:151));
+%junts = cat(1, cond1(:, 3:12, 3:12), cond2(:, 3:12, 3:12));
 %junts = cat(1, cond1(:, 26:225, 26:225), cond2(:, 26:225, 26:225));
-%junts = cat(1, cond1(:, 26:125, 26:125), cond2(:, 26:125, 26:125));
+junts = cat(1, cond1(:, 26:125, 26:125), cond2(:, 26:125, 26:125));
 
 clear max_clust_sum_perm
 for permi = 1:nPerm
@@ -503,10 +426,10 @@ disp (['t: ' num2str(t) ' //  p = ' num2str(p)])
 %% CHECK CONTEXT DURING ACQ AND EXT > GENERALIZATION
 clear, clc
 paths = load_paths_EXT; 
-f2sav =   'POW_HPC_V_39-54_1_0_50-1_1_SCA-DCA';
+f2sav =   'POW_OCC_V_39-54_1_0_50-1_1_SCA-DCA';
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_ACQ = out_rsa; 
-f2sav =   'POW_HPC_V_39-54_1_0_50-1_1_SCE-DCE';
+f2sav =   'POW_OCC_V_39-54_1_0_50-1_1_SCE-DCE';
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_EXT = out_rsa; 
 
@@ -547,7 +470,7 @@ if exist('allSTs')
 end
 
 
-%h = zeros(size(cond1, 2),size(cond1, 2)); 
+h = zeros(size(cond1, 2),size(cond1, 2)); 
 %h(clustinfo.PixelIdxList{id}) = 1;
 
 tRes = strsplit(f2sav, '_'); tRes = strsplit(tRes{7}, '-'); tRes = double(string(tRes{2}));
