@@ -38,8 +38,8 @@ axesHandles = findall(0, 'type', 'axes');
 
 if tRes == 1
     if strcmp(f2t{3}, 'C')
-        %set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 125], 'ylim', [1 125]); 
-        set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 200], 'ylim', [1 200]); 
+        set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 125], 'ylim', [1 125]); 
+        %set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 200], 'ylim', [1 200]); 
     elseif strcmp(f2t{3}, 'V')
         %set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 125], 'ylim', [1 125]); 
         set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 225], 'ylim', [1 225]); 

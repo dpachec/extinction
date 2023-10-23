@@ -39,6 +39,7 @@ CSMPM = (allComb(:,7) == 3 & allComb(:,17) == 3);
 SC2 = (allComb(:,4) == allComb(:,14));
 DC2 = (allComb(:,4) ~= allComb(:,14));
 LT = (allComb(:,2) > 39 & allComb(:,2) < 79) | (allComb(:,2) > 108 & allComb(:,2) < 154); 
+SPHA = allComb(:,3) == allComb(:,13);
 
 EPP = (allComb(:,7) == 1 & allComb(:,17) == 3) | (allComb(:,7) == 3 & allComb(:,17) == 1);
 EPM = (allComb(:,7) == 1 & allComb(:,17) == 2) | (allComb(:,7) == 2 & allComb(:,17) == 1);
@@ -258,6 +259,10 @@ end
 if exist('DC')
    idF = DT & DC2; 
    new_dc = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCSPHA')
+   idF = DT & DC2 & SPHA; 
+   new_dcspha = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SCA')
    idF = DT & SC2 & ACQ;

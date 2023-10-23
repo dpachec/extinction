@@ -35,7 +35,21 @@ IT2 = oneListIdsA(:,7) == 2;
 IT3 = oneListIdsA(:,7) == 3;
 
 
-
+if exist('ALL')
+   idF = 1:length(oneListIdsA)-1; 
+   new_all = [oneListIdsA(idF, 1)];
+   new_all(:, 2) = new_all(:, 1) + 1; 
+end
+if exist('ALLAE')
+   idF = ACQ | EXT
+   new_allae = [oneListIdsA(idF, 1)];
+   new_allae(:, 2) = new_allae(:, 1) + 1; 
+end
+if exist('ALLA')
+   idF = ACQ; 
+   new_alla = [oneListIdsA(idF, 1)];
+   new_alla(:, 2) = new_alla(:, 1) + 1; 
+end
 if exist('ALLE')
    idF = EXT; 
    new_alle = [oneListIdsA(idF, 1)];

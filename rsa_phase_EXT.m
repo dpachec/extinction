@@ -5,30 +5,180 @@ clear , clc
 
 listF2sav = {
 
-'POW_OFC_C_39-54_1_0_50-1_1_SCCSP-DCCSP';
-'POW_AMY_C_39-54_1_0_50-1_1_SCCSP-DCCSP';
-'POW_HPC_C_39-54_1_0_50-1_1_SCCSP-DCCSP';
-'POW_TMP_C_39-54_1_0_50-1_1_SCCSP-DCCSP';
-'POW_OCC_C_39-54_1_0_50-1_1_SCCSP-DCCSP';
+'POW_OFC_V_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_AMY_V_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_HPC_V_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_TMP_V_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_OCC_V_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_FRO_V_39-54_1_0_20-1_1_SC-DCSPHA';
 
-'POW_OFC_C_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
-'POW_AMY_C_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
-'POW_HPC_C_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
-'POW_TMP_C_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
-'POW_OCC_C_39-54_1_0_50-1_1_SCCSPA-DCCSPA';
+'POW_OFC_V_39-54_1_0_20-1_1_SCA-DCA';
+'POW_AMY_V_39-54_1_0_20-1_1_SCA-DCA';
+'POW_HPC_V_39-54_1_0_20-1_1_SCA-DCA';
+'POW_TMP_V_39-54_1_0_20-1_1_SCA-DCA';
+'POW_OCC_V_39-54_1_0_20-1_1_SCA-DCA';
+'POW_FRO_V_39-54_1_0_20-1_1_SCA-DCA';
 
-'POW_OFC_C_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
-'POW_AMY_C_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
-'POW_HPC_C_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
-'POW_TMP_C_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
-'POW_OCC_C_39-54_1_0_50-1_1_SCCSPE-DCCSPE';
+'POW_OFC_V_39-54_1_0_20-1_1_SCE-DCE';
+'POW_AMY_V_39-54_1_0_20-1_1_SCE-DCE';
+'POW_HPC_V_39-54_1_0_20-1_1_SCE-DCE';
+'POW_TMP_V_39-54_1_0_20-1_1_SCE-DCE';
+'POW_OCC_V_39-54_1_0_20-1_1_SCE-DCE';
+'POW_FRO_V_39-54_1_0_20-1_1_SCE-DCE';
 
-'POW_OFC_C_39-54_1_0_50-1_1_SCCSP-SCCSM';
-'POW_AMY_C_39-54_1_0_50-1_1_SCCSP-SCCSM';
-'POW_HPC_C_39-54_1_0_50-1_1_SCCSP-SCCSM';
-'POW_TMP_C_39-54_1_0_50-1_1_SCCSP-SCCSM';
-'POW_OCC_C_39-54_1_0_50-1_1_SCCSP-SCCSM';
+'POW_OFC_V_39-54_1_0_20-1_1_SCR-DCR';
+'POW_AMY_V_39-54_1_0_20-1_1_SCR-DCR';
+'POW_HPC_V_39-54_1_0_20-1_1_SCR-DCR';
+'POW_TMP_V_39-54_1_0_20-1_1_SCR-DCR';
+'POW_OCC_V_39-54_1_0_20-1_1_SCR-DCR';
+'POW_FRO_V_39-54_1_0_20-1_1_SCR-DCR';
 
+'POW_OFC_C_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_AMY_C_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_HPC_C_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_TMP_C_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_OCC_C_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_FRO_C_39-54_1_0_20-1_1_SC-DCSPHA';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCA-DCA';
+'POW_AMY_C_39-54_1_0_20-1_1_SCA-DCA';
+'POW_HPC_C_39-54_1_0_20-1_1_SCA-DCA';
+'POW_TMP_C_39-54_1_0_20-1_1_SCA-DCA';
+'POW_OCC_C_39-54_1_0_20-1_1_SCA-DCA';
+'POW_FRO_C_39-54_1_0_20-1_1_SCA-DCA';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCE-DCE';
+'POW_AMY_C_39-54_1_0_20-1_1_SCE-DCE';
+'POW_HPC_C_39-54_1_0_20-1_1_SCE-DCE';
+'POW_TMP_C_39-54_1_0_20-1_1_SCE-DCE';
+'POW_OCC_C_39-54_1_0_20-1_1_SCE-DCE';
+'POW_FRO_C_39-54_1_0_20-1_1_SCE-DCE';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCR-DCR';
+'POW_AMY_C_39-54_1_0_20-1_1_SCR-DCR';
+'POW_HPC_C_39-54_1_0_20-1_1_SCR-DCR';
+'POW_TMP_C_39-54_1_0_20-1_1_SCR-DCR';
+'POW_OCC_C_39-54_1_0_20-1_1_SCR-DCR';
+'POW_FRO_C_39-54_1_0_20-1_1_SCR-DCR';
+
+'POW_OFC_C_39-54_1_0_20-1_1_DISV-DIDV';
+'POW_AMY_C_39-54_1_0_20-1_1_DISV-DIDV';
+'POW_HPC_C_39-54_1_0_20-1_1_DISV-DIDV';
+'POW_TMP_C_39-54_1_0_20-1_1_DISV-DIDV';
+'POW_OCC_C_39-54_1_0_20-1_1_DISV-DIDV';
+'POW_FRO_C_39-54_1_0_20-1_1_DISV-DIDV';
+
+'POW_OFC_C_39-54_1_0_20-1_1_DISVA-DIDVA';
+'POW_AMY_C_39-54_1_0_20-1_1_DISVA-DIDVA';
+'POW_HPC_C_39-54_1_0_20-1_1_DISVA-DIDVA';
+'POW_TMP_C_39-54_1_0_20-1_1_DISVA-DIDVA';
+'POW_OCC_C_39-54_1_0_20-1_1_DISVA-DIDVA';
+'POW_FRO_C_39-54_1_0_20-1_1_DISVA-DIDVA';
+
+'POW_OFC_C_39-54_1_0_20-1_1_DISVE-DIDVE';
+'POW_AMY_C_39-54_1_0_20-1_1_DISVE-DIDVE';
+'POW_HPC_C_39-54_1_0_20-1_1_DISVE-DIDVE';
+'POW_TMP_C_39-54_1_0_20-1_1_DISVE-DIDVE';
+'POW_OCC_C_39-54_1_0_20-1_1_DISVE-DIDVE';
+'POW_FRO_C_39-54_1_0_20-1_1_DISVE-DIDVE';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SICSP-SICSM';
+'POW_AMY_C_39-54_1_0_20-1_1_SICSP-SICSM';
+'POW_HPC_C_39-54_1_0_20-1_1_SICSP-SICSM';
+'POW_TMP_C_39-54_1_0_20-1_1_SICSP-SICSM';
+'POW_OCC_C_39-54_1_0_20-1_1_SICSP-SICSM';
+'POW_FRO_C_39-54_1_0_20-1_1_SICSP-SICSM';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SICSPA-SICSMA';
+'POW_AMY_C_39-54_1_0_20-1_1_SICSPA-SICSMA';
+'POW_HPC_C_39-54_1_0_20-1_1_SICSPA-SICSMA';
+'POW_TMP_C_39-54_1_0_20-1_1_SICSPA-SICSMA';
+'POW_OCC_C_39-54_1_0_20-1_1_SICSPA-SICSMA';
+'POW_FRO_C_39-54_1_0_20-1_1_SICSPA-SICSMA';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SICSPE-SICSME';
+'POW_AMY_C_39-54_1_0_20-1_1_SICSPE-SICSME';
+'POW_HPC_C_39-54_1_0_20-1_1_SICSPE-SICSME';
+'POW_TMP_C_39-54_1_0_20-1_1_SICSPE-SICSME';
+'POW_OCC_C_39-54_1_0_20-1_1_SICSPE-SICSME';
+'POW_FRO_C_39-54_1_0_20-1_1_SICSPE-SICSME';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SICSPE-SICSMPP';
+'POW_AMY_C_39-54_1_0_20-1_1_SICSPE-SICSMPP';
+'POW_HPC_C_39-54_1_0_20-1_1_SICSPE-SICSMPP';
+'POW_TMP_C_39-54_1_0_20-1_1_SICSPE-SICSMPP';
+'POW_OCC_C_39-54_1_0_20-1_1_SICSPE-SICSMPP';
+'POW_FRO_C_39-54_1_0_20-1_1_SICSPE-SICSMPP';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SICSPE-SICSMPM';
+'POW_AMY_C_39-54_1_0_20-1_1_SICSPE-SICSMPM';
+'POW_HPC_C_39-54_1_0_20-1_1_SICSPE-SICSMPM';
+'POW_TMP_C_39-54_1_0_20-1_1_SICSPE-SICSMPM';
+'POW_OCC_C_39-54_1_0_20-1_1_SICSPE-SICSMPM';
+'POW_FRO_C_39-54_1_0_20-1_1_SICSPE-SICSMPM';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SISV-DISV';
+'POW_AMY_C_39-54_1_0_20-1_1_SISV-DISV';
+'POW_HPC_C_39-54_1_0_20-1_1_SISV-DISV';
+'POW_TMP_C_39-54_1_0_20-1_1_SISV-DISV';
+'POW_OCC_C_39-54_1_0_20-1_1_SISV-DISV';
+'POW_FRO_C_39-54_1_0_20-1_1_SISV-DISV';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SISVA-DISVA';
+'POW_AMY_C_39-54_1_0_20-1_1_SISVA-DISVA';
+'POW_HPC_C_39-54_1_0_20-1_1_SISVA-DISVA';
+'POW_TMP_C_39-54_1_0_20-1_1_SISVA-DISVA';
+'POW_OCC_C_39-54_1_0_20-1_1_SISVA-DISVA';
+'POW_FRO_C_39-54_1_0_20-1_1_SISVA-DISVA';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SISVE-DISVE';
+'POW_AMY_C_39-54_1_0_20-1_1_SISVE-DISVE';
+'POW_HPC_C_39-54_1_0_20-1_1_SISVE-DISVE';
+'POW_TMP_C_39-54_1_0_20-1_1_SISVE-DISVE';
+'POW_OCC_C_39-54_1_0_20-1_1_SISVE-DISVE';
+'POW_FRO_C_39-54_1_0_20-1_1_SISVE-DISVE';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCCSP-DCCSP';
+'POW_AMY_C_39-54_1_0_20-1_1_SCCSP-DCCSP';
+'POW_HPC_C_39-54_1_0_20-1_1_SCCSP-DCCSP';
+'POW_TMP_C_39-54_1_0_20-1_1_SCCSP-DCCSP';
+'POW_OCC_C_39-54_1_0_20-1_1_SCCSP-DCCSP';
+'POW_FRO_C_39-54_1_0_20-1_1_SCCSP-DCCSP';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCCSPA-DCCSPA';
+'POW_AMY_C_39-54_1_0_20-1_1_SCCSPA-DCCSPA';
+'POW_HPC_C_39-54_1_0_20-1_1_SCCSPA-DCCSPA';
+'POW_TMP_C_39-54_1_0_20-1_1_SCCSPA-DCCSPA';
+'POW_OCC_C_39-54_1_0_20-1_1_SCCSPA-DCCSPA';
+'POW_FRO_C_39-54_1_0_20-1_1_SCCSPA-DCCSPA';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCCSPE-DCCSPE';
+'POW_AMY_C_39-54_1_0_20-1_1_SCCSPE-DCCSPE';
+'POW_HPC_C_39-54_1_0_20-1_1_SCCSPE-DCCSPE';
+'POW_TMP_C_39-54_1_0_20-1_1_SCCSPE-DCCSPE';
+'POW_OCC_C_39-54_1_0_20-1_1_SCCSPE-DCCSPE';
+'POW_FRO_C_39-54_1_0_20-1_1_SCCSPE-DCCSPE';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCCSPAE-SCCSMAE';
+'POW_AMY_C_39-54_1_0_20-1_1_SCCSPAE-SCCSMAE';
+'POW_HPC_C_39-54_1_0_20-1_1_SCCSPAE-SCCSMAE';
+'POW_TMP_C_39-54_1_0_20-1_1_SCCSPAE-SCCSMAE';
+'POW_OCC_C_39-54_1_0_20-1_1_SCCSPAE-SCCSMAE';
+'POW_FRO_C_39-54_1_0_20-1_1_SCCSPAE-SCCSMAE';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCCSPA-SCCSMA';
+'POW_AMY_C_39-54_1_0_20-1_1_SCCSPA-SCCSMA';
+'POW_HPC_C_39-54_1_0_20-1_1_SCCSPA-SCCSMA';
+'POW_TMP_C_39-54_1_0_20-1_1_SCCSPA-SCCSMA';
+'POW_OCC_C_39-54_1_0_20-1_1_SCCSPA-SCCSMA';
+'POW_FRO_C_39-54_1_0_20-1_1_SCCSPA-SCCSMA';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
+'POW_AMY_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
+'POW_HPC_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
+'POW_TMP_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
+'POW_OCC_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
+'POW_FRO_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
 
 };   
 
@@ -120,15 +270,15 @@ end
 clear, clc
 paths = load_paths_EXT; 
 
-f2sav = 'POW_AMY_C_30-54_1_0_50-1_1_SICSPE-SICSME';
+f2sav = 'POW_OCC_C_39-54_1_0_50-1_1_SCCSP-DCCSP';
 
                     
 
 load ([ paths.results.rsa f2sav '.mat']);
 
 ids = rem_nan_subj_EXT(out_rsa); 
-cond1 = squeeze(out_rsa(:, 1, :, :)); 
-cond2 = squeeze(out_rsa(:, 2, :, :)); 
+cond1 = squeeze(out_rsa(:, 1, 1:200, 1:200)); 
+cond2 = squeeze(out_rsa(:, 2, 1:200, 1:200)); 
 cond1(ids, :, :) = []; 
 cond2(ids, :, :) = []; 
 diff = cond1-cond2; 
@@ -142,6 +292,7 @@ m2 = squeeze(mean(cond2, 'omitnan'));
 h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
 %h(1:26,1:2) = 0;  % % % no clusters before baseline
 %h(1:251,1:26) = 0;  % % % no clusters before baseline
+
 clustinfo = bwconncomp(h);
 for pxi = 1:length(clustinfo.PixelIdxList)
    allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
@@ -155,7 +306,7 @@ end
 
 
 h = zeros(size(cond1, 2),size(cond1, 2)); 
-h(clustinfo.PixelIdxList{id}) = 1;
+%h(clustinfo.PixelIdxList{id}) = 1;
 
 
 
@@ -540,55 +691,9 @@ set(gca, 'FontSize', 16)
 clear , clc
 
 listF2sav = {
-                'POW_OFC_C_39-54_1_0_50-1_1_CSPA-STR';
-                'POW_AMY_C_39-54_1_0_50-1_1_CSPA-STR';
-                'POW_HPC_C_39-54_1_0_50-1_1_CSPA-STR';
-                'POW_TMP_C_39-54_1_0_50-1_1_CSPA-STR';
-                'POW_OCC_C_39-54_1_0_50-1_1_CSPA-STR';
-
-                'POW_OFC_C_39-54_1_0_50-1_1_IT1CSPA-STR';
-                'POW_AMY_C_39-54_1_0_50-1_1_IT1CSPA-STR';
-                'POW_HPC_C_39-54_1_0_50-1_1_IT1CSPA-STR';
-                'POW_TMP_C_39-54_1_0_50-1_1_IT1CSPA-STR';
-                'POW_OCC_C_39-54_1_0_50-1_1_IT1CSPA-STR';
-
-                'POW_OFC_C_39-54_1_0_50-1_1_IT2CSPA-STR';
-                'POW_AMY_C_39-54_1_0_50-1_1_IT2CSPA-STR';
-                'POW_HPC_C_39-54_1_0_50-1_1_IT2CSPA-STR';
-                'POW_TMP_C_39-54_1_0_50-1_1_IT2CSPA-STR';
-                'POW_OCC_C_39-54_1_0_50-1_1_IT2CSPA-STR';
-
-                'POW_OFC_C_39-54_1_0_50-1_1_CSPE-STR';
-                'POW_AMY_C_39-54_1_0_50-1_1_CSPE-STR';
-                'POW_HPC_C_39-54_1_0_50-1_1_CSPE-STR';
-                'POW_TMP_C_39-54_1_0_50-1_1_CSPE-STR';
-                'POW_OCC_C_39-54_1_0_50-1_1_CSPE-STR';
-
-                'POW_OFC_C_39-54_1_0_50-1_1_CSMA-STR';
-                'POW_AMY_C_39-54_1_0_50-1_1_CSMA-STR';
-                'POW_HPC_C_39-54_1_0_50-1_1_CSMA-STR';
-                'POW_TMP_C_39-54_1_0_50-1_1_CSMA-STR';
-                'POW_OCC_C_39-54_1_0_50-1_1_CSMA-STR';
-
-                'POW_OFC_C_39-54_1_0_50-1_1_CSME-STR';
-                'POW_AMY_C_39-54_1_0_50-1_1_CSME-STR';
-                'POW_HPC_C_39-54_1_0_50-1_1_CSME-STR';
-                'POW_TMP_C_39-54_1_0_50-1_1_CSME-STR';
-                'POW_OCC_C_39-54_1_0_50-1_1_CSME-STR';
-
-                'POW_OFC_C_39-54_1_0_50-1_1_IT2CSME-STR';
-                'POW_AMY_C_39-54_1_0_50-1_1_IT2CSME-STR';
-                'POW_HPC_C_39-54_1_0_50-1_1_IT2CSME-STR';
-                'POW_TMP_C_39-54_1_0_50-1_1_IT2CSME-STR';
-                'POW_OCC_C_39-54_1_0_50-1_1_IT2CSME-STR';
-                
-                'POW_OFC_C_39-54_1_0_50-1_1_IT2CSME-STR';
-                'POW_AMY_C_39-54_1_0_50-1_1_IT2CSME-STR';
-                'POW_HPC_C_39-54_1_0_50-1_1_IT2CSME-STR';
-                'POW_TMP_C_39-54_1_0_50-1_1_IT2CSME-STR';
-                'POW_OCC_C_39-54_1_0_50-1_1_IT2CSME-STR';
-
-                                
+                'POW_AMY_C_39-54_1_0_50-1_1_ALL-STR';
+                'POW_AMY_C_39-54_1_0_50-1_1_ALLAE-STR';
+                               
         };   
 
 t1 = datetime; 
@@ -660,13 +765,13 @@ end
 clear, clc
 paths = load_paths_EXT; 
 
-%f2sav =  'POW_AMY_C_39-54_1_0_50-1_1_CSPA-STR';
-f2sav =  'POW_HPC_C_39-54_1_0_50-1_1_CSME-STR';
+f2sav =  'POW_AMY_C_39-54_1_0_50-1_1_ALLAE-STR';
+%f2sav =  'POW_HPC_C_39-54_1_0_50-1_1_CSME-STR';
 
 load ([ paths.results.rsa f2sav '.mat']);
 
-%load clustinfo_AMY_SICSPE-SICSME_50-1
-load clustinfo_HPC_DISVA-DIDVA_50-1
+load clustinfo_AMY_SICSPE-SICSME_50-1
+%load clustinfo_HPC_DISVA-DIDVA_50-1
 
 out_rsa = out_rsa(~cellfun('isempty', out_rsa));
 ids = ids(~cellfun('isempty', ids));
@@ -683,33 +788,34 @@ for subji = 1:length(out_rsa)
 
     orS = out_rsa{subji}; 
     %orS2 = squeeze(mean(mean(orS(:,:,3:23, 3:23), 4), 3));
-    %orS2 = squeeze(mean(mean(orS(:,:,26:100, 26:100), 4), 3))';
+    orS2 = squeeze(mean(mean(orS(:,:,26:125, 26:125), 4), 3))';
     
-    clear orS2
-    for triali = 1:size(orS, 2)
-        orS2a = squeeze(orS(:,triali,:,:));
-        %orS2(triali,:) = mean(orS2a(clustinfo.PixelIdxList{11}));
-        orS2(triali,:) = mean(orS2a(clustinfo.PixelIdxList{1}));
+%     clear orS2
+%     for triali = 1:size(orS, 2)
+%         orS2a = squeeze(orS(:,triali,:,:));
+%         orS2(triali,:) = mean(orS2a(clustinfo.PixelIdxList{11}), 'omitnan');
+%         
+% 
+%         %orS2a = squeeze(orS(:,triali,:,:));
+%         %dv = diag(orS2a); dv = dv(26:100);
+%         %orS2(triali,:) = mean(dv);
+%     end
 
-        %orS2a = squeeze(orS(:,triali,:,:));
-        %dv = diag(orS2a); dv = dv(26:100);
-        %orS2(triali,:) = mean(dv);
-    end
-
+    idM = isnan(ratings);
     idN = isnan(orS2); 
-    orS2(idN) = []; 
-    ratings(idN) = []; 
+    orS2(idN | idM) = []; 
+    ratings(idN | idM) = []; 
     allRS(subji, :) = corr(orS2, ratings, 'type', 'k' ); 
         
-% %         figure()
-% %         %plot(ratings, orS2); hold on; 
-% %         scatter(orS2, ratings); hold on; 
-% %         h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
-% %         C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
-% %         allSlopes(subji, :) = C(2);
-% %         allIntercepts(subji, :) = C(1);
-% %         %set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
-        
+% % %         figure()
+% % %         %plot(ratings, orS2); hold on; 
+% % %         scatter(orS2, ratings); hold on; 
+% % %         h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
+% % %         C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
+% % %         allSlopes(subji, :) = C(2);
+% % %         allIntercepts(subji, :) = C(1);
+% % %         %set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
+% % %         
 
 % %     figure()
 % %     plot(orS2); hold on; 
