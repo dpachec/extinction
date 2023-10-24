@@ -5,78 +5,6 @@ clear , clc
 
 listF2sav = {
 
-'POW_FRO_V_39-54_1_0_20-1_1_SC-DCSPHA';
-
-'POW_OFC_V_39-54_1_0_20-1_1_SCA-DCA';
-'POW_AMY_V_39-54_1_0_20-1_1_SCA-DCA';
-'POW_HPC_V_39-54_1_0_20-1_1_SCA-DCA';
-'POW_TMP_V_39-54_1_0_20-1_1_SCA-DCA';
-'POW_OCC_V_39-54_1_0_20-1_1_SCA-DCA';
-'POW_FRO_V_39-54_1_0_20-1_1_SCA-DCA';
-
-'POW_OFC_V_39-54_1_0_20-1_1_SCE-DCE';
-'POW_AMY_V_39-54_1_0_20-1_1_SCE-DCE';
-'POW_HPC_V_39-54_1_0_20-1_1_SCE-DCE';
-'POW_TMP_V_39-54_1_0_20-1_1_SCE-DCE';
-'POW_OCC_V_39-54_1_0_20-1_1_SCE-DCE';
-'POW_FRO_V_39-54_1_0_20-1_1_SCE-DCE';
-
-'POW_OFC_V_39-54_1_0_20-1_1_SCR-DCR';
-'POW_AMY_V_39-54_1_0_20-1_1_SCR-DCR';
-'POW_HPC_V_39-54_1_0_20-1_1_SCR-DCR';
-'POW_TMP_V_39-54_1_0_20-1_1_SCR-DCR';
-'POW_OCC_V_39-54_1_0_20-1_1_SCR-DCR';
-'POW_FRO_V_39-54_1_0_20-1_1_SCR-DCR';
-
-'POW_OFC_C_39-54_1_0_20-1_1_SC-DCSPHA';
-'POW_AMY_C_39-54_1_0_20-1_1_SC-DCSPHA';
-'POW_HPC_C_39-54_1_0_20-1_1_SC-DCSPHA';
-'POW_TMP_C_39-54_1_0_20-1_1_SC-DCSPHA';
-'POW_OCC_C_39-54_1_0_20-1_1_SC-DCSPHA';
-'POW_FRO_C_39-54_1_0_20-1_1_SC-DCSPHA';
-
-'POW_OFC_C_39-54_1_0_20-1_1_SCA-DCA';
-'POW_AMY_C_39-54_1_0_20-1_1_SCA-DCA';
-'POW_HPC_C_39-54_1_0_20-1_1_SCA-DCA';
-'POW_TMP_C_39-54_1_0_20-1_1_SCA-DCA';
-'POW_OCC_C_39-54_1_0_20-1_1_SCA-DCA';
-'POW_FRO_C_39-54_1_0_20-1_1_SCA-DCA';
-
-'POW_OFC_C_39-54_1_0_20-1_1_SCE-DCE';
-'POW_AMY_C_39-54_1_0_20-1_1_SCE-DCE';
-'POW_HPC_C_39-54_1_0_20-1_1_SCE-DCE';
-'POW_TMP_C_39-54_1_0_20-1_1_SCE-DCE';
-'POW_OCC_C_39-54_1_0_20-1_1_SCE-DCE';
-'POW_FRO_C_39-54_1_0_20-1_1_SCE-DCE';
-
-'POW_OFC_C_39-54_1_0_20-1_1_SCR-DCR';
-'POW_AMY_C_39-54_1_0_20-1_1_SCR-DCR';
-'POW_HPC_C_39-54_1_0_20-1_1_SCR-DCR';
-'POW_TMP_C_39-54_1_0_20-1_1_SCR-DCR';
-'POW_OCC_C_39-54_1_0_20-1_1_SCR-DCR';
-'POW_FRO_C_39-54_1_0_20-1_1_SCR-DCR';
-
-'POW_OFC_C_39-54_1_0_20-1_1_DISV-DIDV';
-'POW_AMY_C_39-54_1_0_20-1_1_DISV-DIDV';
-'POW_HPC_C_39-54_1_0_20-1_1_DISV-DIDV';
-'POW_TMP_C_39-54_1_0_20-1_1_DISV-DIDV';
-'POW_OCC_C_39-54_1_0_20-1_1_DISV-DIDV';
-'POW_FRO_C_39-54_1_0_20-1_1_DISV-DIDV';
-
-'POW_OFC_C_39-54_1_0_20-1_1_DISVA-DIDVA';
-'POW_AMY_C_39-54_1_0_20-1_1_DISVA-DIDVA';
-'POW_HPC_C_39-54_1_0_20-1_1_DISVA-DIDVA';
-'POW_TMP_C_39-54_1_0_20-1_1_DISVA-DIDVA';
-'POW_OCC_C_39-54_1_0_20-1_1_DISVA-DIDVA';
-'POW_FRO_C_39-54_1_0_20-1_1_DISVA-DIDVA';
-
-'POW_OFC_C_39-54_1_0_20-1_1_DISVE-DIDVE';
-'POW_AMY_C_39-54_1_0_20-1_1_DISVE-DIDVE';
-'POW_HPC_C_39-54_1_0_20-1_1_DISVE-DIDVE';
-'POW_TMP_C_39-54_1_0_20-1_1_DISVE-DIDVE';
-'POW_OCC_C_39-54_1_0_20-1_1_DISVE-DIDVE';
-'POW_FRO_C_39-54_1_0_20-1_1_DISVE-DIDVE';
-
 'POW_OFC_C_39-54_1_0_20-1_1_SICSPAE-SICSMAE';
 'POW_AMY_C_39-54_1_0_20-1_1_SICSPAE-SICSMAE';
 'POW_HPC_C_39-54_1_0_20-1_1_SICSPAE-SICSMAE';
@@ -175,6 +103,7 @@ listF2sav = {
 'POW_OCC_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
 'POW_FRO_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
 
+
 };   
 
 
@@ -265,15 +194,15 @@ end
 clear, clc
 paths = load_paths_EXT; 
 
-f2sav = 'POW_OCC_C_39-54_1_0_50-1_1_SCCSP-DCCSP';
+f2sav = 'POW_OCC_C_39-54_1_0_20-1_1_SICSPPT-SICSMMT';
 
                     
 
 load ([ paths.results.rsa f2sav '.mat']);
 
 ids = rem_nan_subj_EXT(out_rsa); 
-cond1 = squeeze(out_rsa(:, 1, 1:200, 1:200)); 
-cond2 = squeeze(out_rsa(:, 2, 1:200, 1:200)); 
+cond1 = squeeze(out_rsa(:, 1, 1:250, 1:250)); 
+cond2 = squeeze(out_rsa(:, 2, 1:250, 1:250)); 
 cond1(ids, :, :) = []; 
 cond2(ids, :, :) = []; 
 diff = cond1-cond2; 
@@ -300,14 +229,13 @@ if exist('allSTs')
 end
 
 
-h = zeros(size(cond1, 2),size(cond1, 2)); 
+%h = zeros(size(cond1, 2),size(cond1, 2)); 
 %h(clustinfo.PixelIdxList{id}) = 1;
 
 
 
 clim = [-.03 .03];
-tRes = strsplit(f2sav, '_'); tRes = strsplit(tRes{7}, '-'); tRes = double(string(tRes{2}));
-plot_TG_map(m1, m2, h, t, tRes, f2sav, clim)
+plot_TG_map(m1, m2, h, t, f2sav, clim)
 exportgraphics(gcf, [paths.results.rsa  '_myP.png'], 'Resolution',150)
 
 

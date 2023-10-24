@@ -27,20 +27,20 @@ allComb = [idsIt(ids(:, 1),:) idsIt(ids(:,2),:)];
 DT  = (allComb(:,2) ~= allComb(:,12)); 
 ACQ = (allComb(:,3) == 1 & allComb(:,13) == 1); 
 EXT = (allComb(:,3) == 2 & allComb(:,13) == 2); 
-REN = (allComb(:,3) == 3 & allComb(:,13) == 3); 
+TEST = (allComb(:,3) == 3 & allComb(:,13) == 3); 
 DI2  = (allComb(:,6) ~= allComb(:,16)); 
 SI2  = (allComb(:,6) == allComb(:,16));
 SV  = (allComb(:,9) == allComb(:,19)); 
 DV  = (allComb(:,9) ~= allComb(:,19));
 CSP = (allComb(:,9) == 1 & allComb(:,19) == 1);
 CSM = (allComb(:,9) == 0 & allComb(:,19) == 0);
-CSMPP = (allComb(:,7) == 2 & allComb(:,17) == 2);
-CSMPM = (allComb(:,7) == 3 & allComb(:,17) == 3);
+CSPP = (allComb(:,7) == 1 & allComb(:,17) == 1);
+CSPM = (allComb(:,7) == 2 & allComb(:,17) == 2);
+CSMM = (allComb(:,7) == 3 & allComb(:,17) == 3);
 SC2 = (allComb(:,4) == allComb(:,14));
 DC2 = (allComb(:,4) ~= allComb(:,14));
 LT = (allComb(:,2) > 39 & allComb(:,2) < 79) | (allComb(:,2) > 108 & allComb(:,2) < 154); 
 SPHA = allComb(:,3) == allComb(:,13);
-
 EPP = (allComb(:,7) == 1 & allComb(:,17) == 3) | (allComb(:,7) == 3 & allComb(:,17) == 1);
 EPM = (allComb(:,7) == 1 & allComb(:,17) == 2) | (allComb(:,7) == 2 & allComb(:,17) == 1);
 
@@ -245,11 +245,11 @@ if exist('DICSME')
    new_dicsme = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SICSMPP')
-   idF = DT & SI2 & CSMPP & EXT;
+   idF = DT & SI2 & CSPM & EXT;
    new_sicsmpp = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SICSMPM')
-   idF = DT & SI2 & CSMPM & EXT;
+   idF = DT & SI2 & CSMM & EXT;
    new_sicsmpm = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SC')
@@ -280,15 +280,26 @@ if exist('DCE')
    idF = DT & DC2 & EXT;
    new_dce = [allComb(idF, 1) allComb(idF, 11)];
 end
-if exist('SCR')
-   idF = DT & SC2 & REN;
-   new_scr = [allComb(idF, 1) allComb(idF, 11)];
+if exist('SCT')
+   idF = DT & SC2 & TEST;
+   new_sct = [allComb(idF, 1) allComb(idF, 11)];
 end
-if exist('DCR')
-   idF = DT & DC2 & REN;
-   new_dcr = [allComb(idF, 1) allComb(idF, 11)];
+if exist('DCT')
+   idF = DT & DC2 & TEST;
+   new_dct = [allComb(idF, 1) allComb(idF, 11)];
 end
-
+if exist('SICSPPT')
+   idF = DT & SI2 & CSPP & TEST;
+   new_sicsppt = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSPMT')
+   idF = DT & SI2 & CSPM & TEST;
+   new_sicspmt = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSMMT')
+   idF = DT & SI2 & CSMM & TEST;
+   new_sicsmmt = [allComb(idF, 1) allComb(idF, 11)];
+end
 
 
 

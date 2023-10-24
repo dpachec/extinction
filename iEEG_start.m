@@ -254,12 +254,12 @@ for subji = 1:length(ALLEEG)
 
 
         % % %   % % Acquisition
-        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
-        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+        ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
 
         % % % % % % Extinction
-        ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
-        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
+        %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
         %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
         %ids3 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
 
@@ -926,7 +926,7 @@ exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 %% Extract data 4 LME
 
-load clustinfoAB
+load clustinfoB
 clearvars -except ALLEEG ALLEEG1 paths clustinfo nL pi2u
 close all
 sub2exc = [];
@@ -943,10 +943,10 @@ for subji = 1:size(ALLEEG, 1)
         
         for triali = 1:size(powH, 1)
             cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
-            %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
-            thPow(triali, :) = mean(cTR(pi2u), 'all');
+            thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
+            %thPow(triali, :) = mean(cTR(pi2u), 'all');
             
-            %cTR = squeeze(mean(powH(triali, :, 3:8, 301:470), 2));
+            %cTR = squeeze(mean(powH(triali, :, 3:8, 301:400), 2));
             %thPow(triali, :) = mean(cTR, 'all');
     
         end
@@ -977,22 +977,17 @@ for subji = 1:size(ALLEEG, 1)
     end
 end
 
+
 %% 
 d4LME = cat(1, allData4LME{:});
 
-%d2n = d4LME(:, 2); 
-%mT = mean(d2n,'omitnan');
-%stdT = std(d2n,[], 'omitnan');
-%d4LME(:, 2) = bsxfun(@rdivide, bsxfun(@minus, d2n, mT), stdT);  
-        
 
-
-tbl2 = table(d4LME(:,1), d4LME(:,2), d4LME(:,3), d4LME(:,4), d4LME(:,5), d4LME(:,6), d4LME(:,7),...
+tbl = table(d4LME(:,1), d4LME(:,2), d4LME(:,3), d4LME(:,4), d4LME(:,5), d4LME(:,6), d4LME(:,7),...
     'VariableNames',{'theta_AMY','Ratings','subID', 'trialN', 'Phase', 'currCS', 'trial_type'});
 
-tbl2.Ratings = ordinal(tbl2.Ratings);
+%tbl.Ratings = ordinal(tbl.Ratings);
 %tbl2.currCS= categorical(tbl2.currCS);
-tbl2.trial_type= categorical(tbl2.trial_type);
+tbl.trial_type= categorical(tbl.trial_type);
 %tbl2.Phase= categorical(tbl2.Phase);
 
 
@@ -1010,18 +1005,23 @@ clc
 %lme = fitlme(tbl2,'theta_AMY ~ Ratings + currCS + Phase+ trialN + (1|subID)'); % random intercept model
 %lme = fitlme(tbl2,'Ratings ~ theta_AMY + currCS + Phase+ trialN + (1|subID)'); % random intercept model
 
-
-lme = fitlme(tbl2,'theta_AMY ~ Ratings + currCS + Phase + Phase*currCS + (1|subID)'); % random intercept model
+lme = fitlme(tbl,'theta_AMY ~ Ratings + currCS + Phase + Phase*currCS + (1|subID)'); % random intercept model
 
 lme
 %lme.Coefficients
 
+%% FIT MODEL ONLY FOR CS- items during acquisition
 
 
+d4LME2 = cat(1, allData4LME{:});
+d4LME2 = d4LME2(d4LME2(:, 5) == 2 & d4LME2(:, 6) == 0, :); % only cs- during extinction
 
+tbl2 = table(d4LME2(:,1), d4LME2(:,2), d4LME2(:,3), d4LME2(:,4), d4LME2(:,7), ...
+    'VariableNames',{'theta_AMY','Ratings','subID', 'trialN', 'trial_type'});
 
+lme = fitlme(tbl2,'theta_AMY ~ Ratings + trialN  + trial_type*Ratings + (1|subID)'); % random intercept model
 
-
+lme
 
 
 
