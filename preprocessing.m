@@ -416,7 +416,7 @@ end
 
 
 
-%% combine electrode and iEEG data, filter and remove artifacts
+%% COMBINE ELECTRODE AND IEEG DATA, FILTER AND REMOVE ARTIFACTS (CRITICAL STEP)
 
 clear, close all
 paths = load_paths_EXT; 
@@ -454,7 +454,10 @@ for subji = 1:length(allsubs)
             if length(chanMatch) ==1
                 if ~isempty(chanMatch)
                     EEG.chanlocs(chanMatch).fsLabel = elec_info{chani,2};
-                    EEG.chanlocs(chanMatch).mniCoord = double(elec_info{chani,10});
+                    EEG.chanlocs(chanMatch).mniCoord = double(elec_info{chani,9});
+                    if subji == 17
+                        EEG.chanlocs(chanMatch).mniCoord = double(elec_info{chani,10});
+                    end
                 end
             end
         end
@@ -492,7 +495,7 @@ for subji = 1:length(allsubs)
     % % % % re-reference 
     EEG = re_reference_EXT(EEG, 'bipo', sub);
 
-    EEG = manual_channel_removal(EEG, sub)
+    EEG = manual_channel_removal(EEG, sub); 
     
     % % %  Filter
     EEG = add_EEGLAB_fields(EEG);
@@ -502,11 +505,9 @@ for subji = 1:length(allsubs)
     EEG = pop_eegfiltnew (EEG, 149, 150, [],  1); %notch filter
 
     % % % % remove artifacts
-    EEG = artifact_detection_EXT(EEG, 6, 4, 1000, 500);
+    EEG = artifact_detection_EXT(EEG, 5, 3, 1000, 500);
 
    
-    EEG = rem_EEGLAB_fields(EEG);
-
     % % % % save final versions
     mkdir(paths.iEEG)
     cd([paths.iEEG])
@@ -518,9 +519,100 @@ for subji = 1:length(allsubs)
 end
 
 
-%% plot 1 spectrogram per trial to make sure the data looks ok
+%% EXPORT ELECTROEDS JUST TO TEST
 
-% % % TBD
+clear, close all
+paths = load_paths_EXT; 
+currentPath = paths.github; 
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+
+
+for subji = 1:length(allsubs)
+
+    clearvars -except allsubs subji paths ALLEEG
+    sub = allsubs{subji}; 
+    cd([paths.ds sub ])
+    diEEG_list = dir('*downSampiEEG.mat');diEEG_list = {diEEG_list.name}';
+    load(diEEG_list{1})
+    %load electrode files
+    cd([paths.raw_data sub '\elec'])
+
+
+    if sub(1) == 'c' %guangzhou data
+        chanL= dir('*.mat');chanL= {chanL.name}';
+        load(chanL{1})
+        elec_info = table2cell(elec_info);
+        for chani = 1:size(elec_info, 1)
+            
+            chanLabel = elec_info(chani, 1);
+            chanEEG = {EEG.chanlocs.labels}'; 
+            chanEEG = erase(chanEEG, 'POL');
+            chanEEG = erase(chanEEG, ' ');
+            chanMatch = strmatch(chanLabel, chanEEG, 'exact');
+            if length(chanMatch) ==1
+                if ~isempty(chanMatch)
+                    EEG.chanlocs(chanMatch).fsLabel = elec_info{chani,2};
+                    EEG.chanlocs(chanMatch).mniCoord = double(elec_info{chani,9});
+                    if subji == 17
+                        EEG.chanlocs(chanMatch).mniCoord = double(elec_info{chani,10});
+                    end
+                end
+            end
+        end
+    end
+    
+    
+    if sub(1) == 'p' %paris Data
+        chanL= dir('*.csv');chanL= {chanL.name}';
+        elec_info = readtable(chanL{1}, 'Delimiter', ';')
+        elec_info1 = elec_info; 
+        elec_info1(:, 1) = fillmissing(elec_info(:, 1),'previous')
+        elec_info1 = table2cell(elec_info1)
+        for chani = 1:size(elec_info1, 1)    
+            if ~isnan(elec_info1{chani, 2})
+                chanLabel = strcat(elec_info1(chani, 1), '_', string(elec_info1(chani, 2)));
+                % % % correct should be labels and not label, this field name was incorrect in the previous preprocessing stage (important
+                % for epoching data later)
+                if isfield(EEG.chanlocs, 'label')
+                    chanEEG = {EEG.chanlocs.label}'; 
+                    [EEG.chanlocs.labels] = EEG.chanlocs.label;
+                    EEG.chanlocs = rmfield(EEG.chanlocs,'label');
+                else 
+                    chanEEG = {EEG.chanlocs.labels}';
+                end
+        
+                chanMatch = strmatch(chanLabel, chanEEG, 'exact'); 
+                if ~isempty(chanMatch)
+                    EEG.chanlocs(chanMatch).fsLabel = elec_info1{chani,36};
+                    EEG.chanlocs(chanMatch).mniCoord = double(elec_info{chani,4:6});
+                end
+            end
+        end
+    end
+
+    % % % % re-reference 
+    EEG = re_reference_EXT(EEG, 'bipo', sub);
+
+    EEG = manual_channel_removal(EEG, sub);
+    
+   
+   
+    EEG = rem_EEGLAB_fields(EEG);
+
+    ALLEEG{subji, :} = EEG; 
+
+
+end
+
+
+
+
+
 
 
 
@@ -720,21 +812,6 @@ eventChannel = 'POL DC12';TTL = strmatch(eventChannel, {EEG.chanlocs.labels}, 'e
 
 eegplot(EEG.data(chanids,:), 'srate', EEG.srate, 'eloc_file',EEG.chanlocs(chanids), ...
     'winlength', 50, 'spacing', 10000000, 'events', EEG.event);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
