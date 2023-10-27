@@ -271,8 +271,8 @@ cd (paths.github)
 clear, clc
 
 paths = load_paths_EXT; 
-file2load = ['TR_' 'FRO' '_C']; 
-%file2load = ['TR_' 'HPC' '_C']; 
+%file2load = ['TR_' 'FRO' '_C']; 
+file2load = ['TR_' 'HPC' '_C']; 
 %file2load = ['TR_' 'OFC' '_C']; 
 %file2load = ['TR_' 'OCC' '_C']; 
 load ([paths.results.traces file2load]); 

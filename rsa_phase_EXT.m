@@ -4,20 +4,339 @@
 clear , clc
 
 listF2sav = {
+'POW_OFC_C_39-54_1_0_20-1_1_SISV-DISVSPHA';
+'POW_AMY_C_39-54_1_0_20-1_1_SISV-DISVSPHA';
+'POW_HPC_C_39-54_1_0_20-1_1_SISV-DISVSPHA';
+'POW_TMP_C_39-54_1_0_20-1_1_SISV-DISVSPHA';
+'POW_OCC_C_39-54_1_0_20-1_1_SISV-DISVSPHA';
+'POW_FRO_C_39-54_1_0_20-1_1_SISV-DISVSPHA';
 
-'POW_OFC_V_39-54_1_0_20-1_1_SICSPPT-SICSPMT';
-'POW_AMY_V_39-54_1_0_20-1_1_SICSPPT-SICSPMT';
-'POW_HPC_V_39-54_1_0_20-1_1_SICSPPT-SICSPMT';
-'POW_TMP_V_39-54_1_0_20-1_1_SICSPPT-SICSPMT';
-'POW_OCC_V_39-54_1_0_20-1_1_SICSPPT-SICSPMT';
-'POW_FRO_V_39-54_1_0_20-1_1_SICSPPT-SICSPMT';
+'POW_OFC_C_39-54_1_0_20-1_1_SISVA-DISVA';
+'POW_AMY_C_39-54_1_0_20-1_1_SISVA-DISVA';
+'POW_HPC_C_39-54_1_0_20-1_1_SISVA-DISVA';
+'POW_TMP_C_39-54_1_0_20-1_1_SISVA-DISVA';
+'POW_OCC_C_39-54_1_0_20-1_1_SISVA-DISVA';
+'POW_FRO_C_39-54_1_0_20-1_1_SISVA-DISVA';
 
-'POW_OFC_V_39-54_1_0_20-1_1_SICSPPT-SICSMMT';
-'POW_AMY_V_39-54_1_0_20-1_1_SICSPPT-SICSMMT';
-'POW_HPC_V_39-54_1_0_20-1_1_SICSPPT-SICSMMT';
-'POW_TMP_V_39-54_1_0_20-1_1_SICSPPT-SICSMMT';
-'POW_OCC_V_39-54_1_0_20-1_1_SICSPPT-SICSMMT';
-'POW_FRO_V_39-54_1_0_20-1_1_SICSPPT-SICSMMT';
+'POW_OFC_C_39-54_1_0_20-1_1_SISVE-DISVE';
+'POW_AMY_C_39-54_1_0_20-1_1_SISVE-DISVE';
+'POW_HPC_C_39-54_1_0_20-1_1_SISVE-DISVE';
+'POW_TMP_C_39-54_1_0_20-1_1_SISVE-DISVE';
+'POW_OCC_C_39-54_1_0_20-1_1_SISVE-DISVE';
+'POW_FRO_C_39-54_1_0_20-1_1_SISVE-DISVE';
+
+'POW_OFC_V_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_AMY_V_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_HPC_V_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_TMP_V_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_OCC_V_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_FRO_V_39-54_1_0_20-1_1_SC-DCSPHA';
+
+'POW_OFC_V_39-54_1_0_20-1_1_SCA-DCA';
+'POW_AMY_V_39-54_1_0_20-1_1_SCA-DCA';
+'POW_HPC_V_39-54_1_0_20-1_1_SCA-DCA';
+'POW_TMP_V_39-54_1_0_20-1_1_SCA-DCA';
+'POW_OCC_V_39-54_1_0_20-1_1_SCA-DCA';
+'POW_FRO_V_39-54_1_0_20-1_1_SCA-DCA';
+
+'POW_OFC_V_39-54_1_0_20-1_1_SCE-DCE';
+'POW_AMY_V_39-54_1_0_20-1_1_SCE-DCE';
+'POW_HPC_V_39-54_1_0_20-1_1_SCE-DCE';
+'POW_TMP_V_39-54_1_0_20-1_1_SCE-DCE';
+'POW_OCC_V_39-54_1_0_20-1_1_SCE-DCE';
+'POW_FRO_V_39-54_1_0_20-1_1_SCE-DCE';
+
+'POW_OFC_V_39-54_1_0_20-1_1_SCT-DCT';
+'POW_AMY_V_39-54_1_0_20-1_1_SCT-DCT';
+'POW_HPC_V_39-54_1_0_20-1_1_SCT-DCT';
+'POW_TMP_V_39-54_1_0_20-1_1_SCT-DCT';
+'POW_OCC_V_39-54_1_0_20-1_1_SCT-DCT';
+'POW_FRO_V_39-54_1_0_20-1_1_SCT-DCT';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_AMY_C_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_HPC_C_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_TMP_C_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_OCC_C_39-54_1_0_20-1_1_SC-DCSPHA';
+'POW_FRO_C_39-54_1_0_20-1_1_SC-DCSPHA';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCA-DCA';
+'POW_AMY_C_39-54_1_0_20-1_1_SCA-DCA';
+'POW_HPC_C_39-54_1_0_20-1_1_SCA-DCA';
+'POW_TMP_C_39-54_1_0_20-1_1_SCA-DCA';
+'POW_OCC_C_39-54_1_0_20-1_1_SCA-DCA';
+'POW_FRO_C_39-54_1_0_20-1_1_SCA-DCA';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCE-DCE';
+'POW_AMY_C_39-54_1_0_20-1_1_SCE-DCE';
+'POW_HPC_C_39-54_1_0_20-1_1_SCE-DCE';
+'POW_TMP_C_39-54_1_0_20-1_1_SCE-DCE';
+'POW_OCC_C_39-54_1_0_20-1_1_SCE-DCE';
+'POW_FRO_C_39-54_1_0_20-1_1_SCE-DCE';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCT-DCT';
+'POW_AMY_C_39-54_1_0_20-1_1_SCT-DCT';
+'POW_HPC_C_39-54_1_0_20-1_1_SCT-DCT';
+'POW_TMP_C_39-54_1_0_20-1_1_SCT-DCT';
+'POW_OCC_C_39-54_1_0_20-1_1_SCT-DCT';
+'POW_FRO_C_39-54_1_0_20-1_1_SCT-DCT';
+
+'POW_OFC_C_39-54_1_0_20-1_1_DISV-DIDV';
+'POW_AMY_C_39-54_1_0_20-1_1_DISV-DIDV';
+'POW_HPC_C_39-54_1_0_20-1_1_DISV-DIDV';
+'POW_TMP_C_39-54_1_0_20-1_1_DISV-DIDV';
+'POW_OCC_C_39-54_1_0_20-1_1_DISV-DIDV';
+'POW_FRO_C_39-54_1_0_20-1_1_DISV-DIDV';
+
+'POW_OFC_C_39-54_1_0_20-1_1_DISVA-DIDVA';
+'POW_AMY_C_39-54_1_0_20-1_1_DISVA-DIDVA';
+'POW_HPC_C_39-54_1_0_20-1_1_DISVA-DIDVA';
+'POW_TMP_C_39-54_1_0_20-1_1_DISVA-DIDVA';
+'POW_OCC_C_39-54_1_0_20-1_1_DISVA-DIDVA';
+'POW_FRO_C_39-54_1_0_20-1_1_DISVA-DIDVA';
+
+'POW_OFC_C_39-54_1_0_20-1_1_DISVE-DIDVE';
+'POW_AMY_C_39-54_1_0_20-1_1_DISVE-DIDVE';
+'POW_HPC_C_39-54_1_0_20-1_1_DISVE-DIDVE';
+'POW_TMP_C_39-54_1_0_20-1_1_DISVE-DIDVE';
+'POW_OCC_C_39-54_1_0_20-1_1_DISVE-DIDVE';
+'POW_FRO_C_39-54_1_0_20-1_1_DISVE-DIDVE';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SICSPAE-SICSMAE';
+'POW_AMY_C_39-54_1_0_20-1_1_SICSPAE-SICSMAE';
+'POW_HPC_C_39-54_1_0_20-1_1_SICSPAE-SICSMAE';
+'POW_TMP_C_39-54_1_0_20-1_1_SICSPAE-SICSMAE';
+'POW_OCC_C_39-54_1_0_20-1_1_SICSPAE-SICSMAE';
+'POW_FRO_C_39-54_1_0_20-1_1_SICSPAE-SICSMAE';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SICSPA-SICSMA';
+'POW_AMY_C_39-54_1_0_20-1_1_SICSPA-SICSMA';
+'POW_HPC_C_39-54_1_0_20-1_1_SICSPA-SICSMA';
+'POW_TMP_C_39-54_1_0_20-1_1_SICSPA-SICSMA';
+'POW_OCC_C_39-54_1_0_20-1_1_SICSPA-SICSMA';
+'POW_FRO_C_39-54_1_0_20-1_1_SICSPA-SICSMA';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SICSPE-SICSME';
+'POW_AMY_C_39-54_1_0_20-1_1_SICSPE-SICSME';
+'POW_HPC_C_39-54_1_0_20-1_1_SICSPE-SICSME';
+'POW_TMP_C_39-54_1_0_20-1_1_SICSPE-SICSME';
+'POW_OCC_C_39-54_1_0_20-1_1_SICSPE-SICSME';
+'POW_FRO_C_39-54_1_0_20-1_1_SICSPE-SICSME';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SICSPE-SICSMPP';
+'POW_AMY_C_39-54_1_0_20-1_1_SICSPE-SICSMPP';
+'POW_HPC_C_39-54_1_0_20-1_1_SICSPE-SICSMPP';
+'POW_TMP_C_39-54_1_0_20-1_1_SICSPE-SICSMPP';
+'POW_OCC_C_39-54_1_0_20-1_1_SICSPE-SICSMPP';
+'POW_FRO_C_39-54_1_0_20-1_1_SICSPE-SICSMPP';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SICSPE-SICSMPM';
+'POW_AMY_C_39-54_1_0_20-1_1_SICSPE-SICSMPM';
+'POW_HPC_C_39-54_1_0_20-1_1_SICSPE-SICSMPM';
+'POW_TMP_C_39-54_1_0_20-1_1_SICSPE-SICSMPM';
+'POW_OCC_C_39-54_1_0_20-1_1_SICSPE-SICSMPM';
+'POW_FRO_C_39-54_1_0_20-1_1_SICSPE-SICSMPM';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCCSP-DCCSP';
+'POW_AMY_C_39-54_1_0_20-1_1_SCCSP-DCCSP';
+'POW_HPC_C_39-54_1_0_20-1_1_SCCSP-DCCSP';
+'POW_TMP_C_39-54_1_0_20-1_1_SCCSP-DCCSP';
+'POW_OCC_C_39-54_1_0_20-1_1_SCCSP-DCCSP';
+'POW_FRO_C_39-54_1_0_20-1_1_SCCSP-DCCSP';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCCSPA-DCCSPA';
+'POW_AMY_C_39-54_1_0_20-1_1_SCCSPA-DCCSPA';
+'POW_HPC_C_39-54_1_0_20-1_1_SCCSPA-DCCSPA';
+'POW_TMP_C_39-54_1_0_20-1_1_SCCSPA-DCCSPA';
+'POW_OCC_C_39-54_1_0_20-1_1_SCCSPA-DCCSPA';
+'POW_FRO_C_39-54_1_0_20-1_1_SCCSPA-DCCSPA';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCCSPE-DCCSPE';
+'POW_AMY_C_39-54_1_0_20-1_1_SCCSPE-DCCSPE';
+'POW_HPC_C_39-54_1_0_20-1_1_SCCSPE-DCCSPE';
+'POW_TMP_C_39-54_1_0_20-1_1_SCCSPE-DCCSPE';
+'POW_OCC_C_39-54_1_0_20-1_1_SCCSPE-DCCSPE';
+'POW_FRO_C_39-54_1_0_20-1_1_SCCSPE-DCCSPE';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCCSPAE-SCCSMAE';
+'POW_AMY_C_39-54_1_0_20-1_1_SCCSPAE-SCCSMAE';
+'POW_HPC_C_39-54_1_0_20-1_1_SCCSPAE-SCCSMAE';
+'POW_TMP_C_39-54_1_0_20-1_1_SCCSPAE-SCCSMAE';
+'POW_OCC_C_39-54_1_0_20-1_1_SCCSPAE-SCCSMAE';
+'POW_FRO_C_39-54_1_0_20-1_1_SCCSPAE-SCCSMAE';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCCSPA-SCCSMA';
+'POW_AMY_C_39-54_1_0_20-1_1_SCCSPA-SCCSMA';
+'POW_HPC_C_39-54_1_0_20-1_1_SCCSPA-SCCSMA';
+'POW_TMP_C_39-54_1_0_20-1_1_SCCSPA-SCCSMA';
+'POW_OCC_C_39-54_1_0_20-1_1_SCCSPA-SCCSMA';
+'POW_FRO_C_39-54_1_0_20-1_1_SCCSPA-SCCSMA';
+
+'POW_OFC_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
+'POW_AMY_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
+'POW_HPC_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
+'POW_TMP_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
+'POW_OCC_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
+'POW_FRO_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
+
+'POW_OFC_V_39-54_1_0_50-1_1_SICSPPT-SICSPMT';
+'POW_AMY_V_39-54_1_0_50-1_1_SICSPPT-SICSPMT';
+'POW_HPC_V_39-54_1_0_50-1_1_SICSPPT-SICSPMT';
+'POW_TMP_V_39-54_1_0_50-1_1_SICSPPT-SICSPMT';
+'POW_OCC_V_39-54_1_0_50-1_1_SICSPPT-SICSPMT';
+'POW_FRO_V_39-54_1_0_50-1_1_SICSPPT-SICSPMT';
+
+'POW_OFC_V_39-54_1_0_50-1_1_SICSPPT-SICSMMT';
+'POW_AMY_V_39-54_1_0_50-1_1_SICSPPT-SICSMMT';
+'POW_HPC_V_39-54_1_0_50-1_1_SICSPPT-SICSMMT';
+'POW_TMP_V_39-54_1_0_50-1_1_SICSPPT-SICSMMT';
+'POW_OCC_V_39-54_1_0_50-1_1_SICSPPT-SICSMMT';
+'POW_FRO_V_39-54_1_0_50-1_1_SICSPPT-SICSMMT';
+
+};   
+
+
+t1 = datetime; 
+for listi = 1:length(listF2sav)
+    clearvars -except listF2sav listi t1
+        
+    f2sav       = listF2sav{listi}; 
+    cfg = getParams_EXT(f2sav);
+
+
+    paths = load_paths_EXT; 
+    
+    ALLEEG = loadTracesEXT(cfg.roi, cfg.LT, paths); %LT = locked to
+    
+    
+    for subji = 1:length(ALLEEG)
+        disp(['File > ' num2str(listi) '      ' listF2sav{listi} '    Subject > ' num2str(subji)]);
+        
+        EEG = ALLEEG{subji};
+        
+        
+        if ~isempty(EEG)
+
+            
+            EEG = add_EEGLAB_fields(EEG); 
+            EEG = rem_nan_trials_EXT(EEG); 
+
+            Ev = [{EEG.event.type}]';Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+            Ev2 = cat(1, Ev1{:});
+            cfg.oneListIds = Ev2; 
+
+            if strcmp(cfg.tyRSA, 'TR')
+                EEG = normalize_baseline_EXT(EEG, [2501:3000]); 
+                %EEG = normalize_EXT(EEG);  %across trials
+                EEG = downsample_EEG_EXT(EEG); 
+                cfg.oneListTraces = permute(EEG.data(:, 251:550,:), [3 1 2]); 
+                out_contrasts = create_contrasts_EXT(cfg);
+                tic
+                out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
+                toc
+            elseif strcmp(cfg.tyRSA, 'POW')
+                EEG = extract_power_EXT(EEG, 0.01); 
+                %EEG = normalize_baseline_EXT(EEG, [251:300]); 
+                EEG = normalize_EXT(EEG);  %across trials
+                cfg.oneListPow = EEG.power(:, :, : ,251:550); 
+                out_contrasts = create_contrasts_EXT(cfg);
+                tic
+                out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
+                toc
+            elseif strcmp(cfg.tyRSA, 'PHA')
+                EEG = normalize_EXT(EEG);  %across trials
+                phaTS = extract_pha_EXT(EEG, cfg);
+                cfg.oneListTraces = phaTS(:, :, 251:550); 
+                out_contrasts = create_contrasts_EXT(cfg);
+                tic
+                out_rsa(subji, :, :, :) = rsa_EXT3(out_contrasts, cfg);
+                toc
+            elseif strcmp(cfg.tyRSA, 'PLV')
+                EEG = normalize_EXT(EEG);  %across trials
+                phaTS = extract_pha_EXT(EEG, cfg);
+                cfg.oneListTraces = phaTS(:, :, 251:550); 
+                out_contrasts = create_contrasts_EXT(cfg);
+                tic
+                out_rsa(subji, :, :, :) = rsa_EXT5(out_contrasts, cfg);
+                toc
+            end
+        
+            ids{subji} = out_contrasts.allIDs; nnans{subji} = EEG.nan; 
+        end
+        
+    end
+
+    mkdir ([paths.results.rsa]);
+    save([ paths.results.rsa f2sav '.mat'], 'out_rsa', 'ids', 'nnans');
+    
+    
+    t2 = datetime; 
+    etime(datevec(t2), datevec(t1))
+
+end
+
+
+
+
+
+%% plot TG
+clear, clc
+paths = load_paths_EXT; 
+
+f2sav = 'POW_FRO_V_39-54_1_0_50-1_1_SCA-DCA';
+
+                    
+
+load ([ paths.results.rsa f2sav '.mat']);
+
+ids = rem_nan_subj_EXT(out_rsa); 
+cond1 = squeeze(out_rsa(:, 1, 1:250, 1:250)); 
+cond2 = squeeze(out_rsa(:, 2, 1:250, 1:250)); 
+%cond1 = squeeze(out_rsa(:, 1, 1:125, 1:125)); 
+%cond2 = squeeze(out_rsa(:, 2, 1:125, 1:125)); 
+cond1(ids, :, :) = []; 
+cond2(ids, :, :) = []; 
+diff = cond1-cond2; 
+
+[cond1 cond2] = rem_half_matrix(cond1, cond2);
+
+m1 = squeeze(mean(cond1, 'omitnan')); 
+m2 = squeeze(mean(cond2, 'omitnan')); 
+
+[h p ci ts] = ttest(cond1, cond2); 
+h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
+%h(1:26,1:2) = 0;  % % % no clusters before baseline
+%h(1:251,1:26) = 0;  % % % no clusters before baseline
+
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    %[max2u id] = max((allSTs));
+    tObs = allSTs(id); 
+end
+
+
+%h = zeros(size(cond1, 2),size(cond1, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
+
+
+
+clim = [-.03 .03];
+plot_TG_map(m1, m2, h, t, f2sav, clim)
+exportgraphics(gcf, [paths.results.rsa  '_myP.png'], 'Resolution',150)
+
+
+%% plot TG in LOOP
+clear , clc
+
+
+listF2sav = {
+
+
 
 'POW_OFC_V_39-54_1_0_20-1_1_SC-DCSPHA';
 'POW_AMY_V_39-54_1_0_20-1_1_SC-DCSPHA';
@@ -74,13 +393,6 @@ listF2sav = {
 'POW_TMP_C_39-54_1_0_20-1_1_SCR-DCR';
 'POW_OCC_C_39-54_1_0_20-1_1_SCR-DCR';
 'POW_FRO_C_39-54_1_0_20-1_1_SCR-DCR';
-
-'POW_OFC_C_39-54_1_0_20-1_1_DISV-DIDV';
-'POW_AMY_C_39-54_1_0_20-1_1_DISV-DIDV';
-'POW_HPC_C_39-54_1_0_20-1_1_DISV-DIDV';
-'POW_TMP_C_39-54_1_0_20-1_1_DISV-DIDV';
-'POW_OCC_C_39-54_1_0_20-1_1_DISV-DIDV';
-'POW_FRO_C_39-54_1_0_20-1_1_DISV-DIDV';
 
 'POW_OFC_C_39-54_1_0_20-1_1_DISVA-DIDVA';
 'POW_AMY_C_39-54_1_0_20-1_1_DISVA-DIDVA';
@@ -194,147 +506,81 @@ listF2sav = {
 'POW_OCC_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
 'POW_FRO_C_39-54_1_0_20-1_1_SCCSPE-SCCSME';
 
+'POW_OFC_V_39-54_1_0_50-1_1_SICSPPT-SICSPMT';
+'POW_AMY_V_39-54_1_0_50-1_1_SICSPPT-SICSPMT';
+'POW_HPC_V_39-54_1_0_50-1_1_SICSPPT-SICSPMT';
+'POW_TMP_V_39-54_1_0_50-1_1_SICSPPT-SICSPMT';
+'POW_OCC_V_39-54_1_0_50-1_1_SICSPPT-SICSPMT';
+'POW_FRO_V_39-54_1_0_50-1_1_SICSPPT-SICSPMT';
+
+'POW_OFC_V_39-54_1_0_50-1_1_SICSPPT-SICSMMT';
+'POW_AMY_V_39-54_1_0_50-1_1_SICSPPT-SICSMMT';
+'POW_HPC_V_39-54_1_0_50-1_1_SICSPPT-SICSMMT';
+'POW_TMP_V_39-54_1_0_50-1_1_SICSPPT-SICSMMT';
+'POW_OCC_V_39-54_1_0_50-1_1_SICSPPT-SICSMMT';
+'POW_FRO_V_39-54_1_0_50-1_1_SICSPPT-SICSMMT';
 
 };   
 
-
+paths = load_paths_EXT; 
 t1 = datetime; 
 for listi = 1:length(listF2sav)
-    clearvars -except listF2sav listi t1
+    clearvars -except listF2sav listi t1 paths
         
     f2sav       = listF2sav{listi}; 
     cfg = getParams_EXT(f2sav);
-
-
-    paths = load_paths_EXT; 
-    
-    ALLEEG = loadTracesEXT(cfg.roi, cfg.LT, paths); %LT = locked to
-    
-    
-    for subji = 1:length(ALLEEG)
-        disp(['File > ' num2str(listi) '      ' listF2sav{listi} '    Subject > ' num2str(subji)]);
-        
-        EEG = ALLEEG{subji};
-        
-        
-        if ~isempty(EEG)
-
-            
-            EEG = add_EEGLAB_fields(EEG); 
-            EEG = rem_nan_trials_EXT(EEG); 
-
-            Ev = [{EEG.event.type}]';Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
-            Ev2 = cat(1, Ev1{:});
-            cfg.oneListIds = Ev2; 
-
-            if strcmp(cfg.tyRSA, 'TR')
-                EEG = normalize_baseline_EXT(EEG, [2501:3000]); 
-                %EEG = normalize_EXT(EEG);  %across trials
-                EEG = downsample_EEG_EXT(EEG); 
-                cfg.oneListTraces = permute(EEG.data(:, 251:550,:), [3 1 2]); 
-                out_contrasts = create_contrasts_EXT(cfg);
-                tic
-                out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
-                toc
-            elseif strcmp(cfg.tyRSA, 'POW')
-                EEG = extract_power_EXT(EEG, 0.01); 
-                %EEG = normalize_baseline_EXT(EEG, [251:300]); 
-                EEG = normalize_EXT(EEG);  %across trials
-                cfg.oneListPow = EEG.power(:, :, : ,251:550); 
-                out_contrasts = create_contrasts_EXT(cfg);
-                tic
-                out_rsa(subji, :, :, :) = rsa_EXT(out_contrasts, cfg);
-                toc
-            elseif strcmp(cfg.tyRSA, 'PHA')
-                EEG = normalize_EXT(EEG);  %across trials
-                phaTS = extract_pha_EXT(EEG, cfg);
-                cfg.oneListTraces = phaTS(:, :, 251:550); 
-                out_contrasts = create_contrasts_EXT(cfg);
-                tic
-                out_rsa(subji, :, :, :) = rsa_EXT3(out_contrasts, cfg);
-                toc
-            elseif strcmp(cfg.tyRSA, 'PLV')
-                EEG = normalize_EXT(EEG);  %across trials
-                phaTS = extract_pha_EXT(EEG, cfg);
-                cfg.oneListTraces = phaTS(:, :, 251:550); 
-                out_contrasts = create_contrasts_EXT(cfg);
-                tic
-                out_rsa(subji, :, :, :) = rsa_EXT5(out_contrasts, cfg);
-                toc
-            end
-        
-            ids{subji} = out_contrasts.allIDs; nnans{subji} = EEG.nan; 
-        end
-        
-    end
-
-    mkdir ([paths.results.rsa]);
-    save([ paths.results.rsa f2sav '.mat'], 'out_rsa', 'ids', 'nnans');
-    
-    
-    t2 = datetime; 
-    etime(datevec(t2), datevec(t1))
-
-end
-
-
-
-
-
-%% plot TG
-clear, clc
-paths = load_paths_EXT; 
-
-f2sav = 'POW_AMY_C_39-54_1_0_50-1_1_SICSPE-SICSME';
-
                     
 
-load ([ paths.results.rsa f2sav '.mat']);
+    load ([ paths.results.rsa f2sav '.mat']);
+    
+    ids = rem_nan_subj_EXT(out_rsa); 
+    cond1 = squeeze(out_rsa(:, 1, 1:250, 1:250)); 
+    cond2 = squeeze(out_rsa(:, 2, 1:250, 1:250)); 
+    %cond1 = squeeze(out_rsa(:, 1, 1:125, 1:125)); 
+    %cond2 = squeeze(out_rsa(:, 2, 1:125, 1:125)); 
+    cond1(ids, :, :) = []; 
+    cond2(ids, :, :) = []; 
+    diff = cond1-cond2; 
+    
+    [cond1 cond2] = rem_half_matrix(cond1, cond2);
+    
+    m1 = squeeze(mean(cond1, 'omitnan')); 
+    m2 = squeeze(mean(cond2, 'omitnan')); 
+    
+    [h p ci ts] = ttest(cond1, cond2); 
+    h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
+    %h(1:26,1:2) = 0;  % % % no clusters before baseline
+    %h(1:251,1:26) = 0;  % % % no clusters before baseline
+    
+    clustinfo = bwconncomp(h);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+    end
+    
+    if exist('allSTs')
+        [max2u id] = max(abs(allSTs));
+        %[max2u id] = max((allSTs));
+        tObs = allSTs(id); 
+    end
+    
+    
+    %h = zeros(size(cond1, 2),size(cond1, 2)); 
+    %h(clustinfo.PixelIdxList{id}) = 1;
+    
+    
+    
+    clim = [-.03 .03];
+    plot_TG_map(m1, m2, h, t, f2sav, clim)
+    exportgraphics(gcf, [paths.results.rsaPlots f2sav '.png'], 'Resolution',150)
+    close all 
 
-ids = rem_nan_subj_EXT(out_rsa); 
-cond1 = squeeze(out_rsa(:, 1, 1:250, 1:250)); 
-cond2 = squeeze(out_rsa(:, 2, 1:250, 1:250)); 
-cond1(ids, :, :) = []; 
-cond2(ids, :, :) = []; 
-diff = cond1-cond2; 
-
-[cond1 cond2] = rem_half_matrix(cond1, cond2);
-
-m1 = squeeze(mean(cond1, 'omitnan')); 
-m2 = squeeze(mean(cond2, 'omitnan')); 
-
-[h p ci ts] = ttest(cond1, cond2); 
-h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
-%h(1:26,1:2) = 0;  % % % no clusters before baseline
-%h(1:251,1:26) = 0;  % % % no clusters before baseline
-
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
 end
-
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    %[max2u id] = max((allSTs));
-    tObs = allSTs(id); 
-end
-
-
-%h = zeros(size(cond1, 2),size(cond1, 2)); 
-%h(clustinfo.PixelIdxList{id}) = 1;
-
-
-
-clim = [-.03 .03];
-plot_TG_map(m1, m2, h, t, f2sav, clim)
-exportgraphics(gcf, [paths.results.rsa  '_myP.png'], 'Resolution',150)
-
 
 
 
 
 %% PERMUTATIONS
-nPerm = 1000; 
+nPerm = 1000;
 
 nSubj =  size(cond1, 1);
 realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
@@ -367,6 +613,7 @@ for permi = 1:nPerm
     
     if exist('allSTs')
         [max2u id] = max(abs(allSTs));
+        %[max2u id] = max(allSTs);
         max_clust_sum_perm(permi,:) = allSTs(id); 
     else
         max_clust_sum_perm(permi,:) = 0; 
@@ -591,10 +838,10 @@ disp (['t: ' num2str(t) ' //  p = ' num2str(p)])
 %% CHECK CONTEXT DURING ACQ AND EXT > GENERALIZATION
 clear, clc
 paths = load_paths_EXT; 
-f2sav =   'POW_OCC_V_39-54_1_0_50-1_1_SCA-DCA';
+f2sav =   'POW_HPC_V_39-54_1_0_50-1_1_SCA-DCA';
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_ACQ = out_rsa; 
-f2sav =   'POW_OCC_V_39-54_1_0_50-1_1_SCE-DCE';
+f2sav =   'POW_HPC_V_39-54_1_0_50-1_1_SCE-DCE';
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_EXT = out_rsa; 
 
@@ -635,11 +882,10 @@ if exist('allSTs')
 end
 
 
-h = zeros(size(cond1, 2),size(cond1, 2)); 
+%h = zeros(size(cond1, 2),size(cond1, 2)); 
 %h(clustinfo.PixelIdxList{id}) = 1;
 
-tRes = strsplit(f2sav, '_'); tRes = strsplit(tRes{7}, '-'); tRes = double(string(tRes{2}));
-plot_TG_map(m1, m2, h, t, tRes, f2sav, [-.02 .02]); 
+plot_TG_map(m1, m2, h, t, f2sav, [-.02 .02]); 
 exportgraphics(gcf, [paths.results.rsa  '_myP.png'], 'Resolution',150)
 
 
