@@ -145,10 +145,14 @@ paths = load_paths_EXT;
 cd (paths.github)
 
 allsubs = {'p_sub01','p_sub02','p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}'; %subject 8 has differnet format (see below)
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ... 
+            'p_sub19', 'p_sub20', 'p_sub21'}'; %subject 8 has differnet format (see below)
 
+% allsubs = {'p_sub01','p_sub02','p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ... 
+%             'p_sub19', 'p_sub20', 'p_sub21'}'; %subject 8 has differnet format (see below)
 
-for subji = 1 %1:length(allsubs)
+for subji = 18:20 %1:length(allsubs)
 
     clearvars -except allsubs subji paths
     sub = allsubs{subji}; 
@@ -183,10 +187,13 @@ for subji = 1 %1:length(allsubs)
     if strcmp(sub, 'p_sub04') | strcmp(sub, 'p_sub15') | strcmp(sub, 'p_sub18') dataF = zeros(1, (hdr.nSamples * (P/Q)) *2) ; end 
     eCom = []; 
     for chani = 1:hdr.nChans
+        chani
         if ~(strcmp(sub, 'p_sub04') | strcmp(sub, 'p_sub15')| strcmp(sub, 'p_sub18'))
             data_raw_double=ft_read_data(dataset, 'chanindx', chani);
-            data_raw = single(data_raw_double); 
-            clear data_raw_double %save memory
+            %data_raw = single(data_raw_double); 
+            %clear data_raw_double %save memory
+            data_raw = data_raw_double; 
+            
         else
             data_raw_double1=ft_read_data(dataset1, 'chanindx', chani);
             data_raw_double2=ft_read_data(dataset2, 'chanindx', chani);
@@ -197,7 +204,7 @@ for subji = 1 %1:length(allsubs)
         hd = length(data_raw) / nBatch; 
         for batchi = 1:nBatch
             if batchi ==1
-                data(batchi, :) = resample(data_raw(:,1:hd), P, Q); 
+                data(batchi, :) = resample(data_raw(:,1:hd), P, Q); %use the function in fieldtrip, matlab signal processing rescales the data
             else
                 data(batchi, :) = resample(data_raw(:,hd*(batchi-1)+1:hd*batchi), P, Q);
             end
@@ -303,7 +310,7 @@ for subji = 1 %1:length(allsubs)
     cd(foldN2)
  
      filename = [sub '_' num2str(chani, '%03.f'), '_diEEG.mat'];
-     %save(filename, 'EEG', '-v7.3');
+     save(filename, 'EEG', '-v7.3');
      cd (paths.github);
 
     end

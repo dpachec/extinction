@@ -1,5 +1,5 @@
 %% This scripts reads the raw log files and creates trialinfo files 
-
+%%
 % 1. what trial number (position in presentation)?
 % 2. which Phase?
 % 3. which context was used?
@@ -21,14 +21,14 @@
 %16 number of us in total
 
 clear
-paths = load_paths; 
+paths = load_paths_EXT; 
 
 % allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
 %            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
 %            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
 %             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' }';
 
-allsubs = {'p_sub18'}
+allsubs = {'p_sub22'}
 
 
 for sub=1:length(allsubs)
