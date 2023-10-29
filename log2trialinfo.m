@@ -28,7 +28,7 @@ paths = load_paths_EXT;
 %            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
 %             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' }';
 
-allsubs = {'p_sub22'}
+allsubs = {'p_sub21'}
 
 
 for sub=1:length(allsubs)

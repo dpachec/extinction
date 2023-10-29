@@ -18,7 +18,7 @@ if winSize == 50
     end
 elseif winSize == 20
     if slidTW  == 1
-        plot(get(gca,'xlim'), [10 10],'k', 'linewidth', 1); plot([10 10], get(gca,'ylim'),'k', 'linewidth', 1); 
+        plot(get(gca,'xlim'), [40 40],'k', 'linewidth', 1); plot([40 40], get(gca,'ylim'),'k', 'linewidth', 1); 
     end
 end
 set(gca, 'clim', clim)
@@ -33,7 +33,7 @@ if winSize == 50
     end
 elseif winSize == 20
     if slidTW  == 1
-        plot(get(gca,'xlim'), [10 10],'k', 'linewidth', 1); plot([10 10], get(gca,'ylim'),'k', 'linewidth', 1); 
+        plot(get(gca,'xlim'), [40 40],'k', 'linewidth', 1); plot([40 40], get(gca,'ylim'),'k', 'linewidth', 1); 
     end
 end
 set(gca, 'clim', clim)
@@ -49,7 +49,7 @@ if winSize == 50
     end
 elseif winSize == 20
     if slidTW  == 1
-        plot(get(gca,'xlim'), [10 10],'k', 'linewidth', 1); plot([10 10], get(gca,'ylim'),'k', 'linewidth', 1); 
+        plot(get(gca,'xlim'), [40 40],'k', 'linewidth', 1); plot([40 40], get(gca,'ylim'),'k', 'linewidth', 1); 
     end
 end
 set(gca, 'clim', [-4 4])
@@ -76,8 +76,8 @@ if winSize == 50
 elseif winSize == 20
     if slidTW  == 1
         if strcmp(f2t{3}, 'C')
-            %set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 125], 'ylim', [1 125]); 
-            set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 185], 'ylim', [1 185]); 
+            set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [15 140], 'ylim', [15 140]); 
+            %set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 185], 'ylim', [1 185]); 
         elseif strcmp(f2t{3}, 'V')
             %set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 125], 'ylim', [1 125]); 
             set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 200], 'ylim', [1 200]); 

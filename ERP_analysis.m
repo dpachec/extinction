@@ -5,15 +5,15 @@ clear , clc
 
 c2u = 'C';
 
-listF2sav = {   %{'Amygdala'}; 
+listF2sav = {   {'Amygdala'}; 
                 {'Hippocampus'}; 
-                %{'orbitofrontal'}; 
-                %{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'parahippocampal' 'entorhinal' };
-                %{'occipital' 'cuneus' 'lingual' 'pericalcarine' 'bankssts'}; 
-                %{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+                {'orbitofrontal'}; 
+                {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'parahippocampal' 'entorhinal' };
+                {'occipital' 'cuneus' 'lingual' 'pericalcarine' 'bankssts'}; 
+                {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
             };   
-%n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'FRO'};
-n2SAV = {'HPC'};
+n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'FRO'};
+%n2SAV = {'HPC'};
 
 
 
@@ -91,21 +91,22 @@ disp('done all files');
 cd (paths.github)
 
 
-%%EXPORT TRACES IN LOOP
+%EXPORT TRACES IN LOOP
 
 clear , clc
 
 c2u = 'V';
 
-listF2sav = {   %{'Amygdala'}; 
+listF2sav = {   {'Amygdala'}; 
                 {'Hippocampus'}; 
-                %{'orbitofrontal'}; 
-                %{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'parahippocampal' 'entorhinal' };
-                %{'occipital' 'cuneus' 'lingual' 'pericalcarine' 'bankssts'}; 
-                %{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+                {'orbitofrontal'}; 
+                {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'parahippocampal' 'entorhinal' };
+                {'occipital' 'cuneus' 'lingual' 'pericalcarine' 'bankssts'}; 
+                {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
             };   
-%n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'FRO'};
-n2SAV = {'HPC'};
+n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'FRO'};
+%n2SAV = {'HPC'};
+
 
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
@@ -180,8 +181,6 @@ for listi = 1:length(listF2sav)
 end
 disp('done all files');
 cd (paths.github)
-
-
 
 
 

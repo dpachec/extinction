@@ -104,6 +104,10 @@ if exist('DISVA')
    idF = DT & DI2 & SV & ACQ; 
    new_disva = [allComb(idF, 1) allComb(idF, 11)];
 end
+if exist('DISVSPHA')
+   idF = DT & DC2 & SV & SPHA; 
+   new_disvspha = [allComb(idF, 1) allComb(idF, 11)];
+end
 if exist('DISVAE')
    idF = DT & DI2 & SV & (ACQ | EXT); 
    new_disvae = [allComb(idF, 1) allComb(idF, 11)];

@@ -15,9 +15,9 @@ function [EEG] = remove_elec_EXT_manually (EEG, subji)
         if subji == 9
             chans2exc = {'POL F''6'; 'POL F''7'};
         end
-%         if subji == 11
-%             chans2exc = {'POL A5'}; 
-%         end
+         if subji == 10
+             chans2exc = {'POL J''1'}; 
+         end
 %         if subji == 12
 %             chans2exc = {'POL A4'; 'POL A5'}; 
 %         end

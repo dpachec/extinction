@@ -146,13 +146,13 @@ cd (paths.github)
 
 allsubs = {'p_sub01','p_sub02','p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ... 
-            'p_sub19', 'p_sub20', 'p_sub21'}'; %subject 8 has differnet format (see below)
+            'p_sub19', 'p_sub20', 'p_sub21', 'p_sub22'}'; %subject 8 has differnet format (see below)
 
 % allsubs = {'p_sub01','p_sub02','p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
 %             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ... 
 %             'p_sub19', 'p_sub20', 'p_sub21'}'; %subject 8 has differnet format (see below)
 
-for subji = 18:20 %1:length(allsubs)
+for subji = 19:20 %1:length(allsubs)
 
     clearvars -except allsubs subji paths
     sub = allsubs{subji}; 
@@ -315,11 +315,11 @@ for subji = 18:20 %1:length(allsubs)
 
     end
 
-
-% % % % % % 
-chanids = [1];
-eegplot(EEG.data(chanids,:), 'srate', EEG.srate, 'eloc_file',chanids, ...
-    'winlength', 50, 'spacing', 10000, 'events', EEG.event);
+% % 
+% % % % % % % only makes sense for the first channel
+% % chanids = [1];
+% % eegplot(EEG.data(chanids,:), 'srate', EEG.srate, 'eloc_file',chanids, ...
+% %     'winlength', 50, 'spacing', 10000, 'events', EEG.event);
 
 
 
@@ -512,7 +512,7 @@ for subji = 1:length(allsubs)
     EEG = pop_eegfiltnew (EEG, 149, 150, [],  1); %notch filter
 
     % % % % remove artifacts
-    EEG = artifact_detection_EXT(EEG, 5, 3, 1000, 500);
+    EEG = artifact_detection_EXT(EEG, 6, 4, 1000, 500);
 
    
     % % % % save final versions
