@@ -14,6 +14,8 @@ function[EEG] = rem_nan_trials_EXT (EEG)
         EEG.data(:, :, id2rem) = []; 
         EEG.event(id2rem) = []; 
         EEG.nan = length(id2rem); 
+    else
+        EEG.nan = nan; 
     end
 
 end

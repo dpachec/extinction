@@ -80,10 +80,6 @@ if exist('DIE')
    idF = DT & DI2 & EXT; 
    new_die = [allComb(idF, 1) allComb(idF, 11)];
 end
-if exist('SISV')
-   idF = DT & SI2 & SV; 
-   new_sisv = [allComb(idF, 1) allComb(idF, 11)];
-end
 if exist('SISVAE')
    idF = DT & SI2 & SV & (ACQ | EXT); 
    new_sisvae = [allComb(idF, 1) allComb(idF, 11)];
@@ -104,9 +100,9 @@ if exist('DISVA')
    idF = DT & DI2 & SV & ACQ; 
    new_disva = [allComb(idF, 1) allComb(idF, 11)];
 end
-if exist('DISVSPHA')
-   idF = DT & DC2 & SV & SPHA; 
-   new_disvspha = [allComb(idF, 1) allComb(idF, 11)];
+if exist('DISVAESPHA')
+   idF = DT & DC2 & SV & SPHA & (ACQ | EXT); 
+   new_disvaespha = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('DISVAE')
    idF = DT & DI2 & SV & (ACQ | EXT); 
