@@ -30,13 +30,13 @@ function [EEG] = remove_elec_EXT_manually (EEG, subji)
              chans2exc = {'POL H1' ; 'POL H6'}; 
          end
          if subji == 12
-             chans2exc = {'POL H1'; 'POL H''1'; 'POL H''2'; 'POL A5'; 'POL A''1'; 'POL A''2'}; 
+             chans2exc = {'POL H1'; 'POL H''1'; 'POL H''2';  'POL H''3'; 'POL A5'; 'POL A''1'; 'POL A''2'}; 
          end
         if subji == 14
             chans2exc = {'POL H''6'; 'POL T''5'; 'POL V''5'; 'POL J''6'; 'POL F''4'}; 
         end
         if subji == 15
-            chans2exc = {'POL A9'; 'POL A3'; 'POL A4'}; 
+            chans2exc = {'POL A9'; 'POL A3'; 'POL A4'; 'POL H1'}; 
         end
         if subji == 16
             chans2exc = {'POL F''6'; 'POL F''3';'POL J''1'; 'POL J''2'; 'POL A''4'}; 
@@ -57,7 +57,7 @@ function [EEG] = remove_elec_EXT_manually (EEG, subji)
             chans2exc = {'POL H1'};
         end
         if subji == 23
-            chans2exc = {'POL A''1'}; 
+            chans2exc = {'POL A''1'; 'POL J''1'; 'POL J''2'; 'POL J''3'}; 
         end
         if subji == 24
             chans2exc = {'POL Z''1'; 'POL F''13'; 'POL T''11'; 'POL A''1'}; 
@@ -116,7 +116,7 @@ function [EEG] = remove_elec_EXT_manually (EEG, subji)
             chans2exc = {'TBm_5'; 'AmT2_3' };
         end    
         if subji == 46
-            chans2exc = {'TBad_2'; 'TBag_4'; 'TPog_4'; 'TBmg_2'; 'Ha2d_1'; 'Ha2d_2';'Am2g_2' };
+            chans2exc = {'TBad_2'; 'TBag_4'; 'TPog_4'; 'TBmg_2'; 'Ha2d_1'; 'Ha2d_2';'Ha2g_2';'Am2g_2' };
         end    
         if subji == 47
             chans2exc = {'AmT2_8'; 'HaT1_4'}; 
