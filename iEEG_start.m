@@ -413,10 +413,13 @@ d4ANOVA(:,3) = [1:32 1:32 1:32];
 x = RMAOV1(d4ANOVA);
 
 %% Correlate responses and power in cluster
-load clustinfoAB
-clearvars -except ALLEEG paths clustinfo nL pi2u
+
+clearvars -except ALLEEG paths clustinfo nL 
 close all
 sub2exc = []; %subj 23-35-38-39-44-45
+
+load clustinfo_AE
+pi2u = unique([clustinfo_A.PixelIdxList{3} ; clustinfo_E.PixelIdxList{3} ]);
 
 for subji = 1:size(ALLEEG, 1)
     EEG = ALLEEG{subji}; 
@@ -427,9 +430,9 @@ for subji = 1:size(ALLEEG, 1)
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
     
         % % %   % % Acquisition
-        %ids = strcmp(Ev2(:, 2), '1'); 
+        ids = strcmp(Ev2(:, 2), '1'); 
         %ids = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
-        %ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+        ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
     
         % % % % % % Extinction
         %ids = strcmp(Ev2(:, 2), '2'); 
@@ -449,8 +452,8 @@ for subji = 1:size(ALLEEG, 1)
         
         for triali = 1:size(powH, 1)
             cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
-            thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
-            %thPow(triali, :) = mean(cTR(pi2u), 'all');
+            %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{3}), 'all');
+            thPow(triali, :) = mean(cTR(pi2u), 'all');
 
             
             %thPow(triali, :) = mean(cTR, 'all');
@@ -926,9 +929,11 @@ exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 %% Extract data 4 LME
 
-load clustinfoB
-clearvars -except ALLEEG ALLEEG1 paths clustinfo nL pi2u
+
+clearvars -except ALLEEG paths clustinfo nL 
 close all
+load clustinfo_AE
+pi2u = unique([clustinfo_A.PixelIdxList{3} ; clustinfo_E.PixelIdxList{3} ]);
 sub2exc = [];
 
 for subji = 1:size(ALLEEG, 1)
@@ -943,8 +948,8 @@ for subji = 1:size(ALLEEG, 1)
         
         for triali = 1:size(powH, 1)
             cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
-            thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
-            %thPow(triali, :) = mean(cTR(pi2u), 'all');
+            %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{3}), 'all');
+            thPow(triali, :) = mean(cTR(pi2u), 'all');
             
             %cTR = squeeze(mean(powH(triali, :, 3:8, 301:400), 2));
             %thPow(triali, :) = mean(cTR, 'all');
@@ -979,6 +984,10 @@ end
 
 
 %% 
+
+%%fit model
+clc
+
 d4LME = cat(1, allData4LME{:});
 
 
@@ -991,13 +1000,10 @@ tbl.trial_type= categorical(tbl.trial_type);
 %tbl2.Phase= categorical(tbl2.Phase);
 
 
-%%
-VarDecompTbl = colldiag(d4LME)
+%VarDecompTbl = colldiag(d4LME)
 % That can be passed along for visualization
-colldiag_tableplot(VarDecompTbl);
+%colldiag_tableplot(VarDecompTbl);
 
-%% fit model
-clc
 
 
 %lme = fitlme(tbl2,'Ratings ~ theta_AMY + trial_type + Phase + trialN + (1|subID)'); % random intercept model
@@ -1011,15 +1017,21 @@ lme
 %lme.Coefficients
 
 %% FIT MODEL ONLY FOR CS- items during acquisition
-
+clc
 
 d4LME2 = cat(1, allData4LME{:});
-d4LME2 = d4LME2(d4LME2(:, 5) == 2 & d4LME2(:, 6) == 0, :); % only cs- during extinction
 
-tbl2 = table(d4LME2(:,1), d4LME2(:,2), d4LME2(:,3), d4LME2(:,4), d4LME2(:,7), ...
-    'VariableNames',{'theta_AMY','Ratings','subID', 'trialN', 'trial_type'});
+% % % EXTINCTION
+%d4LME2 = d4LME2(d4LME2(:, 5) == 2 & d4LME2(:, 6) == 0, :); % only cs-
+%tbl2 = table(d4LME2(:,1), d4LME2(:,2), d4LME2(:,3), d4LME2(:,4), d4LME2(:,7), ...
+%    'VariableNames',{'theta_AMY','Ratings','subID', 'trialN', 'trial_type'});
+%lme = fitlme(tbl2,'theta_AMY ~ Ratings + trialN  + trial_type*Ratings + (1|subID)'); % random intercept model
 
-lme = fitlme(tbl2,'theta_AMY ~ Ratings + trialN  + trial_type*Ratings + (1|subID)'); % random intercept model
+% % % % ACQUISITION
+d4LME2 = d4LME2(d4LME2(:, 5) == 1 & d4LME2(:, 6) == 0, :); % only cs-
+tbl2 = table(d4LME2(:,1), d4LME2(:,2), d4LME2(:,3), d4LME2(:,4), 'VariableNames',{'theta_AMY','Ratings','subID', 'trialN'});
+lme = fitlme(tbl2,'theta_AMY ~ Ratings + trialN  + (1|subID)'); % random intercept model
+
 
 lme
 
