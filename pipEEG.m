@@ -1,3 +1,149 @@
+%% plot average + mni electrodes
+tic
+
+%atlas = ft_read_atlas([path subjID '/freesurfer/mri/aparc+aseg.mgz']);
+
+%atlas = ft_read_atlas('/Applications/freesurfer/7.3.2/subjects/cvs_avg35_inMNI152/mri/aparc+aseg.mgz');
+atlas = ft_read_atlas('/Applications/freesurfer/7.3.2/subjects/fsaverage/mri/aparc+aseg.mgz');
+
+atlas.coordsys = 'mni';
+cfg            = [];
+cfg.inputcoord = 'mni';
+cfg.atlas      = atlas;
+%cfg.roi        = {'ctx-lh-lateralorbitofrontal'};
+cfg.roi        = {'Left-Hippocampus'};
+%cfg.roi        = {'Left-Amygdala'};
+mask_rha     = ft_volumelookup(cfg, atlas);
+
+seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
+seg.brain = mask_rha;
+cfg             = [];
+cfg.method      = 'iso2mesh';
+cfg.radbound    = 2;
+cfg.maxsurf     = 0;
+cfg.tissue      = 'brain';
+cfg.numvertices = 1000;
+cfg.smooth      = 3;
+cfg.spmversion  = 'spm12';
+mesh_rha_left = ft_prepare_mesh(cfg, seg);
+
+cfg            = [];
+cfg.inputcoord = 'mni';
+cfg.atlas      = atlas;
+%cfg.roi        = {'ctx-lh-medialorbitofrontal'};
+cfg.roi        = {'Right-Hippocampus'};
+%cfg.roi        = {'Right-Amygdala'};
+mask_rha     = ft_volumelookup(cfg, atlas);
+seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
+seg.brain = mask_rha;
+cfg             = [];
+cfg.method      = 'iso2mesh';
+cfg.radbound    = 2;
+cfg.maxsurf     = 0;
+cfg.tissue      = 'brain';
+cfg.numvertices = 3000;
+cfg.smooth      = 3;
+cfg.spmversion  = 'spm12';
+mesh_rha_right = ft_prepare_mesh(cfg, seg);
+
+
+cfg            = [];
+cfg.inputcoord = 'mni';
+cfg.atlas      = atlas;
+cfg.roi        = {'Right-Cerebral-White-Matter'};
+mask_rha     = ft_volumelookup(cfg, atlas);
+seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
+seg.brain = mask_rha;
+cfg             = [];
+cfg.method      = 'iso2mesh';
+cfg.radbound    = 2;
+cfg.maxsurf     = 0;
+cfg.tissue      = 'brain';
+cfg.numvertices = 3000;
+cfg.smooth      = 3;
+cfg.spmversion  = 'spm12';
+mesh_rha_pial = ft_prepare_mesh(cfg, seg);
+
+toc
+
+disp (' > > > > done ')
+
+
+%% 
+tbl = readtable('/Users/danielpacheco/Downloads/allElecHPC.csv')
+%tbl = readtable('/Users/danielpacheco/Downloads/allElecAMY.csv')
+%tbl = readtable('/Users/danielpacheco/Downloads/allElecOFC.csv')
+tbl1 = table2cell(tbl); 
+coord = double(string(tbl1(:, 3:5)));
+%coord = double(string(tbl1(:, 6:8)));
+label = strcat(tbl1(:, 1),'_', string(tbl1(:, 11)));
+label = erase(label, 'POL ')
+
+elec2rem = {};
+% elec2rem = {'J1_5' 'J2_5' 'J3_5' 'J5_18' 'H1_12' 'H1_11' 'H1_18' 'H1_15' 'H1_22' 'H6_11' 'H3_29' 'H3_6' ...
+%              'J''3_21' 'J''5_7' 'J''6_14' 'F''4_14' 'H''1_12' 'H''2_12' 'H''1_8' 'H''4_29' ...
+%              'AmT2_2_38' 'HaT1_1_36' 'HaT1_2_36' 'InAm_2_36' 'Ha2g_3_44' ... 
+%              'HaT2_2_43' 'TBmg_2_46' 'HaT2_3_33' 'HaT2_3_35' 'Ha2d_4_44'...
+%              'Ha2d_1_46' 'Ha2d_2_46' 'HaT1_4_47'}; 
+
+% elec2rem = {'A3_15' 'A4_15' 'A5_3' 'Am2g_3_44' 'AmT2_3_33' 'AmT2_3_45' 'HaT2_3_43' 'AmT2_4_38' ...
+%             'A5_12' 'A4_27' 'A4_29' 'Am2g_2_46' 'A7_28' 'AmT2_4_41' 'AmT2_1_33' ...
+%             'A''4_16' 'A''1_12' 'A''2_12' 'A''1_1' 'AmT2_2_35' 'Y''1_8' 'A''1_24' 'Am2d_4_43'}; 
+
+% elec2rem = {'F2a_1_35' 'F2a_3_35' 'Z''1_23' 'Z''2_23' 'Z''2_16' 'Z''3_16' 'Z''4_16' 'Z''5_16' 'X''5_2' ...
+%             'R2_28' 'R3_28' 'Z''6_19' 'Z''7_19' 'X''5_2' 'F3a_6_35' 'B''3_1' 'B''2_1' 'F3a_4_35' 'X''1_20' ... 
+%             'Y''3_20' 'Y''2_20' 'Z''5_17' 'Z''4_17' 'Z''5_13' 'Z''5_14' 'Z''4_14' 'Z''1_19' 'Z''2_19' ...
+%             'Z7_27' 'Z2_27' 'Z1_27' 'X1_15' 'X2_15' 'X3_15' 'X4_15' 'X5_15' 'X6_15'
+%    }; 
+
+id2rem = contains(label, elec2rem);
+
+label(id2rem) = []; 
+coord(id2rem, :) = []; 
+
+
+elec_mni_frv = []; 
+elec_mni_frv.chanpos = coord;
+elec_mni_frv.unit = 'mm';
+elec_mni_frv.label = label;
+
+
+
+%%
+clc 
+
+figure
+%ft_plot_mesh(mesh_rha_left, 'facecolor', 'r',  'facealpha', 0.1, 'edgecolor', 'none'); hold on; 
+ft_plot_mesh(mesh_rha_left, 'facecolor', 'b',  'facealpha', 1, 'edgecolor', [.6 .6 .6]); hold on; 
+ft_plot_mesh(mesh_rha_right,  'facecolor', 'b',  'facealpha',1, 'edgecolor', [.6 .6 .6]); hold on; 
+%ft_plot_mesh(mesh_rha_pial,  'facecolor', 'w',  'facealpha', .1, 'edgecolor', [.6 .6 .6]); hold on; 
+ft_plot_sens(elec_mni_frv, 'label', 'label','style', 'r', 'fontsize', 12)
+%ft_plot_sens(elec_mni_frv,'style', 'r', 'fontsize', 12)
+
+
+%% final figure
+figure
+ft_plot_mesh(mesh_rha_left,  'facealpha', 0); hold on; 
+ft_plot_mesh(mesh_rha_right,  'facealpha', 0);
+ft_plot_sens(elec_mni_frv);
+title('Average hippocampus');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 %%
 clear
 subjID = 'c_sub01';
@@ -303,137 +449,6 @@ mask_rha     = ft_volumelookup(cfg, atlas);
 
 
 
-
-
-
-
-%% plot average + mni electrodes
-tic
-
-%atlas = ft_read_atlas([path subjID '/freesurfer/mri/aparc+aseg.mgz']);
-
-%atlas = ft_read_atlas('/Applications/freesurfer/7.3.2/subjects/cvs_avg35_inMNI152/mri/aparc+aseg.mgz');
-atlas = ft_read_atlas('/Applications/freesurfer/7.3.2/subjects/fsaverage/mri/aparc+aseg.mgz');
-
-atlas.coordsys = 'mni';
-cfg            = [];
-cfg.inputcoord = 'mni';
-cfg.atlas      = atlas;
-%cfg.roi        = {'ctx-lh-lateralorbitofrontal'};
-cfg.roi        = {'Left-Hippocampus'};
-mask_rha     = ft_volumelookup(cfg, atlas);
-
-seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
-seg.brain = mask_rha;
-cfg             = [];
-cfg.method      = 'iso2mesh';
-cfg.radbound    = 2;
-cfg.maxsurf     = 0;
-cfg.tissue      = 'brain';
-cfg.numvertices = 1000;
-cfg.smooth      = 3;
-cfg.spmversion  = 'spm12';
-mesh_rha_left = ft_prepare_mesh(cfg, seg);
-
-cfg            = [];
-cfg.inputcoord = 'mni';
-cfg.atlas      = atlas;
-%cfg.roi        = {'ctx-lh-medialorbitofrontal'};
-cfg.roi        = {'Right-Hippocampus'};
-mask_rha     = ft_volumelookup(cfg, atlas);
-seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
-seg.brain = mask_rha;
-cfg             = [];
-cfg.method      = 'iso2mesh';
-cfg.radbound    = 2;
-cfg.maxsurf     = 0;
-cfg.tissue      = 'brain';
-cfg.numvertices = 3000;
-cfg.smooth      = 3;
-cfg.spmversion  = 'spm12';
-mesh_rha_right = ft_prepare_mesh(cfg, seg);
-
-
-cfg            = [];
-cfg.inputcoord = 'mni';
-cfg.atlas      = atlas;
-cfg.roi        = {'Right-Cerebral-White-Matter'};
-mask_rha     = ft_volumelookup(cfg, atlas);
-seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
-seg.brain = mask_rha;
-cfg             = [];
-cfg.method      = 'iso2mesh';
-cfg.radbound    = 2;
-cfg.maxsurf     = 0;
-cfg.tissue      = 'brain';
-cfg.numvertices = 3000;
-cfg.smooth      = 3;
-cfg.spmversion  = 'spm12';
-mesh_rha_pial = ft_prepare_mesh(cfg, seg);
-
-toc
-
-disp ('done.')
-
-
-%% 
-tbl = readtable('/Users/danielpacheco/Downloads/allElecHPC.csv')
-%tbl = readtable('/Users/danielpacheco/Downloads/allElecAMY.csv')
-%tbl = readtable('/Users/danielpacheco/Downloads/allElecOFC.csv')
-tbl1 = table2cell(tbl); 
-%coord = double(string(tbl1(:, 3:5)));
-coord = double(string(tbl1(:, 6:8)));
-label = strcat(tbl1(:, 1),'_', string(tbl1(:, 11)));
-label = erase(label, 'POL ')
-
-elec2rem = {};
-elec2rem = {'J1_5' 'J2_5' 'J3_5' 'J5_18' 'H1_12' 'H1_11' 'H1_18' 'H1_15' 'H1_22' 'H6_11' 'H3_29' 'H3_6' ...
-             'J''3_21' 'J''5_7' 'J''6_14' 'F''4_14' 'H''1_12' 'H''2_12' 'H''1_8' 'H''4_29' ...
-             'AmT2_2_38' 'HaT1_1_36' 'HaT1_2_36' 'InAm_2_36' 'Ha2g_3_44' ... 
-             'HaT2_2_43' 'TBmg_2_46' 'HaT2_3_33' 'HaT2_3_35' 'Ha2d_4_44'...
-             'Ha2d_1_46' 'Ha2d_2_46' 'HaT1_4_47'}; 
-
-% elec2rem = {'A3_15' 'A4_15' 'A5_3' 'Am2g_3_44' 'AmT2_3_33' 'AmT2_3_45' 'HaT2_3_43' 'AmT2_4_38' ...
-%             'A5_12' 'A4_27' 'A4_29' 'Am2g_2_46' 'A7_28' 'AmT2_4_41' 'AmT2_1_33' ...
-%             'A''4_16' 'A''1_12' 'A''2_12' 'A''1_1' 'AmT2_2_35' 'Y''1_8' 'A''1_24' 'Am2d_4_43'}; 
-
-% elec2rem = {'F2a_1_35' 'F2a_3_35' 'Z''1_23' 'Z''2_23' 'Z''2_16' 'Z''3_16' 'Z''4_16' 'Z''5_16' 'X''5_2' ...
-%             'R2_28' 'R3_28' 'Z''6_19' 'Z''7_19' 'X''5_2' 'F3a_6_35' 'B''3_1' 'B''2_1' 'F3a_4_35' 'X''1_20' ... 
-%             'Y''3_20' 'Y''2_20' 'Z''5_17' 'Z''4_17' 'Z''5_13' 'Z''5_14' 'Z''4_14' 'Z''1_19' 'Z''2_19' ...
-%             'Z7_27' 'Z2_27' 'Z1_27' 'X1_15' 'X2_15' 'X3_15' 'X4_15' 'X5_15' 'X6_15'
-%    }; 
-
-id2rem = contains(label, elec2rem);
-
-label(id2rem) = []; 
-coord(id2rem, :) = []; 
-
-
-elec_mni_frv = []; 
-elec_mni_frv.chanpos = coord;
-elec_mni_frv.unit = 'mm';
-elec_mni_frv.label = label;
-
-
-
-%%
-clc 
-
-figure
-%ft_plot_mesh(mesh_rha_left, 'facecolor', 'r',  'facealpha', 0.1, 'edgecolor', 'none'); hold on; 
-ft_plot_mesh(mesh_rha_left, 'facecolor', 'b',  'facealpha', .1, 'edgecolor', [.6 .6 .6]); hold on; 
-ft_plot_mesh(mesh_rha_right,  'facecolor', 'b',  'facealpha', .1, 'edgecolor', [.6 .6 .6]); hold on; 
-%ft_plot_mesh(mesh_rha_pial,  'facecolor', 'w',  'facealpha', .1, 'edgecolor', [.6 .6 .6]); hold on; 
-ft_plot_sens(elec_mni_frv, 'label', 'label','style', 'r', 'fontsize', 12)
-%ft_plot_sens(elec_mni_frv,'style', 'r', 'fontsize', 12)
-
-
-%% final figure
-figure
-ft_plot_mesh(mesh_rha_left,  'facealpha', 0); hold on; 
-ft_plot_mesh(mesh_rha_right,  'facealpha', 0);
-ft_plot_sens(elec_mni_frv);
-title('Average hippocampus');
 
 
 
