@@ -68,7 +68,7 @@ if winSize == 50
         end
     elseif slidTW  == 10
         if strcmp(f2t{3}, 'C')
-            set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 17], 'ylim', [1 17]); 
+            set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 13], 'ylim', [1 13]); 
         elseif strcmp(f2t{3}, 'V')
             set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 23], 'ylim', [1 23]); 
         end

@@ -81,7 +81,7 @@ for coni = 1:length(currentContrast)
                 xM = zeros (trialN, bins,  chanN *  win_width);
                 yM = zeros (trialN, bins,  chanN *  win_width);
                 
-            parfor timei = 1:bins 
+            for timei = 1:bins 
                 %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
                 timeBins = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
                 x = all2all(:, 1,:,timeBins);
