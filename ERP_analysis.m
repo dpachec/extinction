@@ -189,7 +189,7 @@ cd (paths.github)
 clear, clc
 
 paths = load_paths_EXT; 
-file2load = ['TR_' 'HPC' '_C']; 
+file2load = ['TR_' 'AMY' '_C']; 
 load ([paths.results.traces file2load]); 
 
 %% create one CSV file with all electrodes
