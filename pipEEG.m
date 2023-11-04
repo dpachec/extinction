@@ -1,6 +1,4 @@
 %% plot average + mni electrodes
-tic
-
 %atlas = ft_read_atlas([path subjID '/freesurfer/mri/aparc+aseg.mgz']);
 
 %atlas = ft_read_atlas('/Applications/freesurfer/7.3.2/subjects/cvs_avg35_inMNI152/mri/aparc+aseg.mgz');
@@ -25,13 +23,14 @@ cfg.tissue      = 'brain';
 cfg.numvertices = 1000;
 cfg.smooth      = 3;
 cfg.spmversion  = 'spm12';
-mesh_rha_left = ft_prepare_mesh(cfg, seg);
+mesh_rha_LH = ft_prepare_mesh(cfg, seg);
 
 cfg            = [];
 cfg.inputcoord = 'mni';
 cfg.atlas      = atlas;
 %cfg.roi        = {'ctx-lh-medialorbitofrontal'};
-cfg.roi        = {'Right-Hippocampus'};
+cfg.roi        = {'Left-Amygdala'};
+%cfg.roi        = {'Right-Hippocampus'};
 %cfg.roi        = {'Right-Amygdala'};
 mask_rha     = ft_volumelookup(cfg, atlas);
 seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
@@ -44,13 +43,35 @@ cfg.tissue      = 'brain';
 cfg.numvertices = 3000;
 cfg.smooth      = 3;
 cfg.spmversion  = 'spm12';
-mesh_rha_right = ft_prepare_mesh(cfg, seg);
+mesh_rha_LA = ft_prepare_mesh(cfg, seg);
 
+
+atlas.coordsys = 'mni';
+cfg            = [];
+cfg.inputcoord = 'mni';
+cfg.atlas      = atlas;
+%cfg.roi        = {'ctx-lh-lateralorbitofrontal'};
+cfg.roi        = {'Right-Hippocampus'};
+%cfg.roi        = {'Left-Amygdala'};
+mask_rha     = ft_volumelookup(cfg, atlas);
+
+seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
+seg.brain = mask_rha;
+cfg             = [];
+cfg.method      = 'iso2mesh';
+cfg.radbound    = 2;
+cfg.maxsurf     = 0;
+cfg.tissue      = 'brain';
+cfg.numvertices = 1000;
+cfg.smooth      = 3;
+cfg.spmversion  = 'spm12';
+mesh_rha_RH = ft_prepare_mesh(cfg, seg);
 
 cfg            = [];
 cfg.inputcoord = 'mni';
 cfg.atlas      = atlas;
-cfg.roi        = {'Right-Cerebral-White-Matter'};
+%cfg.roi        = {'ctx-lh-medialorbitofrontal'};
+cfg.roi        = {'Right-Amygdala'};
 mask_rha     = ft_volumelookup(cfg, atlas);
 seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
 seg.brain = mask_rha;
@@ -62,15 +83,14 @@ cfg.tissue      = 'brain';
 cfg.numvertices = 3000;
 cfg.smooth      = 3;
 cfg.spmversion  = 'spm12';
-mesh_rha_pial = ft_prepare_mesh(cfg, seg);
+mesh_rha_RA = ft_prepare_mesh(cfg, seg);
 
-toc
 
 disp (' > > > > done ')
 
 
 %% 
-tbl = readtable('/Users/danielpacheco/Downloads/allElecHPC.csv')
+%tbl = readtable('/Users/danielpacheco/Downloads/allElecHPC.csv')
 %tbl = readtable('/Users/danielpacheco/Downloads/allElecAMY.csv')
 %tbl = readtable('/Users/danielpacheco/Downloads/allElecOFC.csv')
 tbl1 = table2cell(tbl); 
@@ -108,17 +128,44 @@ elec_mni_frv.unit = 'mm';
 elec_mni_frv.label = label;
 
 
+%% combine two tables 
+tbl1 = readtable('/Users/danielpacheco/Downloads/allElecHPC.csv')
+tbl2 = readtable('/Users/danielpacheco/Downloads/allElecAMY.csv')
+tbl1 = table2cell(tbl1); 
+coord1 = double(string(tbl1(:, 3:5)));
+label1 = strcat(tbl1(:, 1),'_', string(tbl1(:, 11)));
+label1 = erase(label1, 'POL ')
+tbl2 = table2cell(tbl2); 
+coord2 = double(string(tbl2(:, 3:5)));
+label2 = strcat(tbl2(:, 1),'_', string(tbl2(:, 11)));
+label2 = erase(label2, 'POL ')
+
+elec_mni_frv1 = []; 
+elec_mni_frv1.chanpos = coord1;
+elec_mni_frv1.unit = 'mm';
+elec_mni_frv1.label = label1;
+
+elec_mni_frv2 = []; 
+elec_mni_frv2.chanpos = coord2;
+elec_mni_frv2.unit = 'mm';
+elec_mni_frv2.label = label2;
+
+
+
 
 %%
 clc 
 
 figure
 %ft_plot_mesh(mesh_rha_left, 'facecolor', 'r',  'facealpha', 0.1, 'edgecolor', 'none'); hold on; 
-ft_plot_mesh(mesh_rha_left, 'facecolor', 'b',  'facealpha', 1, 'edgecolor', [.6 .6 .6]); hold on; 
-ft_plot_mesh(mesh_rha_right,  'facecolor', 'b',  'facealpha',1, 'edgecolor', [.6 .6 .6]); hold on; 
+ft_plot_mesh(mesh_rha_LH, 'facecolor', 'b',  'facealpha', .1, 'edgecolor', [.6 .6 .6]); hold on; 
+ft_plot_mesh(mesh_rha_LA,  'facecolor', 'r',  'facealpha',.1, 'edgecolor', [.6 .6 .6]); hold on; 
+ft_plot_mesh(mesh_rha_RH, 'facecolor', 'b',  'facealpha', .1, 'edgecolor', [.6 .6 .6]); hold on; 
+ft_plot_mesh(mesh_rha_RA,  'facecolor', 'r',  'facealpha',.1, 'edgecolor', [.6 .6 .6]); hold on; 
 %ft_plot_mesh(mesh_rha_pial,  'facecolor', 'w',  'facealpha', .1, 'edgecolor', [.6 .6 .6]); hold on; 
-ft_plot_sens(elec_mni_frv, 'label', 'label','style', 'r', 'fontsize', 12)
-%ft_plot_sens(elec_mni_frv,'style', 'r', 'fontsize', 12)
+%ft_plot_sens(elec_mni_frv, 'label', 'label','style', 'r', 'fontsize', 12)
+ft_plot_sens(elec_mni_frv1,'style', 'b', 'fontsize', 12)
+ft_plot_sens(elec_mni_frv2,'style', 'r', 'fontsize', 12)
 
 
 %% final figure
