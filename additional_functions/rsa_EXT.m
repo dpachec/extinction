@@ -53,7 +53,7 @@ for coni = 1:length(currentContrast)
                     yM = zeros (trialN, bins,  chanN * length(f) * win_width);
             end
                     
-            parfor timei = 1:bins 
+            for timei = 1:bins 
                 %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
                 timeBins = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
                 if aVTime

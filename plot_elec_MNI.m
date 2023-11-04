@@ -961,9 +961,11 @@ plot (1:100, mP, 'b');
 
 
 %% load gii files
-cd '/Users/danielpacheco/Documents/BrainX3vis/bids/sub-mni/anat'
-g = gifti('sujet01_Lwhite.surf.gii')
-
+clear
+cd C:\Users\Neuropsychology\Downloads
+g = gifti('Right-Hippocampus.surf.gii')
+filename = 'hipp'
+saveas(g, filename, 'obj');
 
 %% load gifty gii
 tic     

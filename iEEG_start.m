@@ -89,92 +89,6 @@ cd (paths.github)
 
 
 
-clear, close all
-paths = load_paths_EXT; 
-
-c2u = 'C';
-
-%sROI = {'Amygdala'}; 
-
-sROI = {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
-
-%sROI = {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'parahippocampal' 'entorhinal' };
-
-%sROI = {'occipital' 'cuneus' 'lingual' 'pericalcarine' 'bankssts'}
-
-%sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'fusiform' 'temporalpole' ...
-%             'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
-
-allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
-           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
-
-
-for subji = 1:length(allsubs)
-    subji
-    sub = allsubs{subji}; 
-    cd([ paths.iEEG])
-    load ([sub '_iEEG.mat']);
-
-    EEG = remove_elec_EXT_manually(EEG, subji); %thres channels is 1/5 of 192 = 38
-    chansLab = {EEG.chanlocs.fsLabel}';
-    selChans = contains(chansLab, sROI);
-
-    
-    if find(selChans)
-        
-        EEG.chanlocs = EEG.chanlocs(selChans);
-        EEG.data = EEG.data(selChans, :); %contains nans
-        
-        %epoch data
-        Ev = [{EEG.event.type}]'; 
-        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
-        clen = cellfun(@length, Ev1); 
-        EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
-        Ev2 = cat(1, Ev1{:});
-       
-        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
-        ids = strcmp(Ev2(:, 10), c2u); 
-        EEG.event = EEG.event(ids);
-
-        % % % remove renewal trials 
-        %id2r3 = strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2'); 
-        %EEG.event = EEG.event(ids & id2r3);
-
-        %epoch data and markers
-        [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
-        
-        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
-
-        
-
-        if ~isempty(EEG.data)
-            
-            EEG = extract_power_EXT(EEG, 0.01); 
-            %EEG = extract_theta_power_EXT(EEG); %HILBERT
-            EEG = normalize_EXT(EEG);
-            nChans(subji, :) = size(EEG.power, 2);
-            ALLEEG{subji,:} = EEG; 
-
-        end
-    
-    end
-
-
-end
-
-sROI = char(join(sROI, '_'));
-mkdir(paths.results.power)
-filename = [paths.results.power 'allS_' sROI '_' c2u];
-nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
-totalChans = sum(nChans);
-save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
-
-cd (paths.github)
-
 
 %% % % % % % % % FIRST LOAD FILE - > START HERE
 clear, clc
@@ -305,8 +219,6 @@ sub2exc = [];
 
 c1B = c1(:, 3:8, 201:500); c2B = c2(:, 3:8, 201:500); 
 %c3B = c3(:, 3:8, 201:500); 
-%c1B = c1(:, 1:30, 201:500); c2B = c2(:, 1:30, 201:500); 
-%c1B = c1(:, 1:54, :); c2B = c2(:, 1:54, :); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 %c3B(sub2exc,:,:) = []; 
 
@@ -331,8 +243,8 @@ max_clust_obs = allSTs(id)
 
 % 
 
-%h = zeros(6, 300);
-%h(clustinfo.PixelIdxList{id}) = 1; 
+h = zeros(6, 300);
+h(clustinfo.PixelIdxList{id}) = 1; 
 
  
 
@@ -385,9 +297,9 @@ for subji = 1:47
     c1BS = squeeze(c1B(subji,:,:));
     c2BS = squeeze(c2B(subji,:,:));
     c3BS = squeeze(c3B(subji,:,:));
-    cSP(subji,:) = mean(c1BS(clustinfo.PixelIdxList{4}), 'all');
-    cSMPP(subji,:) = mean(c2BS(clustinfo.PixelIdxList{4}), 'all');
-    cSMPM(subji,:) = mean(c3BS(clustinfo.PixelIdxList{4}), 'all');
+    cSP(subji,:) = mean(c1BS(clustinfo.PixelIdxList{5}), 'all');
+    cSMPP(subji,:) = mean(c2BS(clustinfo.PixelIdxList{5}), 'all');
+    cSMPM(subji,:) = mean(c3BS(clustinfo.PixelIdxList{5}), 'all');
 
 end
 
@@ -396,7 +308,7 @@ end
 d2p = [cSP cSMPP cSMPM]
 
 [~,~,stats] = anova1(d2p)
-%[c,~,~,gnames] = multcompare(stats);
+[c,~,~,gnames] = multcompare(stats);
 
 %%
 clc
@@ -415,11 +327,11 @@ x = RMAOV1(d4ANOVA);
 %% Correlate responses and power in cluster
 
 clearvars -except ALLEEG paths clustinfo nL 
-close all
+close all, clc
 sub2exc = []; %subj 23-35-38-39-44-45
 
-load clustinfo_AE
-pi2u = unique([clustinfo_A.PixelIdxList{3} ; clustinfo_E.PixelIdxList{3} ]);
+load clustinfoE
+
 
 for subji = 1:size(ALLEEG, 1)
     EEG = ALLEEG{subji}; 
@@ -430,12 +342,12 @@ for subji = 1:size(ALLEEG, 1)
         Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
     
         % % %   % % Acquisition
-        ids = strcmp(Ev2(:, 2), '1'); 
+        %ids = strcmp(Ev2(:, 2), '1'); 
         %ids = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
-        ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+        %ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
     
         % % % % % % Extinction
-        %ids = strcmp(Ev2(:, 2), '2'); 
+        ids = strcmp(Ev2(:, 2), '2'); 
         %ids = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
         %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; 
         %ids = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; 
@@ -445,15 +357,15 @@ for subji = 1:size(ALLEEG, 1)
         % % % Acquisition AND Extinction
         %ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') | ( strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) );
 
-        
+        %length(find(ids))
         powH = EEG.power(ids, :, :, :);
 
         
         
         for triali = 1:size(powH, 1)
             cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
-            %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{3}), 'all');
-            thPow(triali, :) = mean(cTR(pi2u), 'all');
+            thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{5}), 'all');
+            %thPow(triali, :) = mean(cTR(pi2u), 'all');
 
             
             %thPow(triali, :) = mean(cTR, 'all');
@@ -481,7 +393,7 @@ for subji = 1:size(ALLEEG, 1)
 % % %         allSlopes(subji, :) = C(2);
 % % %         allIntercepts(subji, :) = C(1);
 % % %         set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
-        
+% % %         
 
 
     end
@@ -509,7 +421,7 @@ hb = plot ([1], data.data); hold on;
 set(hb, 'lineWidth', 3, 'Marker', '.', 'MarkerSize',35);hold on;
 h = bar (mean_S);hold on;
 set(h,'FaceColor', 'none', 'lineWidth', 3);
-set(gca,'XTick',[1],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 2], 'ylim', [-1 1] );
+set(gca,'XTick',[1],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 2], 'ylim', [-.3 .5] );
 plot(get(gca,'xlim'), [0 0],'k','lineWidth', 3);
 
 [h p ci t] = ttest (data.data(:,1));
@@ -538,6 +450,7 @@ d2p2	= squeeze(mean(c2B, 'omitnan'));
 
 [h p ci ts] = ttest(c1B, c2B); 
 h = squeeze(h); t = squeeze(ts.tstat);
+h(1:54, 1:50) = 0; 
 
 clear allSTs  
 clustinfo = bwconncomp(h);
@@ -549,8 +462,8 @@ max_clust_obs = allSTs(id);
 
 % 
 
-%h = zeros(54, 230);
-%h(clustinfo.PixelIdxList{id}) = 1; 
+h = zeros(54, 230);
+h(clustinfo.PixelIdxList{id}) = 1; 
 
  
 
@@ -705,10 +618,10 @@ clear max_clust_sum_perm
 for permi = 1:nPerm
     %c1B = c1(:,1:54,301:480); 
     %c2B = c2(:,1:54,301:480); 
-    %c1B = c1(:,3:8,301:480); 
-    %c2B = c2(:,3:8,301:480); 
-    c1B = c1(:,3:8,301:400); % first second only
-    c2B = c2(:,3:8,301:400); 
+    c1B = c1(:,3:8,301:480); 
+    c2B = c2(:,3:8,301:480); 
+    %c1B = c1(:,3:8,301:400); % first second only
+    %c2B = c2(:,3:8,301:400); 
     c1B(c1B == 0) = nan; 
     c2B(c2B == 0) = nan; 
     for subji = 1:size(c1B, 1)
@@ -814,55 +727,6 @@ set(gca, 'FontSize', 24);
 exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',150)
 
 
-%% THETA BAND - LINE PLOTS 2
-
-sub2exc = [];
-
-c1B = c1(:, 2001:5000); c2B = c2(:, 2001:5000); 
-c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
-
-c1B(c1B == 0) = nan; 
-c2B(c2B == 0) = nan; 
-c1B(any(isnan(c1B), 2), :) = [];
-c2B(any(isnan(c2B), 2), :) = [];
-
-d2pm1	= squeeze(mean(c1B,'omitnan'));
-d2pm2	= squeeze(mean(c2B,'omitnan'));
-d2pstd1	= std(c1B);
-d2pstd2	= std(c2B);
-se1 = d2pstd1/sqrt(size(c1B, 1))
-se2 = d2pstd2/sqrt(size(c2B, 1))
-
-[h p ci ts] = ttest(c1B, c2B); 
-h = squeeze(h); t = squeeze(ts.tstat);
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-[max2u id] = max(abs(allSTs));
-max_clust_obs = allSTs(id); 
-
-h(1:150) = 0;
-
-hb = h; hb(h==0) = nan; hb(hb==1) = -.01; 
-times = (-1:.001:1.999) + .25;
-
-colors2use = brewermap([6],'*Set1')*0.75;
-shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(1,:)}, 1); hold on; 
-shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(2,:)}, 1); hold on; 
-
-%plot(times, d2p1); hold on; 
-%plot(times, d2p2); hold on; 
-
-xlabel('Time (s)')
-ylabel('Theta Power')
-plot (times, hb, 'Linewidth', 7)
-%set(gca, 'xlim', [-.5 1.75])
-set(gca, 'FontSize', 24);
-
-exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',150)
 
 
 %% permutations 2D (line plot)
@@ -932,8 +796,8 @@ exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 clearvars -except ALLEEG paths clustinfo nL 
 close all
-load clustinfo_AE
-pi2u = unique([clustinfo_A.PixelIdxList{3} ; clustinfo_E.PixelIdxList{3} ]);
+load clustinfoE
+%pi2u = unique([clustinfo_A.PixelIdxList{3} ; clustinfo_E.PixelIdxList{3} ]);
 sub2exc = [];
 
 for subji = 1:size(ALLEEG, 1)
@@ -948,8 +812,8 @@ for subji = 1:size(ALLEEG, 1)
         
         for triali = 1:size(powH, 1)
             cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
-            %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{3}), 'all');
-            thPow(triali, :) = mean(cTR(pi2u), 'all');
+            thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{5}), 'all');
+            %thPow(triali, :) = mean(cTR(pi2u), 'all');
             
             %cTR = squeeze(mean(powH(triali, :, 3:8, 301:400), 2));
             %thPow(triali, :) = mean(cTR, 'all');
@@ -975,7 +839,7 @@ for subji = 1:size(ALLEEG, 1)
         
         d4LME = [thPow ratings2u subID trialN exph currCS trial_type];
         % % remove the testing phase for now
-        d4LME(d4LME(:, 5) == 3,:) = []; 
+        %d4LME(d4LME(:, 5) == 3,:) = []; 
 
         allData4LME{subji,:} = d4LME;
         
@@ -989,14 +853,15 @@ end
 clc
 
 d4LME = cat(1, allData4LME{:});
-
+d4LME(d4LME(:, 2) == 5,:) = []; % % remove ratings of 5 !
+d4LME(d4LME(:, 5) == 3,:) = []; 
 
 tbl = table(d4LME(:,1), d4LME(:,2), d4LME(:,3), d4LME(:,4), d4LME(:,5), d4LME(:,6), d4LME(:,7),...
     'VariableNames',{'theta_AMY','Ratings','subID', 'trialN', 'Phase', 'currCS', 'trial_type'});
 
 %tbl.Ratings = ordinal(tbl.Ratings);
 %tbl2.currCS= categorical(tbl2.currCS);
-tbl.trial_type= categorical(tbl.trial_type);
+%tbl.trial_type= categorical(tbl.trial_type);
 %tbl2.Phase= categorical(tbl2.Phase);
 
 
@@ -1011,26 +876,39 @@ tbl.trial_type= categorical(tbl.trial_type);
 %lme = fitlme(tbl2,'theta_AMY ~ Ratings + currCS + Phase+ trialN + (1|subID)'); % random intercept model
 %lme = fitlme(tbl2,'Ratings ~ theta_AMY + currCS + Phase+ trialN + (1|subID)'); % random intercept model
 
-lme = fitlme(tbl,'theta_AMY ~ Ratings + currCS + Phase + Phase*currCS + (1|subID)'); % random intercept model
+lme = fitlme(tbl,'theta_AMY ~ Ratings + trialN + trial_type + Phase*currCS + (1|subID)'); % random intercept model
 
 lme
 %lme.Coefficients
 
-%% FIT MODEL ONLY FOR CS- items during acquisition
+
+%%
+writetable(tbl, 'd4LME.csv')
+writetable(d4LME2, 'd4LME2.csv')
+
+
+%% 
+plotResiduals(lme,'fitted', 'ResidualType', 'Raw')
+
+%plotResiduals(lme,'lagged')
+
+
+
+%% FIT MODEL ONLY during extinction
 clc
 
 d4LME2 = cat(1, allData4LME{:});
 
 % % % EXTINCTION
-%d4LME2 = d4LME2(d4LME2(:, 5) == 2 & d4LME2(:, 6) == 0, :); % only cs-
-%tbl2 = table(d4LME2(:,1), d4LME2(:,2), d4LME2(:,3), d4LME2(:,4), d4LME2(:,7), ...
-%    'VariableNames',{'theta_AMY','Ratings','subID', 'trialN', 'trial_type'});
-%lme = fitlme(tbl2,'theta_AMY ~ Ratings + trialN  + trial_type*Ratings + (1|subID)'); % random intercept model
+d4LME2 = d4LME2(d4LME2(:, 5) == 2, :); 
+tbl2 = table(d4LME2(:,1), d4LME2(:,2), d4LME2(:,3), d4LME2(:,4),d4LME2(:,6), d4LME2(:,7), ...
+    'VariableNames',{'theta_AMY','Ratings','subID', 'trialN', 'currCS', 'trial_type'});
+lme = fitlme(tbl2,'theta_AMY ~ Ratings + trialN  + currCS + currCS*Ratings + (1|subID)'); % random intercept model
 
 % % % % ACQUISITION
-d4LME2 = d4LME2(d4LME2(:, 5) == 1 & d4LME2(:, 6) == 0, :); % only cs-
-tbl2 = table(d4LME2(:,1), d4LME2(:,2), d4LME2(:,3), d4LME2(:,4), 'VariableNames',{'theta_AMY','Ratings','subID', 'trialN'});
-lme = fitlme(tbl2,'theta_AMY ~ Ratings + trialN  + (1|subID)'); % random intercept model
+%d4LME2 = d4LME2(d4LME2(:, 5) == 1 & d4LME2(:, 6) == 0, :); % only cs-
+%tbl2 = table(d4LME2(:,1), d4LME2(:,2), d4LME2(:,3), d4LME2(:,4), 'VariableNames',{'theta_AMY','Ratings','subID', 'trialN'});
+%lme = fitlme(tbl2,'theta_AMY ~ Ratings + trialN  + (1|subID)'); % random intercept model
 
 
 lme

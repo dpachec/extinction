@@ -512,7 +512,7 @@ for subji = 1:length(allsubs)
     EEG = pop_eegfiltnew (EEG, 149, 150, [],  1); %notch filter
 
     % % % % remove artifacts
-    EEG = artifact_detection_EXT(EEG, 6, 4, 1000, 500);
+    EEG = artifact_detection_EXT(EEG, 5, 3, 1000, 500);
 
    
     % % % % save final versions

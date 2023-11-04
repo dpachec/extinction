@@ -5,7 +5,7 @@ clear , clc
 
 c2u = 'C';
 
-listF2sav = {   %{'Amygdala'}; 
+listF2sav = {   {'Amygdala'}; 
                 {'Hippocampus'}; 
                 %{'orbitofrontal'}; 
                 %{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'parahippocampal' 'entorhinal' };
@@ -13,7 +13,7 @@ listF2sav = {   %{'Amygdala'};
                 %{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
             };   
 %n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'FRO'};
-n2SAV = {'HPC'};
+n2SAV = {'AMY' ; 'HPC'};
 
 
 
@@ -96,7 +96,7 @@ clear , clc
 
 c2u = 'V';
 
-listF2sav = {   %{'Amygdala'}; 
+listF2sav = {   {'Amygdala'}; 
                 {'Hippocampus'}; 
                 %{'orbitofrontal'}; 
                 %{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'parahippocampal' 'entorhinal' };
@@ -104,7 +104,7 @@ listF2sav = {   %{'Amygdala'};
                 %{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
             };   
 %n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'FRO'};
-n2SAV = {'HPC'};
+n2SAV = {'AMY';'HPC'};
 
 
 
