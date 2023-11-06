@@ -94,7 +94,8 @@ cd (paths.github)
 clear, clc
 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'AMY' '_C']; 
+%file2load = ['allS_' 'AMY' '_C']; 
+file2load = ['allS_' 'AMY' '_C_6_4']; 
 %file2load = ['HILB_' 'Amygdala' '_C']; 
 
 load ([paths.results.power file2load]); 
@@ -243,8 +244,8 @@ max_clust_obs = allSTs(id)
 
 % 
 
-h = zeros(6, 300);
-h(clustinfo.PixelIdxList{id}) = 1; 
+%h = zeros(6, 300);
+%h(clustinfo.PixelIdxList{id}) = 1; 
 
  
 
@@ -289,6 +290,62 @@ set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3
 exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 
 
+%% permutations 
+
+nPerm = 1000; 
+clear max_clust_sum_perm
+for permi = 1:nPerm
+    c1B = c1(:,1:54,301:480); 
+    c2B = c2(:,1:54,301:480); 
+    %c1B = c1(:,3:8,301:480); 
+    %c2B = c2(:,3:8,301:480); 
+    %c1B = c1(:,3:8,301:400); % first second only
+    %c2B = c2(:,3:8,301:400); 
+    c1B(c1B == 0) = nan; 
+    c2B(c2B == 0) = nan; 
+    for subji = 1:size(c1B, 1)
+        if rand>.5
+           tmp = c1B(subji, :, :);
+           c1B(subji, :, :) = c2B(subji, :, :);
+           c2B(subji, :, :) = tmp; 
+        end
+    end
+    
+    [hPerm p ci tsPerm] = ttest(c1B, c2B); 
+    hPerm = squeeze(hPerm); tPerm = squeeze(tsPerm.tstat);
+
+    clear allSTs  
+    clustinfo = bwconncomp(hPerm);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+        allSTs(pxi,:) = sum(tPerm(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs') & ~isempty(clustinfo.PixelIdxList)
+        [max2u id] = min(allSTs);
+        max_clust_sum_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_sum_perm(permi,:) = 0; 
+    end
+    
+
+end
+
+clear p ratings2u mcsP
+ratings2u = max_clust_obs; 
+mcsP = max_clust_sum_perm;
+
+%allAb = mcsP(mcsP < ratings2u);
+allAb = mcsP(abs(mcsP) > abs(ratings2u));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
+
+
+% % % % % % 
+% % % % % % figure
+% % % % % % histogram(max_clust_sum_perm); hold on; 
+% % % % % % scatter(max_clust_obs,0, 200, 'filled','r');
+% % % % % % set(gca, 'FontSize', 14);
+% % % % % % xlabel('T')
+% % % % % % exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
+
 %% take in cluster only
 
 
@@ -330,7 +387,7 @@ clearvars -except ALLEEG paths clustinfo nL
 close all, clc
 sub2exc = []; %subj 23-35-38-39-44-45
 
-load clustinfoE
+%load clustinfoE
 
 
 for subji = 1:size(ALLEEG, 1)
@@ -355,6 +412,7 @@ for subji = 1:size(ALLEEG, 1)
         
 
         % % % Acquisition AND Extinction
+        %ids = strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2');
         %ids = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') | ( strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) );
 
         %length(find(ids))
@@ -364,10 +422,12 @@ for subji = 1:size(ALLEEG, 1)
         
         for triali = 1:size(powH, 1)
             cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
+            %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
             thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{5}), 'all');
             %thPow(triali, :) = mean(cTR(pi2u), 'all');
 
             
+            %cTR = squeeze(mean(powH(triali, :, 3:8, 441:460), 2));
             %thPow(triali, :) = mean(cTR, 'all');
     
         end
@@ -611,64 +671,7 @@ exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 
 
 
-%% permutations 
 
-nPerm = 1000; 
-clear max_clust_sum_perm
-for permi = 1:nPerm
-    %c1B = c1(:,1:54,301:480); 
-    %c2B = c2(:,1:54,301:480); 
-    c1B = c1(:,3:8,301:480); 
-    c2B = c2(:,3:8,301:480); 
-    %c1B = c1(:,3:8,301:400); % first second only
-    %c2B = c2(:,3:8,301:400); 
-    c1B(c1B == 0) = nan; 
-    c2B(c2B == 0) = nan; 
-    for subji = 1:size(c1B, 1)
-        if rand>.5
-           tmp = c1B(subji, :, :);
-           c1B(subji, :, :) = c2B(subji, :, :);
-           c2B(subji, :, :) = tmp; 
-        end
-    end
-    
-    [hPerm p ci tsPerm] = ttest(c1B, c2B); 
-    hPerm = squeeze(hPerm); tPerm = squeeze(tsPerm.tstat);
-
-    clear allSTs  
-    clustinfo = bwconncomp(hPerm);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-        allSTs(pxi,:) = sum(tPerm(clustinfo.PixelIdxList{pxi}));% 
-    end
-    if exist('allSTs') & ~isempty(clustinfo.PixelIdxList)
-        [max2u id] = min(allSTs);
-        max_clust_sum_perm(permi,:) = allSTs(id); 
-    else
-        max_clust_sum_perm(permi,:) = 0; 
-    end
-    
-
-end
-
-clear p ratings2u mcsP
-ratings2u = max_clust_obs; 
-mcsP = max_clust_sum_perm;
-
-%allAb = mcsP(mcsP < ratings2u);
-allAb = mcsP(abs(mcsP) > abs(ratings2u));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
-
-
-
-
-
-%% 
-figure
-histogram(max_clust_sum_perm); hold on; 
-scatter(max_clust_obs,0, 200, 'filled','r');
-set(gca, 'FontSize', 14);
-xlabel('T')
-exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 
 
@@ -796,7 +799,7 @@ exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 clearvars -except ALLEEG paths clustinfo nL 
 close all
-load clustinfoE
+%load clustinfoE
 %pi2u = unique([clustinfo_A.PixelIdxList{3} ; clustinfo_E.PixelIdxList{3} ]);
 sub2exc = [];
 
@@ -813,6 +816,7 @@ for subji = 1:size(ALLEEG, 1)
         for triali = 1:size(powH, 1)
             cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
             thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{5}), 'all');
+            %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
             %thPow(triali, :) = mean(cTR(pi2u), 'all');
             
             %cTR = squeeze(mean(powH(triali, :, 3:8, 301:400), 2));
@@ -876,7 +880,7 @@ tbl = table(d4LME(:,1), d4LME(:,2), d4LME(:,3), d4LME(:,4), d4LME(:,5), d4LME(:,
 %lme = fitlme(tbl2,'theta_AMY ~ Ratings + currCS + Phase+ trialN + (1|subID)'); % random intercept model
 %lme = fitlme(tbl2,'Ratings ~ theta_AMY + currCS + Phase+ trialN + (1|subID)'); % random intercept model
 
-lme = fitlme(tbl,'theta_AMY ~ Ratings + trialN + trial_type + Phase*currCS + (1|subID)'); % random intercept model
+lme = fitlme(tbl,'theta_AMY ~ Ratings  + trial_type + Phase*currCS + (1|subID)'); % random intercept model
 
 lme
 %lme.Coefficients
