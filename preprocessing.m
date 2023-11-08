@@ -152,7 +152,7 @@ allsubs = {'p_sub01','p_sub02','p_sub03','p_sub04','p_sub05','p_sub06','p_sub07'
 %             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ... 
 %             'p_sub19', 'p_sub20', 'p_sub21'}'; %subject 8 has differnet format (see below)
 
-for subji = 19:20 %1:length(allsubs)
+for subji = 18:18 %1:length(allsubs)
 
     clearvars -except allsubs subji paths
     sub = allsubs{subji}; 
@@ -381,18 +381,19 @@ end
 
 
 
-%% group the multiple electrode file in one channel (Paris data)
+%% IMPORTANT > group the multiple electrode file in one channel (Paris data)
 
 clear, close all
-paths = load_paths; 
+paths = load_paths_EXT; 
 cd (paths.github)
 
 allsubs = {'p_sub01','p_sub02','p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ...
+            'p_sub19', 'p_sub20', 'p_sub21', 'p_sub22'}'; %subject 8 has differnet format (see below)
 
 
 
-for subji = 1:length(allsubs)
+for subji = 18:20 %:length(allsubs)
 
     clearvars -except allsubs subji paths
     sub = allsubs{subji}; 
@@ -406,7 +407,7 @@ for subji = 1:length(allsubs)
             events = EEG.event
         end
         data(chani,:) = EEG.data; 
-        chans2rec(chani) = EEG.chanlocs(chani).label;
+        chans2rec(chani) = EEG.chanlocs(chani).labels;
 
     end
     
@@ -433,15 +434,17 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ...
+            'p_sub19', 'p_sub20', 'p_sub21', 'p_sub22'}'; %subject 8 has differnet format (see below)}';
 
 
-for subji = 1:length(allsubs)
+for subji = 50:50 % 1:length(allsubs)
 
     clearvars -except allsubs subji paths
     sub = allsubs{subji}; 
     cd([paths.ds sub ])
-    diEEG_list = dir('*downSampiEEG.mat');diEEG_list = {diEEG_list.name}';
+    diEEG_list = dir('*downSampiEEG.mat');
+    diEEG_list = {diEEG_list.name}';
     load(diEEG_list{1})
     %load electrode files
     cd([paths.raw_data sub '\elec'])
@@ -476,7 +479,7 @@ for subji = 1:length(allsubs)
         elec_info = readtable(chanL{1}, 'Delimiter', ';')
         elec_info1 = elec_info; 
         elec_info1(:, 1) = fillmissing(elec_info(:, 1),'previous')
-        elec_info1 = table2cell(elec_info1)
+        elec_info1 = table2cell(elec_info1);
         for chani = 1:size(elec_info1, 1)    
             if ~isnan(elec_info1{chani, 2})
                 chanLabel = strcat(elec_info1(chani, 1), '_', string(elec_info1(chani, 2)));
@@ -512,7 +515,7 @@ for subji = 1:length(allsubs)
     EEG = pop_eegfiltnew (EEG, 149, 150, [],  1); %notch filter
 
     % % % % remove artifacts
-    EEG = artifact_detection_EXT(EEG, 5, 3, 1000, 500);
+    EEG = artifact_detection_EXT(EEG, 6, 4, 1000, 500);
 
    
     % % % % save final versions
