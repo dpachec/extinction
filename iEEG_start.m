@@ -6,7 +6,7 @@ paths = load_paths_EXT;
 
 c2u = 'C';
 
-sROI = {'Amygdala'}; 
+sROI = {'Hippocampus'}; 
 
 %sROI = {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
 
@@ -22,7 +22,8 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ...
+            'p_sub19', 'p_sub20', 'p_sub21'}'; %subject 8 has differnet format (see below)}';
 
 
 for subji = 1:length(allsubs)
@@ -104,7 +105,7 @@ load ([paths.results.power file2load]);
 
 %% load traces
 
-file2load = ['TR_' 'AMY' '_C']; 
+file2load = ['TR_' 'HPC' '_C']; 
 load ([paths.results.traces file2load]); 
 
 
@@ -114,6 +115,7 @@ clear nChans
 for subji = 1:length(ALLEEG)
     EEG = ALLEEG{subji};
     if~isempty(EEG)
+        length(EEG.chanlocs)
         nChans(subji,:) = length(EEG.chanlocs);
     end
 end
@@ -150,7 +152,7 @@ end
 
 %% PLOT grand average for each condition
 
-clearvars -except ALLEEG ALLEEG1 paths  totalChans nChans nSub nL
+clearvars -except ALLEEG paths  totalChans nChans nSub nL
 
 
 
@@ -176,7 +178,7 @@ for subji = 1:length(ALLEEG)
         ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
         ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
         %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
-        %ids3 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
+        ids3 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
 
 
         % % %   % % Acquisition only late trials
@@ -188,8 +190,8 @@ for subji = 1:length(ALLEEG)
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
         tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
         tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
-        %tfDCH3 = mean(EEG.power(ids3, :, : ,:), 'omitnan'); 
-        %tfDTF3 = squeeze(mean(tfDCH3, 2, 'omitnan'));
+        tfDCH3 = mean(EEG.power(ids3, :, : ,:), 'omitnan'); 
+        tfDTF3 = squeeze(mean(tfDCH3, 2, 'omitnan'));
 
 
 
@@ -202,9 +204,104 @@ for subji = 1:length(ALLEEG)
         
         c1(subji, :, :) = tfDTF1; 
         c2(subji, :, :) = tfDTF2; 
-        %c3(subji, :, :) = tfDTF3; 
+        c3(subji, :, :) = tfDTF3; 
 
                 
+    end
+
+end
+
+
+cd (paths.github)
+
+
+%% PLOT power for 1-2 vs 3-4
+
+clearvars -except ALLEEG paths  totalChans nChans nSub nL
+clc
+
+
+for subji = 1:length(ALLEEG)
+    
+    EEG = ALLEEG{subji};
+    
+        
+
+    
+    if ~isempty(EEG)
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
+
+
+        %ids1 = ((strcmp(Ev2(:, 7), '1') | strcmp(Ev2(:, 7), '2')) ) & ((strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2') )); 
+        %ids2 = ((strcmp(Ev2(:, 7), '3') | strcmp(Ev2(:, 7), '4')) ) & ((strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2') )); 
+
+        %ids1 = ((strcmp(Ev2(:, 7), '1') | strcmp(Ev2(:, 7), '2')) ) & ((strcmp(Ev2(:, 2), '1'))); 
+        %ids2 = ((strcmp(Ev2(:, 7), '3') | strcmp(Ev2(:, 7), '4')) ) & ((strcmp(Ev2(:, 2), '1'))); 
+        
+
+        % % %   % % Acquisition only late trials
+        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & double(string(Ev2(:, 1))) > 42;
+        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') & double(string(Ev2(:, 1))) > 42;
+
+
+        tfDCH1 = mean(EEG.power(ids1, :, : ,:), 'omitnan'); 
+        tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
+        tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
+        tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
+        
+        c1(subji, :, :) = tfDTF1; 
+        c2(subji, :, :) = tfDTF2; 
+                  
+    end
+
+end
+
+
+cd (paths.github)
+
+%% PLOT ACQ vs EXT
+
+clearvars -except ALLEEG paths  totalChans nChans nSub nL
+clc
+
+
+for subji = 1:length(ALLEEG)
+    
+    EEG = ALLEEG{subji};
+    
+        
+
+    
+    if ~isempty(EEG)
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
+
+
+        ids1 = strcmp(Ev2(:, 2), '1'); 
+        ids2 = strcmp(Ev2(:, 2), '2'); 
+
+        %ids1 = ((strcmp(Ev2(:, 7), '1') | strcmp(Ev2(:, 7), '2')) ) & ((strcmp(Ev2(:, 2), '1'))); 
+        %ids2 = ((strcmp(Ev2(:, 7), '3') | strcmp(Ev2(:, 7), '4')) ) & ((strcmp(Ev2(:, 2), '1'))); 
+        
+
+        % % %   % % Acquisition only late trials
+        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & double(string(Ev2(:, 1))) > 42;
+        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') & double(string(Ev2(:, 1))) > 42;
+
+
+        tfDCH1 = mean(EEG.power(ids1, :, : ,:), 'omitnan'); 
+        tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
+        tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
+        tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
+        
+        c1(subji, :, :) = tfDTF1; 
+        c2(subji, :, :) = tfDTF2; 
+                  
     end
 
 end
@@ -216,10 +313,9 @@ cd (paths.github)
 
 sub2exc = [];
 
-
-
-c1B = c1(:, 3:8, 201:500); c2B = c2(:, 3:8, 201:500); 
-%c3B = c3(:, 3:8, 201:500); 
+c1B = c1(:, 3:8, 251:480); 
+c2B = c2(:, 3:8, 251:480); 
+%c3B = c3(:, 3:8, 201:480); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 %c3B(sub2exc,:,:) = []; 
 
@@ -244,8 +340,8 @@ max_clust_obs = allSTs(id)
 
 % 
 
-%h = zeros(6, 300);
-%h(clustinfo.PixelIdxList{id}) = 1; 
+h = zeros(6, 230);
+h(clustinfo.PixelIdxList{id}) = 1; 
 
  
 
@@ -253,7 +349,7 @@ max_clust_obs = allSTs(id)
 
 
 
-times = -1:.01:1.99; 
+times = -.5:.01:1.79; 
 %times = -3:.01:3.99
 freqs = 1:size(c1B, 2);
 figure()
@@ -262,28 +358,31 @@ nexttile
 contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.125 .125])
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS+')
+%title('CS+')
+title('Acquisition')
 xlabel('Time (s)')
 ylabel('Frequency (Hz)')
 nexttile
 contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.125 .125])
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS-')
+%title('CS-')
+title('Extinction')
 xlabel('Time (s)')
 ylabel('Frequency (Hz)')
 nexttile
 contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T';
 contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-3 3])
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS+ vs CS-')
+%title('CS+ vs CS-')
+title('Acquisition vs Extinction')
 xlabel('Time (s)')
 ylabel('Frequency (Hz)')
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 colormap(brewermap([],'*Spectral'))
 
 %set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 2]);
-set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
+set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1 6], 'yticklabels', {'3', '8'});
 
 
 %exportgraphics(gcf, [paths.results.power file2load '.png'], 'Resolution',150)
@@ -295,10 +394,10 @@ exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 nPerm = 1000; 
 clear max_clust_sum_perm
 for permi = 1:nPerm
-    c1B = c1(:,1:54,301:480); 
-    c2B = c2(:,1:54,301:480); 
-    %c1B = c1(:,3:8,301:480); 
-    %c2B = c2(:,3:8,301:480); 
+    %c1B = c1(:,1:54,301:480); 
+    %c2B = c2(:,1:54,301:480); 
+    c1B = c1(:,3:8,301:480); 
+    c2B = c2(:,3:8,301:480); 
     %c1B = c1(:,3:8,301:400); % first second only
     %c2B = c2(:,3:8,301:400); 
     c1B(c1B == 0) = nan; 
@@ -377,7 +476,7 @@ clc
 d4ANOVA = [cSP; cSMPP ;cSMPM];
 d4ANOVA(:,2) = [ones(1,47) ones(1,47)*2 ones(1,47)*3];
 d4ANOVA(any(isnan(d4ANOVA), 2), :) = [];
-d4ANOVA(:,3) = [1:32 1:32 1:32];
+d4ANOVA(:,3) = [1:30 1:30 1:30];
 
 x = RMAOV1(d4ANOVA);
 
@@ -387,7 +486,7 @@ clearvars -except ALLEEG paths clustinfo nL
 close all, clc
 sub2exc = []; %subj 23-35-38-39-44-45
 
-%load clustinfoE
+load clustinfoE_px5
 
 
 for subji = 1:size(ALLEEG, 1)
@@ -421,7 +520,7 @@ for subji = 1:size(ALLEEG, 1)
         
         
         for triali = 1:size(powH, 1)
-            cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
+            cTR = squeeze(mean(powH(triali, :, 3:8, 251:500), 2));
             %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
             thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{5}), 'all');
             %thPow(triali, :) = mean(cTR(pi2u), 'all');
@@ -445,15 +544,15 @@ for subji = 1:size(ALLEEG, 1)
 
         allRho(subji, :) = corr(thPow, ratings2u, 'type', 'k');
         
-        
-% % %         figure()
-% % %         scatter(thPow, ratings2u, 250, 'filled');
-% % %         h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
-% % %         C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
-% % %         allSlopes(subji, :) = C(2);
-% % %         allIntercepts(subji, :) = C(1);
-% % %         set(gca, 'ylim', [1 4], 'xlim', [-2 2], 'Fontsize', 24)
-% % %         
+% % % %         
+% % % %         figure()
+% % % %         scatter(thPow, ratings2u, 150, 'filled');
+% % % %         h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
+% % % %         C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
+% % % %         allSlopes(subji, :) = C(2);
+% % % %         allIntercepts(subji, :) = C(1);
+% % % %         set(gca, 'ylim', [1 5], 'xlim', [-4 4], 'Fontsize', 24)
+% % % %         
 
 
     end
@@ -522,8 +621,8 @@ max_clust_obs = allSTs(id);
 
 % 
 
-h = zeros(54, 230);
-h(clustinfo.PixelIdxList{id}) = 1; 
+%h = zeros(54, 230);
+%h(clustinfo.PixelIdxList{id}) = 1; 
 
  
 
@@ -797,9 +896,9 @@ exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 %% Extract data 4 LME
 
 
-clearvars -except ALLEEG paths clustinfo nL 
+clearvars -except ALLEEG paths  
 close all
-%load clustinfoE
+load clustinfoE_px5
 %pi2u = unique([clustinfo_A.PixelIdxList{3} ; clustinfo_E.PixelIdxList{3} ]);
 sub2exc = [];
 
@@ -814,7 +913,7 @@ for subji = 1:size(ALLEEG, 1)
         powH = EEG.power;
         
         for triali = 1:size(powH, 1)
-            cTR = squeeze(mean(powH(triali, :, 3:8, 201:500), 2));
+            cTR = squeeze(mean(powH(triali, :, 3:8, 251:480), 2));
             thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{5}), 'all');
             %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
             %thPow(triali, :) = mean(cTR(pi2u), 'all');
@@ -878,7 +977,6 @@ tbl = table(d4LME(:,1), d4LME(:,2), d4LME(:,3), d4LME(:,4), d4LME(:,5), d4LME(:,
 %lme = fitlme(tbl2,'Ratings ~ theta_AMY + trial_type + Phase + trialN + (1|subID)'); % random intercept model
 %lme = fitlme(tbl2,'Ratings ~ theta_AMY + currCS+ Phase+ trialN + currCS*theta_AMY + Phase*theta_AMY + (1|subID)'); % random intercept model
 %lme = fitlme(tbl2,'theta_AMY ~ Ratings + currCS + Phase+ trialN + (1|subID)'); % random intercept model
-%lme = fitlme(tbl2,'Ratings ~ theta_AMY + currCS + Phase+ trialN + (1|subID)'); % random intercept model
 
 lme = fitlme(tbl,'theta_AMY ~ Ratings  + trial_type + Phase*currCS + (1|subID)'); % random intercept model
 
