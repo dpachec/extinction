@@ -129,8 +129,8 @@ elec_mni_frv.label = label;
 
 
 %% combine two tables 
-tbl1 = readtable('/Users/danielpacheco/Downloads/allElecHPC.csv')
-tbl2 = readtable('/Users/danielpacheco/Downloads/allElecAMY.csv')
+tbl1 = readtable('/Users/danielpacheco/Documents/GitHub/extinction/allElecHPC.csv')
+tbl2 = readtable('/Users/danielpacheco/Documents/GitHub/extinction/allElecAMY.csv')
 tbl1 = table2cell(tbl1); 
 coord1 = double(string(tbl1(:, 3:5)));
 label1 = strcat(tbl1(:, 1),'_', string(tbl1(:, 11)));
