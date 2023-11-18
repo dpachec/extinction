@@ -6,7 +6,9 @@ paths = load_paths_EXT;
 
 c2u = 'C';
 
-sROI = {'Hippocampus'}; 
+%sROI = {'Amygdala'}; 
+
+sROI = {'orbitofrontal'}; 
 
 %sROI = {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
 
@@ -88,7 +90,7 @@ save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
 
 cd (paths.github)
 
-
+ 
 
 
 %% % % % % % % % FIRST LOAD FILE - > START HERE
@@ -597,7 +599,7 @@ exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 
 %% ALL FREQUENCIES
 
-sub2exc = [];
+sub2exc = [38];
 c1B = c1(:, 1:54, 251:480); c2B = c2(:, 1:54, 251:480); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 
