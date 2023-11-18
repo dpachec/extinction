@@ -3,17 +3,18 @@
 
 clear , clc
 
-c2u = 'C';
+c2u = 'V';
 
 listF2sav = {   %{'Amygdala' }; 
                 %{'Hippocampus'}; 
-                %{'orbitofrontal'}; 
+                {'orbitofrontal'}; 
                 {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
-                %{'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
-                %{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+                {'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
+                {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
             };   
 %n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'FRO'};
-n2SAV = {'TMP'};
+%n2SAV = {'TMP'};
+n2SAV = {'OFC'; 'TMP'; 'OCC'; 'FRO'};
 
 
 
