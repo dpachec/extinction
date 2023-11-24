@@ -107,7 +107,7 @@ load ([paths.results.power file2load]);
 
 %% load traces
 
-file2load = ['TR_' 'HPC' '_C']; 
+file2load = ['TR_' 'TMP' '_C_6_4']; 
 load ([paths.results.traces file2load]); 
 
 

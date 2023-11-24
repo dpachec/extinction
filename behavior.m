@@ -116,7 +116,8 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
+            'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
 
 responses = [];
 figure(1); set(gcf, 'Position', [10 20 1850 1350])
@@ -176,7 +177,8 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
+            'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
 
 
 for subji=1:numel(allsubs)
@@ -246,7 +248,7 @@ for vp=1:numel(allsubs)
      tmp_avg_response_type(vp,ty,:)=avg_response_type(vp,ty,:);
            
      % interpolate NaNs
-     nan_ind=  find(isnan(tmp_avg_response_type(vp,ty,:)))
+     nan_ind=  find(isnan(tmp_avg_response_type(vp,ty,:)));
      
      while ~isempty(nan_ind)  
          for ind=1:numel(nan_ind)
@@ -259,10 +261,10 @@ for vp=1:numel(allsubs)
              tmp_avg_response_type(vp,ty,j)=squeeze(nanmean(tmp_avg_response_type(vp,ty,j-1)));   
              end
          end
-        nan_ind=  find(isnan(tmp_avg_response_type(vp,ty,:)))
+        nan_ind=  find(isnan(tmp_avg_response_type(vp,ty,:)));
      end
      
-filt_avg_response_type(vp,ty,:) = filtfilt(move_avg,1,squeeze(tmp_avg_response_type(vp,ty,:)))
+filt_avg_response_type(vp,ty,:) = filtfilt(move_avg,1,squeeze(tmp_avg_response_type(vp,ty,:)));
 % plot average trajectories
 end
 end
@@ -270,13 +272,13 @@ end
 
 figure
 hold on
-fig_stuff=subplot(1,1,1)
+fig_stuff=subplot(1,1,1);
 cmap_default=fig_stuff.ColorOrder;
 %cmap_default=cmap_default([1 2 4],:)
 
 
 for ty=1:3
-    x1=1:size(avg_response_type,3)
+    x1=1:size(avg_response_type,3);
     y1=squeeze(nanmean(filt_avg_response_type(:,ty,:)));
     b1=squeeze(nanstd(filt_avg_response_type(:,ty,:),1))./sqrt(numel(allsubs));
    
@@ -295,11 +297,9 @@ plot([24 24],[1 4],':k', 'Linewidth', 2)
 plot([48 48],[1 4],':k', 'Linewidth', 2)
 
 
-filename = [paths.behavRes 'average_per_type_filtered.png']
-exportgraphics(gcf, filename, 'Resolution',300)
 
 
-
+%%
 for t=1:size(filt_avg_response_type,3)
 [htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,1,t)),squeeze(filt_avg_response_type(:,2,t)))
 end
@@ -414,26 +414,119 @@ for ty=1:3
     
     %plot(squeeze(nanmean(avg_response_type(:,ty,:))))
     h=gca;
-    h.YLim=[1,4];
-    h.YTick=[1;4];
-    h.YTickLabel={'Dangerous','Safe'};
-    h.YTickLabelRotation=90;
-    h.FontSize = 28;
+    %h.YLim=[1,4];
+    %h.YTick=[1;4];
+    %h.YTickLabel={'Dangerous','Safe'};
+    %h.YTickLabelRotation=90;
+    h.FontSize = 18;
 end
 
 plot([24 24],[1 4],':k', 'Linewidth', 2)
 plot([48 48],[1 4],':k', 'Linewidth', 2)
-xlabel("Trial Number"); 
-set(gca, 'xtick', [24 48], 'xticklabels', {'24' '48'})
+%set(gca, 'xtick', [24 48], 'xticklabels', {'24' '48'})
+set(gca, 'xtick', [12 36 56], 'xticklabels', {'ACQ' 'EXT' 'TEST'})
+
+
+% anova 
+clear tbl, clc
+for timei = 1:64
+    d4anova = squeeze(filt_avg_response_type(:,:,timei));    
+    [p(timei), tbl] = anova1(d4anova,[],'off');
+    t(timei) = tbl{2,5};
+
+end
+hb = p<0.05; 
+clustinfo = bwconncomp(hb);
+hb = double(hb); hb(hb == 0) = nan; hb(hb==1) = 1.5; 
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+[max2u id] = max(abs(allSTs));
+max_clust_obs = allSTs(id)
+
+% ttests
+for t=1:size(filt_avg_response_type,3)
+[htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,1,t)),squeeze(filt_avg_response_type(:,2,t)))
+end
+hb1 = htest; hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.4; 
+% ttests
+for t=1:size(filt_avg_response_type,3)
+[htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,1,t)),squeeze(filt_avg_response_type(:,3,t)))
+end
+hb2 = htest; hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
+
+plot(hb, 'Color', [.5 .5 .5], 'LineWidth',5)
+plot(hb1, 'Color', '#FFA500', 'LineWidth',5)
+plot(hb2, 'Color', '#964B00', 'LineWidth',5)
 
 
 filename = [paths.results.behavior 'average_per_type_filtered.png']
 exportgraphics(gcf, filename, 'Resolution',300)
 
+%% permutations
+
+nPerm = 1000; 
+clear max_clust_sum_perm
+for permi = 1:nPerm
+    for subji = 1:50
+        filt_avg_response_type_PERM(subji, :, :) = filt_avg_response_type(subji, randperm(3), :); 
+    end
+    % anova 
+    clear tbl p
+    for timei = 1:64
+        d4anova = squeeze(filt_avg_response_type_PERM(:,:,timei));    
+        [p(timei), tbl] = anova1(d4anova,[],'off');
+        t(timei) = tbl{2,5};
+    end
+    hPerm = p < 0.05; tPerm = t; 
+
+    clear allSTs  
+    clustinfo = bwconncomp(hPerm);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+        allSTs(pxi,:) = sum(tPerm(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs') & ~isempty(clustinfo.PixelIdxList)
+        [max2u id] = max(abs((allSTs)));
+        max_clust_sum_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_sum_perm(permi,:) = 0; 
+    end
+    
+
+end
+
+clear p mcsP
+mcsP = max_clust_sum_perm;
+allAb = mcsP(abs(mcsP) > abs(max_clust_obs));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 %% average rating each block
 
 block_def=[1 24;25 48;49 64];
+
+lCs = {red; yellow; green};
 figure
 hold  on
 for b=1:3
@@ -443,26 +536,37 @@ for b=1:3
 
 end
 for ty=1:3
-  errorbar(1:3,response_avgblock(ty,:),response_stdblock(ty,:), 'LineWidth',2)
-
+  errorbar(1:3,response_avgblock(ty,:),response_stdblock(ty,:), 'Color', lCs{ty}, 'LineWidth',2)
 end
+
 legend('cs+/cs+','cs+/cs-','cs-/cs-')
 h=gca;
 h.XLim=[0.5,4.5];
-h.XTick=[1:4];
-h.XTickLabel={'learn1','learn2','test1','test2',}
+h.XTick=[1:3];
+h.XTickLabel={'ACQ','EXT','TEST'}
 h.FontSize = 18; 
 
 
-filename = [paths.behavRes 'average_per_type_in_block.png']
+filename = [paths.results.behavior 'average_per_type_in_block.png']
 exportgraphics(gcf, filename, 'Resolution',300)
 
+%% statistics average in each block 
+clear response_avgblock
+for b=1:3
+    response_avgblock(b, :, :)=nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3);
+   %response_stdblock(:,b)=(nanstd(nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3),1))./sqrt(numel(allsubs));
+   % response_avgblocksub(:,:,b)=nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3);
+end
+
+%%
+d4anova = squeeze(response_avgblock(3,:,:));
+[p, tbl, stats] = anova1(d4anova)
+
+multcompare(stats)
 
 %% split performance block 3
 
 block_def=[1 24;25 48;49 64];
-figure
-hold  on
  b=3
  response_avgsumblock3=nanmean(nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3),1);
  response_stdsumblock3=nanstd(nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3),1)./sqrt(numel(allsubs));
@@ -470,22 +574,27 @@ hold  on
 all_response_avgblock3=nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3);
 
 figure
-subplot(1,3,1)
+h= subplot(1,3,1)
 
-bar(response_avgsumblock3)
-hold on
-errorbar(1:3,response_avgsumblock3,response_stdsumblock3)
-scatter(reshape(repmat((1:3),numel(allsubs),1),numel(allsubs)*3,1),reshape(nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3),numel(allsubs)*3,1))
+ba = bar(response_avgsumblock3); hold on;
+ba.FaceColor = 'flat';
+ba.CData(1,:) = lCs{1};
+ba.CData(2,:) = lCs{2};
+ba.CData(3,:) = lCs{3};
+
+errorbar(1:3,response_avgsumblock3,response_stdsumblock3, 'k', LineWidth=2)
+scatter(reshape(repmat((1:3),numel(allsubs),1),numel(allsubs)*3,1), ...
+        reshape(nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3),numel(allsubs)*3,1), 10,'ko')
 %plot(nansum(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3)')
-h=gca;
 
-h.XTickLabel={'cs+/cs+','cs+/cs-','cs-/cs-'}
-title('ABC')
+
+set(h,'xtick', 1:3, 'xticklabel', {'cs+/cs+','cs+/cs-','cs-/cs-'}, 'FontSize', 14)
 
 avg_response_typeC=(avg_response_type(:,:,block_def(b,1):block_def(b,2)));
 
 
-
+filename = [paths.results.behavior 'perf_at_test_per_type.png']
+exportgraphics(gcf, filename, 'Resolution',300)
 
 %% split performance block 4 in A & B
 
