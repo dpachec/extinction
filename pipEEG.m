@@ -1,3 +1,46 @@
+%% EXTRACT ALL SURFACES AND EXPORT TO OBJ
+%atlas = ft_read_atlas('/Applications/freesurfer/7.3.2/subjects/cvs_avg35_inMNI152/mri/aparc+aseg.mgz');
+
+clear 
+atlas = ft_read_atlas('/Applications/freesurfer/7.3.2/subjects/fsaverage/mri/aparc+aseg.mgz');
+
+for surfi = 1:length(atlas.aparclabel)
+
+    atlas.coordsys = 'mni';
+    cfg            = [];
+    cfg.inputcoord = 'mni';
+    cfg.atlas      = atlas;
+    cfg.roi        = atlas.aparclabel{surfi};
+    mask_rha     = ft_volumelookup(cfg, atlas);
+
+    seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
+    seg.brain = mask_rha;
+    cfg             = [];
+    %cfg.method      = 'iso2mesh';
+    cfg.method      = 'isosurface';
+    cfg.radbound    = 2;
+    cfg.maxsurf     = 0;
+    cfg.tissue      = 'brain';
+    cfg.numvertices = 100000;
+    cfg.smooth      = 40;
+    cfg.spmversion  = 'spm12';
+    mesh2exp        = ft_prepare_mesh(cfg, seg);
+    % % % % export to obj
+    %ob2wri.faces    = mesh2exp.tri;
+    ob2wri.faces    = [mesh2exp.tri(:,3) mesh2exp.tri(:,2) mesh2exp.tri(:,1)]  ;
+    ob2wri.vertices = mesh2exp.pos;
+    
+    obj_write(ob2wri, ['surfaces/' atlas.aparclabel{surfi}])
+
+
+end
+
+disp (' > > > > done ')
+
+
+%%
+[X,Y,Z] = cylinder(1:10);
+
 %% plot average + mni electrodes
 %atlas = ft_read_atlas([path subjID '/freesurfer/mri/aparc+aseg.mgz']);
 
@@ -16,12 +59,13 @@ mask_rha     = ft_volumelookup(cfg, atlas);
 seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
 seg.brain = mask_rha;
 cfg             = [];
-cfg.method      = 'iso2mesh';
+%cfg.method      = 'iso2mesh';
+cfg.method      = 'isosurface';
 cfg.radbound    = 2;
 cfg.maxsurf     = 0;
 cfg.tissue      = 'brain';
-cfg.numvertices = 1000;
-cfg.smooth      = 3;
+cfg.numvertices = 100000;
+cfg.smooth      = 50;
 cfg.spmversion  = 'spm12';
 mesh_rha_LH = ft_prepare_mesh(cfg, seg);
 
@@ -36,12 +80,13 @@ mask_rha     = ft_volumelookup(cfg, atlas);
 seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
 seg.brain = mask_rha;
 cfg             = [];
-cfg.method      = 'iso2mesh';
+%cfg.method      = 'iso2mesh';
+cfg.method      = 'isosurface';
 cfg.radbound    = 2;
 cfg.maxsurf     = 0;
 cfg.tissue      = 'brain';
-cfg.numvertices = 3000;
-cfg.smooth      = 3;
+cfg.numvertices = 100000;
+cfg.smooth      = 50;
 cfg.spmversion  = 'spm12';
 mesh_rha_LA = ft_prepare_mesh(cfg, seg);
 
@@ -58,12 +103,13 @@ mask_rha     = ft_volumelookup(cfg, atlas);
 seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
 seg.brain = mask_rha;
 cfg             = [];
-cfg.method      = 'iso2mesh';
+%cfg.method      = 'iso2mesh';
+cfg.method      = 'isosurface';
 cfg.radbound    = 2;
 cfg.maxsurf     = 0;
 cfg.tissue      = 'brain';
-cfg.numvertices = 1000;
-cfg.smooth      = 3;
+cfg.numvertices = 100000;
+cfg.smooth      = 50;
 cfg.spmversion  = 'spm12';
 mesh_rha_RH = ft_prepare_mesh(cfg, seg);
 
@@ -76,17 +122,33 @@ mask_rha     = ft_volumelookup(cfg, atlas);
 seg = keepfields(atlas, {'dim', 'unit','coordsys','transform'});
 seg.brain = mask_rha;
 cfg             = [];
-cfg.method      = 'iso2mesh';
+%cfg.method      = 'iso2mesh';
+cfg.method      = 'isosurface';
 cfg.radbound    = 2;
 cfg.maxsurf     = 0;
 cfg.tissue      = 'brain';
-cfg.numvertices = 3000;
-cfg.smooth      = 3;
+cfg.numvertices = 100000;
+cfg.smooth      = 50;
 cfg.spmversion  = 'spm12';
 mesh_rha_RA = ft_prepare_mesh(cfg, seg);
 
 
 disp (' > > > > done ')
+
+%% export to obj
+ob2wri.faces = mesh_rha_LA.tri; 
+ob2wri.vertices = mesh_rha_LA.pos; 
+obj_write(ob2wri, 'LA')
+ob2wri.faces = mesh_rha_RA.tri; 
+ob2wri.vertices = mesh_rha_RA.pos; 
+obj_write(ob2wri, 'RA')
+ob2wri.faces = mesh_rha_LH.tri; 
+ob2wri.vertices = mesh_rha_LH.pos; 
+obj_write(ob2wri, 'LH')
+ob2wri.faces = mesh_rha_RH.tri; 
+ob2wri.vertices = mesh_rha_RH.pos; 
+obj_write(ob2wri, 'RH')
+
 
 
 %% 
