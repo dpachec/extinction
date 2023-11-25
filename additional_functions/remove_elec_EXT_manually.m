@@ -11,7 +11,7 @@ function [EEG] = remove_elec_EXT_manually (EEG, subji)
           chans2exc = {'POL L2'; 'POL L3'; 'POL L4'; 'POL L8'; 'POL F11'; 'POL R12'; 'POL R13'}; 
         end
         if subji ==4
-          chans2exc = {'POL B1'; 'POL L16'; 'POL S9'; 'POL S7'; 'POL S1'; 'POL B5'}; 
+          chans2exc = {'POL B1'; 'POL L16'; 'POL S9'; 'POL S7'; 'POL S1'; 'POL B5'; 'POL S5'; 'POL S2'}; 
         end
         if subji ==5
           chans2exc = {'POL J1' ; 'POL J2' ; 'POL J3' ; 'POL A5';'POL V5';'POL V6';'POL L4';'POL V8';'POL L10';'POL L11'};
@@ -48,7 +48,7 @@ function [EEG] = remove_elec_EXT_manually (EEG, subji)
         end
         if subji == 15
             chans2exc = {'POL A9'; 'POL A3'; 'POL A4'; 'POL H1';'POL X1';'POL X2';'POL X3';'POL X4';'POL X5';'POL X6'; 'POL Y4'; 'POL U10'; 'POL O8'; ...
-                            'POL S12'; 'POL V4'; 'POL V5'; 'POL V6'}; 
+                            'POL S12'; 'POL V4'; 'POL V5'; 'POL V6'; 'POL Z10'}; 
         end
         if subji == 16
             chans2exc = {'POL F''6'; 'POL F''3';'POL J''1'; 'POL J''2'; 'POL A''4';  'POL Z''2'; 'POL Z''3'; 'POL Z''4'; 'POL Z''5' ; ...
@@ -65,7 +65,8 @@ function [EEG] = remove_elec_EXT_manually (EEG, subji)
             chans2exc = {'POL H''9'; 'POL Z''6'; 'POL Z''7';'POL F''11'}; 
         end
         if subji == 20
-            chans2exc = {'POL B''1'; 'POL F''1'; 'POL Y''17'; 'POL B''13'; 'POL P''1'}; 
+            chans2exc = {'POL B''1'; 'POL F''1'; 'POL Y''17'; 'POL B''13'; 'POL P''1'; ...
+                         'POL X''11'; 'POL X''16'; 'POL X''17'; 'POL L''2'; 'POL F''2'}; 
         end
         if subji == 21
             chans2exc = {'POL H''3' ; 'POL J''3'; 'POL A''5'; 'POL P''10'; 'POL V''4';'POL Y''8';'POL J''11'}; 
@@ -112,13 +113,14 @@ function [EEG] = remove_elec_EXT_manually (EEG, subji)
             chans2exc = {'TBa_1';'LMI2_8';'TBa_7'};
         end
         if subji == 35
-            chans2exc = {'HaT2_3'; 'AmT2_2';'F2a_1'; 'F2a_3'; 'F3a_6';'PMs_5'};
+            chans2exc = {'HaT2_3'; 'AmT2_2';'F2a_1'; 'F2a_3'; 'F3a_6';'PMs_5';'F2a_2'; 'F2p_2';'F2p_1'; 'F1a_2'; 'F1p_2'};
+
         end
         if subji == 36
             chans2exc = {'HaT1_1'; 'HaT1_2'; 'InAm_2'; 'InaF_4'; 'TPol_2';'HmT2_3';'HmT2_4';'TBm_1';'TBa_2'};
         end
         if subji == 37
-            chans2exc = {'F1m_4'; 'F1p_1'};
+            chans2exc = {'F1m_4'; 'F1p_1'; 'F1a_2'; 'F1p_2'; 'F1m_2'; 'F1m_3'; };
         end
         if subji == 38
             chans2exc = {'T2md_4'; 'T2md_5'; 'AmT2_2'; 'AmT2_4'; 'T2mg_1';'TPod_2';'TPod_6';'T2Bg_2';'T2pg_8';'TPod_5'};
