@@ -10,11 +10,12 @@ listF2sav = {   %{'Amygdala' };
                 %{'orbitofrontal'}; 
                 %{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
                 %{'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
-                {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+                %{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+                {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'}; 
             };   
 %n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'FRO'};
 %n2SAV = {'TMP'};
-n2SAV = {'FRO'};
+n2SAV = {'PFC'};
 
 
 
@@ -104,11 +105,12 @@ listF2sav = {   %{'Amygdala' };
                 %{'orbitofrontal'}; 
                 %{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
                 %{'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
-                {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+                %{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+                {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'}; 
             };   
 %n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'FRO'};
 %n2SAV = {'TMP'};
-n2SAV = {'FRO'};
+n2SAV = {'PFC'};
 
 
 
