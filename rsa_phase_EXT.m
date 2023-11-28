@@ -29,6 +29,144 @@ listF2sav = {
 'POW_PFC_C_3-54_1_0_50-10_1_SCE-DCE';
 'POW_PFC_C_3-54_1_0_50-10_1_SCT-DCT';
 
+'POW_PFCO_C_3-54_1_0_50-10_1_SISVA-DISVA';
+'POW_PFCO_C_3-54_1_0_50-10_1_SISVE-DISVE';
+'POW_PFCO_C_3-54_1_0_50-10_1_DISVA-DIDVA';
+'POW_PFCO_C_3-54_1_0_50-10_1_DISVE-DIDVE';
+'POW_PFCO_C_3-54_1_0_50-10_1_SICSPA-SICSMA';
+'POW_PFCO_C_3-54_1_0_50-10_1_SICSPE-SICSME';
+'POW_PFCO_C_3-54_1_0_50-10_1_SICSPE-SICSMPP';
+'POW_PFCO_C_3-54_1_0_50-10_1_SICSPE-SICSMPM';
+'POW_PFCO_C_3-54_1_0_50-10_1_SICSPPT-SICSPMT';
+'POW_PFCO_C_3-54_1_0_50-10_1_SICSPPT-SICSMMT';
+'POW_PFCO_C_3-54_1_0_50-10_1_SCCSPA-DCCSPA';
+'POW_PFCO_C_3-54_1_0_50-10_1_SCCSPE-DCCSPE';
+'POW_PFCO_C_3-54_1_0_50-10_1_SCCSMA-DCCSMA';
+'POW_PFCO_C_3-54_1_0_50-10_1_SCCSME-DCCSME';
+'POW_PFCO_C_3-54_1_0_50-10_1_SCCSPA-SCCSMA';
+'POW_PFCO_C_3-54_1_0_50-10_1_SCCSPE-SCCSME';
+'POW_PFCO_V_3-54_1_0_50-10_1_SCA-DCA';
+'POW_PFCO_V_3-54_1_0_50-10_1_SCE-DCE';
+'POW_PFCO_V_3-54_1_0_50-10_1_SCT-DCT';
+'POW_PFCO_C_3-54_1_0_50-10_1_SCA-DCA';
+'POW_PFCO_C_3-54_1_0_50-10_1_SCE-DCE';
+'POW_PFCO_C_3-54_1_0_50-10_1_SCT-DCT';
+
+'POW_HPC_C_3-54_1_0_50-10_1_SISVA-DISVA';
+'POW_HPC_C_3-54_1_0_50-10_1_SISVE-DISVE';
+'POW_HPC_C_3-54_1_0_50-10_1_DISVA-DIDVA';
+'POW_HPC_C_3-54_1_0_50-10_1_DISVE-DIDVE';
+'POW_HPC_C_3-54_1_0_50-10_1_SICSPA-SICSMA';
+'POW_HPC_C_3-54_1_0_50-10_1_SICSPE-SICSME';
+'POW_HPC_C_3-54_1_0_50-10_1_SICSPE-SICSMPP';
+'POW_HPC_C_3-54_1_0_50-10_1_SICSPE-SICSMPM';
+'POW_HPC_C_3-54_1_0_50-10_1_SICSPPT-SICSPMT';
+'POW_HPC_C_3-54_1_0_50-10_1_SICSPPT-SICSMMT';
+'POW_HPC_C_3-54_1_0_50-10_1_SCCSPA-DCCSPA';
+'POW_HPC_C_3-54_1_0_50-10_1_SCCSPE-DCCSPE';
+'POW_HPC_C_3-54_1_0_50-10_1_SCCSMA-DCCSMA';
+'POW_HPC_C_3-54_1_0_50-10_1_SCCSME-DCCSME';
+'POW_HPC_C_3-54_1_0_50-10_1_SCCSPA-SCCSMA';
+'POW_HPC_C_3-54_1_0_50-10_1_SCCSPE-SCCSME';
+'POW_HPC_V_3-54_1_0_50-10_1_SCA-DCA';
+'POW_HPC_V_3-54_1_0_50-10_1_SCE-DCE';
+'POW_HPC_V_3-54_1_0_50-10_1_SCT-DCT';
+'POW_HPC_C_3-54_1_0_50-10_1_SCA-DCA';
+'POW_HPC_C_3-54_1_0_50-10_1_SCE-DCE';
+'POW_HPC_C_3-54_1_0_50-10_1_SCT-DCT';
+
+'POW_OFC_C_3-54_1_0_50-10_1_SISVA-DISVA';
+'POW_OFC_C_3-54_1_0_50-10_1_SISVE-DISVE';
+'POW_OFC_C_3-54_1_0_50-10_1_DISVA-DIDVA';
+'POW_OFC_C_3-54_1_0_50-10_1_DISVE-DIDVE';
+'POW_OFC_C_3-54_1_0_50-10_1_SICSPA-SICSMA';
+'POW_OFC_C_3-54_1_0_50-10_1_SICSPE-SICSME';
+'POW_OFC_C_3-54_1_0_50-10_1_SICSPE-SICSMPP';
+'POW_OFC_C_3-54_1_0_50-10_1_SICSPE-SICSMPM';
+'POW_OFC_C_3-54_1_0_50-10_1_SICSPPT-SICSPMT';
+'POW_OFC_C_3-54_1_0_50-10_1_SICSPPT-SICSMMT';
+'POW_OFC_C_3-54_1_0_50-10_1_SCCSPA-DCCSPA';
+'POW_OFC_C_3-54_1_0_50-10_1_SCCSPE-DCCSPE';
+'POW_OFC_C_3-54_1_0_50-10_1_SCCSMA-DCCSMA';
+'POW_OFC_C_3-54_1_0_50-10_1_SCCSME-DCCSME';
+'POW_OFC_C_3-54_1_0_50-10_1_SCCSPA-SCCSMA';
+'POW_OFC_C_3-54_1_0_50-10_1_SCCSPE-SCCSME';
+'POW_OFC_V_3-54_1_0_50-10_1_SCA-DCA';
+'POW_OFC_V_3-54_1_0_50-10_1_SCE-DCE';
+'POW_OFC_V_3-54_1_0_50-10_1_SCT-DCT';
+'POW_OFC_C_3-54_1_0_50-10_1_SCA-DCA';
+'POW_OFC_C_3-54_1_0_50-10_1_SCE-DCE';
+'POW_OFC_C_3-54_1_0_50-10_1_SCT-DCT';
+
+'POW_AMY_C_3-54_1_0_50-10_1_SISVA-DISVA';
+'POW_AMY_C_3-54_1_0_50-10_1_SISVE-DISVE';
+'POW_AMY_C_3-54_1_0_50-10_1_DISVA-DIDVA';
+'POW_AMY_C_3-54_1_0_50-10_1_DISVE-DIDVE';
+'POW_AMY_C_3-54_1_0_50-10_1_SICSPA-SICSMA';
+'POW_AMY_C_3-54_1_0_50-10_1_SICSPE-SICSME';
+'POW_AMY_C_3-54_1_0_50-10_1_SICSPE-SICSMPP';
+'POW_AMY_C_3-54_1_0_50-10_1_SICSPE-SICSMPM';
+'POW_AMY_C_3-54_1_0_50-10_1_SICSPPT-SICSPMT';
+'POW_AMY_C_3-54_1_0_50-10_1_SICSPPT-SICSMMT';
+'POW_AMY_C_3-54_1_0_50-10_1_SCCSPA-DCCSPA';
+'POW_AMY_C_3-54_1_0_50-10_1_SCCSPE-DCCSPE';
+'POW_AMY_C_3-54_1_0_50-10_1_SCCSMA-DCCSMA';
+'POW_AMY_C_3-54_1_0_50-10_1_SCCSME-DCCSME';
+'POW_AMY_C_3-54_1_0_50-10_1_SCCSPA-SCCSMA';
+'POW_AMY_C_3-54_1_0_50-10_1_SCCSPE-SCCSME';
+'POW_AMY_V_3-54_1_0_50-10_1_SCA-DCA';
+'POW_AMY_V_3-54_1_0_50-10_1_SCE-DCE';
+'POW_AMY_V_3-54_1_0_50-10_1_SCT-DCT';
+'POW_AMY_C_3-54_1_0_50-10_1_SCA-DCA';
+'POW_AMY_C_3-54_1_0_50-10_1_SCE-DCE';
+'POW_AMY_C_3-54_1_0_50-10_1_SCT-DCT';
+
+'POW_OCC_C_3-54_1_0_50-10_1_SISVA-DISVA';
+'POW_OCC_C_3-54_1_0_50-10_1_SISVE-DISVE';
+'POW_OCC_C_3-54_1_0_50-10_1_DISVA-DIDVA';
+'POW_OCC_C_3-54_1_0_50-10_1_DISVE-DIDVE';
+'POW_OCC_C_3-54_1_0_50-10_1_SICSPA-SICSMA';
+'POW_OCC_C_3-54_1_0_50-10_1_SICSPE-SICSME';
+'POW_OCC_C_3-54_1_0_50-10_1_SICSPE-SICSMPP';
+'POW_OCC_C_3-54_1_0_50-10_1_SICSPE-SICSMPM';
+'POW_OCC_C_3-54_1_0_50-10_1_SICSPPT-SICSPMT';
+'POW_OCC_C_3-54_1_0_50-10_1_SICSPPT-SICSMMT';
+'POW_OCC_C_3-54_1_0_50-10_1_SCCSPA-DCCSPA';
+'POW_OCC_C_3-54_1_0_50-10_1_SCCSPE-DCCSPE';
+'POW_OCC_C_3-54_1_0_50-10_1_SCCSMA-DCCSMA';
+'POW_OCC_C_3-54_1_0_50-10_1_SCCSME-DCCSME';
+'POW_OCC_C_3-54_1_0_50-10_1_SCCSPA-SCCSMA';
+'POW_OCC_C_3-54_1_0_50-10_1_SCCSPE-SCCSME';
+'POW_OCC_V_3-54_1_0_50-10_1_SCA-DCA';
+'POW_OCC_V_3-54_1_0_50-10_1_SCE-DCE';
+'POW_OCC_V_3-54_1_0_50-10_1_SCT-DCT';
+'POW_OCC_C_3-54_1_0_50-10_1_SCA-DCA';
+'POW_OCC_C_3-54_1_0_50-10_1_SCE-DCE';
+'POW_OCC_C_3-54_1_0_50-10_1_SCT-DCT';
+
+'POW_TMP_C_3-54_1_0_50-10_1_SISVA-DISVA';
+'POW_TMP_C_3-54_1_0_50-10_1_SISVE-DISVE';
+'POW_TMP_C_3-54_1_0_50-10_1_DISVA-DIDVA';
+'POW_TMP_C_3-54_1_0_50-10_1_DISVE-DIDVE';
+'POW_TMP_C_3-54_1_0_50-10_1_SICSPA-SICSMA';
+'POW_TMP_C_3-54_1_0_50-10_1_SICSPE-SICSME';
+'POW_TMP_C_3-54_1_0_50-10_1_SICSPE-SICSMPP';
+'POW_TMP_C_3-54_1_0_50-10_1_SICSPE-SICSMPM';
+'POW_TMP_C_3-54_1_0_50-10_1_SICSPPT-SICSPMT';
+'POW_TMP_C_3-54_1_0_50-10_1_SICSPPT-SICSMMT';
+'POW_TMP_C_3-54_1_0_50-10_1_SCCSPA-DCCSPA';
+'POW_TMP_C_3-54_1_0_50-10_1_SCCSPE-DCCSPE';
+'POW_TMP_C_3-54_1_0_50-10_1_SCCSMA-DCCSMA';
+'POW_TMP_C_3-54_1_0_50-10_1_SCCSME-DCCSME';
+'POW_TMP_C_3-54_1_0_50-10_1_SCCSPA-SCCSMA';
+'POW_TMP_C_3-54_1_0_50-10_1_SCCSPE-SCCSME';
+'POW_TMP_V_3-54_1_0_50-10_1_SCA-DCA';
+'POW_TMP_V_3-54_1_0_50-10_1_SCE-DCE';
+'POW_TMP_V_3-54_1_0_50-10_1_SCT-DCT';
+'POW_TMP_C_3-54_1_0_50-10_1_SCA-DCA';
+'POW_TMP_C_3-54_1_0_50-10_1_SCE-DCE';
+'POW_TMP_C_3-54_1_0_50-10_1_SCT-DCT';
+
 
 
 
@@ -122,7 +260,7 @@ end
 clear, clc
 paths = load_paths_EXT; 
         
-f2sav = 'POW_HPC_V_3-54_1_0_50-10_1_SCT-DCT';
+f2sav = 'POW_OFC_C_3-54_1_0_50-10_1_SCT-DCT';
 
 
 sub2exc = [];
@@ -402,12 +540,7 @@ listF2sav = {
 'POW_AMY_C_3-54_1_0_50-10_1_SCCSME-DCCSME';
 'POW_AMY_C_3-54_1_0_50-10_1_SCCSPA-SCCSMA';
 'POW_AMY_C_3-54_1_0_50-10_1_SCCSPE-SCCSME';
-'POW_AMY_V_3-54_1_0_50-10_1_SCA-DCA';
-'POW_AMY_V_3-54_1_0_50-10_1_SCE-DCE';
-'POW_AMY_V_3-54_1_0_50-10_1_SCT-DCT';
-'POW_AMY_C_3-54_1_0_50-10_1_SCA-DCA';
-'POW_AMY_C_3-54_1_0_50-10_1_SCE-DCE';
-'POW_AMY_C_3-54_1_0_50-10_1_SCT-DCT';
+
 
 
 
@@ -544,7 +677,7 @@ x = RMAOV1(d4ANOVA);
 %% plot 2 lines from TG 
 clear
 paths = load_paths_EXT; 
-f2sav =   'POW_OCC_C_3-8_0_0_50-1_1_SICSPE-SICSME';
+f2sav =   'POW_PFC_C_3-8_0_0_50-1_1_SICSPA-SICSMA';
 load ([ paths.results.rsa f2sav '.mat']);
 
 ids = rem_nan_subj_EXT(out_rsa); 
@@ -678,10 +811,13 @@ disp (['t: ' num2str(t) ' //  p = ' num2str(p)])
 %% CHECK CONTEXT DURING ACQ AND EXT > GENERALIZATION
 clear, clc
 paths = load_paths_EXT; 
-f2sav =   'POW_OCC_V_39-54_1_0_50-10_1_SCA-DCA';
+
+myR = 'PFC';
+
+f2sav =   ['POW_' myR '_C_3-54_1_0_50-10_1_SCA-DCA'];
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_ACQ = out_rsa; 
-f2sav =   'POW_OCC_V_39-54_1_0_50-10_1_SCE-DCE';
+f2sav =   ['POW_' myR '_C_3-54_1_0_50-10_1_SCE-DCE'];
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_EXT = out_rsa; 
 
@@ -743,7 +879,7 @@ nPerm = 1000;
 nSubj =  size(diffA, 1);
 realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
 
-junts = cat(1, diffA(:, 4:23, 4:23), diffE(:, 4:23, 4:23));
+junts = cat(1, diffA(:, 4:20, 4:20), diffE(:, 4:20, 4:20));
 %junts = cat(1, diffA(:, 4:13, 4:13), diffE(:, 4:13, 4:13));
 %junts = cat(1, diffA(:, 26:125, 26:125), diffE(:, 26:125, 26:125));
 
@@ -785,8 +921,109 @@ disp('done')
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
+%% CHECK VALENCE DURING ACQ AND EXT 
+clear, clc
+paths = load_paths_EXT; 
+
+myR = 'TMP';
+pM = 1; 
+
+f2sav =   ['POW_' myR '_C_3-54_1_0_50-10_1_SICSPA-SICSMA'];
+load ([ paths.results.rsa f2sav '.mat']);
+out_rsa_ACQ = out_rsa; 
+f2sav =   ['POW_' myR '_C_3-54_1_0_50-10_1_SICSPE-SICSME'];
+load ([ paths.results.rsa f2sav '.mat']);
+out_rsa_EXT = out_rsa; 
 
 
+
+
+% % % % %  remove hack 
+ids = []; 
+for subji = 1:size(out_rsa, 1)
+    %cond1 = squeeze(out_rsa(subji, 1, 1:13, 1:13)); 
+    %cond2 = squeeze(out_rsa(subji, 2, 1:13, 1:13)); 
+    cond1 = squeeze(out_rsa(subji, 1, :, :)); 
+    cond2 = squeeze(out_rsa(subji, 2, :, :)); 
+    if cond1(1) == 0
+        ids = [ids subji];
+    end
+end
+
+condA = squeeze(out_rsa_ACQ(:, pM, :, :)); condA(ids, :, :) = []; 
+condE = squeeze(out_rsa_EXT(:, pM, :,:)); condE(ids, :, :) = []; 
+
+[condA condE] = rem_half_matrix(condA, condE);
+m1 = squeeze(mean(condA, 'omitnan')); 
+m2 = squeeze(mean(condE, 'omitnan')); 
+
+[h p ci ts] = ttest(condA, condE); 
+h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    tObs = allSTs(id); 
+end
+
+
+%h = zeros(size(cond1, 2),size(cond1, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
+
+plot_TG_map(m1, m2, h, t, f2sav, [-.02 .02]); 
+exportgraphics(gcf, [paths.results.rsa  '_myP.png'], 'Resolution',150)
+
+
+
+
+%% PERMUTATIONS
+nPerm = 1000; 
+
+nSubj =  size(condA, 1);
+realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
+
+junts = cat(1, condA(:, 4:20, 4:20), condE(:, 4:20, 4:20));
+
+clear max_clust_sum_perm
+for permi = 1:nPerm
+    
+    [M,N] = size(realCondMapping);
+    rowIndex = repmat((1:M)',[1 N]);
+    [~,randomizedColIndex] = sort(rand(M,N),2);
+    newLinearIndex = sub2ind([M,N],rowIndex,randomizedColIndex);
+    fakeCondMapping = realCondMapping(newLinearIndex);
+
+    cond1P = junts(fakeCondMapping == 0, :,:);
+    cond2P = junts(fakeCondMapping == 1, :,:);
+
+    diffC = cond1P - cond2P; 
+    [h p ci ts] = ttest(diffC); 
+    h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat); 
+    clear allSTs  
+    clustinfo = bwconncomp(h);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+    end
+    
+    if exist('allSTs')
+        [max2u id] = max(allSTs);
+        max_clust_sum_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_sum_perm(permi,:) = 0; 
+    end
+
+end
+
+
+disp('done')
+
+ 
+%allAb = max_clust_sum_perm(max_clust_sum_perm < tObs);
+allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 %% plot histogram
 figure
 %tObs =  -30.4546%-86.4470;

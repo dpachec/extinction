@@ -15,7 +15,7 @@ end
 
 totalNofNanTrls = sum(d2check);
 chans2rem = totalNofNanTrls > thresChan; %% if the total number of trials with nans is higher than this, remove channel
-
+disp(['Electrodes removed automatically = ' num2str(sum(chans2rem))])
 EEG.chanlocs(chans2rem) = []; 
 EEG.data(chans2rem, :, :) = []; 
 

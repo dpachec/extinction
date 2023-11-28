@@ -5,17 +5,15 @@ clear , clc
 
 c2u = 'C';
 
-listF2sav = {   %{'Amygdala' }; 
-                %{'Hippocampus'}; 
-                %{'orbitofrontal'}; 
-                %{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
-                %{'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
-                %{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+listF2sav = {   {'Amygdala' }; 
+                {'Hippocampus'}; 
+                {'orbitofrontal'}; 
+                {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+                {'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
+                {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
                 {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'}; 
             };   
-%n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'FRO'};
-%n2SAV = {'TMP'};
-n2SAV = {'PFC'};
+n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'PFC'; 'PFCO'};
 
 
 
@@ -94,23 +92,21 @@ end
 disp('done all files');
 cd (paths.github)
 
-%%EXPORT TRACES IN LOOP
+
 
 clear , clc
 
 c2u = 'V';
 
-listF2sav = {   %{'Amygdala' }; 
-                %{'Hippocampus'}; 
-                %{'orbitofrontal'}; 
-                %{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
-                %{'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
-                %{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+listF2sav = {   {'Amygdala' }; 
+                {'Hippocampus'}; 
+                {'orbitofrontal'}; 
+                {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+                {'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
+                {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
                 {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'}; 
             };   
-%n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'FRO'};
-%n2SAV = {'TMP'};
-n2SAV = {'PFC'};
+n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'PFC'; 'PFCO'};
 
 
 
@@ -194,7 +190,7 @@ cd (paths.github)
 clear, clc
 
 paths = load_paths_EXT; 
-file2load = ['TR_' 'HPC' '_C_6_4']; 
+file2load = ['TR_' 'TMP' '_C_6_4']; 
 load ([paths.results.traces file2load]); 
 
 %% create one CSV file with all electrodes
@@ -260,7 +256,7 @@ end
 
 %% Plot all ERPs
 
-for subji = 48 %48:length(ALLEEG)
+for subji = 1:length(ALLEEG)
 
     EEG = ALLEEG{subji}; 
 
@@ -321,6 +317,97 @@ for subji = 48 %48:length(ALLEEG)
 end
 
 disp ('done plotting traces')
+
+%% PLOT ALL ERP FOR ALL FILES IN LOOP 
+
+clear , clc
+
+
+listF2sav = {   'TR_OFC_C_6_4'
+                'TR_FRO_C_6_4'
+                'TR_PFC_C_6_4'
+                'TR_TMP_C_6_4'
+                'TR_OCC_C_6_4'
+                'TR_AMY_C_6_4'
+                'TR_HPC_C_6_4'
+            
+            };   
+
+paths = load_paths_EXT; 
+
+for listi = 1:length(listF2sav)
+    disp(['File > ' num2str(listi) '      ' listF2sav{listi}]);
+    clearvars -except listF2sav listi paths 
+    file2load = listF2sav{listi}; 
+    load ([paths.results.traces file2load]); 
+    
+    for subji = 1:length(ALLEEG)
+        EEG = ALLEEG{subji}; 
+    
+        if ~isempty(EEG)
+            
+            Ev = [{EEG.event.type}]';
+            Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+            Ev2 = cat(1, Ev1{:});
+            
+            % % %   % % Acquisition
+            ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+            ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+    
+            % % % % % % Extinction
+            ids3 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+            %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
+            ids4 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
+            ids5 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
+    
+            tfDCH1 = mean(EEG.data(: ,:, ids1), 3, 'omitnan'); 
+            tfDCH2 = mean(EEG.data(: ,:, ids2), 3, 'omitnan'); 
+            tfDCH3 = mean(EEG.data(: ,:, ids3), 3, 'omitnan'); 
+            tfDCH4 = mean(EEG.data(: ,:, ids4), 3, 'omitnan'); 
+            tfDCH5 = mean(EEG.data(: ,:, ids5), 3, 'omitnan'); 
+    
+            allERPs{subji} = [tfDCH1; tfDCH2; tfDCH3; tfDCH4; tfDCH5];
+    
+            nChans = size(EEG.data, 1);
+            for chani = 1:nChans
+    
+                t = tiledlayout(5, 1); set(gcf, 'Position', [100 100 500 1000])
+                nexttile
+                plot(tfDCH1(chani, :)); 
+                nexttile
+                plot(tfDCH2(chani, :)); 
+                nexttile
+                plot(tfDCH3(chani, :)); 
+                nexttile
+                plot(tfDCH4(chani, :)); 
+                nexttile
+                plot(tfDCH5(chani, :)); 
+                
+                figName = [file2load '_s' num2str(subji) '_ch' num2str(chani)]; 
+                title(t, figName, 'Interpreter','none'); 
+                mkdir(paths.results.tracesPlots)
+                exportgraphics(gcf, [paths.results.tracesPlots figName '.png'], 'Resolution', 150); 
+                close all; 
+    
+            end
+            
+            %c1{subji,:} = tfDCH1; 
+            %2{subji,:} = tfDCH2; 
+    
+        end
+    
+    
+    
+    end
+
+disp ('done plotting traces from all subjects')
+
+
+end
+
+
+
+
 
 %% Plot all SPECTROGRAMS
 
@@ -385,6 +472,96 @@ for subji = 1:length(ALLEEG)
 end
 
 disp ('done plotting spectrograms')
+
+%% PLOT ALL SPECTROGRAMS FOR ALL FILES IN LOOP 
+
+clear , clc
+
+
+listF2sav = {   'TR_OFC_C_6_4'
+                'TR_FRO_C_6_4'
+                'TR_PFC_C_6_4'
+                'TR_TMP_C_6_4'
+                'TR_OCC_C_6_4'
+                'TR_AMY_C_6_4'
+                'TR_HPC_C_6_4'
+            
+            };   
+
+paths = load_paths_EXT; 
+
+for listi = 1:length(listF2sav)
+    disp(['File > ' num2str(listi) '      ' listF2sav{listi}]);
+    clearvars -except listF2sav listi paths 
+    file2load = listF2sav{listi}; 
+    load ([paths.results.traces file2load]); 
+    
+    
+for subji = 1:length(ALLEEG)
+
+    EEG = ALLEEG{subji}; 
+
+    if ~isempty(EEG)
+        
+        Ev = [{EEG.event.type}]';
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        Ev2 = cat(1, Ev1{:});
+        
+        % % %   % % Acquisition
+        ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+
+        % % % % % % Extinction
+        ids3 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
+        ids4 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
+        ids5 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
+
+        EEG = extract_power_EXT(EEG, 0.01); 
+        EEG = normalize_EXT(EEG);  %across trials
+
+        tfDCH1 = mean(EEG.power(ids1, :, :, :), 1, 'omitnan'); 
+        tfDCH2 = mean(EEG.power(ids2, :, :, :), 1, 'omitnan'); 
+        tfDCH3 = mean(EEG.power(ids3, :, :, :), 1, 'omitnan'); 
+        tfDCH4 = mean(EEG.power(ids4, :, :, :), 1, 'omitnan'); 
+        tfDCH5 = mean(EEG.power(ids5, :, :, :), 1, 'omitnan'); 
+
+        nChans = size(EEG.power, 2);
+        for chani = 1:nChans
+
+            t = tiledlayout(5, 1); set(gcf, 'Position', [100 100 500 1000])
+            nexttile
+            imagesc(squeeze(tfDCH1(:, chani, :,:)));
+            nexttile
+            imagesc(squeeze(tfDCH2(:, chani, :,:))); 
+            nexttile
+            imagesc(squeeze(tfDCH3(:, chani, :,:))); 
+            nexttile
+            imagesc(squeeze(tfDCH4(:, chani, :,:))); 
+            nexttile
+            imagesc(squeeze(tfDCH5(:, chani, :,:))); 
+            
+            figName = [file2load '_s' num2str(subji) '_ch' num2str(chani)]; 
+            title(t, figName, 'Interpreter','none'); 
+            exportgraphics(gcf, [paths.results.powerPlots figName '.png'], 'Resolution', 150); 
+            close all; 
+
+        end
+        
+        %c1{subji,:} = tfDCH1; 
+        %2{subji,:} = tfDCH2; 
+
+    end
+
+
+
+end
+disp ('done plotting traces from all subjects')
+
+
+end
+
+
 
 %% Save without plotting
 

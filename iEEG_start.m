@@ -1,6 +1,177 @@
 %% 
 %% 
+
+
+clear, close all
+paths = load_paths_EXT; 
+
+c2u = 'C';
+
+sROI = {'Amygdala'}; 
+%{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+%{'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
+%{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+%{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'};
+
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ...
+            'p_sub19', 'p_sub20', 'p_sub21'}'; %subject 8 has differnet format (see below)}';
+
+
+for subji = 1:length(allsubs)
+    subji
+    sub = allsubs{subji}; 
+    cd([ paths.iEEG])
+    load ([sub '_iEEG.mat']);
+
+    EEG = remove_elec_EXT_manually(EEG, subji); %thres channels is 1/5 of 192 = 38
+    chansLab = {EEG.chanlocs.fsLabel}';
+    selChans = contains(chansLab, sROI);
+
+    
+    if find(selChans)
+        
+        EEG.chanlocs = EEG.chanlocs(selChans);
+        EEG.data = EEG.data(selChans, :); %contains nans
+        
+        %epoch data
+        Ev = [{EEG.event.type}]'; 
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        clen = cellfun(@length, Ev1); 
+        EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
+        Ev2 = cat(1, Ev1{:});
+       
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
+        ids = strcmp(Ev2(:, 10), c2u); 
+        EEG.event = EEG.event(ids);
+
+        % % % remove renewal trials 
+        %id2r3 = strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2'); 
+        %EEG.event = EEG.event(ids & id2r3);
+
+        %epoch data and markers
+        [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+        
+        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+
+        
+
+        if ~isempty(EEG.data)
+            
+            EEG = extract_power_EXT(EEG, 0.01); 
+            %EEG = extract_theta_power_EXT(EEG); %HILBERT
+            EEG = normalize_EXT(EEG);
+            nChans(subji, :) = size(EEG.power, 2);
+            ALLEEG{subji,:} = EEG; 
+
+        end
+    
+    end
+
+
+end
+
+sROI = char(join(sROI, '_'));
+mkdir(paths.results.power)
+filename = [paths.results.power 'allS_' sROI '_' c2u];
+nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
+totalChans = sum(nChans);
+save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
+
+cd (paths.github)
+
  
+
+clear, close all
+paths = load_paths_EXT; 
+
+c2u = 'C';
+
+
+sROI = {'Hippocampus'}; 
+%sROI = {'orbitofrontal'}; 
+%{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+%{'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
+%{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+%{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'};
+
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ...
+            'p_sub19', 'p_sub20', 'p_sub21'}'; %subject 8 has differnet format (see below)}';
+
+
+for subji = 1:length(allsubs)
+    subji
+    sub = allsubs{subji}; 
+    cd([ paths.iEEG])
+    load ([sub '_iEEG.mat']);
+
+    EEG = remove_elec_EXT_manually(EEG, subji); %thres channels is 1/5 of 192 = 38
+    chansLab = {EEG.chanlocs.fsLabel}';
+    selChans = contains(chansLab, sROI);
+
+    
+    if find(selChans)
+        
+        EEG.chanlocs = EEG.chanlocs(selChans);
+        EEG.data = EEG.data(selChans, :); %contains nans
+        
+        %epoch data
+        Ev = [{EEG.event.type}]'; 
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        clen = cellfun(@length, Ev1); 
+        EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
+        Ev2 = cat(1, Ev1{:});
+       
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
+        ids = strcmp(Ev2(:, 10), c2u); 
+        EEG.event = EEG.event(ids);
+
+        % % % remove renewal trials 
+        %id2r3 = strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2'); 
+        %EEG.event = EEG.event(ids & id2r3);
+
+        %epoch data and markers
+        [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+        
+        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+
+        
+
+        if ~isempty(EEG.data)
+            
+            EEG = extract_power_EXT(EEG, 0.01); 
+            %EEG = extract_theta_power_EXT(EEG); %HILBERT
+            EEG = normalize_EXT(EEG);
+            nChans(subji, :) = size(EEG.power, 2);
+            ALLEEG{subji,:} = EEG; 
+
+        end
+    
+    end
+
+
+end
+
+sROI = char(join(sROI, '_'));
+mkdir(paths.results.power)
+filename = [paths.results.power 'allS_' sROI '_' c2u];
+nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
+totalChans = sum(nChans);
+save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
+
+cd (paths.github)
+
+ 
+
 clear, close all
 paths = load_paths_EXT; 
 
@@ -9,15 +180,344 @@ c2u = 'C';
 %sROI = {'Amygdala'}; 
 
 sROI = {'orbitofrontal'}; 
+%{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+%{'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
+%{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+%{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'};
 
-%sROI = {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ...
+            'p_sub19', 'p_sub20', 'p_sub21'}'; %subject 8 has differnet format (see below)}';
 
-%sROI = {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'parahippocampal' 'entorhinal' };
 
-%sROI = {'occipital' 'cuneus' 'lingual' 'pericalcarine' 'bankssts'}
+for subji = 1:length(allsubs)
+    subji
+    sub = allsubs{subji}; 
+    cd([ paths.iEEG])
+    load ([sub '_iEEG.mat']);
 
-%sROI = { 'inferiortemporal' 'middletemporal' 'superiortemporal' 'bankssts' 'fusiform' 'temporalpole' ...
-%             'lateraloccipital' 'lingual' 'parahippocampal' 'cuneus' 'pericalcarine' };
+    EEG = remove_elec_EXT_manually(EEG, subji); %thres channels is 1/5 of 192 = 38
+    chansLab = {EEG.chanlocs.fsLabel}';
+    selChans = contains(chansLab, sROI);
+
+    
+    if find(selChans)
+        
+        EEG.chanlocs = EEG.chanlocs(selChans);
+        EEG.data = EEG.data(selChans, :); %contains nans
+        
+        %epoch data
+        Ev = [{EEG.event.type}]'; 
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        clen = cellfun(@length, Ev1); 
+        EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
+        Ev2 = cat(1, Ev1{:});
+       
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
+        ids = strcmp(Ev2(:, 10), c2u); 
+        EEG.event = EEG.event(ids);
+
+        % % % remove renewal trials 
+        %id2r3 = strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2'); 
+        %EEG.event = EEG.event(ids & id2r3);
+
+        %epoch data and markers
+        [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+        
+        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+
+        
+
+        if ~isempty(EEG.data)
+            
+            EEG = extract_power_EXT(EEG, 0.01); 
+            %EEG = extract_theta_power_EXT(EEG); %HILBERT
+            EEG = normalize_EXT(EEG);
+            nChans(subji, :) = size(EEG.power, 2);
+            ALLEEG{subji,:} = EEG; 
+
+        end
+    
+    end
+
+
+end
+
+sROI = char(join(sROI, '_'));
+mkdir(paths.results.power)
+filename = [paths.results.power 'allS_' sROI '_' c2u];
+nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
+totalChans = sum(nChans);
+save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
+
+cd (paths.github)
+
+ 
+  
+clear, close all
+paths = load_paths_EXT; 
+
+c2u = 'C';
+
+%sROI = {'Amygdala'}; 
+
+sROI = {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+%{'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
+%{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+%{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'};
+
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ...
+            'p_sub19', 'p_sub20', 'p_sub21'}'; %subject 8 has differnet format (see below)}';
+
+
+for subji = 1:length(allsubs)
+    subji
+    sub = allsubs{subji}; 
+    cd([ paths.iEEG])
+    load ([sub '_iEEG.mat']);
+
+    EEG = remove_elec_EXT_manually(EEG, subji); %thres channels is 1/5 of 192 = 38
+    chansLab = {EEG.chanlocs.fsLabel}';
+    selChans = contains(chansLab, sROI);
+
+    
+    if find(selChans)
+        
+        EEG.chanlocs = EEG.chanlocs(selChans);
+        EEG.data = EEG.data(selChans, :); %contains nans
+        
+        %epoch data
+        Ev = [{EEG.event.type}]'; 
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        clen = cellfun(@length, Ev1); 
+        EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
+        Ev2 = cat(1, Ev1{:});
+       
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
+        ids = strcmp(Ev2(:, 10), c2u); 
+        EEG.event = EEG.event(ids);
+
+        % % % remove renewal trials 
+        %id2r3 = strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2'); 
+        %EEG.event = EEG.event(ids & id2r3);
+
+        %epoch data and markers
+        [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+        
+        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+
+        
+
+        if ~isempty(EEG.data)
+            
+            EEG = extract_power_EXT(EEG, 0.01); 
+            %EEG = extract_theta_power_EXT(EEG); %HILBERT
+            EEG = normalize_EXT(EEG);
+            nChans(subji, :) = size(EEG.power, 2);
+            ALLEEG{subji,:} = EEG; 
+
+        end
+    
+    end
+
+
+end
+
+sROI = char(join(sROI, '_'));
+mkdir(paths.results.power)
+filename = [paths.results.power 'allS_' sROI '_' c2u];
+nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
+totalChans = sum(nChans);
+save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
+
+cd (paths.github)
+
+ 
+  
+clear, close all
+paths = load_paths_EXT; 
+
+c2u = 'C';
+
+%sROI = {'Amygdala'}; 
+
+sROI = {'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
+%{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+%{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'};
+
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ...
+            'p_sub19', 'p_sub20', 'p_sub21'}'; %subject 8 has differnet format (see below)}';
+
+
+for subji = 1:length(allsubs)
+    subji
+    sub = allsubs{subji}; 
+    cd([ paths.iEEG])
+    load ([sub '_iEEG.mat']);
+
+    EEG = remove_elec_EXT_manually(EEG, subji); %thres channels is 1/5 of 192 = 38
+    chansLab = {EEG.chanlocs.fsLabel}';
+    selChans = contains(chansLab, sROI);
+
+    
+    if find(selChans)
+        
+        EEG.chanlocs = EEG.chanlocs(selChans);
+        EEG.data = EEG.data(selChans, :); %contains nans
+        
+        %epoch data
+        Ev = [{EEG.event.type}]'; 
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        clen = cellfun(@length, Ev1); 
+        EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
+        Ev2 = cat(1, Ev1{:});
+       
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
+        ids = strcmp(Ev2(:, 10), c2u); 
+        EEG.event = EEG.event(ids);
+
+        % % % remove renewal trials 
+        %id2r3 = strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2'); 
+        %EEG.event = EEG.event(ids & id2r3);
+
+        %epoch data and markers
+        [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+        
+        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+
+        
+
+        if ~isempty(EEG.data)
+            
+            EEG = extract_power_EXT(EEG, 0.01); 
+            %EEG = extract_theta_power_EXT(EEG); %HILBERT
+            EEG = normalize_EXT(EEG);
+            nChans(subji, :) = size(EEG.power, 2);
+            ALLEEG{subji,:} = EEG; 
+
+        end
+    
+    end
+
+
+end
+
+sROI = char(join(sROI, '_'));
+mkdir(paths.results.power)
+filename = [paths.results.power 'allS_' sROI '_' c2u];
+nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
+totalChans = sum(nChans);
+save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
+
+cd (paths.github)
+
+ 
+  
+clear, close all
+paths = load_paths_EXT; 
+
+c2u = 'C';
+
+%sROI = {'Amygdala'}; 
+
+sROI = {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+%{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'};
+
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ...
+            'p_sub19', 'p_sub20', 'p_sub21'}'; %subject 8 has differnet format (see below)}';
+
+
+for subji = 1:length(allsubs)
+    subji
+    sub = allsubs{subji}; 
+    cd([ paths.iEEG])
+    load ([sub '_iEEG.mat']);
+
+    EEG = remove_elec_EXT_manually(EEG, subji); %thres channels is 1/5 of 192 = 38
+    chansLab = {EEG.chanlocs.fsLabel}';
+    selChans = contains(chansLab, sROI);
+
+    
+    if find(selChans)
+        
+        EEG.chanlocs = EEG.chanlocs(selChans);
+        EEG.data = EEG.data(selChans, :); %contains nans
+        
+        %epoch data
+        Ev = [{EEG.event.type}]'; 
+        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+        clen = cellfun(@length, Ev1); 
+        EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
+        Ev2 = cat(1, Ev1{:});
+       
+        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
+        ids = strcmp(Ev2(:, 10), c2u); 
+        EEG.event = EEG.event(ids);
+
+        % % % remove renewal trials 
+        %id2r3 = strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2'); 
+        %EEG.event = EEG.event(ids & id2r3);
+
+        %epoch data and markers
+        [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
+        
+        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
+
+        
+
+        if ~isempty(EEG.data)
+            
+            EEG = extract_power_EXT(EEG, 0.01); 
+            %EEG = extract_theta_power_EXT(EEG); %HILBERT
+            EEG = normalize_EXT(EEG);
+            nChans(subji, :) = size(EEG.power, 2);
+            ALLEEG{subji,:} = EEG; 
+
+        end
+    
+    end
+
+
+end
+
+sROI = char(join(sROI, '_'));
+mkdir(paths.results.power)
+filename = [paths.results.power 'allS_' sROI '_' c2u];
+nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
+totalChans = sum(nChans);
+save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
+
+cd (paths.github)
+
+ 
+  
+clear, close all
+paths = load_paths_EXT; 
+
+c2u = 'C';
+
+%sROI = {'Amygdala'}; 
+
+sROI = {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'};
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
@@ -93,12 +593,13 @@ cd (paths.github)
  
 
 
+
 %% % % % % % % % FIRST LOAD FILE - > START HERE
 clear, clc
 
 paths = load_paths_EXT; 
-%file2load = ['allS_' 'AMY' '_C']; 
-file2load = ['allS_' 'AMY' '_C_6_4']; 
+file2load = ['allS_' 'PFC' '_C']; 
+%file2load = ['allS_' 'AMY' '_C_6_4']; 
 %file2load = ['HILB_' 'Amygdala' '_C']; 
 
 load ([paths.results.power file2load]); 
@@ -173,12 +674,12 @@ for subji = 1:length(ALLEEG)
 
 
         % % %   % % Acquisition
-        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
-        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+        ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
 
         % % % % % % Extinction
-        ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
-        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
+        %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
         %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
         ids3 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
 
@@ -216,6 +717,125 @@ end
 
 cd (paths.github)
 
+
+%% ALL FREQUENCIES
+
+sub2exc = [];
+c1B = c1(:, 1:54, 251:480); c2B = c2(:, 1:54, 251:480); 
+c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
+
+c1B(c1B == 0) = nan; 
+c2B(c2B == 0) = nan; 
+d2p1	= squeeze(mean(c1B, 'omitnan'));
+d2p2	= squeeze(mean(c2B, 'omitnan'));
+
+
+[h p ci ts] = ttest(c1B, c2B); 
+h = squeeze(h); t = squeeze(ts.tstat);
+h(1:54, 1:50) = 0; 
+
+clear allSTs  
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+[max2u id] = max(abs(allSTs));
+max_clust_obs = allSTs(id); 
+
+% 
+
+h = zeros(54, 230);
+h(clustinfo.PixelIdxList{id}) = 1; 
+
+ 
+
+
+
+
+
+times = -.5:.01:1.79; 
+%times = -3:.01:3.99
+freqs = 1:size(c1B, 2);
+figure()
+tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 900])
+nexttile
+contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.125 .125])
+%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+title('CS+')
+xlabel('Time (s)')
+ylabel('Frequency (Hz)')
+nexttile
+contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.125 .125])
+%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+title('CS-')
+xlabel('Time (s)')
+ylabel('Frequency (Hz)')
+nexttile
+contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T';
+contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-4 4])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+title('CS+ vs CS-')
+xlabel('Time (s)')
+ylabel('Frequency (Hz)')
+%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+colormap(brewermap([],'*Spectral'))
+
+set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'}, 'xlim', [-.5 1.75]);
+%set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
+
+
+%exportgraphics(gcf, [paths.results.power file2load '.png'], 'Resolution',150)
+exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
+
+
+
+
+
+%% permutations 
+
+nPerm = 1000; 
+clear max_clust_sum_perm
+for permi = 1:nPerm
+    c1B = c1(:,1:54,301:480); 
+    c2B = c2(:,1:54,301:480); 
+    
+    c1B(c1B == 0) = nan; 
+    c2B(c2B == 0) = nan; 
+    for subji = 1:size(c1B, 1)
+        if rand>.5
+           tmp = c1B(subji, :, :);
+           c1B(subji, :, :) = c2B(subji, :, :);
+           c2B(subji, :, :) = tmp; 
+        end
+    end
+    
+    [hPerm p ci tsPerm] = ttest(c1B, c2B); 
+    hPerm = squeeze(hPerm); tPerm = squeeze(tsPerm.tstat);
+
+    clear allSTs  
+    clustinfo = bwconncomp(hPerm);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+        allSTs(pxi,:) = sum(tPerm(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs') & ~isempty(clustinfo.PixelIdxList)
+        [max2u id] = min(allSTs);
+        max_clust_sum_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_sum_perm(permi,:) = 0; 
+    end
+    
+
+end
+
+clear p ratings2u mcsP
+ratings2u = max_clust_obs; 
+mcsP = max_clust_sum_perm;
+
+%allAb = mcsP(mcsP < ratings2u);
+allAb = mcsP(abs(mcsP) > abs(ratings2u));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 %% PLOT power for 1-2 vs 3-4
 
@@ -595,78 +1215,6 @@ exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 
 
 
-
-
-%% ALL FREQUENCIES
-
-sub2exc = [38];
-c1B = c1(:, 1:54, 251:480); c2B = c2(:, 1:54, 251:480); 
-c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
-
-c1B(c1B == 0) = nan; 
-c2B(c2B == 0) = nan; 
-d2p1	= squeeze(mean(c1B, 'omitnan'));
-d2p2	= squeeze(mean(c2B, 'omitnan'));
-
-
-[h p ci ts] = ttest(c1B, c2B); 
-h = squeeze(h); t = squeeze(ts.tstat);
-h(1:54, 1:50) = 0; 
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-[max2u id] = max(abs(allSTs));
-max_clust_obs = allSTs(id); 
-
-% 
-
-%h = zeros(54, 230);
-%h(clustinfo.PixelIdxList{id}) = 1; 
-
- 
-
-
-
-
-
-times = -.5:.01:1.79; 
-%times = -3:.01:3.99
-freqs = 1:size(c1B, 2);
-figure()
-tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 900])
-nexttile
-contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.125 .125])
-%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS+')
-xlabel('Time (s)')
-ylabel('Frequency (Hz)')
-nexttile
-contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.125 .125])
-%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS-')
-xlabel('Time (s)')
-ylabel('Frequency (Hz)')
-nexttile
-contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T';
-contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-4 4])
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS+ vs CS-')
-xlabel('Time (s)')
-ylabel('Frequency (Hz)')
-%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-colormap(brewermap([],'*Spectral'))
-
-set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'}, 'xlim', [-.5 1.75]);
-%set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
-
-
-%exportgraphics(gcf, [paths.results.power file2load '.png'], 'Resolution',150)
-exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 
 
 
