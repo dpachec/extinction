@@ -45,6 +45,12 @@ function [ALLEEG] = loadTracesEXT(roi, LT, paths)
         elseif strcmp(LT, 'C')
             file2load = ['TR_' 'PFC' '_C']; 
         end  
+    elseif strcmp(roi, 'PFCO')
+        if strcmp(LT, 'V')
+            file2load = ['TR_' 'PFCO' '_V']; 
+        elseif strcmp(LT, 'C')
+            file2load = ['TR_' 'PFCO' '_C']; 
+        end          
     
     end 
         load ([paths.results.traces file2load]); 

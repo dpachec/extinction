@@ -598,9 +598,7 @@ cd (paths.github)
 clear, clc
 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'PFC' '_C']; 
-%file2load = ['allS_' 'AMY' '_C_6_4']; 
-%file2load = ['HILB_' 'Amygdala' '_C']; 
+file2load = ['allS_' 'TMP' '_C']; 
 
 load ([paths.results.power file2load]); 
 
@@ -744,8 +742,8 @@ max_clust_obs = allSTs(id);
 
 % 
 
-h = zeros(54, 230);
-h(clustinfo.PixelIdxList{id}) = 1; 
+%h = zeros(54, 230);
+%h(clustinfo.PixelIdxList{id}) = 1; 
 
  
 
