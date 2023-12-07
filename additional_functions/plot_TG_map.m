@@ -72,7 +72,7 @@ if winSize == 50
     elseif slidTW  == 10
         if strcmp(f2t{3}, 'C')
             %set(axesHandles,'xtick', [], 'xticklabel', [], 'ytick', [], 'yticklabel', [], 'xlim', [1 13], 'ylim', [1 13]); 
-            set(axesHandles,'xtick', [3 20], 'xticklabel', {'0', '1.7'},'ytick', [3 20], 'yticklabel', {'0', '1.7'}, 'xlim', [1 20], 'ylim', [1 20]); 
+            set(axesHandles,'xtick', [3 19], 'xticklabel', {'0', '1.7'},'ytick', [3 19], 'yticklabel', {'0', '1.7'}, 'xlim', [1 19], 'ylim', [1 19]); 
         elseif strcmp(f2t{3}, 'V')
             set(axesHandles,'xtick', [3 23], 'xticklabel', {'0', '2'}, 'ytick', [3 23], 'yticklabel', {'0', '2'}, 'xlim', [1 23], 'ylim', [1 23]); 
         end

@@ -28,6 +28,8 @@ EXT = oneListIdsA(:,3) == 2;
 REN = oneListIdsA(:,3) == 3;
 CSMPP2 = oneListIdsA(:,7) == 2;
 CSMPM2 = oneListIdsA(:,7) == 3;
+SC1 = oneListIdsA(:,3) == oneListIdsA(:,13);
+DC1 = oneListIdsA(:,3) ~= oneListIdsA(:,13);
 
 
 IT1 = oneListIdsA(:,7) == 1;
@@ -108,6 +110,18 @@ if exist('IT3CSME')
    new_it3csme = [oneListIdsA(idF, 1)];
    new_it3csme(:, 2) = new_it3csme(:, 1) + 1; 
 end
+if exist('SCA')
+   idF = SC1 & ACQ; 
+   new_sca = [oneListIdsA(idF, 1)];
+   new_sca(:, 2) = new_sca(:, 1) + 1; 
+end
+if exist('SCE')
+   idF = SC1 & EXT; 
+   new_sce = [oneListIdsA(idF, 1)];
+   new_sce(:, 2) = new_sce(:, 1) + 1; 
+end
+
+
 
 
 if strcmp(cfg.tyRSA, 'POW')
