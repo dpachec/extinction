@@ -5,26 +5,7 @@ clear , clc
 
 listF2sav = {
 
-'POW_PFC_C_3-54_1_0_50-10_1_DCCSPA-DCCSMA';
-'POW_PFC_C_3-54_1_0_50-10_1_DCCSPE-DCCSME';
-
-'POW_PFCO_C_3-54_1_0_50-10_1_DCCSPA-DCCSMA';
-'POW_PFCO_C_3-54_1_0_50-10_1_DCCSPE-DCCSME';
-
-'POW_HPC_C_3-54_1_0_50-10_1_DCCSPA-DCCSMA';
-'POW_HPC_C_3-54_1_0_50-10_1_DCCSPE-DCCSME';
-
-'POW_OFC_C_3-54_1_0_50-10_1_DCCSPA-DCCSMA';
-'POW_OFC_C_3-54_1_0_50-10_1_DCCSPE-DCCSME';
-
-'POW_AMY_C_3-54_1_0_50-10_1_DCCSPA-DCCSMA';
-'POW_AMY_C_3-54_1_0_50-10_1_DCCSPE-DCCSME';
-
-'POW_OCC_C_3-54_1_0_50-10_1_DCCSPA-DCCSMA';
-'POW_OCC_C_3-54_1_0_50-10_1_DCCSPE-DCCSME';
-
-'POW_TMP_C_3-54_1_0_50-10_1_DCCSPA-DCCSMA';
-'POW_TMP_C_3-54_1_0_50-10_1_DCCSPE-DCCSME';
+'POW_PFC_C_3-54_1_0_50-10_1_SCA-DCA';
 
 };   
 
@@ -116,7 +97,7 @@ end
 clear, clc
 paths = load_paths_EXT; 
  
-f2sav =  'POW_TMP_C_3-54_1_0_50-10_1_DCCSPE-DCCSME';
+f2sav =  'POW_OCC_C_3-54_1_0_50-10_1_SCA-DCA';
 
 
 
@@ -160,8 +141,8 @@ if exist('allSTs')
 end
 
 
-h = zeros(size(cond1, 2),size(cond1, 2)); 
-h(clustinfo.PixelIdxList{id}) = 1;
+%h = zeros(size(cond1, 2),size(cond1, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
 
 
 clim = [-.03 .03];
@@ -1474,8 +1455,8 @@ end
 clear , clc
 paths = load_paths_EXT; 
 
-load ([paths.results.rsa '/POW_HPC_C_3-54_1_0_50-10_1_ALLA-TR'])
-toi = 3:12; 
+load ([paths.results.rsa '/POW_OFC_C_3-54_1_0_50-10_1_ALLE-TR'])
+toi = 3:20; 
 
 out_rsa1 = out_rsa(~cellfun('isempty', (out_rsa)));
 id2sav1 = id2sav(~cellfun('isempty', (id2sav)));
@@ -1488,29 +1469,35 @@ for subji = 1:length(out_rsa1)
     idC = mod(idh(:, 3), 10); 
     idCS = idh(:, 8); 
 
-    c1 = mean(rsah(idC == 1, toi), 2); 
-    c2 = mean(rsah(idC == 2, toi), 2); 
-    c3 = mean(rsah(idC == 3, toi), 2); 
-    c4 = mean(rsah(idC == 4, toi), 2); 
+%     c1 = mean(rsah(idC == 1, toi), 2) - mean(rsah(idC ~= 1, toi), 2); 
+%     c2 = mean(rsah(idC == 2, toi), 2)- mean(rsah(idC ~= 2, toi), 2);  
+%     c3 = mean(rsah(idC == 3, toi), 2)- mean(rsah(idC ~= 3, toi), 2); 
+%     c4 = mean(rsah(idC == 4, toi), 2)- mean(rsah(idC ~= 4, toi), 2); 
+
+    for triali = 1:size(rsah, 1)
+        idSC = idh(:,3) == idh(triali, 3); 
+        idDC = idh(:,3) ~= idh(triali, 3); 
+        rsat = rsah; 
+        rsat(triali,:) = [];
+        idSC(triali,:) = []; 
+        idDC(triali,:) = []; 
+        allCs(triali, :) = mean(rsat(idSC, toi), 'all', 'omitnan') - mean(rsat(idDC, toi), 'all', 'omitnan'); 
+
+    end
     
-%     c1 = mean(rsah(idC == 1 & idCS == 0, toi), 2); 
-%     c2 = mean(rsah(idC == 2 & idCS == 0, toi), 2); 
-%     c3 = mean(rsah(idC == 3 & idCS == 0, toi), 2); 
-%     c4 = mean(rsah(idC == 4 & idCS == 0, toi), 2); 
 
-    allC{subji,:} = padcat(c1, c2, c3, c4);
-
+    c1 = allCs(idC == 1,:); 
+    c2 = allCs(idC == 2,:); 
+    c3 = allCs(idC == 3,:); 
+    c4 = allCs(idC == 4,:); 
+    allC{subji,:} = [c1 c2 c3 c4];
 
 
 end
 
 
- 
-
-allC2 = cellfun(@(x) mean(x, 2, 'omitnan'), allC, 'un', 0); 
-
-M = max(cellfun(@length, allC2));
-allC3 = cellfun(@(x) [x; nan(M - numel(x), 1)], allC2, 'un', 0);
+M = max(cellfun(@length, allC));
+allC3 = cellfun(@(x) [x; nan(M - numel(x), 1)], allC, 'un', 0);
 allC4 = [allC3{:}]'; 
 
 
@@ -1520,18 +1507,18 @@ allC4 = [allC3{:}]';
 
  
 
-[aov, tbl, stats] = anova1(allC4)
+[aov, tbl, stats] = anova1(allC4);
 
-multcompare(stats)
+multcompare(stats);
 
 
 %% Correlate context specific activity and AMY theta power
 clear , clc
 paths = load_paths_EXT; 
 
-toi  = 12:18;
+toi  = 3:20;
 
-load ([paths.results.rsa '/POW_PFC_V_3-54_1_0_50-10_1_ALLE-TR'])
+load ([paths.results.rsa 'POW_AMY_C_3-54_1_0_50-10_1_ALLE-TR'])
 load allPOWAMY
 
 
@@ -1559,16 +1546,39 @@ for subji = 1:length(out_rsa1)
     %amyPowV = amyPowV(idh(:, 6) == 1); 
     %ctxPFC = ctxPFC(idh(:, 6) == 1); 
 
+    % compute same minus different 
+    for triali = 1:size(idh, 1)
+        idtrSC = idh(:, 3) == idh(triali, 3); 
+        idtrDC = idh(:, 3) ~= idh(triali, 3); 
+        idtrSC(triali) = []; 
+        idtrDC(triali) = []; 
+        tr_AMY(triali, :) = amyPowV(triali); 
+        %tr_AMY(triali, :) = mean(amyPowV(idtrSC)) - mean(amyPowV(idtrDC)) ; 
+        tr_PFC(triali, :) = mean(ctxPFC(idtrSC)) - mean(ctxPFC(idtrDC)) ; 
 
-    allRHO(subji, :) = corr(amyPowV, ctxPFC, 'type', 's'); 
+    end
 
-% %     figure()
-% %     scatter(amyPowV, ctxPFC, 150, 'filled');
-% %     h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
-% %     C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
-% %     allSlopes(subji, :) = C(2);
-% %     allIntercepts(subji, :) = C(1);
-% %     set(gca, 'Fontsize', 24)
+    %[B, tF1] = rmoutliers(tr_AMY, 'percentiles', [10 90]); 
+    %[B, tF2] = rmoutliers(tr_PFC, 'percentiles', [10 90]); 
+%     [B, tF1] = rmoutliers(tr_AMY); 
+%     [B, tF2] = rmoutliers(tr_PFC); 
+%     tF3 = tF1 | tF2; 
+%     tr_AMY(tF3) = []; 
+%     tr_PFC(tF3) = []; 
+
+
+
+    allRHO(subji, :) = corr(tr_AMY, tr_PFC, 'type', 's'); 
+    %allRHO(subji, :) = corr(amyPowV, ctxPFC, 'type', 's'); 
+% % 
+    figure()
+    scatter(tr_AMY, tr_PFC, 150, 'filled');
+    %scatter(amyPowV, ctxPFC, 150, 'filled');
+    h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
+    C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
+    allSlopes(subji, :) = C(2);
+    allIntercepts(subji, :) = C(1);
+    set(gca, 'Fontsize', 24)
 
 end
 
@@ -1581,19 +1591,19 @@ ylim = [-0.85 0.85];
 xlim = [0 2];
  
 
-figure(2); set(gcf,'Position', [0 0 500 600]); 
+figure(2); set(gcf,'Position', [0 0 300 600]); 
 mean_S = mean(data.data, 1);
 std_S = std(data.data, [], 1);
 h = bar (mean_S);hold on;
 hb = plot ([1], data.data); hold on; % > lines
 set(hb, 'lineWidth', 1, 'Marker', '.', 'MarkerSize',30);hold on;
-set(h,'FaceColor', 'none', 'lineWidth', 2);
-set(hb,'linestyle','none', 'lineWidth', 2);
-set(gca,'XTick',[1],'XTickLabel',{'   '},     'FontSize', 15, 'linew',2, 'ylim', ylim, 'xlim', xlim);
-plot(get(gca,'xlim'), [0 0],'k','lineWidth', 2.5);
+set(h,'FaceColor', 'none', 'lineWidth', 1.5);
+set(hb,'linestyle','none', 'lineWidth', 1.5);
+set(gca,'XTick',[1],'XTickLabel',{'   '}, 'FontSize', 18, 'linew',1.5, 'ylim', ylim, 'xlim', xlim);
+plot(get(gca,'xlim'), [0 0],'k','lineWidth', 1.5);
 
 [h p ci ts] = ttest(allRHO); 
-disp (['t: ' num2str(ts.tstat) ' //  p = ' num2str(p)])
+disp (['t(' num2str(ts.df) ') = ' num2str(ts.tstat, 3) ',' ' p = ' num2str(p, 3)]);
 
 
 exportgraphics(gcf, ['_myP.png'], 'Resolution',150)

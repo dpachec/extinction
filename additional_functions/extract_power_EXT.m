@@ -1,5 +1,7 @@
  
-function [EEG] = extract_power_NAV (EEG, timeRes)
+function [EEG] = extract_power_EXT (EEG, cfg)
+
+    timeRes = 1 / (1000/ cfg.tR); 
     
     data_ft = mat2ft(EEG.data, EEG.srate); %1000 sr
     

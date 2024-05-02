@@ -1,4 +1,4 @@
-function [RMAOV1] = RMAOV1(X,alpha)
+function [RMAOV1 F1] = RMAOV1(X,alpha)
 % RMAOV1 Repeated Measures Single-Factor Analysis of Variance Test.
 %   One-way repeated measures ANOVA is used to analyze the relationship 
 %   between the independent variable and dependent variable when:(1) 
