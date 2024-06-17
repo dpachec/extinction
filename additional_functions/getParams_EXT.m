@@ -16,14 +16,28 @@ function [cfg] = getParams_EXT(f2sav)
             tParams         = strsplit(f2t{7}, '-');
             cfg.win_width   = double(string((tParams{1})));
             cfg.mf          = double(string((tParams{2})));
-            cfg.powF2load   = ['POW_' cfg.roi '_' cfg.LT '_' f2t{4} '_' num2str(cfg.mf)]; 
+            cfg.powF2load   = ['POW_' cfg.roi '_' cfg.LT '_' num2str(cfg.mf)]; 
 
         case 'POW'
             cfg.roi         = f2t{2};
             cfg.LT          = f2t{3}; 
+            cfg.tR          = double(string((f2t{4})));
+        case 'RSA'
+            cfg.roi = f2t{2};
+            cfg.LT         = f2t{3}; 
             freqs = strsplit(f2t{4}, '-');
             cfg.freqs       = [double(string((freqs{1}))) : double(string((freqs{2})))];
-            cfg.tR          = double(string((f2t{5})));
+            
+            cfg.avTFV       = double(string((f2t{5}))); 
+            cfg.fR          = double(string((f2t{6}))); 
+            tParams         = strsplit(f2t{7}, '-');
+            cfg.win_width   = double(string((tParams{1})));
+            cfg.mf          = double(string((tParams{2})));
+            cfg.powF2load   = ['POW_' cfg.roi '_' cfg.LT '_' num2str(cfg.mf/10)]; 
+            cfg.TG = double(string(f2t{8})); 
+            cfg.contr2sav   = strsplit(f2t{9}, '-');
+
+
     
 end
 

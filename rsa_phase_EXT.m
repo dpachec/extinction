@@ -5,7 +5,7 @@ clear , clc
 
 listF2sav = {
 
-'POW_PFC_C_3-54_1_0_50-10_1_SCA-DCA';
+'RSA_PFC_C_3-54_1_0_50-10_0_SCA-DCA';
 
 };   
 
@@ -97,7 +97,7 @@ end
 clear, clc
 paths = load_paths_EXT; 
  
-f2sav =  'POW_OCC_C_3-54_1_0_50-10_1_SCA-DCA';
+f2sav =  'POW_PFC_C_3-54_1_0_50-10_1_SCE-DCE';
 
 
 

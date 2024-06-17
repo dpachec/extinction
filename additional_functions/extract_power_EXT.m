@@ -16,7 +16,7 @@ function [EEG] = extract_power_EXT (EEG, cfg)
     if strcmp (timeRes, 'all')
         cfg.toi          = 'all'; % takes as reference the number of time windows defined above
     else
-        cfg.toi          = 0.005:timeRes:(length(EEG.data)/1000) - 0.005;
+        cfg.toi          = 0.05:timeRes:(length(EEG.data)/1000) - 0.05;
     end
     cfg.keeptrials   = 'yes'; % keep individual trials or average
     cfg.showcallinfo = 'no';% no log console
@@ -36,7 +36,7 @@ function [EEG] = extract_power_EXT (EEG, cfg)
     if strcmp (timeRes, 'all')
         cfg.toi          = 'all'; % takes as reference the number of time windows defined above
     else
-        cfg.toi          = 0.005:timeRes:(length(EEG.data)/1000) - 0.005;
+        cfg.toi          = 0.05:timeRes:(length(EEG.data)/1000) - 0.05;
     end
     cfg.showcallinfo = 'no';% no log console
     cfg.keeptrials   = 'yes'; % keep individual trials, if not, it makes an average 
