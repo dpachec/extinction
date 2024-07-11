@@ -121,7 +121,7 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
 
 responses = [];
 figure(1); set(gcf, 'Position', [10 20 1850 1350])
-tiledlayout(6, 8,'TileSpacing','compact', 'Padding','none');
+tiledlayout(7, 8,'TileSpacing','compact', 'Padding','none');
 
 for subji=1:numel(allsubs)
 
@@ -162,7 +162,8 @@ for subji=1:numel(allsubs)
   
 end
 
-  filename = [paths.results.behavior types{type2u} '_behav.png']
+  %filename = [paths.results.behavior types{type2u} '_behav.png']
+  filename = ['myP.png']
   exportgraphics(gcf, filename, 'Resolution',300)
   
 
@@ -198,7 +199,6 @@ responses(i,:)=[tmp',nan(1,64-numel(tmp))];
 end
 
 % average responses for each  n x type x response
-
 for ty=1:3
   avg_response_type(subji,ty,:)=nanmean(responses(type_item==ty,:),1) 
     
@@ -232,7 +232,9 @@ end
 plot([24 24],[1 4],':k', 'Linewidth', 2)
 plot([48 48],[1 4],':k', 'Linewidth', 2)
 
-filename = [paths.results.behavior 'average_per_type.png']
+%filename = [paths.results.behavior 'average_per_type.png']
+
+filename = ['myP.png']
 exportgraphics(gcf, filename, 'Resolution',300)
 
 
@@ -354,52 +356,17 @@ title(contrast_label{con})
 
 end
 
-%% plot only
-
-figure
-hold on
-fig_stuff=subplot(1,1,1)
-cmap_default=fig_stuff.ColorOrder;
-%cmap_default=cmap_default([1 2 4],:)
-yellow = cmap_default(3,:)
-red = cmap_default(2,:)
-
-for ty=1:3
-    x1=1:size(avg_response_type,3)
-    y1=squeeze(nanmean(filt_avg_response_type(:,ty,:)));
-    b1=squeeze(nanstd(filt_avg_response_type(:,ty,:),1))./sqrt(numel(allsubs));
-   
-    boundedline(x1, y1, b1, 'LineWidth', 2, 'cmap',cmap_default(ty,:),'transparency',0.2,'alpha');
-    
-    
-    %plot(squeeze(nanmean(avg_response_type(:,ty,:))))
-    h=gca;
-    h.YLim=[1,4];
-    h.YTick=[1;4];
-    h.YTickLabel={'Dangerous','Safe'};
-    h.YTickLabelRotation=90;
-    h.FontSize = 22;
-end
-
-plot([24 24],[1 4],':k', 'Linewidth', 2)
-plot([48 48],[1 4],':k', 'Linewidth', 2)
-xlabel("Trial Number"); 
-set(gca, 'xtick', [24 48], 'xticklabels', {'24' '48'})
-
-
-filename = [paths.results.behavior 'average_per_type_filtered.png']
-exportgraphics(gcf, filename, 'Resolution',300)
-
-
 %% plot only new colors
 
 figure
 hold on
 fig_stuff=subplot(1,1,1)
+cmap_default=fig_stuff.ColorOrder;
 
 green= colormap(brewermap([1],'Greens'))
 green = green*.9;
-%cmap_default(3,:) = yellow;
+red = cmap_default(2,:);
+yellow = cmap_default(3,:); 
 newM(1, :) = red; 
 newM(2, :) = yellow; 
 newM(3, :) = green; 
@@ -433,11 +400,10 @@ for timei = 1:64
     d4anova = squeeze(filt_avg_response_type(:,:,timei));    
     [p(timei), tbl] = anova1(d4anova,[],'off');
     t(timei) = tbl{2,5};
-
 end
 hb = p<0.05; 
 clustinfo = bwconncomp(hb);
-hb = double(hb); hb(hb == 0) = nan; hb(hb==1) = 1.5; 
+hb = double(hb); hb(hb == 0) = nan; hb(hb==1) = 1.1; 
 for pxi = 1:length(clustinfo.PixelIdxList)
    allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
 end
@@ -454,13 +420,20 @@ for t=1:size(filt_avg_response_type,3)
 [htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,1,t)),squeeze(filt_avg_response_type(:,3,t)))
 end
 hb2 = htest; hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
+% ttests
+for t=1:size(filt_avg_response_type,3)
+[htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,2,t)),squeeze(filt_avg_response_type(:,3,t)))
+end
+hb3 = htest; hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.5; 
 
-plot(hb, 'Color', [.5 .5 .5], 'LineWidth',5)
+plot(hb, 'k', 'LineWidth',5)
 plot(hb1, 'Color', '#FFA500', 'LineWidth',5)
 plot(hb2, 'Color', '#964B00', 'LineWidth',5)
+plot(hb3,  'Color', [.5 .5 .5], 'LineWidth',5)
 
 
-filename = [paths.results.behavior 'average_per_type_filtered.png']
+%filename = [paths.results.behavior 'average_per_type_filtered.png']
+filename = 'myP.png'; 
 exportgraphics(gcf, filename, 'Resolution',300)
 
 %% permutations
@@ -502,26 +475,6 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %% average rating each block
 
 block_def=[1 24;25 48;49 64];
@@ -547,7 +500,8 @@ h.XTickLabel={'ACQ','EXT','TEST'}
 h.FontSize = 18; 
 
 
-filename = [paths.results.behavior 'average_per_type_in_block.png']
+%filename = [paths.results.behavior 'average_per_type_in_block.png']
+filename = 'myP.png'; 
 exportgraphics(gcf, filename, 'Resolution',300)
 
 %% statistics average in each block 
@@ -558,8 +512,61 @@ for b=1:3
    % response_avgblocksub(:,:,b)=nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3);
 end
 
+%% LME
+clc
+clear d4LME
+d4LME = response_avgblocksub(:);
+
+subj4LME = [1:50]; subj4LME = [subj4LME subj4LME subj4LME subj4LME subj4LME subj4LME subj4LME subj4LME subj4LME ]'; 
+type = [[ones(1, 50) ones(1, 50)*2 ones(1, 50)*3]']; type = [type; type; type]
+block = [[ones(1, 150) ones(1, 150)*2 ones(1, 150)*3]']; 
+
+d4LME = [d4LME subj4LME block type]
+tbl = table(d4LME(:,1), d4LME(:,2), d4LME(:,3), d4LME(:,4), ...
+    'VariableNames',{'performance','subID', 'block','type'});
+
+lme = fitlme(tbl,'performance ~ block + type + block*type + (1|subID)'); % random intercept model
+
+lme
+
+
+
+
+%% WITHIN SUBJECTS DESING IN MATLAB
+clear d2ADD
+d2ADD(:, 1) = squeeze(response_avgblocksub(:, 1, 1));
+d2ADD(:, 2) = squeeze(response_avgblocksub(:, 1, 2));
+d2ADD(:, 3) = squeeze(response_avgblocksub(:, 1, 3));
+
+d4ANOVA = [[1:50]' ]; 
+% organize the data in a table
+T = array2table(d4ANOVA(:,2:end));
+T.Properties.VariableNames = {'nnHBLNET' 'nnHALEX' 'nnHCAT'};
+% create the within-subjects design
+withinDesign = table([1 2 3]','VariableNames',{'Model'});
+withinDesign.Model = categorical(withinDesign.Model);
+% create the repeated measures model and do the anova
+rm = fitrm(T,'nnHBLNET-nnHCAT ~ 1','WithinDesign',withinDesign);
+AT = ranova(rm,'WithinModel','Model'); % remove comma to see ranova's table
+%tbl = multcompare(rm, 'Model', 'ComparisonType', 'tukey-kramer'); % see: help RepeatedMeasuresModel/multcompare;  'tukey-kramer' (default), 'dunn-sidak', 'bonferroni','scheffe'
+tbl = multcompare(rm, 'Model', 'ComparisonType', 'bonferroni'); % see: help RepeatedMeasuresModel/multcompare;  'tukey-kramer' (default), 'dunn-sidak', 'bonferroni','scheffe'
+
+
+% output a conventional anova table
+disp(anovaTable(AT, 'Measure (units)'));
+
+
 %%
-d4anova = squeeze(response_avgblock(3,:,:));
+d4ANOVA = [response_avgblocksub]; 
+d4ANOVA(:,2) = [ones(1,50) ones(1,50)*2 ones(1,50)*3];
+d4ANOVA(:,3) = [1:15 1:15 1:15];
+[p f] = RMAOV1(d4ANOVA);
+allP(freqi, timei) = p; 
+allF(freqi, timei) = f; 
+
+
+%%
+d4anova = squeeze(response_avgblock(1,:,:));
 [p, tbl, stats] = anova1(d4anova)
 
 multcompare(stats)
@@ -593,7 +600,8 @@ set(h,'xtick', 1:3, 'xticklabel', {'cs+/cs+','cs+/cs-','cs-/cs-'}, 'FontSize', 1
 avg_response_typeC=(avg_response_type(:,:,block_def(b,1):block_def(b,2)));
 
 
-filename = [paths.results.behavior 'perf_at_test_per_type.png']
+%filename = [paths.results.behavior 'perf_at_test_per_type.png']
+filename = 'myP.png'; 
 exportgraphics(gcf, filename, 'Resolution',300)
 
 %% split performance block 4 in A & B

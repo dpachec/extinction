@@ -1,5 +1,3 @@
-
-
 %% Plot all ERPs
 
 for subji = 1:length(ALLEEG)

@@ -3,8 +3,8 @@ function[neuralRDMs] = createNeuralRDMs_EXT(cfg)
 
 oneListPow = cfg.POW; 
 freqs2test = cfg.freqs; 
-win_width = cfg.win_width /100;  
-mf = cfg.mf / 100; 
+win_width = cfg.win_width /10;  
+mf = cfg.mf / 10; 
 fR = cfg.fR; 
 avTFV = cfg.avTFV;
 

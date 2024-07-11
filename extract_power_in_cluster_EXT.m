@@ -14,7 +14,8 @@ close all, clc
 
 paths = load_paths_EXT; 
 
-load ([paths.results.clusters 'AMY_EXT_3-8Hz_px4'])
+load ([paths.results.clusters 'AMY_THETA_CLUST_px4'])
+%load ([paths.results.clusters 'AMY_POWER_CLUST_px42'])
 
 for subji = 1:size(ALLEEG, 1)
     EEG = ALLEEG{subji}; 
@@ -48,8 +49,16 @@ for subji = 1:size(ALLEEG, 1)
         
         
         for triali = 1:size(powH, 1)
+            
+            % % % Theta only 
             cTR = squeeze(mean(powH(triali, :, 3:8, 251:500), 2));
             thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{4}), 'all');
+
+            % % % All frequencies
+            %cTR = squeeze(mean(powH(triali, :, 3:54, 251:500), 2));
+            %thPow(triali, :) = mean(cTR(clustinfo.PixelIdxList{42}), 'all');
+
+
             %thPow(triali, :) = mean(cTR(pi2u), 'all');
 
             %cTR = squeeze(mean(powH(triali, :, 3:8, 441:460), 2));
@@ -72,6 +81,7 @@ end
 
 
 save ([paths.results.trial_based 'AMY_POW_3-8Hz_TR'], 'allPOWAMY', 'nNan'); 
+%save ([paths.results.trial_based 'AMY_POW_3-54Hz_TR'], 'allPOWAMY', 'nNan'); 
 
 
 

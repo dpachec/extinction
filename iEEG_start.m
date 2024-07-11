@@ -598,7 +598,7 @@ cd (paths.github)
 clear, clc
 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'AMY' '_C']; 
+file2load = ['allS_' 'PFC' '_C']; 
 
 load ([paths.results.power file2load]); 
 
@@ -634,6 +634,7 @@ for subji = 1:length(ALLEEG)
     if ~isempty(EEG)
         chans = [{EEG.chanlocs.fsLabel}]'; 
         ids2rem1 = []; 
+        %ids2rem1 = contains(chans, 'Left')
         ids2rem1 = contains(chans, 'Right')
         %ids2rem1 = contains(chans, 'Hippocampus')
         %ids2rem = logical(ids2rem1+ids2rem2)
@@ -650,6 +651,9 @@ for subji = 1:length(ALLEEG)
 
     end
 end
+
+clear ALLLEEG
+ALLEEG = ALLEEG1; 
 
 %% PLOT grand average for each condition
 
@@ -679,7 +683,7 @@ for subji = 1:length(ALLEEG)
         ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
         ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
         %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
-        ids3 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
+        %ids3 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
 
 
         % % %   % % Acquisition only late trials
@@ -691,8 +695,8 @@ for subji = 1:length(ALLEEG)
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
         tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
         tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
-        tfDCH3 = mean(EEG.power(ids3, :, : ,:), 'omitnan'); 
-        tfDTF3 = squeeze(mean(tfDCH3, 2, 'omitnan'));
+        %tfDCH3 = mean(EEG.power(ids3, :, : ,:), 'omitnan'); 
+        %tfDTF3 = squeeze(mean(tfDCH3, 2, 'omitnan'));
 
 
 
@@ -705,7 +709,7 @@ for subji = 1:length(ALLEEG)
         
         c1(subji, :, :) = tfDTF1; 
         c2(subji, :, :) = tfDTF2; 
-        c3(subji, :, :) = tfDTF3; 
+        %c3(subji, :, :) = tfDTF3; 
 
                 
     end
@@ -730,7 +734,7 @@ d2p2	= squeeze(mean(c2B, 'omitnan'));
 
 [h p ci ts] = ttest(c1B, c2B); 
 h = squeeze(h); t = squeeze(ts.tstat);
-h(1:54, 1:50) = 0; 
+%h(1:54, 1:50) = 0; 
 
 clear allSTs  
 clustinfo = bwconncomp(h);
@@ -742,13 +746,8 @@ max_clust_obs = allSTs(id);
 
 % 
 
-h = zeros(54, 230);
-h(clustinfo.PixelIdxList{id}) = 1; 
-
- 
-
-
-
+%h = zeros(54, 230);
+%h(clustinfo.PixelIdxList{id}) = 1; 
 
 
 times = -.5:.01:1.79; 
@@ -780,16 +779,118 @@ ylabel('Frequency (Hz)')
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 colormap(brewermap([],'*Spectral'))
 
-set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'}, 'xlim', [-.5 1.75]);
+set(findobj(gcf,'type','axes'),'FontSize',24, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'}, 'xlim', [-.5 1.75]);
 %set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
 
 
-%exportgraphics(gcf, [paths.results.power file2load '.png'], 'Resolution',150)
-exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
+%exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
+exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+
+
+%% ALL FREQUENCIES MINUS BASELINE 
+
+sub2exc = [];
+c1B = c1(:, 1:54, 251:480); c2B = c2(:, 1:54, 251:480); 
+c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
+
+mT = mean(c1B(:, :, 1:50),3, 'omitnan');
+stdT = squeeze(std(c1B(:, :, 1:50),[], 3, 'omitnan'));
+%c1B = bsxfun(@rdivide, bsxfun(@minus, c1B, mT), stdT); 
+c1B = bsxfun(@minus, c1B, mT); 
+
+mT = mean(c2B(:, :, 1:50),3, 'omitnan');
+stdT = squeeze(std(c2B(:, :, 1:50),[], 3, 'omitnan'));
+%c2B = bsxfun(@rdivide, bsxfun(@minus, c2B, mT), stdT); 
+c2B = bsxfun(@minus, c2B, mT); 
+
+c1B(c1B == 0) = nan; 
+c2B(c2B == 0) = nan; 
+d2p1	= squeeze(mean(c1B, 'omitnan'));
+d2p2	= squeeze(mean(c2B, 'omitnan'));
 
 
 
+[h1 p1 ci1 ts1] = ttest(c1B); 
+h1 = squeeze(h1); t1 = squeeze(ts1.tstat);
+[h2 p2 ci2 ts2] = ttest(c2B); 
+h2 = squeeze(h2); t2 = squeeze(ts2.tstat);
 
+[h p ci ts] = ttest(c1B, c2B); 
+h = squeeze(h); t = squeeze(ts.tstat);
+%h(1:54, 1:50) = 0; 
+
+clear allSTs  
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+[max2u id] = max(abs(allSTs));
+max_clust_obs = allSTs(id); 
+
+% 
+
+%h = zeros(54, 230);
+%h(clustinfo.PixelIdxList{id}) = 1; 
+
+
+times = -.5:.01:1.79; 
+%times = -3:.01:3.99
+freqs = 1:size(c1B, 2);
+figure()
+tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 900])
+nexttile
+contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
+contour(times, freqs,h1, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-4 4])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.1 .1])
+%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+title('CS+')
+xlabel('Time (s)')
+ylabel('Frequency (Hz)')
+nexttile
+contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
+contour(times, freqs,h2, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-4 4])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.1 .1])
+%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+title('CS-')
+xlabel('Time (s)')
+ylabel('Frequency (Hz)')
+nexttile
+contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T';
+contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-4 4])
+plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+title('CS+ vs CS-')
+xlabel('Time (s)')
+ylabel('Frequency (Hz)')
+%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
+colormap(brewermap([],'*Spectral'))
+
+set(findobj(gcf,'type','axes'),'FontSize',24, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'}, 'xlim', [-.5 1.75]);
+%set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
+
+
+%exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
+exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+
+
+
+%% mean for 
+
+%% plot cluster depic schematic 
+load AMY_POWER_CLUST_px42
+
+eE1 = zeros(54,230); 
+eE1(clustinfo.PixelIdxList{42}) = 1; 
+
+
+figure(); set(gcf, 'Position', [100 100 500 200])
+contourf(1:2300, 1:540, myresizem(eE1, 10), 40, 'linecolor', 'none'); hold on; 
+contour(1:2300, 1:540,myresizem(eE1, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 6); set(gca, 'clim', [-1 1])
+plot([500 500 ],get(gca,'ylim'), 'k:','lineWidth', 8);set(gca, 'clim', [-.125 .125]); hold on; 
+
+set(gca, 'xTick', [], 'xTicklabel', [], 'yTick', [], 'yTicklabel', [])
+colormap autumn
+
+exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
 %% permutations 
 
@@ -936,7 +1037,7 @@ sub2exc = [];
 
 c1B = c1(:, 3:8, 251:480); 
 c2B = c2(:, 3:8, 251:480); 
-%c3B = c3(:, 3:8, 201:480); 
+%c3B = c3(:, 3:8, 251:480); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 %c3B(sub2exc,:,:) = []; 
 
@@ -1067,18 +1168,69 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 % % % % % % exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 %% take in cluster only
+clear 
+load allTPOW
+load AMY_THETA_CLUST_px4
 
+for subji = 1:50
 
-for subji = 1:47
-
-    c1BS = squeeze(c1B(subji,:,:));
-    c2BS = squeeze(c2B(subji,:,:));
-    c3BS = squeeze(c3B(subji,:,:));
-    cSP(subji,:) = mean(c1BS(clustinfo.PixelIdxList{5}), 'all');
-    cSMPP(subji,:) = mean(c2BS(clustinfo.PixelIdxList{5}), 'all');
-    cSMPM(subji,:) = mean(c3BS(clustinfo.PixelIdxList{5}), 'all');
+    CSPA_S = squeeze(c1B_A(subji,:,:));
+    CSMA_S = squeeze(c2B_A(subji,:,:));
+    CSPPE_S = squeeze(c1B_A(subji,:,:));
+    CSPME_S = squeeze(c2B_E(subji,:,:));
+    CSMME_S = squeeze(c3B_E(subji,:,:));
+    
+    CSPA(subji,:) = mean(CSPA_S(clustinfo.PixelIdxList{4}), 'all');
+    CSMA(subji,:) = mean(CSMA_S(clustinfo.PixelIdxList{4}), 'all');
+    CSPPE(subji,:) = mean(CSPPE_S(clustinfo.PixelIdxList{4}), 'all');
+    CSPME(subji,:) = mean(CSPME_S(clustinfo.PixelIdxList{4}), 'all');
+    CSMME(subji,:) = mean(CSMME_S(clustinfo.PixelIdxList{4}), 'all');
 
 end
+
+%% 
+
+d2p = [CSMME CSPME CSPPE CSPA CSMA ]; 
+d2pm = mean(d2p, 'omitnan')
+
+mean_S = mean(d2p, 'omitnan');
+h = barh (mean_S);hold on;
+set(h,'FaceColor', 'flat', 'lineWidth', 2);
+set(gca,'YTick',[1:5],'YTickLabel',{'', ''}, 'FontSize', 25, 'linew',2, 'xlim', [-.3 .6], 'ylim', [0 6] );
+plot([0 0],get(gca,'ylim'), 'k','lineWidth', 2);
+
+fig_stuff=subplot(1,1,1)
+cmap_default=fig_stuff.ColorOrder;
+h.CData = [cmap_default(5,:); cmap_default(3,:); cmap_default(2, :);  cmap_default(5,:); cmap_default(2,:)]
+hb = scatter (d2p, 1:5,35, 'k'); hold on;
+%h.CData = [0 0 0; 1 0 1; 1 0 1; 0 0 1; 1 0 0]
+
+%[h p ci t] = ttest (data.data(:,1));
+%disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
+set(gca, 'LineWidth', 2);
+box on
+exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+
+%% plot cluster depic schematic 
+load AMY_THETA_CLUST_px4
+
+eE1 = zeros(6,230); 
+eE1(clustinfo.PixelIdxList{4}) = 1; 
+
+
+figure(); set(gcf, 'Position', [100 100 500 200])
+contourf(1:2300, 1:60, myresizem(eE1, 10), 40, 'linecolor', 'none'); hold on; 
+contour(1:2300, 1:60,myresizem(eE1, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 6); set(gca, 'clim', [-1 1])
+plot([500 500 ],get(gca,'ylim'), 'k:','lineWidth', 8);set(gca, 'clim', [-.125 .125]); hold on; 
+
+set(gca, 'xTick', [], 'xTicklabel', [], 'yTick', [], 'yTicklabel', [])
+colormap autumn
+
+exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+
+
+
+
 
 
 %% 
@@ -1777,9 +1929,9 @@ eegplot(data2check, 'srate', EEG.srate, 'winlength', 50, 'spacing', 1000);
 
 %% plot example trial in one subject (WITH MORE THAN 1 electrode)
 
-%EEG = ALLEEG{1}; 
+EEG = ALLEEG{37}; 
 tr = 20; 
-ch = 2; 
+ch = 1; 
 
 % figure
 % d2p	= squeeze(EEG.dsPower(tr, ch, : ,:));
@@ -1791,19 +1943,8 @@ figure
 myCmap = colormap(brewermap([],'YlOrRd'));
 colormap(myCmap)
 d2p	= squeeze(EEG.power(tr, ch, : ,:));
-contourf(1:70, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
-
-
-%% plot example trial in one subject (ONLY 1 electrode)
-
-%EEG = ALLEEG{1}; 
-tr =26; 
-
-figure
-d2p	= squeeze(EEG.power(tr, 1 ,:,:));
-myCmap = colormap(brewermap([],'YlOrRd'));
-colormap(myCmap)
 contourf(1:700, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
+
 
 
 %% plot two different conditions (average in all amygdala channels and across trials)
@@ -1813,17 +1954,17 @@ Ev = [{EEG.event.type}]';
 Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
 Ev2 = cat(1, Ev1{:})
 ids = strcmp(Ev2(:, 6), '1')  & strcmp(Ev2(:, 2), '1') % CS+CS+ during acquisition
-d2p1	= squeeze(mean(mean(EEG.power(ids, :, : ,:))));
+d2p1	= squeeze(mean(mean(EEG.power(ids, :, : ,:), 'omitnan'), 'omitnan'));
 ids = strcmp(Ev2(:, 6), '2')  & strcmp(Ev2(:, 2), '1') % CS+CS- during acquisition
-d2p2	= squeeze(mean(mean(EEG.power(ids, :, : ,:))));
+d2p2	= squeeze(mean(mean(EEG.power(ids, :, : ,:), 'omitnan'), 'omitnan'));
 
 myCmap = colormap(brewermap([],'YlOrRd')); colormap(myCmap)
 
 tiledlayout(2, 1,'TileSpacing','compact');
 nexttile
-contourf(1:701, 1:54, d2p1, 40, 'linecolor', 'none'); hold on; %colorbar
+contourf(1:700, 1:54, d2p1, 40, 'linecolor', 'none'); hold on; %colorbar
 nexttile
-contourf(1:701, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; %colorbar
+contourf(1:700, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; %colorbar
 
 
 

@@ -6,6 +6,14 @@ clear , clc
 
 listF2sav = {
 
+%'RSA_HPC_C_1-54_1_0_500-100_1_SCE-DCE';
+%'RSA_AMY_C_1-54_1_0_500-100_1_SCE-DCE';
+%'RSA_OCC_C_1-54_1_0_500-100_1_SCE-DCE';
+'RSA_PFC_C_4-54_1_0_500-100_1_SCE-DCE';
+%'RSA_OFC_C_1-54_1_0_500-100_1_SCE-DCE';
+%'RSA_TMP_C_1-54_1_0_500-100_1_SCE-DCE';
+
+
 % 'RSA_HPC_C_3-54_1_0_500-100_1_SCE-DCE';
 % 'RSA_AMY_C_3-54_1_0_500-100_1_SCE-DCE';
 % 'RSA_OCC_C_3-54_1_0_500-100_1_SCE-DCE';
@@ -42,20 +50,20 @@ listF2sav = {
 % 'RSA_TMP_C_3-54_1_0_500-100_1_SICSPE-SICSME';
 
 
-'RSA_HPC_C_3-54_1_0_500-100_1_SISVA-DISVA';
-'RSA_AMY_C_3-54_1_0_500-100_1_SISVA-DISVA';
-'RSA_OCC_C_3-54_1_0_500-100_1_SISVA-DISVA';
-'RSA_PFC_C_3-54_1_0_500-100_1_SISVA-DISVA';
-'RSA_OFC_C_3-54_1_0_500-100_1_SISVA-DISVA';
-'RSA_TMP_C_3-54_1_0_500-100_1_SISVA-DISVA';
-
-'RSA_HPC_C_3-54_1_0_500-100_1_SISVE-DISVE';
-'RSA_AMY_C_3-54_1_0_500-100_1_SISVE-DISVE';
-'RSA_OCC_C_3-54_1_0_500-100_1_SISVE-DISVE';
-'RSA_PFC_C_3-54_1_0_500-100_1_SISVE-DISVE';
-'RSA_OFC_C_3-54_1_0_500-100_1_SISVE-DISVE';
-'RSA_TMP_C_3-54_1_0_500-100_1_SISVE-DISVE';
-
+% 'RSA_HPC_C_3-54_1_0_500-100_1_SISVA-DISVA';
+% 'RSA_AMY_C_3-54_1_0_500-100_1_SISVA-DISVA';
+% 'RSA_OCC_C_3-54_1_0_500-100_1_SISVA-DISVA';
+% 'RSA_PFC_C_3-54_1_0_500-100_1_SISVA-DISVA';
+% 'RSA_OFC_C_3-54_1_0_500-100_1_SISVA-DISVA';
+% 'RSA_TMP_C_3-54_1_0_500-100_1_SISVA-DISVA';
+% 
+% 'RSA_HPC_C_3-54_1_0_500-100_1_SISVE-DISVE';
+% 'RSA_AMY_C_3-54_1_0_500-100_1_SISVE-DISVE';
+% 'RSA_OCC_C_3-54_1_0_500-100_1_SISVE-DISVE';
+% 'RSA_PFC_C_3-54_1_0_500-100_1_SISVE-DISVE';
+% 'RSA_OFC_C_3-54_1_0_500-100_1_SISVE-DISVE';
+% 'RSA_TMP_C_3-54_1_0_500-100_1_SISVE-DISVE';
+% 
 
 
 
@@ -104,7 +112,7 @@ end
 clear, clc
 paths = load_paths_EXT; 
  
-f2sav = 'RSA_HPC_C_3-54_1_0_500-100_1_SICSPA-SICSMA';
+f2sav = 'RSA_TMP_C_3-54_1_0_500-100_1_SICSPA-SICSMA';
 sub2exc = [];
 
 
@@ -433,15 +441,16 @@ exportgraphics(gcf, [paths.results.rsa  '_myP.png'], 'Resolution',150)
 clear, clc
 paths = load_paths_EXT; 
 
-myR = 'HPC';
+myR = 'PFC';
 
-f2sav =   ['RSA_' myR '_C_3-54_1_0_500-100_1_SICSPA-SICSMA'];
-%f2sav =   ['RSA_' myR '_C_3-54_1_0_500-100_1_SCA-DCA'];
+%f2sav =   ['RSA_' myR '_C_3-54_1_0_500-100_1_SICSPA-SICSMA'];
+f2sav =   ['RSA_' myR '_C_3-54_1_0_500-100_1_SCA-DCA'];
 %f2sav =   ['POW_' myR '_C_3-54_1_0_50-10_1_DISVA-DIDVA'];
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_ACQ = out_rsa; 
-f2sav =   ['RSA_' myR '_C_3-54_1_0_500-100_1_SICSPE-SICSME'];
-%f2sav =   ['RSA_' myR '_C_3-54_1_0_500-100_1_SCE-DCE'];
+
+%f2sav =   ['RSA_' myR '_C_3-54_1_0_500-100_1_SICSPE-SICSME'];
+f2sav =   ['RSA_' myR '_C_3-54_1_0_500-100_1_SCE-DCE'];
 %f2sav =   ['POW_' myR '_C_3-54_1_0_50-10_1_DISVE-DIDVE'];
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_EXT = out_rsa; 
@@ -469,11 +478,11 @@ cond2A = squeeze(out_rsa_ACQ(:, 2, :, :)); cond2A(ids, :,:) = [];
 cond1E = squeeze(out_rsa_EXT(:, 1, :,:)); cond1E(ids, :, :) = []; 
 cond2E = squeeze(out_rsa_EXT(:, 2, :, :)); cond2E(ids, :, :) = []; 
 
-%diffA = cond1A-cond2A; 
-%diffE = cond1E-cond2E; 
+diffA = cond1A-cond2A; 
+diffE = cond1E-cond2E; 
 
-diffA = cond1A; 
-diffE = cond1E; 
+%diffA = cond1A; 
+%diffE = cond1E; 
 
 
 for subji = 1:size(cond1A, 1)
@@ -508,7 +517,7 @@ end
 
 %h = zeros(1, size(cond1, 2)); 
 %h(clustinfo.PixelIdxList{id}) = 1;
-hb = h; hb(h==0) = nan; hb(hb==1) = -.005; 
+hb = h; hb(h==0) = nan; hb(hb==1) = -.025; 
 
 %times = (-.5:.01:2) + .25;
 times = -.25:.1:2.3;
@@ -516,18 +525,19 @@ figure();
 colors2use = brewermap([6],'*Set2')*0.75;
 shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(1,:)}, 1); hold on; 
 shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(2,:)}, 1); hold on; 
-plot(times, hb, LineWidth=6)
-plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 1);
-plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 1);
-set(gca, 'xlim', [-.25 1.7])
+plot(times, hb, LineWidth=8)
+set(gca, 'xlim', [-.25 1.7], 'Fontsize', 28);
+plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 2);
+plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
+
 %set(gca, 'xlim', [-.25 1.4],'Fontsize', 18);%'ylim', [-.032 .035], 
-title(f2sav, 'Interpreter','none')
+%title(f2sav, 'Interpreter','none')
 exportgraphics(gcf, ['myP.png'], 'Resolution',150)
 
 
 %% Permutations (2D) 
 
-nPerm = 10000;
+nPerm = 1000;
 
 nSubj =  size(diffA, 1);
 realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
@@ -582,10 +592,15 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
 %% plot 2 lines from TG 
-
 clear
+
+
+sub2exc = []; % 8 13
+%sub2exc = [8 13 22]; % 8 13
+
 paths = load_paths_EXT; 
-f2sav = 'RSA_TMP_C_3-54_1_0_500-100_1_SICSPE-SICSME';
+%f2sav = 'RSA_TMP_C_3-54_1_0_500-100_1_SICSPE-SICSME';
+f2sav = 'RSA_PFC_C_3-54_1_0_500-100_1_SCE-DCE';
 load ([ paths.results.rsa f2sav '.mat']);
 
 ids = rem_nan_subj_EXT(out_rsa); 
@@ -603,6 +618,8 @@ for subji = 1:size(cond1, 1)
 end       
 cond1 = cond1B; cond2 = cond2B; 
 
+cond1(sub2exc, :) = []; 
+cond2(sub2exc, :) = []; 
 
 d2pm1	= squeeze(mean(cond1,'omitnan'));
 d2pm2	= squeeze(mean(cond2,'omitnan'));
@@ -628,20 +645,24 @@ end
 
 %h = zeros(1, size(cond1, 2)); 
 %h(clustinfo.PixelIdxList{id}) = 1;
+%h = 0; 
 hb = h; hb(h==0) = nan; hb(hb==1) = -.005; 
 
 %times = (-.5:.01:2) + .25;
 times = -.25:.1:2.3;
 figure(); 
-colors2use = brewermap([6],'*Set1')*0.75;
-shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(1,:)}, 1); hold on; 
-shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(2,:)}, 1); hold on; 
-plot(times, hb, LineWidth=6)
-plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 1);
-plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 1);
-set(gca, 'xlim', [-.25 1.7])
-%set(gca, 'xlim', [-.25 1.4],'Fontsize', 18);%'ylim', [-.032 .035], 
-title(f2sav, 'Interpreter','none')
+%colors2use = brewermap([6],'*Set1')*0.75;
+colors2use = brewermap([6],'*Accent')*0.75;
+
+shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(2,:)}, 1); hold on; 
+shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(1,:)}, 1); hold on; 
+plot(times, hb, LineWidth=10)
+set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 28);
+plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 3);
+plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 3);
+
+%set(gca, 'xlim', [-.25 1.4],'Fontsize', 18);%
+%title(f2sav, 'Interpreter','none')
 %exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 exportgraphics(gcf, ['myP.png'], 'Resolution',150)
 
@@ -654,7 +675,7 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',150)
 
 %% Permutations (2D)
 
-nPerm = 10000;
+nPerm = 1000;
 
 nSubj =  size(cond1, 1);
 realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
