@@ -598,9 +598,12 @@ cd (paths.github)
 clear, clc
 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'PFC' '_C']; 
+file2load = ['allS_' 'AMY' '_C']; 
 
 load ([paths.results.power file2load]); 
+
+sub2exc = [27 37]; 
+ALLEEG(sub2exc) = []; 
 
 
 
@@ -658,7 +661,6 @@ ALLEEG = ALLEEG1;
 %% PLOT grand average for each condition
 
 clearvars -except ALLEEG paths  totalChans nChans nSub nL
-
 
 
 for subji = 1:length(ALLEEG)
@@ -787,93 +789,9 @@ set(findobj(gcf,'type','axes'),'FontSize',24, 'ytick', [1 30 54], 'yticklabels',
 exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
 
-%% ALL FREQUENCIES MINUS BASELINE 
-
-sub2exc = [];
-c1B = c1(:, 1:54, 251:480); c2B = c2(:, 1:54, 251:480); 
-c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
-
-mT = mean(c1B(:, :, 1:50),3, 'omitnan');
-stdT = squeeze(std(c1B(:, :, 1:50),[], 3, 'omitnan'));
-%c1B = bsxfun(@rdivide, bsxfun(@minus, c1B, mT), stdT); 
-c1B = bsxfun(@minus, c1B, mT); 
-
-mT = mean(c2B(:, :, 1:50),3, 'omitnan');
-stdT = squeeze(std(c2B(:, :, 1:50),[], 3, 'omitnan'));
-%c2B = bsxfun(@rdivide, bsxfun(@minus, c2B, mT), stdT); 
-c2B = bsxfun(@minus, c2B, mT); 
-
-c1B(c1B == 0) = nan; 
-c2B(c2B == 0) = nan; 
-d2p1	= squeeze(mean(c1B, 'omitnan'));
-d2p2	= squeeze(mean(c2B, 'omitnan'));
 
 
 
-[h1 p1 ci1 ts1] = ttest(c1B); 
-h1 = squeeze(h1); t1 = squeeze(ts1.tstat);
-[h2 p2 ci2 ts2] = ttest(c2B); 
-h2 = squeeze(h2); t2 = squeeze(ts2.tstat);
-
-[h p ci ts] = ttest(c1B, c2B); 
-h = squeeze(h); t = squeeze(ts.tstat);
-%h(1:54, 1:50) = 0; 
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-[max2u id] = max(abs(allSTs));
-max_clust_obs = allSTs(id); 
-
-% 
-
-%h = zeros(54, 230);
-%h(clustinfo.PixelIdxList{id}) = 1; 
-
-
-times = -.5:.01:1.79; 
-%times = -3:.01:3.99
-freqs = 1:size(c1B, 2);
-figure()
-tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 900])
-nexttile
-contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
-contour(times, freqs,h1, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-4 4])
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.1 .1])
-%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS+')
-xlabel('Time (s)')
-ylabel('Frequency (Hz)')
-nexttile
-contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
-contour(times, freqs,h2, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-4 4])
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.1 .1])
-%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS-')
-xlabel('Time (s)')
-ylabel('Frequency (Hz)')
-nexttile
-contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T';
-contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-4 4])
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS+ vs CS-')
-xlabel('Time (s)')
-ylabel('Frequency (Hz)')
-%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-colormap(brewermap([],'*Spectral'))
-
-set(findobj(gcf,'type','axes'),'FontSize',24, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'}, 'xlim', [-.5 1.75]);
-%set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
-
-
-%exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
-exportgraphics(gcf, ['myP.png'], 'Resolution',300)
-
-
-
-%% mean for 
 
 %% plot cluster depic schematic 
 load AMY_POWER_CLUST_px42
@@ -897,8 +815,8 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 nPerm = 1000; 
 clear max_clust_sum_perm
 for permi = 1:nPerm
-    c1B = c1(:,1:54,301:480); 
-    c2B = c2(:,1:54,301:480); 
+    c1B = c1(:,1:54,301:475); 
+    c2B = c2(:,1:54,301:475); 
     
     c1B(c1B == 0) = nan; 
     c2B(c2B == 0) = nan; 
@@ -1968,68 +1886,77 @@ contourf(1:700, 1:54, d2p2, 40, 'linecolor', 'none'); hold on; %colorbar
 
 
 
+%% plot all electrodes and all trials 
+
+clear, clc
+
+paths = load_paths_EXT; 
 
 
+files2load = {['allS_' 'PFC' '_C']; ['allS_' 'AMY' '_C']; ['allS_' 'TMP' '_C']; ['allS_' 'HPC' '_C']; ['allS_' 'OCC' '_C']; ['allS_' 'OFC' '_C']}; 
 
 
+for listi = 1:length(files2load)
 
+    clearvars -except listi files2load paths
 
+    file2load = files2load{listi}; 
 
+    load ([paths.results.power file2load]); 
 
-
-%% power analysis all channels / SETTINGS FOR PLOTTING IN BRAIN PLOTS 
-clear, close all
-paths = load_paths; 
-
-c2u = 'C';
-sROI = 'allChannels'; % don't change > for specific ROIs check next block 
-
-allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
-           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18'}';
-
-
-for subji = 1:length(allsubs)
-    subji
-    sub = allsubs{subji}; 
-    cd([paths.iEEG])
-    load ([sub '_iEEG.mat']);
-
-    
-    Ev = [{EEG.event.type}]'; 
-    Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
-    clen = cellfun(@length, Ev1); 
-    EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
-    Ev2 = cat(1, Ev1{:});
-   
-    Ev2(:, 10) = erase(Ev2(:, 10), ' '); 
-    ids = strcmp(Ev2(:, 10), c2u); 
-    EEG.event = EEG.event(ids)
-
-    %epoch data and markers
-    EEG = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
-    EEG = extract_power_EXT(EEG, 0.1); 
-    EEG.power = EEG.power(:, :, :, 31:40);
-    
-    EEG = rmfield(EEG, 'data');
-    EEG = normalize_EXT(EEG);
-
-    ALLEEG{subji,:} = EEG; 
-
-
+    for subji = 1:length(ALLEEG)
+        EEG = ALLEEG{subji}; 
+        if ~isempty(EEG)
+            nChans = size(EEG.chanlocs,1); 
+            nTrials = size(EEG.power, 1); 
+        
+            for chani = 1:nChans
+                for triali = 1:nTrials
+                    figure
+                    myCmap = colormap(brewermap([],'YlOrRd'));
+                    colormap(myCmap)
+                    d2p	= squeeze(EEG.power(triali, chani, : ,:));
+                    contourf(1:700, 1:54, d2p, 40, 'linecolor', 'none'); colorbar
+                    fname = [paths.results.allSpectro '/' file2load(6:8) '/' file2load(6:end) '_' num2str(subji, '%02.f') '_' num2str(chani, '%02.f') '_' num2str(triali, '%03.f') '.png']; 
+                    exportgraphics(gcf, fname, 'Resolution',50)
+                    close all; 
+                end
+            end
+        end
+    end
 end
 
 
 
 
-sROI = char(join(sROI, '_'));
-filename = [paths.iEEGRes.power 'allS_' sROI '_' c2u];
-save(filename, "ALLEEG");
-
-cd (paths.github)
 
 
-%% 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%
+
+
+

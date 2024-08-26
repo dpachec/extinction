@@ -6,10 +6,20 @@ clear , clc
 
 listF2sav = {
 
-%'RSA_HPC_C_1-54_1_0_500-100_1_SCE-DCE';
+'RSA_PFC_C_3-54_1_0_500-10_1_SCE-DCE';
+
+% 'RSA_TMP_C_3-54_1_0_500-10_1_SICSPE-SICSME';
+% 'RSA_AMY_C_3-54_1_0_500-10_1_SICSPE-SICSME';
+% 'RSA_HPC_C_3-54_1_0_500-10_1_SICSPE-SICSME';
+% 'RSA_OFC_C_3-54_1_0_500-10_1_SICSPE-SICSME';
+% 'RSA_PFC_C_3-54_1_0_500-10_1_SICSPE-SICSME';
+% 'RSA_OCC_C_3-54_1_0_500-10_1_SICSPE-SICSME';
+
+%
+% 'RSA_HPC_C_1-54_1_0_500-100_1_SCE-DCE';
 %'RSA_AMY_C_1-54_1_0_500-100_1_SCE-DCE';
 %'RSA_OCC_C_1-54_1_0_500-100_1_SCE-DCE';
-'RSA_PFC_C_4-54_1_0_500-100_1_SCE-DCE';
+%'RSA_PFC_C_4-54_1_0_500-100_1_SCE-DCE';
 %'RSA_OFC_C_1-54_1_0_500-100_1_SCE-DCE';
 %'RSA_TMP_C_1-54_1_0_500-100_1_SCE-DCE';
 
@@ -595,15 +605,19 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 clear
 
 
-sub2exc = []; % 8 13
+sub2exc = []; % 19
 %sub2exc = [8 13 22]; % 8 13
 
 paths = load_paths_EXT; 
 %f2sav = 'RSA_TMP_C_3-54_1_0_500-100_1_SICSPE-SICSME';
 f2sav = 'RSA_PFC_C_3-54_1_0_500-100_1_SCE-DCE';
+
 load ([ paths.results.rsa f2sav '.mat']);
 
+
+
 ids = rem_nan_subj_EXT(out_rsa); 
+
 cond1 = squeeze(out_rsa(:, 1, :, :)); 
 cond2 = squeeze(out_rsa(:, 2, :, :)); 
 
@@ -618,8 +632,8 @@ for subji = 1:size(cond1, 1)
 end       
 cond1 = cond1B; cond2 = cond2B; 
 
-cond1(sub2exc, :) = []; 
-cond2(sub2exc, :) = []; 
+% cond1(sub2exc, :) = []; 
+% cond2(sub2exc, :) = []; 
 
 d2pm1	= squeeze(mean(cond1,'omitnan'));
 d2pm2	= squeeze(mean(cond2,'omitnan'));
@@ -652,12 +666,151 @@ hb = h; hb(h==0) = nan; hb(hb==1) = -.005;
 times = -.25:.1:2.3;
 figure(); 
 %colors2use = brewermap([6],'*Set1')*0.75;
-colors2use = brewermap([6],'*Accent')*0.75;
+%colors2use = brewermap([6],'*Accent')*0.75;
+colors2use = brewermap([6],'Accent')*0.75;
 
 shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(2,:)}, 1); hold on; 
 shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(1,:)}, 1); hold on; 
 plot(times, hb, LineWidth=10)
-set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 28);
+%set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 28);
+set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .05], 'Fontsize', 28);
+plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 3);
+plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 3);
+
+%set(gca, 'xlim', [-.25 1.4],'Fontsize', 18);%
+%title(f2sav, 'Interpreter','none')
+%exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
+exportgraphics(gcf, ['myP.png'], 'Resolution',150)
+
+
+
+
+%% Permutations (2D)
+
+nPerm = 1000;
+
+nSubj =  size(cond1, 1);
+realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
+
+junts = cat(1, cond1(:, 3:20), cond2(:, 3:20));
+%junts = cat(1, cond1(:, 3:22), cond2(:, 3:22));
+
+[M,N] = size(realCondMapping);
+rowIndex = repmat((1:M)',[1 N]);
+    
+clear max_clust_sum_perm
+for permi = 1:nPerm
+    
+    [~,randomizedColIndex] = sort(rand(M,N),2);
+    newLinearIndex = sub2ind([M,N],rowIndex,randomizedColIndex);
+    fakeCondMapping = realCondMapping(newLinearIndex);
+    fakeCondMapping = fakeCondMapping(:);
+
+    cond1P = junts(fakeCondMapping == 0, :);
+    cond2P = junts(fakeCondMapping == 1, :);
+
+    diffC = cond1P - cond2P; 
+    [h p ci ts] = ttest(diffC); 
+    h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat); 
+    clear allSTs  
+    clustinfo = bwconncomp(h);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+    end
+    
+    if exist('allSTs')
+        [max2u id] = max(abs(allSTs));
+        %[max2u id] = max(allSTs);
+        max_clust_sum_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_sum_perm(permi,:) = 0; 
+    end
+
+end
+
+
+disp('done')
+
+ 
+allAb = max_clust_sum_perm(max_clust_sum_perm > tObs);
+%allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
+
+
+
+%% plot 2 lines from TG 50ms or 10ms
+clear
+
+
+sub2exc = []; % 19
+%sub2exc = [8 13 22]; % 8 13
+
+paths = load_paths_EXT; 
+f2sav = 'RSA_TMP_C_3-54_1_0_500-10_1_SICSPE-SICSME';
+%f2sav = 'RSA_PFC_C_3-54_1_0_500-10_1_SCE-DCE';
+%f2sav = 'RSA_PFC_C_3-54_1_0_500-100_1_SCE-DCE';
+load ([ paths.results.rsa f2sav '.mat']);
+
+
+
+ids = rem_nan_subj_EXT(out_rsa); 
+
+cond1 = squeeze(out_rsa(:, 1, :, :)); 
+cond2 = squeeze(out_rsa(:, 2, :, :)); 
+
+cond1(ids, :, :) = []; 
+cond2(ids, :, :) = []; 
+
+diff = cond1-cond2; 
+
+for subji = 1:size(cond1, 1)
+   cond1B(subji, :) = diag(squeeze(cond1(subji, :, :)));
+   cond2B(subji, :) = diag(squeeze(cond2(subji, :, :)));
+end       
+cond1 = cond1B; cond2 = cond2B; 
+
+% cond1(sub2exc, :) = []; 
+% cond2(sub2exc, :) = []; 
+
+d2pm1	= squeeze(mean(cond1,'omitnan'));
+d2pm2	= squeeze(mean(cond2,'omitnan'));
+d2pstd1	= std(cond1, 'omitnan');
+d2pstd2	= std(cond2, 'omitnan');
+se1 = d2pstd1/sqrt(size(cond1, 1));
+se2 = d2pstd2/sqrt(size(cond1, 1));
+
+[h p ci ts] = ttest(cond1, cond2); 
+h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    tObs = allSTs(id); 
+else
+    tObs = 0; 
+end
+
+
+%h = zeros(1, size(cond1, 2)); 
+%h(clustinfo.PixelIdxList{id}) = 1;
+%h = 0; 
+hb = h; hb(h==0) = nan; hb(hb==1) = -.005; 
+
+%times = (-.5:.01:2) + .25;
+times = -.25:.01:2.25;
+figure(); 
+%colors2use = brewermap([6],'*Set1')*0.75;
+%colors2use = brewermap([6],'*Accent')*0.75;
+colors2use = brewermap([6],'Accent')*0.75;
+
+shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(2,:)}, 1); hold on; 
+shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(1,:)}, 1); hold on; 
+plot(times, hb, LineWidth=10)
+%set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 28);
+set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .05], 'Fontsize', 28);
 plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 3);
 plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 3);
 
@@ -671,16 +824,15 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',150)
 
 
 
-
-
-%% Permutations (2D)
+%% Permutations (2D) 50ms
 
 nPerm = 1000;
 
 nSubj =  size(cond1, 1);
 realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
 
-junts = cat(1, cond1(:, 3:20), cond2(:, 3:20));
+junts = cat(1, cond1(:, 51:225), cond2(:, 51:225));
+%junts = cat(1, cond1(:, 6:40), cond2(:, 6:40));
 %junts = cat(1, cond1(:, 3:22), cond2(:, 3:22));
 
 [M,N] = size(realCondMapping);

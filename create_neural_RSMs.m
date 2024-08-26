@@ -5,12 +5,12 @@ clear , clc
 
 listF2sav = {
 
-'nRSM_HPC_CE_13-29_1_0_500-100';
-'nRSM_OFC_CE_13-29_1_0_500-100';
-'nRSM_OCC_CE_13-29_1_0_500-100';
-'nRSM_TMP_CE_13-29_1_0_500-100';
-'nRSM_PFC_CE_13-29_1_0_500-100';
-'nRSM_AMY_CE_13-29_1_0_500-100';
+'nRSM_HPC_CAET_3-54_1_0_500-100';
+'nRSM_OFC_CAET_3-54_1_0_500-100';
+'nRSM_OCC_CAET_3-54_1_0_500-100';
+'nRSM_TMP_CAET_3-54_1_0_500-100';
+'nRSM_PFC_CAET_3-54_1_0_500-100';
+'nRSM_AMY_CAET_3-54_1_0_500-100';
 
 
 };   
@@ -37,12 +37,20 @@ for listi = 1:length(listF2sav)
 
         if ~isempty(POW)
             % % select experimental phase
-            if cfg.period == 'A'
+            if strcmp(cfg.period, 'A')
                 ids2rem = ids(:, 2)~=1; 
-            elseif cfg.period == 'E'
+            elseif strcmp(cfg.period, 'E')
                 ids2rem = ids(:, 2)~=2; 
-            elseif cfg.period == 'T'
+            elseif strcmp(cfg.period, 'T')
                 ids2rem = ids(:, 2)~=3; 
+            elseif strcmp(cfg.period, 'ET')
+                ids2rem = ids(:, 2)==1; 
+            elseif strcmp(cfg.period, 'AE')
+                ids2rem = ids(:, 2)==3; 
+            elseif strcmp(cfg.period, 'AT')
+                ids2rem = ids(:, 2)==1; 
+            elseif strcmp(cfg.period, 'AET')
+                ids2rem = []; 
             end
 
 

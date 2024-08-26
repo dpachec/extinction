@@ -27,11 +27,20 @@ clear
 
 paths = load_paths_EXT;
 
+% 
+% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+%            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+%             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
+%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
+
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
@@ -110,14 +119,26 @@ types={'cs+cs+','cs+cs-','cs-cs-'};
 
 paths = load_paths_EXT;
 
+% 
+% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+%            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+%             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
+%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub09', 'p_sub10', ...
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
+
+
+
+% removed p_07 and c_27
 
 responses = [];
 figure(1); set(gcf, 'Position', [10 20 1850 1350])
@@ -173,36 +194,42 @@ paths = load_paths_EXT;
 path_trlinfo= paths.trlinfo;
 
 
+% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+%            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+%             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
+%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
+
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub09', 'p_sub10', ...
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
 
 
 for subji=1:numel(allsubs)
-% plot responses for each type across experiment
-load(strcat(path_trlinfo,allsubs{subji},'_trlinfo.mat'))
-trialinfo=trlinfo;
-types={'cs+/cs+','cs+/cs-','cs-/cs-'};
-items=1:3;
-
-
-
-
-for i=1:3
-type_item(i)=mean(trialinfo(trialinfo(:,5)==i,6));
-tmp=trialinfo(trialinfo(:,5)==i,7);
-responses(i,:)=[tmp',nan(1,64-numel(tmp))];
-end
-
-% average responses for each  n x type x response
-for ty=1:3
-  avg_response_type(subji,ty,:)=nanmean(responses(type_item==ty,:),1) 
+    % plot responses for each type across experiment
+    load(strcat(path_trlinfo,allsubs{subji},'_trlinfo.mat'))
+    trialinfo=trlinfo;
+    types={'cs+/cs+','cs+/cs-','cs-/cs-'};
+    items=1:3;
     
-end
+    for i=1:3
+        type_item(i)=mean(trialinfo(trialinfo(:,5)==i,6));
+        tmp=trialinfo(trialinfo(:,5)==i,7);
+        %responses(i,:)=[tmp',nan(1,64-numel(tmp))]; % does not affect results and don't understand, removed
+        responses(i,:)=tmp;
+    end
+    
+    % average responses for each  n x type x response
+    for ty=1:3
+        %avg_response_type(subji,ty,:)=nanmean(responses(type_item==ty,:),1) 
+        avg_response_type(subji,ty,:)=nanmean(responses(find(type_item==ty),:),1) 
+    end
 end
 
 figure
@@ -301,60 +328,7 @@ plot([48 48],[1 4],':k', 'Linewidth', 2)
 
 
 
-%%
-for t=1:size(filt_avg_response_type,3)
-[htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,1,t)),squeeze(filt_avg_response_type(:,2,t)))
-end
 
-figure
-for ty=1:3
-subplot(2,2,ty)
-hold on
-rectangle('Position',[0 0 24 4],'FaceColor',[1 .9 .9])
-rectangle('Position',[24 0 24 4],'FaceColor',[0.9 .9 .9])
-rectangle('Position',[48 0 16 4],'FaceColor',[1 .8 1])
-
-
-stem(squeeze(nanmean(filt_avg_response_type(:,ty,:))))
-title(types{ty})
-h=gca;
-h.YLim=[1,4];
-h.YTick=[1;4];
-h.YTickLabel={'Dangerous','Safe'};
-h.YTickLabelRotation=90;
-
-
-end
-
-figure
-
-contrasts=[1,2;1,3;2,3];
-contrast_label={'cs+/cs+ vs cs+/cs-','cs+/cs+ vs cs-/cs-','cs+/cs- vs cs-/cs-'};
-for con=1:3
-    con1=contrasts(con,1);
-    con2=contrasts(con,2);
-
-subplot(2,3,con)
-hold on
-rectangle('Position',[0 -2 24 4],'FaceColor',[1 .9 .9])
-rectangle('Position',[24 -2 24 4],'FaceColor',[0.9 .9 .9])
-rectangle('Position',[48 -2 16 4],'FaceColor',[1 .8 1])
-[htest,p,~,tstat]=ttest(squeeze(filt_avg_response_type(:,con1,:)),squeeze(filt_avg_response_type(:,con2,:)))
-
-
-h=gca;
-stem(squeeze(nanmean(filt_avg_response_type(:,con1,:)-filt_avg_response_type(:,con2,:))))
-hold on
-plot(htest)
-title(types{ty})
-h=gca;
-h.YLim=[-2,2];
-h.YTick=[-2;2];
-h.YTickLabel={'less safe','safer'};
-title(contrast_label{con})
-
-
-end
 
 %% plot only new colors
 
@@ -484,12 +458,12 @@ figure
 hold  on
 for b=1:3
     response_avgblock(:,b)=nanmean(nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),1),3);
-   response_stdblock(:,b)=(nanstd(nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3),1))./sqrt(numel(allsubs));
+    response_stdblock(:,b)=(nanstd(nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3),1))./sqrt(numel(allsubs));
     response_avgblocksub(:,:,b)=nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3);
-
 end
+
 for ty=1:3
-  errorbar(1:3,response_avgblock(ty,:),response_stdblock(ty,:), 'Color', lCs{ty}, 'LineWidth',2)
+    errorbar(1:3,response_avgblock(ty,:),response_stdblock(ty,:), 'Color', lCs{ty}, 'LineWidth',2)
 end
 
 legend('cs+/cs+','cs+/cs-','cs-/cs-')
@@ -504,13 +478,27 @@ h.FontSize = 18;
 filename = 'myP.png'; 
 exportgraphics(gcf, filename, 'Resolution',300)
 
-%% statistics average in each block 
-clear response_avgblock
-for b=1:3
-    response_avgblock(b, :, :)=nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3);
-   %response_stdblock(:,b)=(nanstd(nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3),1))./sqrt(numel(allsubs));
-   % response_avgblocksub(:,:,b)=nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3);
-end
+
+%% Reshape data 4 Anova
+clc 
+
+d4anova = response_avgblocksub(:);
+%nanIDs = find(isnan(d4anova))
+%d4anova(nanIDs) = 2; 
+
+%rm_anova2
+nSubj = 48; 
+subID = repmat((1:nSubj)', 9, 1); 
+trial_type = repmat([ones(1,nSubj) , ones(1,nSubj)*2 , ones(1,nSubj)*3]', 3, 1);
+block_n = [ones(1,nSubj*3) , ones(1,nSubj*3)*2 , ones(1,nSubj*3)*3]';
+
+
+
+anovaStats = rm_anova2(d4anova,subID,trial_type,block_n,{'trial_type', 'block_number'})
+
+
+
+
 
 %% LME
 clc
@@ -893,3 +881,58 @@ names={strcat('learn1_',conds{1}),strcat('learn1_',conds{2}),strcat('learn1_',co
 
 
 % test
+
+%%
+for t=1:size(filt_avg_response_type,3)
+[htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,1,t)),squeeze(filt_avg_response_type(:,2,t)))
+end
+
+figure
+for ty=1:3
+subplot(2,2,ty)
+hold on
+rectangle('Position',[0 0 24 4],'FaceColor',[1 .9 .9])
+rectangle('Position',[24 0 24 4],'FaceColor',[0.9 .9 .9])
+rectangle('Position',[48 0 16 4],'FaceColor',[1 .8 1])
+
+
+stem(squeeze(nanmean(filt_avg_response_type(:,ty,:))))
+title(types{ty})
+h=gca;
+h.YLim=[1,4];
+h.YTick=[1;4];
+h.YTickLabel={'Dangerous','Safe'};
+h.YTickLabelRotation=90;
+
+
+end
+
+figure
+
+contrasts=[1,2;1,3;2,3];
+contrast_label={'cs+/cs+ vs cs+/cs-','cs+/cs+ vs cs-/cs-','cs+/cs- vs cs-/cs-'};
+for con=1:3
+    con1=contrasts(con,1);
+    con2=contrasts(con,2);
+
+subplot(2,3,con)
+hold on
+rectangle('Position',[0 -2 24 4],'FaceColor',[1 .9 .9])
+rectangle('Position',[24 -2 24 4],'FaceColor',[0.9 .9 .9])
+rectangle('Position',[48 -2 16 4],'FaceColor',[1 .8 1])
+[htest,p,~,tstat]=ttest(squeeze(filt_avg_response_type(:,con1,:)),squeeze(filt_avg_response_type(:,con2,:)))
+
+
+h=gca;
+stem(squeeze(nanmean(filt_avg_response_type(:,con1,:)-filt_avg_response_type(:,con2,:))))
+hold on
+plot(htest)
+title(types{ty})
+h=gca;
+h.YLim=[-2,2];
+h.YTick=[-2;2];
+h.YTickLabel={'less safe','safer'};
+title(contrast_label{con})
+
+
+end

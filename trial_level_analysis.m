@@ -16,10 +16,10 @@ load ([paths.results.trial_based 'AMY_POW_3-54Hz_TR'])
 %load ([paths.results.trial_based 'trlCTX_OCC_CE_3-54_1_0_500-100'])
 
 
-load ([paths.results.trial_based 'trlSTA_AMY_CE_3-54_1_0_500-100'])
+%load ([paths.results.trial_based 'trlSTA_AMY_CE_3-54_1_0_500-100'])
 %load ([paths.results.trial_based 'trlSTA_HPC_CE_3-54_1_0_500-100'])
 %load ([paths.results.trial_based 'trlSTA_PFC_CE_3-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlSTA_TMP_CE_3-54_1_0_500-100'])
+load ([paths.results.trial_based 'trlSTA_TMP_CE_3-54_1_0_500-100'])
 %load ([paths.results.trial_based 'trlSTA_OFC_CE_3-54_1_0_500-100'])
 %load ([paths.results.trial_based 'trlSTA_OCC_CE_3-54_1_0_500-100'])
 
@@ -153,16 +153,16 @@ load ([paths.results.trial_based 'AMY_POW_3-54Hz_TR'])
 %load ([paths.results.trial_based 'trlCTX_HPC_CE_9-54_1_0_500-100'])
 %load ([paths.results.trial_based 'trlCTX_AMY_CE_9-54_1_0_500-100'])
 %load ([paths.results.trial_based 'trlCTX_TMP_CE_3-54_1_0_500-100'])
-load ([paths.results.trial_based 'trlCTX_OFC_CE_3-54_1_0_500-100'])
+%load ([paths.results.trial_based 'trlCTX_OFC_CE_3-54_1_0_500-100'])
 %load ([paths.results.trial_based 'trlCTX_OCC_CE_9-54_1_0_500-100'])
 
 
-%load ([paths.results.trial_based 'trlSTA_AMY_CE_3-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlSTA_HPC_CE_9-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlSTA_PFC_CE_9-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlSTA_TMP_CE_9-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlSTA_OFC_CE_9-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlSTA_OCC_CE_9-54_1_0_500-100'])
+load ([paths.results.trial_based 'trlSTA_AMY_CE_3-54_1_0_500-100'])
+%load ([paths.results.trial_based 'trlSTA_HPC_CE_3-54_1_0_500-100'])
+%load ([paths.results.trial_based 'trlSTA_PFC_CE_3-54_1_0_500-100'])
+%load ([paths.results.trial_based 'trlSTA_TMP_CE_3-54_1_0_500-100'])
+%load ([paths.results.trial_based 'trlSTA_OFC_CE_3-54_1_0_500-100'])
+%load ([paths.results.trial_based 'trlSTA_OCC_CE_3-54_1_0_500-100'])
 
 
 
@@ -418,15 +418,24 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
 
-%% Correlate different trial-level metrics at ALL TIME POINTS
+
+
+
+
+
+
+
+
+%% Correlate different trial-level metrics at SPECIFIC TIME POINTS
 clear, clc
 
-printClust = 0; 
-print1Clust = 1; 
+sub2exc = []; %11
 
 paths = load_paths_EXT;
 
-cond1 = load ([paths.results.trial_based 'trlCTX_PFC_CE_3-54_1_0_500-100'])
+time1 = 9:13; 
+
+%cond1 = load ([paths.results.trial_based 'trlCTX_PFC_CE_3-54_1_0_500-100'])
 %cond2 = load([paths.results.trial_based 'trlCTX_HPC_CE_3-54_1_0_500-100'])
 %cond2 = load ([paths.results.trial_based 'trlCTX_AMY_CE_3-54_1_0_500-100'])
 %cond2 = load ([paths.results.trial_based 'trlCTX_TMP_CE_3-54_1_0_500-100'])
@@ -436,10 +445,225 @@ cond1 = load ([paths.results.trial_based 'trlCTX_PFC_CE_3-54_1_0_500-100'])
 
 %cond2 = load ([paths.results.trial_based 'trlSTA_AMY_CE_3-54_1_0_500-100'])
 %cond2 = load ([paths.results.trial_based 'trlSTA_HPC_CE_3-54_1_0_500-100'])
-cond2 = load ([paths.results.trial_based 'trlSTA_PFC_CE_3-54_1_0_500-100'])
+%cond2 = load ([paths.results.trial_based 'trlSTA_PFC_CE_3-54_1_0_500-100'])
+%cond1 = load ([paths.results.trial_based 'trlSTA_TMP_CE_3-54_1_0_500-100'])
+%cond2 = load ([paths.results.trial_based 'trlSTA_OFC_CE_3-54_1_0_500-100'])
+%cond2 = load ([paths.results.trial_based 'trlSTA_OCC_CE_3-54_1_0_500-100'])
+
+cond1 = load ([paths.results.trial_based 'trlCTX_PFC_CT_3-54_1_0_500-100'])
+
+cond2 = load ([paths.results.trial_based 'trlSTA_HPC_CAET_3-54_1_0_500-100'])
+
+
+
+if isfield(cond1, 'ctxTRALL')
+    cond1 = cond1.ctxTRALL; 
+else
+    cond1 = cond1.itstaTRALL; 
+end
+
+if isfield(cond2, 'ctxTRALL')
+    cond2 = cond2.ctxTRALL; 
+else
+    cond2 = cond2.itstaTRALL; 
+end
+
+if length(cond1) < 50 
+    cond1{50,2}= []; 
+end
+if length(cond2) < 50 
+    cond2{50,2}= []; 
+end
+
+
+nTimepoints = 26; 
+win_width = 5; 
+mf = 1; 
+bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
+
+for subji = 1:50
+
+    rsa2T1 = cond1{subji, 1}; 
+    rsa2T1IDs = cond1{subji, 2}; 
+
+    rsa2T2 = cond2{subji, 1}; 
+    rsa2T2IDs = cond2{subji, 2}; 
+    
+    if ~isempty(rsa2T1) & ~isempty(rsa2T2)
+        [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
+        rsa2T1 = rsa2T1(i1, :); 
+        rsa2T1IDs = rsa2T1IDs(i1,:); 
+
+        rsa2T2 = rsa2T2(i2, :); 
+        rsa2T2IDs = rsa2T2IDs(i2,:); 
+    
+        
+         
+        rsa2TT1 = mean(rsa2T1(:, time1), 2); 
+
+        for timej = 1:bins
+            timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
+            rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
+   
+            allRHO(subji, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
+        end
+    
+    end
+end
+
+allRHO(sub2exc, :) = []; 
+
+allRHO = allRHO(any(allRHO,2),:);
+[h p ci ts] = ttest(atanh(allRHO));
+t = squeeze(ts.tstat); 
+
+clear allSTs  
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    max_clust_obs = allSTs(id); 
+end
+
+
+%h(1:10) = 0; 
+hb = h; hb(h==0) = nan; hb(hb==1) = -.005; 
+
+mAR = mean(allRHO);
+stdAR = std(allRHO); 
+seAR = stdAR / sqrt(size(allRHO, 1))
+
+times = -.25:.1:1.9
+%times = -.25:.1:2.2
+figure()
+
+%colors2use = brewermap([6],'*Set1')*0.75;
+colors2use = brewermap([6],'Set3')*0.75;
+shadedErrorBar(times, mAR, seAR, {'Color',colors2use(1,:)}, 1); hold on; 
+
+%set(gca, 'ylim', [-.25 .1], 'xlim', [-.25 1.8]) % for AMY HPC STABILITY
+set(gca, 'ylim', [-.2 .2], 'xlim', [-.25 1.8]) % 
+
+plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
+plot(times, hb, Linewidth=6); 
+
+set(gca, 'Fontsize', 30)
+
+exportgraphics(gcf, ['myP.png'], 'Resolution',150)
+
+
+
+
+
+%% PERMUTATIONS
+clearvars -except max_clust_obs cond1 cond2 time1
+clc
+
+nPerm = 1000;
+t4P = 3:20; 
+
+nTimepoints = 18; 
+win_width = 5; 
+mf = 1; 
+bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
+
+tic
+
+for permi = 1:nPerm
+
+    clearvars -except nTimepoints win_width mf bins cond1 cond2 permi nPerm max_clust_perm max_clust_obs t4P time1
+    for subji = 1:50
+    
+        rsa2T1 = cond1{subji, 1}; 
+        rsa2T1IDs = cond1{subji, 2}; 
+    
+        rsa2T2 = cond2{subji, 1}; 
+        rsa2T2IDs = cond2{subji, 2}; 
+        
+        if ~isempty(rsa2T1) & ~isempty(rsa2T2)
+            [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
+            rsa2T1 = rsa2T1(i1, t4P); 
+            rsa2T1IDs = rsa2T1IDs(i1,:); 
+    
+            rsa2T2 = rsa2T2(i2, t4P); 
+            rsa2T2IDs = rsa2T2IDs(i2,:); 
+
+            ids4perm = randperm(size(rsa2T2, 1)); 
+            rsa2T2 = rsa2T2(ids4perm, :); 
+            rsa2T2IDs = rsa2T2IDs(ids4perm, :); 
+        
+            
+            rsa2TT1 = mean(rsa2T1(:, time1), 2); 
+            for timej = 1:bins
+                timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
+                rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
+            
+                allRHO(subji, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
+            end
+
+        end
+    end
+    allRHO = allRHO(any(allRHO,2),:);
+    [h p ci ts] = ttest(atanh(allRHO));
+    t = squeeze(ts.tstat); 
+    
+    clear allSTs  
+    clustinfo = bwconncomp(h);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs')
+        [max2u id] = max(abs(allSTs));
+        max_clust_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_perm(permi,:) = 0; 
+    end
+
+end    
+
+
+allAb = max_clust_perm(abs(max_clust_perm) > abs(max_clust_obs));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
+
+
+
+
+toc
+
+%% Correlate different trial-level metrics at ALL TIME POINTS
+clear, clc
+
+
+sub2exc = []; 
+%sub2exc = [24]; % for TMP
+
+printClust = 1; 
+print1Clust = 0; 
+
+paths = load_paths_EXT;
+
+%cond1 = load ([paths.results.trial_based 'trlCTX_PFC_CE_3-54_1_0_500-100'])
+%cond2 = load([paths.results.trial_based 'trlCTX_HPC_CE_3-54_1_0_500-100'])
+%cond2 = load ([paths.results.trial_based 'trlCTX_AMY_CE_3-54_1_0_500-100'])
+%cond2 = load ([paths.results.trial_based 'trlCTX_TMP_CE_3-54_1_0_500-100'])
+%cond2 = load ([paths.results.trial_based 'trlCTX_OFC_CE_3-54_1_0_500-100'])
+%cond2 = load ([paths.results.trial_based 'trlCTX_OCC_CE_3-54_1_0_500-100'])
+
+
+%cond2 = load ([paths.results.trial_based 'trlSTA_AMY_CE_3-54_1_0_500-100'])
+%cond2 = load ([paths.results.trial_based 'trlSTA_HPC_CE_3-54_1_0_500-100'])
+%cond2 = load ([paths.results.trial_based 'trlSTA_PFC_CE_3-54_1_0_500-100'])
 %cond2 = load ([paths.results.trial_based 'trlSTA_TMP_CE_3-54_1_0_500-100'])
 %cond2 = load ([paths.results.trial_based 'trlSTA_OFC_CE_3-54_1_0_500-100'])
 %cond2 = load ([paths.results.trial_based 'trlSTA_OCC_CE_3-54_1_0_500-100'])
+
+
+cond1 = load ([paths.results.trial_based 'trlCTX_PFC_CT_3-54_1_0_500-100'])
+
+cond2 = load ([paths.results.trial_based 'trlSTA_PFC_CET_3-54_1_0_500-100'])
+
 
 
 
@@ -500,9 +724,7 @@ for subji = 1:50
     end
 end
 
-% % % % only for tmp
-%sub2exc = [21];
-%allRHO(sub2exc, :, :) = []; 
+allRHO(sub2exc, :, :) = []; 
 
 ids2K = any(allRHO,2); 
 ids2K = ids2K(:, 1); 

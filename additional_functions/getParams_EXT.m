@@ -7,7 +7,7 @@ function [cfg] = getParams_EXT(f2sav)
         case 'nRSM'
             cfg.roi = f2t{2};
             cfg.LT         = f2t{3}(1); 
-            cfg.period     = f2t{3}(2);
+            cfg.period     = f2t{3}(2:end);
             freqs = strsplit(f2t{4}, '-');
             cfg.freqs       = [double(string((freqs{1}))) : double(string((freqs{2})))];
             
@@ -33,7 +33,8 @@ function [cfg] = getParams_EXT(f2sav)
             tParams         = strsplit(f2t{7}, '-');
             cfg.win_width   = double(string((tParams{1})));
             cfg.mf          = double(string((tParams{2})));
-            cfg.powF2load   = ['POW_' cfg.roi '_' cfg.LT '_' num2str(cfg.mf/10)]; 
+            %cfg.powF2load   = ['POW_' cfg.roi '_' cfg.LT '_' num2str(cfg.mf/10)]; 
+            cfg.powF2load   = ['POW_' cfg.roi '_' cfg.LT '_10']; 
             cfg.TG = double(string(f2t{8})); 
             cfg.contr2sav   = strsplit(f2t{9}, '-');
 
