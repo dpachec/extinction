@@ -6,7 +6,8 @@ clear , clc
 
 listF2sav = {
 
-'RSA_PFC_C_3-54_1_0_500-10_1_SCE-DCE';
+'RSA_TMP_C_3-30_1_0_500-100_1_SCE-DCE';
+'RSA_PFC_C_3-30_1_0_500-100_1_SCE-DCE';
 
 % 'RSA_TMP_C_3-54_1_0_500-10_1_SICSPE-SICSME';
 % 'RSA_AMY_C_3-54_1_0_500-10_1_SICSPE-SICSME';
@@ -605,18 +606,18 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 clear
 
 
-sub2exc = []; % 19
-%sub2exc = [8 13 22]; % 8 13
+sub2exc = [27 37]; %Always in the 50 subject space (p_07 c_27)
+%sub2exc = [3 11 19 27 37]; %Always in the 50 subject space (p_07 c_27)
+%sub2exc = [3 11 19 27 37 48]; %Always in the 50 subject space (p_07 c_27)
+
 
 paths = load_paths_EXT; 
-%f2sav = 'RSA_TMP_C_3-54_1_0_500-100_1_SICSPE-SICSME';
-f2sav = 'RSA_PFC_C_3-54_1_0_500-100_1_SCE-DCE';
+f2sav = 'RSA_TMP_C_3-54_1_0_500-100_1_SICSPE-SICSME';
+%f2sav = 'RSA_PFC_C_3-54_1_0_500-100_1_SCE-DCE';
 
 load ([ paths.results.rsa f2sav '.mat']);
 
-
-
-ids = rem_nan_subj_EXT(out_rsa); 
+[out_rsa, ids] = rem_nan_subj_EXT(out_rsa, sub2exc); 
 
 cond1 = squeeze(out_rsa(:, 1, :, :)); 
 cond2 = squeeze(out_rsa(:, 2, :, :)); 
@@ -742,18 +743,15 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 clear
 
 
-sub2exc = []; % 19
-%sub2exc = [8 13 22]; % 8 13
+sub2exc = [27 37]; %Always in the 50 subject space
+
 
 paths = load_paths_EXT; 
-f2sav = 'RSA_TMP_C_3-54_1_0_500-10_1_SICSPE-SICSME';
-%f2sav = 'RSA_PFC_C_3-54_1_0_500-10_1_SCE-DCE';
-%f2sav = 'RSA_PFC_C_3-54_1_0_500-100_1_SCE-DCE';
+%f2sav = 'RSA_TMP_C_3-54_1_0_500-10_1_SICSPE-SICSME';
+f2sav = 'RSA_PFC_C_3-54_1_0_500-10_1_SCE-DCE';
 load ([ paths.results.rsa f2sav '.mat']);
 
-
-
-ids = rem_nan_subj_EXT(out_rsa); 
+[out_rsa, ids] = rem_nan_subj_EXT(out_rsa, sub2exc); 
 
 cond1 = squeeze(out_rsa(:, 1, :, :)); 
 cond2 = squeeze(out_rsa(:, 2, :, :)); 

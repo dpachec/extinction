@@ -602,7 +602,9 @@ file2load = ['allS_' 'AMY' '_C'];
 
 load ([paths.results.power file2load]); 
 
-sub2exc = [27 37]; 
+sub2exc = []; % p_07 c_27 %Always in the 50 subject space
+%sub2exc = [27 37]; % p_07 c_27 %Always in the 50 subject space
+%sub2exc = [11 19 27 37]; 
 ALLEEG(sub2exc) = []; 
 
 
@@ -678,12 +680,13 @@ for subji = 1:length(ALLEEG)
 
 
         % % %   % % Acquisition
-        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
-        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+        ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
 
         % % % % % % Extinction
-        ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
-        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
+        %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
+        
         %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
         %ids3 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
 
@@ -697,8 +700,10 @@ for subji = 1:length(ALLEEG)
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
         tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
         tfDTF2 = squeeze(mean(tfDCH2, 2, 'omitnan'));
-        %tfDCH3 = mean(EEG.power(ids3, :, : ,:), 'omitnan'); 
-        %tfDTF3 = squeeze(mean(tfDCH3, 2, 'omitnan'));
+        if exist('ids3')
+            tfDCH3 = mean(EEG.power(ids3, :, : ,:), 'omitnan'); 
+            tfDTF3 = squeeze(mean(tfDCH3, 2, 'omitnan'));
+        end
 
 
 
@@ -711,7 +716,9 @@ for subji = 1:length(ALLEEG)
         
         c1(subji, :, :) = tfDTF1; 
         c2(subji, :, :) = tfDTF2; 
-        %c3(subji, :, :) = tfDTF3; 
+        if exist('ids3')
+            c3(subji, :, :) = tfDTF3; 
+        end
 
                 
     end
@@ -725,7 +732,7 @@ cd (paths.github)
 %% ALL FREQUENCIES
 
 sub2exc = [];
-c1B = c1(:, 1:54, 251:480); c2B = c2(:, 1:54, 251:480); 
+c1B = c1(:, 1:54, 276:475); c2B = c2(:, 1:54, 276:475); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 
 c1B(c1B == 0) = nan; 
@@ -748,11 +755,11 @@ max_clust_obs = allSTs(id);
 
 % 
 
-%h = zeros(54, 230);
+h = zeros(54, 200);
 %h(clustinfo.PixelIdxList{id}) = 1; 
 
 
-times = -.5:.01:1.79; 
+times = -.25:.01:1.74; 
 %times = -3:.01:3.99
 freqs = 1:size(c1B, 2);
 figure()
@@ -781,7 +788,7 @@ ylabel('Frequency (Hz)')
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 colormap(brewermap([],'*Spectral'))
 
-set(findobj(gcf,'type','axes'),'FontSize',24, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'}, 'xlim', [-.5 1.75]);
+set(findobj(gcf,'type','axes'),'FontSize',24, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'}, 'xlim', [-.25 1.75]);
 %set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
 
 
@@ -794,18 +801,17 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
 
 %% plot cluster depic schematic 
-load AMY_POWER_CLUST_px42
 
-eE1 = zeros(54,230); 
-eE1(clustinfo.PixelIdxList{42}) = 1; 
+eE1 = zeros(54,200); 
+eE1(clustinfo.PixelIdxList{id}) = 1; 
 
 
 figure(); set(gcf, 'Position', [100 100 500 200])
-contourf(1:2300, 1:540, myresizem(eE1, 10), 40, 'linecolor', 'none'); hold on; 
-contour(1:2300, 1:540,myresizem(eE1, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 6); set(gca, 'clim', [-1 1])
-plot([500 500 ],get(gca,'ylim'), 'k:','lineWidth', 8);set(gca, 'clim', [-.125 .125]); hold on; 
+contourf(1:2000, 1:540, myresizem(eE1, 10), 40, 'linecolor', 'none'); hold on; 
+contour(1:2000, 1:540,myresizem(eE1, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 6); 
+plot([250 250 ],get(gca,'ylim'), 'k:','lineWidth', 8);set(gca, 'clim', [-.125 .125]); hold on; 
 
-set(gca, 'xTick', [], 'xTicklabel', [], 'yTick', [], 'yTicklabel', [])
+set(gca, 'xTick', [], 'xTicklabel', [], 'yTick', [], 'yTicklabel', []);
 colormap autumn
 
 exportgraphics(gcf, ['myP.png'], 'Resolution',300)
@@ -1088,21 +1094,22 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 %% take in cluster only
 clear 
 load allTPOW
-load AMY_THETA_CLUST_px4
+load clustInfo_AMY_px50
+
 
 for subji = 1:50
 
-    CSPA_S = squeeze(c1B_A(subji,:,:));
-    CSMA_S = squeeze(c2B_A(subji,:,:));
-    CSPPE_S = squeeze(c1B_A(subji,:,:));
-    CSPME_S = squeeze(c2B_E(subji,:,:));
-    CSMME_S = squeeze(c3B_E(subji,:,:));
+    CSPA_S = squeeze(c1_A(subji,:,276:475));
+    CSMA_S = squeeze(c2_A(subji,:,276:475));
+    CSPPE_S = squeeze(c1_E(subji,:,276:475));
+    CSPME_S = squeeze(c2_E(subji,:,276:475));
+    CSMME_S = squeeze(c3_E(subji,:,276:475));
     
-    CSPA(subji,:) = mean(CSPA_S(clustinfo.PixelIdxList{4}), 'all');
-    CSMA(subji,:) = mean(CSMA_S(clustinfo.PixelIdxList{4}), 'all');
-    CSPPE(subji,:) = mean(CSPPE_S(clustinfo.PixelIdxList{4}), 'all');
-    CSPME(subji,:) = mean(CSPME_S(clustinfo.PixelIdxList{4}), 'all');
-    CSMME(subji,:) = mean(CSMME_S(clustinfo.PixelIdxList{4}), 'all');
+    CSPA(subji,:) = mean(CSPA_S(clustinfo.PixelIdxList{50}), 'all');
+    CSMA(subji,:) = mean(CSMA_S(clustinfo.PixelIdxList{50}), 'all');
+    CSPPE(subji,:) = mean(CSPPE_S(clustinfo.PixelIdxList{50}), 'all');
+    CSPME(subji,:) = mean(CSPME_S(clustinfo.PixelIdxList{50}), 'all');
+    CSMME(subji,:) = mean(CSMME_S(clustinfo.PixelIdxList{50}), 'all');
 
 end
 
@@ -1129,47 +1136,41 @@ set(gca, 'LineWidth', 2);
 box on
 exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
-%% plot cluster depic schematic 
-load AMY_THETA_CLUST_px4
 
-eE1 = zeros(6,230); 
-eE1(clustinfo.PixelIdxList{4}) = 1; 
+%% compare during acquisition
 
+[h p ci ts] = ttest(CSPA, CSMA); 
+t = ts.tstat; 
 
-figure(); set(gcf, 'Position', [100 100 500 200])
-contourf(1:2300, 1:60, myresizem(eE1, 10), 40, 'linecolor', 'none'); hold on; 
-contour(1:2300, 1:60,myresizem(eE1, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 6); set(gca, 'clim', [-1 1])
-plot([500 500 ],get(gca,'ylim'), 'k:','lineWidth', 8);set(gca, 'clim', [-.125 .125]); hold on; 
-
-set(gca, 'xTick', [], 'xTicklabel', [], 'yTick', [], 'yTicklabel', [])
-colormap autumn
-
-exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+disp (['t = ' num2str(t) '  ' ' p = ' num2str(p)]);
 
 
+%% compare during extinction
 
 
+d4ANOVA = [CSMME CSPME CSPPE];
+d4ANOVA = d4ANOVA(any(d4ANOVA ,2),:);
+d4ANOVA = d4ANOVA(:);
+conds = [ones(1, 32) ones(1, 32)*2 ones(1, 32)*3]';
+subID = repmat(1:32, 1, 3)'; 
 
-
-%% 
-d2p = [cSP cSMPP cSMPM]
-
-[~,~,stats] = anova1(d2p)
-[c,~,~,gnames] = multcompare(stats);
-
-%%
-clc
-
-[h p ci ts] = ttest(cSP, cSMPP)
-[h p ci ts] = ttest(cSP, cSMPM)
-
-%%
-d4ANOVA = [cSP; cSMPP ;cSMPM];
-d4ANOVA(:,2) = [ones(1,47) ones(1,47)*2 ones(1,47)*3];
-d4ANOVA(any(isnan(d4ANOVA), 2), :) = [];
-d4ANOVA(:,3) = [1:30 1:30 1:30];
+d4ANOVA = [d4ANOVA conds subID]
 
 x = RMAOV1(d4ANOVA);
+
+
+%% compare during acquisition
+
+[h1 p1 ci ts] = ttest(CSPPE, CSPME); 
+t1 = ts.tstat; 
+
+[h2 p2 ci ts] = ttest(CSPPE, CSMME); 
+t2 = ts.tstat; 
+
+disp (['t = ' num2str(t1) '  ' ' p = ' num2str(p1)]);
+disp (['t = ' num2str(t2) '  ' ' p = ' num2str(p2)]);
+
+
 
 %% EXTRACT SINGLE TRIAL POWER LEVELS
 

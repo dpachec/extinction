@@ -1,7 +1,11 @@
-function [ids] = rem_nan_subj_EXT(out_rsa ,sub2exc)
+function [out_rsa, ids] = rem_nan_subj_EXT(out_rsa ,sub2exc)
 
 % % % % %  remove hack 
-%out_rsa(sub2exc, :, :, :) = zeros(1,size(out_rsa, 2), size(out_rsa, 3), size(out_rsa, 4));
+
+% % first zero pad for regions with less than 50 subjects
+out_rsa(size(out_rsa,1) + 1 : 50, :, :, :) = zeros(length(size(out_rsa,1) + 1 : 50), size(out_rsa, 2), size(out_rsa, 3), size(out_rsa, 4));
+
+out_rsa(sub2exc, :, :, :) = zeros(length(sub2exc),size(out_rsa, 2), size(out_rsa, 3), size(out_rsa, 4));
 ids = []; 
 for subji = 1:size(out_rsa, 1)
     cond1 = squeeze(out_rsa(subji, 1, :, :)); 
