@@ -5,15 +5,22 @@ clear , clc
 c2u = 'C';
 
 listF2sav = {   
-                {'Amygdala' }; 
-                {'Hippocampus'}; 
-                {'orbitofrontal'}; 
+                %{'Amygdala' }; 
+                %{'Hippocampus'}; 
+                %{'orbitofrontal'}; 
                 {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
-                {'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
-                {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
-                {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'}; 
+                %{'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
+                %{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+                %{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'}; 
             };   
-n2SAV = {'AMY'; 'HPC'; 'OFC'; 'TMP'; 'OCC'; 'PFC'; 'PFCO'};
+n2SAV = {
+            %'AMY'; 
+            %'HPC'; 
+            %'OFC'; 
+            'TMP'; 
+            %'OCC'; 
+            %'PFC'; 
+            %'PFCO'};
 
 
 
@@ -93,6 +100,8 @@ disp('done all files');
 cd (paths.github)
 
 
+
+
 %% Export power
 %POW_Region_Locked2(CUE:VIDEO)_mf_
 clear , clc
@@ -100,21 +109,23 @@ clear , clc
 listF2sav = {
 
 
-'POW_aHPC_C_10';
-'POW_OCC_C_10';
-'POW_HPC_C_10';
-'POW_TMP_C_10';
-'POW_PFC_C_10';
-'POW_OFC_C_10';
-'POW_AMY_C_10';
+'POW_PFCO_C_10';
 
-'POW_aHPC_V_10';
-'POW_OCC_V_10';
-'POW_HPC_V_10';
-'POW_TMP_V_10';
-'POW_PFC_V_10';
-'POW_OFC_V_10';
-'POW_AMY_V_10';
+% 'POW_aHPC_C_10';
+% 'POW_OCC_C_10';
+% 'POW_HPC_C_10';
+% 'POW_TMP_C_10';
+% 'POW_PFC_C_10';
+% 'POW_OFC_C_10';
+% 'POW_AMY_C_10';
+% 
+% 'POW_aHPC_V_10';
+% 'POW_OCC_V_10';
+% 'POW_HPC_V_10';
+% 'POW_TMP_V_10';
+% 'POW_PFC_V_10';
+% 'POW_OFC_V_10';
+% 'POW_AMY_V_10';
 
 };   
 

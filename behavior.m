@@ -208,7 +208,7 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
             'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub09', 'p_sub10', ...
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
-            'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
+            'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08 no c_sub27 no p_sub06
 
 
 for subji=1:numel(allsubs)
@@ -330,7 +330,7 @@ plot([48 48],[1 4],':k', 'Linewidth', 2)
 
 
 
-%% plot only new colors
+%% plot new colors ; perform ANOVA and t-tests at every trial
 
 figure
 hold on
@@ -368,40 +368,47 @@ plot([48 48],[1 4],':k', 'Linewidth', 2)
 set(gca, 'xtick', [12 36 56], 'xticklabels', {'ACQ' 'EXT' 'TEST'})
 
 
-% anova 
+% anova %here
 clear tbl, clc
 for timei = 1:64
-    d4anova = squeeze(filt_avg_response_type(:,:,timei));    
-    [p(timei), tbl] = anova1(d4anova,[],'off');
-    t(timei) = tbl{2,5};
+    d4ANOVA =  squeeze(filt_avg_response_type(:,:,timei)); 
+    nSubj = size(d4ANOVA, 1); 
+    d4ANOVA = d4ANOVA(:); 
+    d4ANOVA(:,2) = [ones(1,nSubj) ones(1,nSubj)*2 ones(1,nSubj)*3];
+    d4ANOVA(:,3) = [1:nSubj 1:nSubj 1:nSubj];
+    [p f] = RMAOV1(d4ANOVA);
+    allP(timei) = p; 
+    allF(timei) = f; 
 end
-hb = p<0.05; 
+
+hb = allP<0.05; 
 clustinfo = bwconncomp(hb);
 hb = double(hb); hb(hb == 0) = nan; hb(hb==1) = 1.1; 
 for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+   allSTs(pxi,:) = sum(allF(clustinfo.PixelIdxList{pxi}));% 
 end
 [max2u id] = max(abs(allSTs));
 max_clust_obs = allSTs(id)
 
 % ttests
 for t=1:size(filt_avg_response_type,3)
-[htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,1,t)),squeeze(filt_avg_response_type(:,2,t)))
+    [htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,1,t)),squeeze(filt_avg_response_type(:,2,t)))
 end
-hb1 = htest; hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.4; 
+p = p*3; htest = p<0.05; hb1 = double(htest); hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.4; 
+
 % ttests
 for t=1:size(filt_avg_response_type,3)
-[htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,1,t)),squeeze(filt_avg_response_type(:,3,t)))
+    [htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,1,t)),squeeze(filt_avg_response_type(:,3,t)))
 end
-hb2 = htest; hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
+p = p*3; htest = p<0.05; hb2 = double(htest); hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
 % ttests
 for t=1:size(filt_avg_response_type,3)
-[htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,2,t)),squeeze(filt_avg_response_type(:,3,t)))
+    [htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,2,t)),squeeze(filt_avg_response_type(:,3,t)))
 end
-hb3 = htest; hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.5; 
+p = p*3; htest = p<0.05; hb3 = double(htest); hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.5; 
 
 plot(hb, 'k', 'LineWidth',5)
-plot(hb1, 'Color', '#FFA500', 'LineWidth',5)
+plot(hb1, 'Color', '#EC5300', 'LineWidth',5)
 plot(hb2, 'Color', '#964B00', 'LineWidth',5)
 plot(hb3,  'Color', [.5 .5 .5], 'LineWidth',5)
 
@@ -498,53 +505,56 @@ anovaStats = rm_anova2(d4anova,subID,trial_type,block_n,{'trial_type', 'block_nu
 
 
 % % % % BLOCK 1
-[h1,p1]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,2,1))); %CS+/CS+ vs CS+/CS- B1
-[h2,p2]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,3,1))); %CS+/CS+ vs CS-/CS- B1
-[h3,p3]=ttest(squeeze(response_avgblocksub(:,2,1)),squeeze(response_avgblocksub(:,3,1))); %CS+/CS- vs CS-/CS- B1
+[h1,p1, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,2,1))); %CS+/CS+ vs CS+/CS- B1
+t1 = ts.tstat; 
+[h2,p2, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,3,1))); %CS+/CS+ vs CS-/CS- B1
+t2 = ts.tstat; 
+[h3,p3, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,1)),squeeze(response_avgblocksub(:,3,1))); %CS+/CS- vs CS-/CS- B1
+t3 = ts.tstat; 
 
 % % % % BLOCK 2
-[h4,p4]=ttest(squeeze(response_avgblocksub(:,1,2)),squeeze(response_avgblocksub(:,2,2))); %CS+/CS+ vs CS+/CS- B2
-[h5,p5]=ttest(squeeze(response_avgblocksub(:,1,2)),squeeze(response_avgblocksub(:,3,2))); %CS+/CS+ vs CS-/CS- B2
-[h6,p6]=ttest(squeeze(response_avgblocksub(:,2,2)),squeeze(response_avgblocksub(:,3,2))); %CS+/CS- vs CS-/CS- B2
+[h4,p4, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,2)),squeeze(response_avgblocksub(:,2,2))); %CS+/CS+ vs CS+/CS- B2
+t4 = ts.tstat; 
+[h5,p5, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,2)),squeeze(response_avgblocksub(:,3,2))); %CS+/CS+ vs CS-/CS- B2
+t5 = ts.tstat; 
+[h6,p6, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,2)),squeeze(response_avgblocksub(:,3,2))); %CS+/CS- vs CS-/CS- B2
+t6 = ts.tstat; 
 
 % % % % BLOCK 2
-[h7,p7]=ttest(squeeze(response_avgblocksub(:,1,3)),squeeze(response_avgblocksub(:,2,3))); %CS+/CS+ vs CS+/CS- B3
-[h8,p8]=ttest(squeeze(response_avgblocksub(:,1,3)),squeeze(response_avgblocksub(:,3,3))); %CS+/CS+ vs CS-/CS- B3
-[h9,p9]=ttest(squeeze(response_avgblocksub(:,2,3)),squeeze(response_avgblocksub(:,3,3))); %CS+/CS- vs CS-/CS- B3
+[h7,p7, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,3)),squeeze(response_avgblocksub(:,2,3))); %CS+/CS+ vs CS+/CS- B3
+t7 = ts.tstat; 
+[h8,p8, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,3)),squeeze(response_avgblocksub(:,3,3))); %CS+/CS+ vs CS-/CS- B3
+t8 = ts.tstat; 
+[h9,p9, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,3)),squeeze(response_avgblocksub(:,3,3))); %CS+/CS- vs CS-/CS- B3
+t9 = ts.tstat; 
 
 %% 
 % % % % CS+/CS+ 
-[h1,p1]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,1,2))); %B1 vs B2 CS+/CS+ 
-[h2,p2]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,1,3))); %B1 vs B3 CS+/CS+ 
-[h3,p3]=ttest(squeeze(response_avgblocksub(:,1,2)),squeeze(response_avgblocksub(:,1,3))); %B2 vs B3 CS+/CS+ 
+[h1,p1, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,1,2))); %B1 vs B2 CS+/CS+ 
+t1 = ts.tstat; 
+[h2,p2, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,1,3))); %B1 vs B3 CS+/CS+ 
+t2 = ts.tstat; 
+[h3,p3, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,2)),squeeze(response_avgblocksub(:,1,3))); %B2 vs B3 CS+/CS+ 
+t3 = ts.tstat; 
 
 % % % % CS+/CS-
-[h4,p4]=ttest(squeeze(response_avgblocksub(:,2,1)),squeeze(response_avgblocksub(:,2,2))); %B1 vs B2 CS+/CS-
-[h5,p5]=ttest(squeeze(response_avgblocksub(:,2,1)),squeeze(response_avgblocksub(:,2,3))); %B1 vs B3 CS+/CS- 
-[h6,p6]=ttest(squeeze(response_avgblocksub(:,2,2)),squeeze(response_avgblocksub(:,2,3))); %B2 vs B3 CS+/CS- 
+[h4,p4, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,1)),squeeze(response_avgblocksub(:,2,2))); %B1 vs B2 CS+/CS-
+t4 = ts.tstat; 
+[h5,p5, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,1)),squeeze(response_avgblocksub(:,2,3))); %B1 vs B3 CS+/CS- 
+t5 = ts.tstat; 
+[h6,p6, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,2)),squeeze(response_avgblocksub(:,2,3))); %B2 vs B3 CS+/CS- 
+t6 = ts.tstat; 
 
 % % % % CS-/CS-
-[h7,p7]=ttest(squeeze(response_avgblocksub(:,3,1)),squeeze(response_avgblocksub(:,3,2))); %B1 vs B2 CS-/CS- 
-[h8,p8]=ttest(squeeze(response_avgblocksub(:,3,1)),squeeze(response_avgblocksub(:,3,3))); %B1 vs B3 CS-/CS- 
-[h9,p9]=ttest(squeeze(response_avgblocksub(:,3,2)),squeeze(response_avgblocksub(:,3,3))); %B2 vs B3 CS-/CS-
+[h7,p7, ci, ts]=ttest(squeeze(response_avgblocksub(:,3,1)),squeeze(response_avgblocksub(:,3,2))); %B1 vs B2 CS-/CS- 
+t7 = ts.tstat; 
+[h8,p8, ci, ts]=ttest(squeeze(response_avgblocksub(:,3,1)),squeeze(response_avgblocksub(:,3,3))); %B1 vs B3 CS-/CS- 
+t8 = ts.tstat; 
+[h9,p9, ci, ts]=ttest(squeeze(response_avgblocksub(:,3,2)),squeeze(response_avgblocksub(:,3,3))); %B2 vs B3 CS-/CS-
+t9 = ts.tstat; 
 
 
 
-%% correct Bonferroni 
-
-p1 = p1*9; 
-p2 = p2*9; 
-p3 = p3*9; 
-p4 = p4*9; 
-p5 = p5*9; 
-p6 = p6*9; 
-p7 = p7*9; 
-p8 = p8*9; 
-p9 = p9*9; 
-
-
-
-disp('corrected')
 
 %% correct Bonferroni 18
 

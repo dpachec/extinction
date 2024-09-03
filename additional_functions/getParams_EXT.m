@@ -16,7 +16,8 @@ function [cfg] = getParams_EXT(f2sav)
             tParams         = strsplit(f2t{7}, '-');
             cfg.win_width   = double(string((tParams{1})));
             cfg.mf          = double(string((tParams{2})));
-            cfg.powF2load   = ['POW_' cfg.roi '_' cfg.LT '_' num2str(cfg.mf/10)]; 
+            %cfg.powF2load   = ['POW_' cfg.roi '_' cfg.LT '_' num2str(cfg.mf/10)]; 
+            cfg.powF2load   = ['POW_' cfg.roi '_' cfg.LT '_10']; 
 
         case 'POW'
             cfg.roi         = f2t{2};
