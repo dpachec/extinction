@@ -109,7 +109,8 @@ clear , clc
 listF2sav = {
 
 
-'POW_PFCO_C_10';
+'POW_AMY_C_10';
+'POW_TMP_C_10';
 
 % 'POW_aHPC_C_10';
 % 'POW_OCC_C_10';
@@ -159,6 +160,7 @@ for listi = 1:length(listF2sav)
                 EEG = extract_power_EXT(EEG, cfg); 
                 EEG = normalize_EXT(EEG);  %across trials
                 oneListPow = EEG.power(:, :, : ,251:550); 
+                %oneListPow = EEG.power(:, :, : ,201:550); 
                 %oneListPow = EEG.power(:, :, : ,26:55); 
                 POW{subji, 1} = oneListPow;
                 POW{subji, 2} = Ev2; 

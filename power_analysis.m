@@ -87,6 +87,13 @@ save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
 cd (paths.github)
 
 
+%% load traces
+
+%file2load = ['TR_' 'HPC' '_C']; 
+file2load = ['TR_' 'AMY' '_C']; 
+load ([paths.results.traces file2load]); 
+disp('loaded')
+
 
 
 %% % % % % % % % FIRST LOAD FILE - > START HERE
@@ -103,12 +110,7 @@ ALLEEG(sub2exc,:) = {[]};
 
 
 
-%% load traces
 
-%file2load = ['TR_' 'HPC' '_C']; 
-file2load = ['TR_' 'AMY' '_C']; 
-load ([paths.results.traces file2load]); 
-disp('loaded')
 
 %% count channels 
 
@@ -173,7 +175,7 @@ end
 
 %% PLOT grand average for each condition
 
-clearvars -except ALLEEG paths  totalChans nChans nSub nL
+clearvars -except ALLEEG paths  totalChans nChans nSub nL file2load
 
 
 for subji = 1:length(ALLEEG)
@@ -197,7 +199,7 @@ for subji = 1:length(ALLEEG)
         ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
         
         %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
-        %ids3 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
 
 
         % % %   % % Acquisition only late trials
@@ -240,22 +242,30 @@ end
 
 cd (paths.github)
 
-%% plot all subjects 
 
-for subji = 1:size(c1, 1)
+%% ALL FREQUENCIES 
 
-    figure
-    imagesc(squeeze(c1(subji,:,:)));
+freq2u = 4:8;
 
+f2u = strsplit(file2load, '_')
+
+if strcmp(f2u{2}, 'AMY')
+    sub2exc = [19 27 37]; 
+elseif strcmp(f2u{2}, 'HPC')
+    sub2exc = []; % no exclusions: no subjects with less than 10 trials in HPC
+elseif strcmp(f2u{2}, 'OCC')
+    sub2exc = []; % no exclusions: no subjects with less than 10 trials in OCC
+elseif strcmp(f2u{2}, 'PFC')
+    sub2exc = [19 27 37]; 
+elseif strcmp(f2u{2}, 'OFC')
+    sub2exc = [27]; %no subjects to exclude in OFC
+elseif strcmp(f2u{2}, 'TMP')
+    %sub2exc = [6 19 21 24 25 31 32 33 38 39 41 42 46 48 50]; % all subj with less than 10
+    sub2exc = [19 21 25 31 46]; % all subj with less than 5 trials
 end
 
 
-%% ALL FREQUENCIES
-
-sub2exc = [27 37]; 
-
-f2u = 1:10;
-c1B = c1(:, f2u, 276:475); c2B = c2(:, f2u, 276:475); 
+c1B = c1(:, freq2u, 276:475); c2B = c2(:, freq2u, 276:475); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
 
 c1B(c1B == 0) = nan; 
@@ -266,7 +276,6 @@ d2p2	= squeeze(mean(c2B, 'omitnan'));
 
 [h p ci ts] = ttest(c1B, c2B); 
 h = squeeze(h); t = squeeze(ts.tstat);
-%h(1:54, 1:50) = 0; 
 
 clear allSTs  
 clustinfo = bwconncomp(h);
@@ -282,8 +291,11 @@ h = zeros(size(c1B, 2),size(c1B, 3));
 h(clustinfo.PixelIdxList{id}) = 1; 
 
 
-times = -.25:.01:1.74; 
-%times = -3:.01:3.99
+
+times = -.24:.01:1.75; 
+findLAT_H = sum(h);
+findLAT_H(2, :) = times; 
+
 freqs = 1:size(c1B, 2);
 figure()
 tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 900])
@@ -311,7 +323,7 @@ ylabel('Frequency (Hz)')
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 colormap(brewermap([],'*Spectral'))
 
-set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1 f2u(end)], 'yticklabels', {'1', num2str(f2u(end))}, 'xlim', [-.25 1.75]);
+set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1  length(freq2u)], 'yticklabels', {num2str(freq2u(1)), num2str(freq2u(end))}, 'xlim', [-.24 1.75]);
 %set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'}, 'xlim', [-.25 1.75]);
 %set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
 
@@ -322,28 +334,23 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
 %% permutations 
 
-nPerm = 10000; 
-clear max_clust_sum_perm
+nPerm = 1000; 
+t4p = 26:200; 
 
-t4p = 301:475; 
-
+clear max_clust_sum_perm c1BP c2BP
 tic
 for permi = 1:nPerm
-    c1B = c1(:,f2u,t4p); 
-    c2B = c2(:,f2u,t4p); 
-    c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
-    
-    c1B(c1B == 0) = nan; 
-    c2B(c2B == 0) = nan; 
     for subji = 1:size(c1B, 1)
         if rand>.5
-           tmp = c1B(subji, :, :);
-           c1B(subji, :, :) = c2B(subji, :, :);
-           c2B(subji, :, :) = tmp; 
+           c1BP(subji, :, :) = c2B(subji, :, t4p);
+           c2BP(subji, :, :) = c1B(subji, :, t4p);
+        else
+           c1BP(subji, :, :) = c1B(subji, :, t4p); 
+           c2BP(subji, :, :) = c2B(subji, :, t4p);
         end
     end
     
-    [hPerm p ci tsPerm] = ttest(c1B, c2B); 
+    [hPerm p ci tsPerm] = ttest(c1BP, c2BP); 
     hPerm = squeeze(hPerm); tPerm = squeeze(tsPerm.tstat);
 
     clear allSTs  
@@ -352,7 +359,7 @@ for permi = 1:nPerm
         allSTs(pxi,:) = sum(tPerm(clustinfo.PixelIdxList{pxi}));% 
     end
     if exist('allSTs') & ~isempty(clustinfo.PixelIdxList)
-        [max2u id] = min(allSTs);
+        [max2u id] = max(abs((allSTs)));
         max_clust_sum_perm(permi,:) = allSTs(id); 
     else
         max_clust_sum_perm(permi,:) = 0; 
@@ -366,17 +373,22 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 toc
 
+%% 
+histogram(max_clust_sum_perm, 20)
+
+
 
 %% permutations 
 
 nPerm = 1000; 
+t4p = 26:200; 
+
+
 clear max_clust_sum_perm
+junts = cat(1, c1B, c2B);
+junts = junts(:, :, t4p); 
 
-c1(sub2exc,:,:) = []; c2(sub2exc,:,:) = []; 
-junts = cat(1, c1(:, 1:44, 301:475), c2(:, 1:44, 301:475));
-junts(junts== 0) = nan; 
-
-nSubj =  size(c1, 1);
+nSubj =  size(c1B, 1);
 realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
 [M,N] = size(realCondMapping);
 rowIndex = repmat((1:M)',[1 N]);
@@ -401,7 +413,7 @@ for permi = 1:nPerm
         allSTs(pxi,:) = sum(tPerm(clustinfo.PixelIdxList{pxi}));% 
     end
     if exist('allSTs') & ~isempty(clustinfo.PixelIdxList)
-        [max2u id] = min(allSTs);
+        [max2u id] = max(abs((allSTs)));
         max_clust_sum_perm(permi,:) = allSTs(id); 
     else
         max_clust_sum_perm(permi,:) = 0; 
@@ -435,165 +447,36 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
 
 
-%% ONLY THETA
-
-sub2exc = [27 37];
-
-c1B = c1(:, 3:8, 251:480); 
-c2B = c2(:, 3:8, 251:480); 
-%c3B = c3(:, 3:8, 251:480); 
-c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
-%c3B(sub2exc,:,:) = []; 
-
-c1B(c1B == 0) = nan; 
-c2B(c2B == 0) = nan; 
-%c3B(c3B == 0) = nan; 
-d2p1	= squeeze(mean(c1B, 'omitnan'));
-d2p2	= squeeze(mean(c2B, 'omitnan'));
-%d2p3	= squeeze(mean(c3B, 'omitnan'));
-
-
-[h p ci ts] = ttest(c1B, c2B); 
-h = squeeze(h); t = squeeze(ts.tstat);
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-[max2u id] = max(abs(allSTs));
-max_clust_obs = allSTs(id)
-
-% 
-
-h = zeros(6, 230);
-h(clustinfo.PixelIdxList{id}) = 1; 
-
- 
-
-
-
-
-
-times = -.5:.01:1.79; 
-%times = -3:.01:3.99
-freqs = 1:size(c1B, 2);
-figure()
-tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 900])
-nexttile
-contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.125 .125])
-%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-%title('CS+')
-title('Acquisition')
-xlabel('Time (s)')
-ylabel('Frequency (Hz)')
-nexttile
-contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.125 .125])
-%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-%title('CS-')
-title('Extinction')
-xlabel('Time (s)')
-ylabel('Frequency (Hz)')
-nexttile
-contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T';
-contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-3 3])
-plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-%title('CS+ vs CS-')
-title('Acquisition vs Extinction')
-xlabel('Time (s)')
-ylabel('Frequency (Hz)')
-%plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-colormap(brewermap([],'*Spectral'))
-
-%set(findobj(gcf,'type','axes'),'FontSize',16, 'ytick', [1 30 ], 'yticklabels', {'1', '30'}, 'xlim', [-.5 2]);
-set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1 6], 'yticklabels', {'3', '8'},'xlim', [-.25 1.75]);
-
-
-%exportgraphics(gcf, [paths.results.power file2load '.png'], 'Resolution',150)
-exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
-
-
-%% permutations 
-
-nPerm = 1000; 
-clear max_clust_sum_perm
-for permi = 1:nPerm
-    %c1B = c1(:,1:54,301:480); 
-    %c2B = c2(:,1:54,301:480); 
-    c1B = c1(:,3:8,301:480); 
-    c2B = c2(:,3:8,301:480); 
-    %c1B = c1(:,3:8,301:400); % first second only
-    %c2B = c2(:,3:8,301:400); 
-    c1B(c1B == 0) = nan; 
-    c2B(c2B == 0) = nan; 
-    for subji = 1:size(c1B, 1)
-        if rand>.5
-           tmp = c1B(subji, :, :);
-           c1B(subji, :, :) = c2B(subji, :, :);
-           c2B(subji, :, :) = tmp; 
-        end
-    end
-    
-    [hPerm p ci tsPerm] = ttest(c1B, c2B); 
-    hPerm = squeeze(hPerm); tPerm = squeeze(tsPerm.tstat);
-
-    clear allSTs  
-    clustinfo = bwconncomp(hPerm);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-        allSTs(pxi,:) = sum(tPerm(clustinfo.PixelIdxList{pxi}));% 
-    end
-    if exist('allSTs') & ~isempty(clustinfo.PixelIdxList)
-        [max2u id] = min(allSTs);
-        max_clust_sum_perm(permi,:) = allSTs(id); 
-    else
-        max_clust_sum_perm(permi,:) = 0; 
-    end
-    
-
-end
-
-clear p ratings2u mcsP
-ratings2u = max_clust_obs; 
-mcsP = max_clust_sum_perm;
-
-%allAb = mcsP(mcsP < ratings2u);
-allAb = mcsP(abs(mcsP) > abs(ratings2u));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
-
-
-% % % % % % 
-% % % % % % figure
-% % % % % % histogram(max_clust_sum_perm); hold on; 
-% % % % % % scatter(max_clust_obs,0, 200, 'filled','r');
-% % % % % % set(gca, 'FontSize', 14);
-% % % % % % xlabel('T')
-% % % % % % exportgraphics(gcf, [paths.results.power 'myP.png'], 'Resolution',150)
 
 %% take in cluster only
 clear 
-load allTPOW
-load clustInfo_AMY_px50
+load allTHETAPOWER
+load clustinfo_AMY_THETA_px4
 
 
-for subji = 1:50
+for subji = 1:size(c1B_A, 1)
 
-    CSPA_S = squeeze(c1_A(subji,:,276:475));
-    CSMA_S = squeeze(c2_A(subji,:,276:475));
-    CSPPE_S = squeeze(c1_E(subji,:,276:475));
-    CSPME_S = squeeze(c2_E(subji,:,276:475));
-    CSMME_S = squeeze(c3_E(subji,:,276:475));
+    CSPA_S = squeeze(c1B_A(subji,:,:));
+    CSMA_S = squeeze(c2B_A(subji,:,:));
+    CSPPE_S = squeeze(c1B_E(subji,:,:));
+    CSPME_S = squeeze(c2B_E(subji,:,:));
+    CSMME_S = squeeze(c3B_E(subji,:,:));
     
-    CSPA(subji,:) = mean(CSPA_S(clustinfo.PixelIdxList{50}), 'all');
-    CSMA(subji,:) = mean(CSMA_S(clustinfo.PixelIdxList{50}), 'all');
-    CSPPE(subji,:) = mean(CSPPE_S(clustinfo.PixelIdxList{50}), 'all');
-    CSPME(subji,:) = mean(CSPME_S(clustinfo.PixelIdxList{50}), 'all');
-    CSMME(subji,:) = mean(CSMME_S(clustinfo.PixelIdxList{50}), 'all');
+    CSPA(subji,:) = mean(CSPA_S(clustinfo.PixelIdxList{4}), 'all');
+    CSMA(subji,:) = mean(CSMA_S(clustinfo.PixelIdxList{4}), 'all');
+    CSPPE(subji,:) = mean(CSPPE_S(clustinfo.PixelIdxList{4}), 'all');
+    CSPME(subji,:) = mean(CSPME_S(clustinfo.PixelIdxList{4}), 'all');
+    CSMME(subji,:) = mean(CSMME_S(clustinfo.PixelIdxList{4}), 'all');
 
 end
 
 %% 
+CSMME(isnan(CSMME)) = []; 
+CSPME(isnan(CSPME)) = []; 
+CSPPE(isnan(CSPPE)) = []; 
+CSPA(isnan(CSPA)) = []; 
+CSMA(isnan(CSMA)) = []; 
+
 
 d2p = [CSMME CSPME CSPPE CSPA CSMA ]; 
 d2pm = mean(d2p, 'omitnan')
@@ -601,7 +484,7 @@ d2pm = mean(d2p, 'omitnan')
 mean_S = mean(d2p, 'omitnan');
 h = barh (mean_S);hold on;
 set(h,'FaceColor', 'flat', 'lineWidth', 2);
-set(gca,'YTick',[1:5],'YTickLabel',{'', ''}, 'FontSize', 18, 'linew',2, 'xlim', [-.3 .6], 'ylim', [0 6] );
+set(gca,'YTick',[1:5],'YTickLabel',{'', ''}, 'FontSize', 18, 'linew',2, 'xlim', [-.5 .7], 'ylim', [0 6] );
 plot([0 0],get(gca,'ylim'), 'k','lineWidth', 2);
 
 fig_stuff=subplot(1,1,1)
@@ -612,17 +495,40 @@ hb = scatter (d2p, 1:5,35, 'k'); hold on;
 
 %[h p ci t] = ttest (data.data(:,1));
 %disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
-set(gca, 'LineWidth', 0.5);
+set(gca, 'LineWidth', 0.5, 'FontSize', 14);
 box on
 exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
 
 %% compare during acquisition
-
+clc
 [h p ci ts] = ttest(CSPA, CSMA); 
 t = ts.tstat; 
+disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
 
-disp (['t = ' num2str(t) '  ' ' p = ' num2str(p)]);
+[h p ci ts] = ttest(CSPPE, CSPME); 
+t = ts.tstat; 
+disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
+
+[h p ci ts] = ttest(CSPPE, CSMME); 
+t = ts.tstat; 
+disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
+
+[h p ci ts] = ttest(CSPME, CSMME); 
+t = ts.tstat; 
+disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
+
+[h p ci ts] = ttest(CSPPE); 
+t = ts.tstat; 
+disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
+
+[h p ci ts] = ttest(CSPME); 
+t = ts.tstat; 
+disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
+
+[h p ci ts] = ttest(CSMME); 
+t = ts.tstat; 
+disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
 
 
 %% compare during extinction

@@ -37,8 +37,12 @@ function [cfg] = getParams_EXT(f2sav)
             %cfg.powF2load   = ['POW_' cfg.roi '_' cfg.LT '_' num2str(cfg.mf/10)]; 
             cfg.powF2load   = ['POW_' cfg.roi '_' cfg.LT '_10']; 
             cfg.TG = double(string(f2t{8})); 
-            cfg.contr2sav   = strsplit(f2t{9}, '-');
-
+            if length(f2t) > 9
+                cfg.TnT         = f2t{9};
+                cfg.contr2sav   = strsplit(f2t{10}, '-');
+            else
+                cfg.contr2sav   = strsplit(f2t{9}, '-');
+            end
 
     
 end

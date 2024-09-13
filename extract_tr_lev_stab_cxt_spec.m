@@ -10,16 +10,17 @@ listF2sav = {
 
 'trlSTA_AMY_CE_1-44_1_0_500-50';
 'trlCTX_AMY_CE_1-44_1_0_500-50';
-'trlSTA_HPC_CE_1-44_1_0_500-50';
-'trlCTX_HPC_CE_1-44_1_0_500-50';
-'trlSTA_PFC_CE_1-44_1_0_500-50';
-'trlCTX_PFC_CE_1-44_1_0_500-50';
-'trlSTA_OCC_CE_1-44_1_0_500-50';
-'trlCTX_OCC_CE_1-44_1_0_500-50';
-'trlSTA_OFC_CE_1-44_1_0_500-50';
-'trlCTX_OFC_CE_1-44_1_0_500-50';
 'trlSTA_TMP_CE_1-44_1_0_500-50';
 'trlCTX_TMP_CE_1-44_1_0_500-50';
+
+% 'trlSTA_HPC_CE_1-44_1_0_500-50';
+% 'trlCTX_HPC_CE_1-44_1_0_500-50';
+% 'trlSTA_PFC_CE_1-44_1_0_500-50';
+% 'trlCTX_PFC_CE_1-44_1_0_500-50';
+% 'trlSTA_OCC_CE_1-44_1_0_500-50';
+% 'trlCTX_OCC_CE_1-44_1_0_500-50';
+% 'trlSTA_OFC_CE_1-44_1_0_500-50';
+% 'trlCTX_OFC_CE_1-44_1_0_500-50';
 
 
 

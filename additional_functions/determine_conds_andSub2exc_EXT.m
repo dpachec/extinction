@@ -26,19 +26,20 @@ function [cond1 cond2 sub2exc] = determine_conds_andSub2exc_EXT(c1, c2, paths)
     c1s = strsplit(c1, '_'); c2s = strsplit(c2, '_'); 
     if strcmp(c1s{1}, 'trlSTA') & strcmp(c2s{1}, 'trlSTA')
         if (strcmp(c1s{2}, 'TMP') & strcmp(c2s{2}, 'AMY')) | strcmp(c1s{2}, 'AMY') & strcmp(c2s{2}, 'TMP')
-            sub2exc = [19 21 24];
+            sub2exc = [19 21 24 27 37];
         elseif (strcmp(c1s{2}, 'TMP') & strcmp(c2s{2}, 'HPC')) | strcmp(c1s{2}, 'HPC') & strcmp(c2s{2}, 'TMP')
-            sub2exc = [6 19 21 24];
+            sub2exc = [6 19 21 24 27 37];
         elseif (strcmp(c1s{2}, 'TMP') & strcmp(c2s{2}, 'PFC')) | strcmp(c1s{2}, 'PFC') & strcmp(c2s{2}, 'TMP')
-            sub2exc = [19 24 25];
+            sub2exc = [19 24 25 27 37];
         elseif (strcmp(c1s{2}, 'TMP') & strcmp(c2s{2}, 'OFC')) | strcmp(c1s{2}, 'OFC') & strcmp(c2s{2}, 'TMP')
-            sub2exc = [];
+            sub2exc = [27 37];
+        elseif (strcmp(c1s{2}, 'TMP') & strcmp(c2s{2}, 'OCC')) | strcmp(c1s{2}, 'OCC') & strcmp(c2s{2}, 'TMP')
+            sub2exc = [25 27 37];            
         elseif (strcmp(c1s{2}, 'AMY') & strcmp(c2s{2}, 'PFC')) | strcmp(c1s{2}, 'PFC') & strcmp(c2s{2}, 'AMY')
             sub2exc = [19];        
         elseif (strcmp(c1s{2}, 'HPC') & strcmp(c2s{2}, 'PFC')) | strcmp(c1s{2}, 'PFC') & strcmp(c2s{2}, 'HPC')
-            sub2exc = [19];        
-        else
-            sub2exc = []; 
+            sub2exc = [19 27 37];        
+        
         end
     elseif strcmp(c1s{1}, 'trlCTX') & strcmp(c2s{1}, 'trlCTX')
         if (strcmp(c1s{2}, 'PFC') & strcmp(c2s{2}, 'AMY')) | strcmp(c1s{2}, 'AMY') & strcmp(c2s{2}, 'PFC')
@@ -52,9 +53,11 @@ function [cond1 cond2 sub2exc] = determine_conds_andSub2exc_EXT(c1, c2, paths)
         else
             sub2exc = []; 
         end
-    elseif strcmp(c1s{1}, 'trlCTX') & strcmp(c2s{1}, 'trlSTA')
+    elseif (strcmp(c1s{1}, 'trlCTX') & strcmp(c2s{1}, 'trlSTA')) |  (strcmp(c2s{1}, 'trlCTX') & strcmp(c1s{1}, 'trlSTA'))
         if (strcmp(c1s{2}, 'PFC') & strcmp(c2s{2}, 'AMY')) | strcmp(c1s{2}, 'AMY') & strcmp(c2s{2}, 'PFC')
-            sub2exc = [];
+            sub2exc = [19];
+        elseif (strcmp(c1s{2}, 'PFC') & strcmp(c2s{2}, 'TMP')) | strcmp(c1s{2}, 'TMP') & strcmp(c2s{2}, 'PFC')
+            sub2exc = [19 24 25]; 
         else
             sub2exc = []; 
         end

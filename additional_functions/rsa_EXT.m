@@ -118,7 +118,11 @@ for coni = 1:length(currentContrast)
 
     if TG==1
         if exist('rsaZ') & ~isempty(rsaZ)
-            allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
+            if strcmp(cfg.TnT, 'T')
+                allRSAZ{coni} = rsaZ; 
+            else
+                allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
+            end
         else 
             if cfg.TG
                 allRSAZ(coni, :, :) = nan (bins);

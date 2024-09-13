@@ -49,7 +49,7 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
 responses = [];
 
 
-for subji=1:numel(allsubs)
+for subji=1:43%numel(allsubs)
 
     sub=allsubs{subji};
     info_file=strcat(paths.trlinfo,sub,'_trlinfo');
@@ -256,6 +256,53 @@ for ty=1:3
 end
 
 
+
+% anova %here
+clear tbl, clc
+for timei = 1:64
+    d4ANOVA =  squeeze(avg_response_type(:,:,timei)); 
+    nSubj = size(d4ANOVA, 1); 
+    d4ANOVA = d4ANOVA(:); 
+    d4ANOVA(:,2) = [ones(1,nSubj) ones(1,nSubj)*2 ones(1,nSubj)*3];
+    d4ANOVA(:,3) = [1:nSubj 1:nSubj 1:nSubj];
+    [p f] = RMAOV1(d4ANOVA);
+    allP(timei) = p; 
+    allF(timei) = f; 
+end
+
+hb = allP<0.05; 
+clustinfo = bwconncomp(hb);
+hb = double(hb); hb(hb == 0) = nan; hb(hb==1) = 1.1; 
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi,:) = sum(allF(clustinfo.PixelIdxList{pxi}));% 
+end
+[max2u id] = max(abs(allSTs));
+max_clust_obs = allSTs(id)
+
+
+
+% ttests
+for t=1:size(avg_response_type,3)
+    [htest1(t),p1(t)]=ttest(squeeze(avg_response_type(:,1,t)),squeeze(avg_response_type(:,2,t)))
+end
+htest1 = p1<0.05; hb1 = double(htest1); hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.4; 
+p1ACQ = p1(1:24); 
+
+% ttests
+for t=1:size(avg_response_type,3)
+    [htest2(t),p2(t)]=ttest(squeeze(avg_response_type(:,1,t)),squeeze(avg_response_type(:,3,t)))
+end
+htest2 = p2<0.05; hb2 = double(htest2); hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
+p2ACQ = p2(1:24); 
+
+% ttests
+for t=1:size(avg_response_type,3)
+    [htest3(t),p3(t)]=ttest(squeeze(avg_response_type(:,2,t)),squeeze(avg_response_type(:,3,t)))
+end
+htest3 = p3<0.05; hb3 = double(htest3); hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.5; 
+p3ACQ = p3(1:24); 
+
+
 plot([24 24],[1 4],':k', 'Linewidth', 2)
 plot([48 48],[1 4],':k', 'Linewidth', 2)
 
@@ -270,32 +317,33 @@ exportgraphics(gcf, filename, 'Resolution',300)
 
 
 window=2;
+
 % smooth trajectories
 move_avg=ones(1,window)/window;
-for vp=1:numel(allsubs)
+for subji=1:27%numel(allsubs)
     for ty=1:3
-     tmp_avg_response_type(vp,ty,:)=avg_response_type(vp,ty,:);
+     tmp_avg_response_type(subji,ty,:)=avg_response_type(subji,ty,:);
            
      % interpolate NaNs
-     nan_ind=  find(isnan(tmp_avg_response_type(vp,ty,:)));
+     nan_ind=  find(isnan(tmp_avg_response_type(subji,ty,:)));
      
      while ~isempty(nan_ind)  
          for ind=1:numel(nan_ind)
              j=nan_ind(ind);
              if j>2 & j<(size(tmp_avg_response_type,3)-1)
-             tmp_avg_response_type(vp,ty,j)=squeeze(nanmean(tmp_avg_response_type(vp,ty,j-1:j+1)));
+                tmp_avg_response_type(subji,ty,j)=squeeze(nanmean(tmp_avg_response_type(subji,ty,j-1:j+1)));
              elseif j<=2
-             tmp_avg_response_type(vp,ty,j)=squeeze(nanmean(tmp_avg_response_type(vp,ty,j+1)));
+                tmp_avg_response_type(subji,ty,j)=squeeze(nanmean(tmp_avg_response_type(subji,ty,j+1)));
              elseif j>=(size(avg_response_type,3)-1)
-             tmp_avg_response_type(vp,ty,j)=squeeze(nanmean(tmp_avg_response_type(vp,ty,j-1)));   
+                tmp_avg_response_type(subji,ty,j)=squeeze(nanmean(tmp_avg_response_type(subji,ty,j-1)));   
              end
          end
-        nan_ind=  find(isnan(tmp_avg_response_type(vp,ty,:)));
+        nan_ind=  find(isnan(tmp_avg_response_type(subji,ty,:)));
      end
      
-filt_avg_response_type(vp,ty,:) = filtfilt(move_avg,1,squeeze(tmp_avg_response_type(vp,ty,:)));
-% plot average trajectories
-end
+    filt_avg_response_type(subji,ty,:) = filtfilt(move_avg,1,squeeze(tmp_avg_response_type(subji,ty,:)));
+    % plot average trajectories
+    end
 end
 
 
@@ -384,28 +432,69 @@ end
 hb = allP<0.05; 
 clustinfo = bwconncomp(hb);
 hb = double(hb); hb(hb == 0) = nan; hb(hb==1) = 1.1; 
+clear allSTs
 for pxi = 1:length(clustinfo.PixelIdxList)
    allSTs(pxi,:) = sum(allF(clustinfo.PixelIdxList{pxi}));% 
 end
 [max2u id] = max(abs(allSTs));
-max_clust_obs = allSTs(id)
+max_clust_obs_ANOVA = allSTs(id)
 
-% ttests
-for t=1:size(filt_avg_response_type,3)
-    [htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,1,t)),squeeze(filt_avg_response_type(:,2,t)))
+% ttest 1
+for i=1:size(filt_avg_response_type,3)
+    [htest1(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,1,i)),squeeze(filt_avg_response_type(:,2,i)))
 end
-p = p*3; htest = p<0.05; hb1 = double(htest); hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.4; 
+t1 = [ts.tstat]; 
+hb1 = double(htest1); hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.2; 
+clustinfo1 = bwconncomp(htest1);
+clear allSTs
+for pxi = 1:length(clustinfo1.PixelIdxList)
+   allSTs(pxi,:) = sum(t1(clustinfo1.PixelIdxList{pxi}));% 
+end
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    max_clust_obs_TT1 = allSTs(id); 
+else
+    max_clust_obs_TT1 = 0; 
+end
+[sxs iDp1ACQ] = min(p(1:24)); 
+t1ACQ = t1(iDp1ACQ); 
 
-% ttests
-for t=1:size(filt_avg_response_type,3)
-    [htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,1,t)),squeeze(filt_avg_response_type(:,3,t)))
+% ttest 2
+for i=1:size(filt_avg_response_type,3)
+    [htest2(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,1,i)),squeeze(filt_avg_response_type(:,3,i)))
 end
-p = p*3; htest = p<0.05; hb2 = double(htest); hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
-% ttests
-for t=1:size(filt_avg_response_type,3)
-    [htest(t),p(t)]=ttest(squeeze(filt_avg_response_type(:,2,t)),squeeze(filt_avg_response_type(:,3,t)))
+t2 = [ts.tstat]; 
+hb2 = double(htest2); hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
+clustinfo2 = bwconncomp(htest2);
+clear allSTs
+for pxi = 1:length(clustinfo2.PixelIdxList)
+   allSTs(pxi,:) = sum(t2(clustinfo2.PixelIdxList{pxi}));% 
 end
-p = p*3; htest = p<0.05; hb3 = double(htest); hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.5; 
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    max_clust_obs_TT2 = allSTs(id); 
+else
+    max_clust_obs_TT2 = 0; 
+end
+
+% ttest 3
+for i=1:size(filt_avg_response_type,3)
+    [htest3(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,2,i)),squeeze(filt_avg_response_type(:,3,i)))
+end
+t3 = [ts.tstat]; 
+hb3 = double(htest3); hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.4; 
+clustinfo3 = bwconncomp(htest3);
+clear allSTs
+for pxi = 1:length(clustinfo3.PixelIdxList)
+   allSTs(pxi,:) = sum(t3(clustinfo3.PixelIdxList{pxi}));% 
+end
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    max_clust_obs_TT3 = allSTs(id); 
+else
+    max_clust_obs_TT3 = 0; 
+end
+
 
 plot(hb, 'k', 'LineWidth',5)
 plot(hb1, 'Color', '#EC5300', 'LineWidth',5)
@@ -417,22 +506,30 @@ plot(hb3,  'Color', [.5 .5 .5], 'LineWidth',5)
 filename = 'myP.png'; 
 exportgraphics(gcf, filename, 'Resolution',300)
 
-%% permutations
+%% permutations ANOVA
 
 nPerm = 1000; 
 clear max_clust_sum_perm
 for permi = 1:nPerm
-    for subji = 1:50
+    for subji = 1:size(filt_avg_response_type)
         filt_avg_response_type_PERM(subji, :, :) = filt_avg_response_type(subji, randperm(3), :); 
     end
-    % anova 
-    clear tbl p
+       
+    
+    % anova %here
+    clear tbl, clc
     for timei = 1:64
-        d4anova = squeeze(filt_avg_response_type_PERM(:,:,timei));    
-        [p(timei), tbl] = anova1(d4anova,[],'off');
-        t(timei) = tbl{2,5};
+        d4ANOVA =  squeeze(filt_avg_response_type_PERM(:,:,timei)); 
+        nSubj = size(d4ANOVA, 1); 
+        d4ANOVA = d4ANOVA(:); 
+        d4ANOVA(:,2) = [ones(1,nSubj) ones(1,nSubj)*2 ones(1,nSubj)*3];
+        d4ANOVA(:,3) = [1:nSubj 1:nSubj 1:nSubj];
+        [p f] = RMAOV1(d4ANOVA);
+        allP(timei) = p; 
+        allF(timei) = f; 
     end
-    hPerm = p < 0.05; tPerm = t; 
+    
+    hPerm = allP < 0.05; tPerm = allF; 
 
     clear allSTs  
     clustinfo = bwconncomp(hPerm);
@@ -453,6 +550,89 @@ clear p mcsP
 mcsP = max_clust_sum_perm;
 allAb = mcsP(abs(mcsP) > abs(max_clust_obs));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
+
+
+%% permutations TTESTS
+
+nPerm = 1000; 
+clear max_clust_sum_perm
+for permi = 1:nPerm
+    
+    for subji = 1:size(filt_avg_response_type)
+        filt_avg_response_type_PERM(subji, :, :) = filt_avg_response_type(subji, randperm(3), :); 
+    end
+       
+
+    % ttest 1
+    for i=1:size(filt_avg_response_type_PERM,3)
+        [htest1(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type_PERM(:,1,i)),squeeze(filt_avg_response_type_PERM(:,2,i)));
+    end
+    t1 = [ts.tstat]; 
+    hb1 = double(htest1); hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.2; 
+    clustinfo = bwconncomp(htest1);
+    clear allSTs
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi,:) = sum(t1(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs')
+        [max2u id] = max(abs(allSTs));
+        max_clust_perm_TT1(permi, :) = allSTs(id); 
+    else
+        max_clust_perm_TT1(permi, :) = 0; 
+    end
+    
+    % ttest 2
+    for i=1:size(filt_avg_response_type_PERM,3)
+        [htest2(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type_PERM(:,1,i)),squeeze(filt_avg_response_type_PERM(:,3,i)));
+    end
+    t2 = [ts.tstat]; 
+    hb2 = double(htest2); hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
+    clustinfo = bwconncomp(htest2);
+    clear allSTs
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi,:) = sum(t2(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs')
+        [max2u id] = max(abs(allSTs));
+        max_clust_perm_TT2(permi, :) = allSTs(id); 
+    else
+        max_clust_perm_TT2(permi, :) = 0; 
+    end
+    
+    % ttest 3
+    for i=1:size(filt_avg_response_type_PERM,3)
+        [htest1(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type_PERM(:,2,i)),squeeze(filt_avg_response_type_PERM(:,3,i)));
+    end
+    t3 = [ts.tstat]; 
+    hb3 = double(htest3); hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.4; 
+    clustinfo = bwconncomp(htest3);
+    clear allSTs
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi,:) = sum(t3(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs')
+        [max2u id] = max(abs(allSTs));
+        max_clust_perm_TT3(permi, :) = allSTs(id); 
+    else
+        max_clust_perm_TT3(permi, :) = 0; 
+    end
+
+
+    
+
+end
+
+clear p mcsP
+allAb1 = max_clust_perm_TT1(abs(max_clust_perm_TT1) > abs(max_clust_obs_TT1));
+p1 = 1 - ((nPerm-1) - (length (allAb1)))  / nPerm; 
+allAb1ACQ = max_clust_perm_TT1(abs(max_clust_perm_TT1) > abs(t1ACQ));
+p1ACQ = 1 - ((nPerm-1) - (length (allAb1ACQ)))  / nPerm; 
+
+allAb2 = max_clust_perm_TT2(abs(max_clust_perm_TT2) > abs(max_clust_obs_TT2));
+p2 = 1 - ((nPerm-1) - (length (allAb2)))  / nPerm; 
+allAb3 = max_clust_perm_TT3(abs(max_clust_perm_TT3) > abs(max_clust_obs_TT3));
+p3 = 1 - ((nPerm-1) - (length (allAb3)))  / nPerm; 
+
 
 
 
@@ -561,7 +741,7 @@ t9 = ts.tstat;
 p1 = p1*18; 
 p2 = p2*18; 
 p3 = p3*18; 
-p4 = p4*18; 
+p4 = p4*9; 
 p5 = p5*18; 
 p6 = p6*18; 
 p7 = p7*18; 

@@ -2,8 +2,9 @@
 %% 
 clear, clc
 
-%tp2use = 6:15; %18:23; 
-tp2use = 18:23;
+%tp2use = 36:46;
+%tp2use = 20:32; % check OFC
+tp2use = 30:42; % check TMP
 
 paths = load_paths_EXT;
 load ([paths.results.trial_based 'AMY_POW_3-54Hz_TR'])
@@ -11,17 +12,17 @@ load ([paths.results.trial_based 'AMY_POW_3-54Hz_TR'])
 %load ([paths.results.trial_based 'trlCTX_aHPC_CE_3-54_1_0_500-100'])
 %load ([paths.results.trial_based 'trlCTX_HPC_CE_3-54_1_0_500-100'])
 %load ([paths.results.trial_based 'trlCTX_AMY_CE_3-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlCTX_TMP_CE_3-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlCTX_OFC_CE_3-54_1_0_500-100'])
+load ([paths.results.trial_based 'trlCTX_TMP_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlCTX_OFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_OCC_CE_3-54_1_0_500-100'])
 
 
-%load ([paths.results.trial_based 'trlSTA_AMY_CE_3-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlSTA_HPC_CE_3-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlSTA_PFC_CE_3-54_1_0_500-100'])
-load ([paths.results.trial_based 'trlSTA_TMP_CE_3-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlSTA_OFC_CE_3-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlSTA_OCC_CE_3-54_1_0_500-100'])
+%load ([paths.results.trial_based 'trlSTA_AMY_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_HPC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_PFC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_TMP_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_OFC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_OCC_CE_1-44_1_0_500-50'])
 
 
 
@@ -86,14 +87,14 @@ for subji = 1:50
         % amyPOW(tF3) = []; 
 
 
-        % % figure()
-        % % scatter(amyPOW, rsa2T, 150, 'filled');
-        % % h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
-        % % C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
-        % % allSlopes(subji, :) = C(2);
-        % % allIntercepts(subji, :) = C(1);
-        % % %set(gca, 'ylim', [-.15 .15], 'xlim', [-3 3], 'Fontsize', 24)
-        % % set(gca, 'ylim', [-3 3], 'xlim', [-3 3], 'Fontsize', 24)
+        figure()
+        scatter(amyPOW, rsa2T, 150, 'filled');
+        h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
+        C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
+        allSlopes(subji, :) = C(2);
+        allIntercepts(subji, :) = C(1);
+        %set(gca, 'ylim', [-.15 .15], 'xlim', [-3 3], 'Fontsize', 24)
+        set(gca, 'ylim', [-3 3], 'xlim', [-3 3], 'Fontsize', 24)
 
 
         if length(amyPOW) > 5 % at least five trials for the correlation analysis
@@ -151,16 +152,16 @@ paths = load_paths_EXT;
 load ([paths.results.trial_based 'AMY_POW_3-54Hz_TR'])
 %load ([paths.results.trial_based 'trlCTX_PFC_CE_9-54_1_0_500-100'])
 %load ([paths.results.trial_based 'trlCTX_HPC_CE_9-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlCTX_AMY_CE_9-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlCTX_TMP_CE_3-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlCTX_OFC_CE_3-54_1_0_500-100'])
+%load ([paths.results.trial_based 'trlCTX_AMY_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlCTX_TMP_CE_1-44_1_0_500-50'])
+load ([paths.results.trial_based 'trlCTX_OFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_OCC_CE_9-54_1_0_500-100'])
 
 
-load ([paths.results.trial_based 'trlSTA_AMY_CE_3-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlSTA_HPC_CE_3-54_1_0_500-100'])
+%load ([paths.results.trial_based 'trlSTA_AMY_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_HPC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_PFC_CE_3-54_1_0_500-100'])
-%load ([paths.results.trial_based 'trlSTA_TMP_CE_3-54_1_0_500-100'])
+%load ([paths.results.trial_based 'trlSTA_TMP_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_OFC_CE_3-54_1_0_500-100'])
 %load ([paths.results.trial_based 'trlSTA_OCC_CE_3-54_1_0_500-100'])
 
@@ -179,8 +180,8 @@ if length(cond2u) < 50
 end
 
 
-nTimepoints = 26; %%all2all file is stored within this cell array
-win_width = 5; 
+nTimepoints = 51; %%all2all file is stored within this cell array
+win_width = 10; 
 mf = 1; 
 bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
 
@@ -239,14 +240,14 @@ for subji = 1:50
             % amyPOW(tF3) = []; 
     
     
-            % % figure()
-            % % scatter(amyPOW, rsa2T, 150, 'filled');
-            % % h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
-            % % C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
-            % % allSlopes(subji, :) = C(2);
-            % % allIntercepts(subji, :) = C(1);
-            % % %set(gca, 'ylim', [-.15 .15], 'xlim', [-3 3], 'Fontsize', 24)
-            % % set(gca, 'ylim', [-3 3], 'xlim', [-3 3], 'Fontsize', 24)
+            % % % figure()
+            % % % scatter(amyPOW, rsa2T, 150, 'filled');
+            % % % h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
+            % % % C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
+            % % % allSlopes(subji, :) = C(2);
+            % % % allIntercepts(subji, :) = C(1);
+            % % % %set(gca, 'ylim', [-.15 .15], 'xlim', [-3 3], 'Fontsize', 24)
+            % % % set(gca, 'ylim', [-3 3], 'xlim', [-3 3], 'Fontsize', 24)
     
     
             if length(amyPOW) > 5 % at least five trials for the correlation analysis
@@ -285,8 +286,7 @@ mAR = mean(allRHO);
 stdAR = std(allRHO); 
 seAR = stdAR / sqrt(size(allRHO, 1))
 
-times = -.25:.1:1.9
-%times = -.25:.1:2.2
+times = -.25:.05:1.8
 figure()
 
 %colors2use = brewermap([6],'*Set1')*0.75;
@@ -433,22 +433,26 @@ sub2exc = []; %11
 
 paths = load_paths_EXT;
 
-time1 = 9:13; 
-
-cond1 = load ([paths.results.trial_based 'trlCTX_PFC_CE_3-54_1_0_500-100'])
-%cond2 = load([paths.results.trial_based 'trlCTX_HPC_CE_3-54_1_0_500-100'])
-%cond2 = load ([paths.results.trial_based 'trlCTX_AMY_CE_3-54_1_0_500-100'])
-%cond2 = load ([paths.results.trial_based 'trlCTX_TMP_CE_3-54_1_0_500-100'])
-%cond2 = load ([paths.results.trial_based 'trlCTX_OFC_CE_3-54_1_0_500-100'])
-%cond2 = load ([paths.results.trial_based 'trlCTX_OCC_CE_3-54_1_0_500-100'])
+time1 = 19:27; 
 
 
-cond2 = load ([paths.results.trial_based 'trlSTA_AMY_CE_3-54_1_0_500-100'])
-%cond2 = load ([paths.results.trial_based 'trlSTA_HPC_CE_3-54_1_0_500-100'])
-%cond2 = load ([paths.results.trial_based 'trlSTA_PFC_CE_3-54_1_0_500-100'])
-%cond1 = load ([paths.results.trial_based 'trlSTA_TMP_CE_3-54_1_0_500-100'])
-%cond2 = load ([paths.results.trial_based 'trlSTA_OFC_CE_3-54_1_0_500-100'])
-%cond2 = load ([paths.results.trial_based 'trlSTA_OCC_CE_3-54_1_0_500-100'])
+f2sav1 = 'trlSTA_TMP_CE_1-44_1_0_500-50'; 
+f2sav2 = 'trlSTA_AMY_CE_1-44_1_0_500-50'; 
+
+cond1 = load ([paths.results.trial_based f2sav1]); 
+cond2 = load ([paths.results.trial_based f2sav2]); 
+
+cfg1 = getParams_EXT(f2sav1);
+cfg2 = getParams_EXT(f2sav2);
+
+if strcmp(cfg1.period, 'E') 
+    if strcmp(cfg1.roi, 'TMP') & strcmp(cfg2.roi, 'AMY') 
+        sub2exc = [21 27 37]; 
+    end
+elseif strcmp(cfg.contr2sav{1}(6), 'A') 
+    sub2exc = [24 25]; 
+end
+
 
 
 
@@ -472,7 +476,7 @@ if length(cond2) < 50
 end
 
 
-nTimepoints = 26; 
+nTimepoints = 51; 
 win_width = 5; 
 mf = 1; 
 bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
@@ -531,8 +535,8 @@ mAR = mean(allRHO);
 stdAR = std(allRHO); 
 seAR = stdAR / sqrt(size(allRHO, 1))
 
-times = -.25:.1:1.9
-%times = -.25:.1:2.2
+times = -.24:.05:2.1;
+
 figure()
 
 %colors2use = brewermap([6],'*Set1')*0.75;
@@ -632,7 +636,7 @@ toc
 clear, clc
 
 
-sub2exc = [21]; %21 for TMP AMY
+sub2exc = [21 27 37]; %21 for TMP AMY
 %sub2exc = [24]; % for TMP
 
 printClust = 1; 
@@ -889,11 +893,15 @@ print1Clust = 0;
 
 paths = load_paths_EXT;
 
-%c1 = 'trlSTA_TMP_CE_1-44_1_0_500-50'; 
-%c2 = 'trlSTA_OCC_CE_1-44_1_0_500-50'; 
+c1 = 'trlSTA_TMP_CE_1-44_1_0_500-50'; 
+c2 = 'trlSTA_OCC_CE_1-44_1_0_500-50'; 
 
-c1 = 'trlCTX_PFC_CE_1-44_1_0_500-50'; 
-c2 = 'trlSTA_AMY_CE_1-44_1_0_500-50'; 
+%c1 = 'trlCTX_PFC_CE_1-44_1_0_500-50'; 
+%c2 = 'trlCTX_AMY_CE_1-44_1_0_500-50'; 
+
+
+%c1 = 'trlCTX_PFC_CE_1-44_1_0_500-50'; 
+%c2 = 'trlSTA_AMY_CE_1-44_1_0_500-50'; 
 
 
 [cond1 cond2 sub2exc] = determine_conds_andSub2exc_EXT(c1, c2, paths); 
@@ -938,6 +946,10 @@ for subji = 1:50
     end
 end
 
+if size(allRHO, 1) < 50
+    diffS = 50- size(allRHO, 1);  
+    allRHO(end+1:50, :, :) = zeros(diffS, bins, bins); 
+end
 allRHO(sub2exc, :, :) = []; 
 
 ids2K = any(allRHO,2); 
@@ -946,8 +958,9 @@ allRHO = allRHO(ids2K,:,:);
 [h p ci ts] = ttest(atanh(allRHO));
 h = squeeze(h); t = squeeze(ts.tstat); 
 
-%h(1:5, :) = 0;
-%h(:, 1:5) = 0;
+h(1:5, :) = 0;
+h(:, 1:5) = 0;
+
 
 
 
@@ -961,6 +974,10 @@ if exist('allSTs')
     max_clust_obs = allSTs(id); 
 end
 
+%h(clustinfo.PixelIdxList{2}) = 0; % TMP AMY 
+%h(clustinfo.PixelIdxList{4}) = 0; % TMP OFC
+
+
 if ~printClust
     h = zeros(size(h)); 
 end
@@ -968,19 +985,19 @@ if print1Clust
     h(clustinfo.PixelIdxList{id}) = 1; 
 end
 
-
 d2p = squeeze(mean(allRHO)); 
 figure(); colormap (brewermap([100], '*Spectral'))
 contourf(myresizem(t, 10), 50, 'linecolor', 'none'); axis square; hold on; 
 contour( myresizem(h, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 4);
-plot([50 50],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
-plot(get(gca,'xlim'), [50 50],'k:', 'linewidth', 4); hold on; 
-set(gca, 'xlim', [1 400], 'ylim', [1 400], 'FontSize', 24)
-set(gca, 'xTick', [50 150 250 350], 'XTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'yTick', [50 150 250 350], 'YTickLabel', {'0', '0.5', '1', '1.5'})
+plot([55 55],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
+plot(get(gca,'xlim'), [55 55],'k:', 'linewidth', 4); hold on; 
+set(gca, 'xlim', [5 400], 'ylim', [5 400], 'FontSize', 24)
+set(gca, 'xTick', [55 155 255 355], 'XTickLabel', {'0', '0.5', '1', '1.5'})
+set(gca, 'yTick', [55 155 255 355], 'YTickLabel', {'0', '0.5', '1', '1.5'})
 set(gca, 'clim', [-4 4])
 
 exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+
 
 
 %% PERMUTATIONS
@@ -989,7 +1006,7 @@ clc
 
 % sub2exc inherited from previous code block
 
-nPerm = 10;
+nPerm = 100;
 t4P = 6:40; 
 
 nTimepoints = 35; 
@@ -1074,1805 +1091,6 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
 toc
-
-
-
-
-
-
-%% EXCERSICE; JUST FOR TODAY; DELETE EVERYTHING BELOW TOMORROW
-
-%%Correlate different trial-level metrics at ALL TIME POINTS NEW TIMES (3)
-clear, clc
-
-printClust = 1; 
-print1Clust = 0; 
-
-paths = load_paths_EXT;
-
-c1 = 'trlSTA_TMP_CE_1-44_1_0_500-50'; 
-c2 = 'trlSTA_PFC_CE_1-44_1_0_500-50'; 
-
-
-[cond1 cond2 sub2exc] = determine_conds_andSub2exc_EXT(c1, c2, paths); 
-
-
-nTimepoints = 51; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-for subji = 1:50
-
-    rsa2T1 = cond1{subji, 1}; 
-    rsa2T1IDs = cond1{subji, 2}; 
-
-    rsa2T2 = cond2{subji, 1}; 
-    rsa2T2IDs = cond2{subji, 2}; 
-    
-    if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-        [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-        rsa2T1 = rsa2T1(i1, :); 
-        rsa2T1IDs = rsa2T1IDs(i1,:); 
-
-        rsa2T2 = rsa2T2(i2, :); 
-        rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-        nTrials(subji, :) = size(rsa2T1, 1); 
-    
-        
-         for timei = 1:bins 
-            %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-
-            for timej = 1:bins
-                timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-       
-                allRHO(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-            end
-        end
-    end
-end
-
-allRHO(sub2exc, :, :) = []; 
-
-ids2K = any(allRHO,2); 
-ids2K = ids2K(:, 1); 
-allRHO = allRHO(ids2K,:,:);
-[h p ci ts] = ttest(atanh(allRHO));
-h = squeeze(h); t = squeeze(ts.tstat); 
-
-%h(1:5, :) = 0;
-%h(:, 1:5) = 0;
-
-
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    max_clust_obs = allSTs(id); 
-end
-
-if ~printClust
-    h = zeros(size(h)); 
-end
-if print1Clust
-    h(clustinfo.PixelIdxList{id}) = 1; 
-end
-
-
-d2p = squeeze(mean(allRHO)); 
-figure(); colormap (brewermap([100], '*Spectral'))
-contourf(myresizem(t, 10), 50, 'linecolor', 'none'); axis square; hold on; 
-contour( myresizem(h, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 4);
-plot([50 50],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
-plot(get(gca,'xlim'), [50 50],'k:', 'linewidth', 4); hold on; 
-set(gca, 'xlim', [1 400], 'ylim', [1 400], 'FontSize', 24)
-set(gca, 'xTick', [50 150 250 350], 'XTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'yTick', [50 150 250 350], 'YTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'clim', [-4 4])
-
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
-
-
-%%PERMUTATIONS
-clearvars -except max_clust_obs cond1 cond2 sub2exc c1 c2
-clc
-
-% sub2exc inherited from previous code block
-
-nPerm = 10000;
-t4P = 6:40; 
-
-nTimepoints = 35; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-tic
-
-for permi = 1:nPerm
-
-    clearvars -except nTimepoints win_width mf bins cond1 cond2 permi nPerm max_clust_perm max_clust_obs t4P sub2exc c1 c2
-
-    permi
-
-    for subji = 1:50
-    
-        rsa2T1 = cond1{subji, 1}; 
-        rsa2T1IDs = cond1{subji, 2}; 
-    
-        rsa2T2 = cond2{subji, 1}; 
-        rsa2T2IDs = cond2{subji, 2}; 
-        
-        if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-            [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-            rsa2T1 = rsa2T1(i1, t4P); 
-            rsa2T1IDs = rsa2T1IDs(i1,:); 
-    
-            rsa2T2 = rsa2T2(i2, t4P); 
-            rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-            ids4perm = randperm(size(rsa2T2, 1)); 
-            rsa2T2 = rsa2T2(ids4perm, :); 
-            rsa2T2IDs = rsa2T2IDs(ids4perm, :); 
-        
-            
-             for timei = 1:bins 
-                %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-    
-                for timej = 1:bins
-                    timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                    rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-           
-                    allRHOP(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-                end
-            end
-        end
-    end
-    
-    
-
-    allRHOP(sub2exc, :, :) = []; 
-    
-    ids2K = any(allRHOP,2); 
-    ids2K = ids2K(:, 1); 
-    allRHOP = allRHOP(ids2K,:,:); % limit also time 
-    [h p ci ts] = ttest(atanh(allRHOP));
-    h = squeeze(h); t = squeeze(ts.tstat); 
-    
-    clear allSTs  
-    clustinfo = bwconncomp(h);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-       allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-    end
-    if exist('allSTs')
-        [max2u id] = max(abs(allSTs));
-        max_clust_perm(permi, : ) = allSTs(id); 
-    else
-        max_clust_perm(permi, : ) = 0; 
-    end
-    
-    
-end    
-
-
-allAb = max_clust_perm(abs(max_clust_perm) > abs(max_clust_obs));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
-
-save([c1 '_____' c2], 'p', 'max_clust_perm')
-
-toc
-
-
-
-
-
-
-
-
-%%Correlate different trial-level metrics at ALL TIME POINTS NEW TIMES (4)
-clear, clc
-
-printClust = 1; 
-print1Clust = 0; 
-
-paths = load_paths_EXT;
-
-c1 = 'trlSTA_TMP_CE_1-44_1_0_500-50'; 
-c2 = 'trlSTA_OFC_CE_1-44_1_0_500-50'; 
-
-
-[cond1 cond2 sub2exc] = determine_conds_andSub2exc_EXT(c1, c2, paths); 
-
-
-nTimepoints = 51; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-for subji = 1:50
-
-    rsa2T1 = cond1{subji, 1}; 
-    rsa2T1IDs = cond1{subji, 2}; 
-
-    rsa2T2 = cond2{subji, 1}; 
-    rsa2T2IDs = cond2{subji, 2}; 
-    
-    if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-        [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-        rsa2T1 = rsa2T1(i1, :); 
-        rsa2T1IDs = rsa2T1IDs(i1,:); 
-
-        rsa2T2 = rsa2T2(i2, :); 
-        rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-        nTrials(subji, :) = size(rsa2T1, 1); 
-    
-        
-         for timei = 1:bins 
-            %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-
-            for timej = 1:bins
-                timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-       
-                allRHO(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-            end
-        end
-    end
-end
-
-allRHO(sub2exc, :, :) = []; 
-
-ids2K = any(allRHO,2); 
-ids2K = ids2K(:, 1); 
-allRHO = allRHO(ids2K,:,:);
-[h p ci ts] = ttest(atanh(allRHO));
-h = squeeze(h); t = squeeze(ts.tstat); 
-
-%h(1:5, :) = 0;
-%h(:, 1:5) = 0;
-
-
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    max_clust_obs = allSTs(id); 
-end
-
-if ~printClust
-    h = zeros(size(h)); 
-end
-if print1Clust
-    h(clustinfo.PixelIdxList{id}) = 1; 
-end
-
-
-d2p = squeeze(mean(allRHO)); 
-figure(); colormap (brewermap([100], '*Spectral'))
-contourf(myresizem(t, 10), 50, 'linecolor', 'none'); axis square; hold on; 
-contour( myresizem(h, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 4);
-plot([50 50],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
-plot(get(gca,'xlim'), [50 50],'k:', 'linewidth', 4); hold on; 
-set(gca, 'xlim', [1 400], 'ylim', [1 400], 'FontSize', 24)
-set(gca, 'xTick', [50 150 250 350], 'XTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'yTick', [50 150 250 350], 'YTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'clim', [-4 4])
-
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
-
-
-%%PERMUTATIONS
-clearvars -except max_clust_obs cond1 cond2 sub2exc c1 c2
-clc
-
-% sub2exc inherited from previous code block
-
-nPerm = 10000;
-t4P = 6:40; 
-
-nTimepoints = 35; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-tic
-
-for permi = 1:nPerm
-
-    clearvars -except nTimepoints win_width mf bins cond1 cond2 permi nPerm max_clust_perm max_clust_obs t4P sub2exc c1 c2
-
-    permi
-
-    for subji = 1:50
-    
-        rsa2T1 = cond1{subji, 1}; 
-        rsa2T1IDs = cond1{subji, 2}; 
-    
-        rsa2T2 = cond2{subji, 1}; 
-        rsa2T2IDs = cond2{subji, 2}; 
-        
-        if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-            [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-            rsa2T1 = rsa2T1(i1, t4P); 
-            rsa2T1IDs = rsa2T1IDs(i1,:); 
-    
-            rsa2T2 = rsa2T2(i2, t4P); 
-            rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-            ids4perm = randperm(size(rsa2T2, 1)); 
-            rsa2T2 = rsa2T2(ids4perm, :); 
-            rsa2T2IDs = rsa2T2IDs(ids4perm, :); 
-        
-            
-             for timei = 1:bins 
-                %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-    
-                for timej = 1:bins
-                    timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                    rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-           
-                    allRHOP(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-                end
-            end
-        end
-    end
-    
-    
-
-    allRHOP(sub2exc, :, :) = []; 
-    
-    ids2K = any(allRHOP,2); 
-    ids2K = ids2K(:, 1); 
-    allRHOP = allRHOP(ids2K,:,:); % limit also time 
-    [h p ci ts] = ttest(atanh(allRHOP));
-    h = squeeze(h); t = squeeze(ts.tstat); 
-    
-    clear allSTs  
-    clustinfo = bwconncomp(h);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-       allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-    end
-    if exist('allSTs')
-        [max2u id] = max(abs(allSTs));
-        max_clust_perm(permi, : ) = allSTs(id); 
-    else
-        max_clust_perm(permi, : ) = 0; 
-    end
-    
-    
-end    
-
-
-allAb = max_clust_perm(abs(max_clust_perm) > abs(max_clust_obs));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
-
-save([c1 '_____' c2], 'p', 'max_clust_perm')
-
-toc
-
-
-
-
-
-
-
-
-%%Correlate different trial-level metrics at ALL TIME POINTS NEW TIMES (5)
-clear, clc
-
-printClust = 1; 
-print1Clust = 0; 
-
-paths = load_paths_EXT;
-
-c1 = 'trlSTA_TMP_CE_1-44_1_0_500-50'; 
-c2 = 'trlSTA_OCC_CE_1-44_1_0_500-50'; 
-
-
-[cond1 cond2 sub2exc] = determine_conds_andSub2exc_EXT(c1, c2, paths); 
-
-
-nTimepoints = 51; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-for subji = 1:50
-
-    rsa2T1 = cond1{subji, 1}; 
-    rsa2T1IDs = cond1{subji, 2}; 
-
-    rsa2T2 = cond2{subji, 1}; 
-    rsa2T2IDs = cond2{subji, 2}; 
-    
-    if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-        [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-        rsa2T1 = rsa2T1(i1, :); 
-        rsa2T1IDs = rsa2T1IDs(i1,:); 
-
-        rsa2T2 = rsa2T2(i2, :); 
-        rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-        nTrials(subji, :) = size(rsa2T1, 1); 
-    
-        
-         for timei = 1:bins 
-            %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-
-            for timej = 1:bins
-                timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-       
-                allRHO(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-            end
-        end
-    end
-end
-
-allRHO(sub2exc, :, :) = []; 
-
-ids2K = any(allRHO,2); 
-ids2K = ids2K(:, 1); 
-allRHO = allRHO(ids2K,:,:);
-[h p ci ts] = ttest(atanh(allRHO));
-h = squeeze(h); t = squeeze(ts.tstat); 
-
-%h(1:5, :) = 0;
-%h(:, 1:5) = 0;
-
-
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    max_clust_obs = allSTs(id); 
-end
-
-if ~printClust
-    h = zeros(size(h)); 
-end
-if print1Clust
-    h(clustinfo.PixelIdxList{id}) = 1; 
-end
-
-
-d2p = squeeze(mean(allRHO)); 
-figure(); colormap (brewermap([100], '*Spectral'))
-contourf(myresizem(t, 10), 50, 'linecolor', 'none'); axis square; hold on; 
-contour( myresizem(h, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 4);
-plot([50 50],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
-plot(get(gca,'xlim'), [50 50],'k:', 'linewidth', 4); hold on; 
-set(gca, 'xlim', [1 400], 'ylim', [1 400], 'FontSize', 24)
-set(gca, 'xTick', [50 150 250 350], 'XTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'yTick', [50 150 250 350], 'YTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'clim', [-4 4])
-
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
-
-
-%%PERMUTATIONS
-clearvars -except max_clust_obs cond1 cond2 sub2exc c1 c2
-clc
-
-% sub2exc inherited from previous code block
-
-nPerm = 10000;
-t4P = 6:40; 
-
-nTimepoints = 35; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-tic
-
-for permi = 1:nPerm
-
-    clearvars -except nTimepoints win_width mf bins cond1 cond2 permi nPerm max_clust_perm max_clust_obs t4P sub2exc c1 c2
-
-    permi
-
-    for subji = 1:50
-    
-        rsa2T1 = cond1{subji, 1}; 
-        rsa2T1IDs = cond1{subji, 2}; 
-    
-        rsa2T2 = cond2{subji, 1}; 
-        rsa2T2IDs = cond2{subji, 2}; 
-        
-        if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-            [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-            rsa2T1 = rsa2T1(i1, t4P); 
-            rsa2T1IDs = rsa2T1IDs(i1,:); 
-    
-            rsa2T2 = rsa2T2(i2, t4P); 
-            rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-            ids4perm = randperm(size(rsa2T2, 1)); 
-            rsa2T2 = rsa2T2(ids4perm, :); 
-            rsa2T2IDs = rsa2T2IDs(ids4perm, :); 
-        
-            
-             for timei = 1:bins 
-                %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-    
-                for timej = 1:bins
-                    timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                    rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-           
-                    allRHOP(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-                end
-            end
-        end
-    end
-    
-    
-
-    allRHOP(sub2exc, :, :) = []; 
-    
-    ids2K = any(allRHOP,2); 
-    ids2K = ids2K(:, 1); 
-    allRHOP = allRHOP(ids2K,:,:); % limit also time 
-    [h p ci ts] = ttest(atanh(allRHOP));
-    h = squeeze(h); t = squeeze(ts.tstat); 
-    
-    clear allSTs  
-    clustinfo = bwconncomp(h);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-       allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-    end
-    if exist('allSTs')
-        [max2u id] = max(abs(allSTs));
-        max_clust_perm(permi, : ) = allSTs(id); 
-    else
-        max_clust_perm(permi, : ) = 0; 
-    end
-    
-    
-end    
-
-
-allAb = max_clust_perm(abs(max_clust_perm) > abs(max_clust_obs));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
-
-save([c1 '_____' c2], 'p', 'max_clust_perm')
-
-toc
-
-
-
-
-
-
-
-
-%%Correlate different trial-level metrics at ALL TIME POINTS NEW TIMES (6)
-clear, clc
-
-printClust = 1; 
-print1Clust = 0; 
-
-paths = load_paths_EXT;
-
-c1 = 'trlCTX_PFC_CE_1-44_1_0_500-50'; 
-c2 = 'trlCTX_AMY_CE_1-44_1_0_500-50'; 
-
-
-[cond1 cond2 sub2exc] = determine_conds_andSub2exc_EXT(c1, c2, paths); 
-
-
-nTimepoints = 51; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-for subji = 1:50
-
-    rsa2T1 = cond1{subji, 1}; 
-    rsa2T1IDs = cond1{subji, 2}; 
-
-    rsa2T2 = cond2{subji, 1}; 
-    rsa2T2IDs = cond2{subji, 2}; 
-    
-    if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-        [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-        rsa2T1 = rsa2T1(i1, :); 
-        rsa2T1IDs = rsa2T1IDs(i1,:); 
-
-        rsa2T2 = rsa2T2(i2, :); 
-        rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-        nTrials(subji, :) = size(rsa2T1, 1); 
-    
-        
-         for timei = 1:bins 
-            %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-
-            for timej = 1:bins
-                timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-       
-                allRHO(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-            end
-        end
-    end
-end
-
-allRHO(sub2exc, :, :) = []; 
-
-ids2K = any(allRHO,2); 
-ids2K = ids2K(:, 1); 
-allRHO = allRHO(ids2K,:,:);
-[h p ci ts] = ttest(atanh(allRHO));
-h = squeeze(h); t = squeeze(ts.tstat); 
-
-%h(1:5, :) = 0;
-%h(:, 1:5) = 0;
-
-
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    max_clust_obs = allSTs(id); 
-end
-
-if ~printClust
-    h = zeros(size(h)); 
-end
-if print1Clust
-    h(clustinfo.PixelIdxList{id}) = 1; 
-end
-
-
-d2p = squeeze(mean(allRHO)); 
-figure(); colormap (brewermap([100], '*Spectral'))
-contourf(myresizem(t, 10), 50, 'linecolor', 'none'); axis square; hold on; 
-contour( myresizem(h, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 4);
-plot([50 50],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
-plot(get(gca,'xlim'), [50 50],'k:', 'linewidth', 4); hold on; 
-set(gca, 'xlim', [1 400], 'ylim', [1 400], 'FontSize', 24)
-set(gca, 'xTick', [50 150 250 350], 'XTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'yTick', [50 150 250 350], 'YTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'clim', [-4 4])
-
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
-
-
-%%PERMUTATIONS
-clearvars -except max_clust_obs cond1 cond2 sub2exc c1 c2
-clc
-
-% sub2exc inherited from previous code block
-
-nPerm = 10000;
-t4P = 6:40; 
-
-nTimepoints = 35; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-tic
-
-for permi = 1:nPerm
-
-    clearvars -except nTimepoints win_width mf bins cond1 cond2 permi nPerm max_clust_perm max_clust_obs t4P sub2exc c1 c2
-
-    permi
-
-    for subji = 1:50
-    
-        rsa2T1 = cond1{subji, 1}; 
-        rsa2T1IDs = cond1{subji, 2}; 
-    
-        rsa2T2 = cond2{subji, 1}; 
-        rsa2T2IDs = cond2{subji, 2}; 
-        
-        if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-            [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-            rsa2T1 = rsa2T1(i1, t4P); 
-            rsa2T1IDs = rsa2T1IDs(i1,:); 
-    
-            rsa2T2 = rsa2T2(i2, t4P); 
-            rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-            ids4perm = randperm(size(rsa2T2, 1)); 
-            rsa2T2 = rsa2T2(ids4perm, :); 
-            rsa2T2IDs = rsa2T2IDs(ids4perm, :); 
-        
-            
-             for timei = 1:bins 
-                %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-    
-                for timej = 1:bins
-                    timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                    rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-           
-                    allRHOP(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-                end
-            end
-        end
-    end
-    
-    
-
-    allRHOP(sub2exc, :, :) = []; 
-    
-    ids2K = any(allRHOP,2); 
-    ids2K = ids2K(:, 1); 
-    allRHOP = allRHOP(ids2K,:,:); % limit also time 
-    [h p ci ts] = ttest(atanh(allRHOP));
-    h = squeeze(h); t = squeeze(ts.tstat); 
-    
-    clear allSTs  
-    clustinfo = bwconncomp(h);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-       allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-    end
-    if exist('allSTs')
-        [max2u id] = max(abs(allSTs));
-        max_clust_perm(permi, : ) = allSTs(id); 
-    else
-        max_clust_perm(permi, : ) = 0; 
-    end
-    
-    
-end    
-
-
-allAb = max_clust_perm(abs(max_clust_perm) > abs(max_clust_obs));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
-
-save([c1 '_____' c2], 'p', 'max_clust_perm')
-
-toc
-
-
-
-
-
-
-
-
-%%Correlate different trial-level metrics at ALL TIME POINTS NEW TIMES (7)
-clear, clc
-
-printClust = 1; 
-print1Clust = 0; 
-
-paths = load_paths_EXT;
-
-c1 = 'trlCTX_PFC_CE_1-44_1_0_500-50'; 
-c2 = 'trlCTX_HPC_CE_1-44_1_0_500-50'; 
-
-
-[cond1 cond2 sub2exc] = determine_conds_andSub2exc_EXT(c1, c2, paths); 
-
-
-nTimepoints = 51; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-for subji = 1:50
-
-    rsa2T1 = cond1{subji, 1}; 
-    rsa2T1IDs = cond1{subji, 2}; 
-
-    rsa2T2 = cond2{subji, 1}; 
-    rsa2T2IDs = cond2{subji, 2}; 
-    
-    if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-        [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-        rsa2T1 = rsa2T1(i1, :); 
-        rsa2T1IDs = rsa2T1IDs(i1,:); 
-
-        rsa2T2 = rsa2T2(i2, :); 
-        rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-        nTrials(subji, :) = size(rsa2T1, 1); 
-    
-        
-         for timei = 1:bins 
-            %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-
-            for timej = 1:bins
-                timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-       
-                allRHO(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-            end
-        end
-    end
-end
-
-allRHO(sub2exc, :, :) = []; 
-
-ids2K = any(allRHO,2); 
-ids2K = ids2K(:, 1); 
-allRHO = allRHO(ids2K,:,:);
-[h p ci ts] = ttest(atanh(allRHO));
-h = squeeze(h); t = squeeze(ts.tstat); 
-
-%h(1:5, :) = 0;
-%h(:, 1:5) = 0;
-
-
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    max_clust_obs = allSTs(id); 
-end
-
-if ~printClust
-    h = zeros(size(h)); 
-end
-if print1Clust
-    h(clustinfo.PixelIdxList{id}) = 1; 
-end
-
-
-d2p = squeeze(mean(allRHO)); 
-figure(); colormap (brewermap([100], '*Spectral'))
-contourf(myresizem(t, 10), 50, 'linecolor', 'none'); axis square; hold on; 
-contour( myresizem(h, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 4);
-plot([50 50],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
-plot(get(gca,'xlim'), [50 50],'k:', 'linewidth', 4); hold on; 
-set(gca, 'xlim', [1 400], 'ylim', [1 400], 'FontSize', 24)
-set(gca, 'xTick', [50 150 250 350], 'XTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'yTick', [50 150 250 350], 'YTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'clim', [-4 4])
-
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
-
-
-%%PERMUTATIONS
-clearvars -except max_clust_obs cond1 cond2 sub2exc c1 c2
-clc
-
-% sub2exc inherited from previous code block
-
-nPerm = 10000;
-t4P = 6:40; 
-
-nTimepoints = 35; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-tic
-
-for permi = 1:nPerm
-
-    clearvars -except nTimepoints win_width mf bins cond1 cond2 permi nPerm max_clust_perm max_clust_obs t4P sub2exc c1 c2
-
-    permi
-
-    for subji = 1:50
-    
-        rsa2T1 = cond1{subji, 1}; 
-        rsa2T1IDs = cond1{subji, 2}; 
-    
-        rsa2T2 = cond2{subji, 1}; 
-        rsa2T2IDs = cond2{subji, 2}; 
-        
-        if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-            [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-            rsa2T1 = rsa2T1(i1, t4P); 
-            rsa2T1IDs = rsa2T1IDs(i1,:); 
-    
-            rsa2T2 = rsa2T2(i2, t4P); 
-            rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-            ids4perm = randperm(size(rsa2T2, 1)); 
-            rsa2T2 = rsa2T2(ids4perm, :); 
-            rsa2T2IDs = rsa2T2IDs(ids4perm, :); 
-        
-            
-             for timei = 1:bins 
-                %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-    
-                for timej = 1:bins
-                    timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                    rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-           
-                    allRHOP(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-                end
-            end
-        end
-    end
-    
-    
-
-    allRHOP(sub2exc, :, :) = []; 
-    
-    ids2K = any(allRHOP,2); 
-    ids2K = ids2K(:, 1); 
-    allRHOP = allRHOP(ids2K,:,:); % limit also time 
-    [h p ci ts] = ttest(atanh(allRHOP));
-    h = squeeze(h); t = squeeze(ts.tstat); 
-    
-    clear allSTs  
-    clustinfo = bwconncomp(h);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-       allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-    end
-    if exist('allSTs')
-        [max2u id] = max(abs(allSTs));
-        max_clust_perm(permi, : ) = allSTs(id); 
-    else
-        max_clust_perm(permi, : ) = 0; 
-    end
-    
-    
-end    
-
-
-allAb = max_clust_perm(abs(max_clust_perm) > abs(max_clust_obs));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
-
-save([c1 '_____' c2], 'p', 'max_clust_perm')
-
-toc
-
-%%Correlate different trial-level metrics at ALL TIME POINTS NEW TIMES (8)
-clear, clc
-
-printClust = 1; 
-print1Clust = 0; 
-
-paths = load_paths_EXT;
-
-c1 = 'trlCTX_PFC_CE_1-44_1_0_500-50'; 
-c2 = 'trlCTX_TMP_CE_1-44_1_0_500-50'; 
-
-
-
-[cond1 cond2 sub2exc] = determine_conds_andSub2exc_EXT(c1, c2, paths); 
-
-
-nTimepoints = 51; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-for subji = 1:50
-
-    rsa2T1 = cond1{subji, 1}; 
-    rsa2T1IDs = cond1{subji, 2}; 
-
-    rsa2T2 = cond2{subji, 1}; 
-    rsa2T2IDs = cond2{subji, 2}; 
-    
-    if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-        [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-        rsa2T1 = rsa2T1(i1, :); 
-        rsa2T1IDs = rsa2T1IDs(i1,:); 
-
-        rsa2T2 = rsa2T2(i2, :); 
-        rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-        nTrials(subji, :) = size(rsa2T1, 1); 
-    
-        
-         for timei = 1:bins 
-            %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-
-            for timej = 1:bins
-                timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-       
-                allRHO(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-            end
-        end
-    end
-end
-
-allRHO(sub2exc, :, :) = []; 
-
-ids2K = any(allRHO,2); 
-ids2K = ids2K(:, 1); 
-allRHO = allRHO(ids2K,:,:);
-[h p ci ts] = ttest(atanh(allRHO));
-h = squeeze(h); t = squeeze(ts.tstat); 
-
-%h(1:5, :) = 0;
-%h(:, 1:5) = 0;
-
-
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    max_clust_obs = allSTs(id); 
-end
-
-if ~printClust
-    h = zeros(size(h)); 
-end
-if print1Clust
-    h(clustinfo.PixelIdxList{id}) = 1; 
-end
-
-
-d2p = squeeze(mean(allRHO)); 
-figure(); colormap (brewermap([100], '*Spectral'))
-contourf(myresizem(t, 10), 50, 'linecolor', 'none'); axis square; hold on; 
-contour( myresizem(h, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 4);
-plot([50 50],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
-plot(get(gca,'xlim'), [50 50],'k:', 'linewidth', 4); hold on; 
-set(gca, 'xlim', [1 400], 'ylim', [1 400], 'FontSize', 24)
-set(gca, 'xTick', [50 150 250 350], 'XTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'yTick', [50 150 250 350], 'YTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'clim', [-4 4])
-
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
-
-
-%%PERMUTATIONS
-clearvars -except max_clust_obs cond1 cond2 sub2exc c1 c2
-clc
-
-% sub2exc inherited from previous code block
-
-nPerm = 10000;
-t4P = 6:40; 
-
-nTimepoints = 35; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-tic
-
-for permi = 1:nPerm
-
-    clearvars -except nTimepoints win_width mf bins cond1 cond2 permi nPerm max_clust_perm max_clust_obs t4P sub2exc c1 c2
-
-    permi
-
-    for subji = 1:50
-    
-        rsa2T1 = cond1{subji, 1}; 
-        rsa2T1IDs = cond1{subji, 2}; 
-    
-        rsa2T2 = cond2{subji, 1}; 
-        rsa2T2IDs = cond2{subji, 2}; 
-        
-        if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-            [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-            rsa2T1 = rsa2T1(i1, t4P); 
-            rsa2T1IDs = rsa2T1IDs(i1,:); 
-    
-            rsa2T2 = rsa2T2(i2, t4P); 
-            rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-            ids4perm = randperm(size(rsa2T2, 1)); 
-            rsa2T2 = rsa2T2(ids4perm, :); 
-            rsa2T2IDs = rsa2T2IDs(ids4perm, :); 
-        
-            
-             for timei = 1:bins 
-                %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-    
-                for timej = 1:bins
-                    timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                    rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-           
-                    allRHOP(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-                end
-            end
-        end
-    end
-    
-    
-
-    allRHOP(sub2exc, :, :) = []; 
-    
-    ids2K = any(allRHOP,2); 
-    ids2K = ids2K(:, 1); 
-    allRHOP = allRHOP(ids2K,:,:); % limit also time 
-    [h p ci ts] = ttest(atanh(allRHOP));
-    h = squeeze(h); t = squeeze(ts.tstat); 
-    
-    clear allSTs  
-    clustinfo = bwconncomp(h);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-       allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-    end
-    if exist('allSTs')
-        [max2u id] = max(abs(allSTs));
-        max_clust_perm(permi, : ) = allSTs(id); 
-    else
-        max_clust_perm(permi, : ) = 0; 
-    end
-    
-    
-end    
-
-
-allAb = max_clust_perm(abs(max_clust_perm) > abs(max_clust_obs));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
-
-save([c1 '_____' c2], 'p', 'max_clust_perm')
-
-toc
-
-
-
-
-
-%%Correlate different trial-level metrics at ALL TIME POINTS NEW TIMES (9)
-clear, clc
-
-printClust = 1; 
-print1Clust = 0; 
-
-paths = load_paths_EXT;
-
-c1 = 'trlCTX_PFC_CE_1-44_1_0_500-50'; 
-c2 = 'trlCTX_OFC_CE_1-44_1_0_500-50'; 
-
-
-[cond1 cond2 sub2exc] = determine_conds_andSub2exc_EXT(c1, c2, paths); 
-
-
-nTimepoints = 51; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-for subji = 1:50
-
-    rsa2T1 = cond1{subji, 1}; 
-    rsa2T1IDs = cond1{subji, 2}; 
-
-    rsa2T2 = cond2{subji, 1}; 
-    rsa2T2IDs = cond2{subji, 2}; 
-    
-    if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-        [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-        rsa2T1 = rsa2T1(i1, :); 
-        rsa2T1IDs = rsa2T1IDs(i1,:); 
-
-        rsa2T2 = rsa2T2(i2, :); 
-        rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-        nTrials(subji, :) = size(rsa2T1, 1); 
-    
-        
-         for timei = 1:bins 
-            %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-
-            for timej = 1:bins
-                timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-       
-                allRHO(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-            end
-        end
-    end
-end
-
-allRHO(sub2exc, :, :) = []; 
-
-ids2K = any(allRHO,2); 
-ids2K = ids2K(:, 1); 
-allRHO = allRHO(ids2K,:,:);
-[h p ci ts] = ttest(atanh(allRHO));
-h = squeeze(h); t = squeeze(ts.tstat); 
-
-%h(1:5, :) = 0;
-%h(:, 1:5) = 0;
-
-
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    max_clust_obs = allSTs(id); 
-end
-
-if ~printClust
-    h = zeros(size(h)); 
-end
-if print1Clust
-    h(clustinfo.PixelIdxList{id}) = 1; 
-end
-
-
-d2p = squeeze(mean(allRHO)); 
-figure(); colormap (brewermap([100], '*Spectral'))
-contourf(myresizem(t, 10), 50, 'linecolor', 'none'); axis square; hold on; 
-contour( myresizem(h, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 4);
-plot([50 50],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
-plot(get(gca,'xlim'), [50 50],'k:', 'linewidth', 4); hold on; 
-set(gca, 'xlim', [1 400], 'ylim', [1 400], 'FontSize', 24)
-set(gca, 'xTick', [50 150 250 350], 'XTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'yTick', [50 150 250 350], 'YTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'clim', [-4 4])
-
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
-
-
-%%PERMUTATIONS
-clearvars -except max_clust_obs cond1 cond2 sub2exc c1 c2
-clc
-
-% sub2exc inherited from previous code block
-
-nPerm = 10000;
-t4P = 6:40; 
-
-nTimepoints = 35; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-tic
-
-for permi = 1:nPerm
-
-    clearvars -except nTimepoints win_width mf bins cond1 cond2 permi nPerm max_clust_perm max_clust_obs t4P sub2exc c1 c2
-
-    permi
-
-    for subji = 1:50
-    
-        rsa2T1 = cond1{subji, 1}; 
-        rsa2T1IDs = cond1{subji, 2}; 
-    
-        rsa2T2 = cond2{subji, 1}; 
-        rsa2T2IDs = cond2{subji, 2}; 
-        
-        if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-            [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-            rsa2T1 = rsa2T1(i1, t4P); 
-            rsa2T1IDs = rsa2T1IDs(i1,:); 
-    
-            rsa2T2 = rsa2T2(i2, t4P); 
-            rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-            ids4perm = randperm(size(rsa2T2, 1)); 
-            rsa2T2 = rsa2T2(ids4perm, :); 
-            rsa2T2IDs = rsa2T2IDs(ids4perm, :); 
-        
-            
-             for timei = 1:bins 
-                %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-    
-                for timej = 1:bins
-                    timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                    rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-           
-                    allRHOP(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-                end
-            end
-        end
-    end
-    
-    
-
-    allRHOP(sub2exc, :, :) = []; 
-    
-    ids2K = any(allRHOP,2); 
-    ids2K = ids2K(:, 1); 
-    allRHOP = allRHOP(ids2K,:,:); % limit also time 
-    [h p ci ts] = ttest(atanh(allRHOP));
-    h = squeeze(h); t = squeeze(ts.tstat); 
-    
-    clear allSTs  
-    clustinfo = bwconncomp(h);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-       allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-    end
-    if exist('allSTs')
-        [max2u id] = max(abs(allSTs));
-        max_clust_perm(permi, : ) = allSTs(id); 
-    else
-        max_clust_perm(permi, : ) = 0; 
-    end
-    
-    
-end    
-
-
-allAb = max_clust_perm(abs(max_clust_perm) > abs(max_clust_obs));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
-
-save([c1 '_____' c2], 'p', 'max_clust_perm')
-
-toc
-
-
-
-
-
-
-
-
-
-
-%%Correlate different trial-level metrics at ALL TIME POINTS NEW TIMES (10)
-clear, clc
-
-printClust = 1; 
-print1Clust = 0; 
-
-paths = load_paths_EXT;
-
-c1 = 'trlCTX_PFC_CE_1-44_1_0_500-50'; 
-c2 = 'trlCTX_OCC_CE_1-44_1_0_500-50'; 
-
-
-
-[cond1 cond2 sub2exc] = determine_conds_andSub2exc_EXT(c1, c2, paths); 
-
-
-nTimepoints = 51; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-for subji = 1:50
-
-    rsa2T1 = cond1{subji, 1}; 
-    rsa2T1IDs = cond1{subji, 2}; 
-
-    rsa2T2 = cond2{subji, 1}; 
-    rsa2T2IDs = cond2{subji, 2}; 
-    
-    if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-        [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-        rsa2T1 = rsa2T1(i1, :); 
-        rsa2T1IDs = rsa2T1IDs(i1,:); 
-
-        rsa2T2 = rsa2T2(i2, :); 
-        rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-        nTrials(subji, :) = size(rsa2T1, 1); 
-    
-        
-         for timei = 1:bins 
-            %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-
-            for timej = 1:bins
-                timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-       
-                allRHO(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-            end
-        end
-    end
-end
-
-allRHO(sub2exc, :, :) = []; 
-
-ids2K = any(allRHO,2); 
-ids2K = ids2K(:, 1); 
-allRHO = allRHO(ids2K,:,:);
-[h p ci ts] = ttest(atanh(allRHO));
-h = squeeze(h); t = squeeze(ts.tstat); 
-
-%h(1:5, :) = 0;
-%h(:, 1:5) = 0;
-
-
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    max_clust_obs = allSTs(id); 
-end
-
-if ~printClust
-    h = zeros(size(h)); 
-end
-if print1Clust
-    h(clustinfo.PixelIdxList{id}) = 1; 
-end
-
-
-d2p = squeeze(mean(allRHO)); 
-figure(); colormap (brewermap([100], '*Spectral'))
-contourf(myresizem(t, 10), 50, 'linecolor', 'none'); axis square; hold on; 
-contour( myresizem(h, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 4);
-plot([50 50],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
-plot(get(gca,'xlim'), [50 50],'k:', 'linewidth', 4); hold on; 
-set(gca, 'xlim', [1 400], 'ylim', [1 400], 'FontSize', 24)
-set(gca, 'xTick', [50 150 250 350], 'XTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'yTick', [50 150 250 350], 'YTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'clim', [-4 4])
-
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
-
-
-%%PERMUTATIONS
-clearvars -except max_clust_obs cond1 cond2 sub2exc c1 c2
-clc
-
-% sub2exc inherited from previous code block
-
-nPerm = 10000;
-t4P = 6:40; 
-
-nTimepoints = 35; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-tic
-
-for permi = 1:nPerm
-
-    clearvars -except nTimepoints win_width mf bins cond1 cond2 permi nPerm max_clust_perm max_clust_obs t4P sub2exc c1 c2
-
-    permi
-
-    for subji = 1:50
-    
-        rsa2T1 = cond1{subji, 1}; 
-        rsa2T1IDs = cond1{subji, 2}; 
-    
-        rsa2T2 = cond2{subji, 1}; 
-        rsa2T2IDs = cond2{subji, 2}; 
-        
-        if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-            [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-            rsa2T1 = rsa2T1(i1, t4P); 
-            rsa2T1IDs = rsa2T1IDs(i1,:); 
-    
-            rsa2T2 = rsa2T2(i2, t4P); 
-            rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-            ids4perm = randperm(size(rsa2T2, 1)); 
-            rsa2T2 = rsa2T2(ids4perm, :); 
-            rsa2T2IDs = rsa2T2IDs(ids4perm, :); 
-        
-            
-             for timei = 1:bins 
-                %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-    
-                for timej = 1:bins
-                    timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                    rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-           
-                    allRHOP(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-                end
-            end
-        end
-    end
-    
-    
-
-    allRHOP(sub2exc, :, :) = []; 
-    
-    ids2K = any(allRHOP,2); 
-    ids2K = ids2K(:, 1); 
-    allRHOP = allRHOP(ids2K,:,:); % limit also time 
-    [h p ci ts] = ttest(atanh(allRHOP));
-    h = squeeze(h); t = squeeze(ts.tstat); 
-    
-    clear allSTs  
-    clustinfo = bwconncomp(h);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-       allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-    end
-    if exist('allSTs')
-        [max2u id] = max(abs(allSTs));
-        max_clust_perm(permi, : ) = allSTs(id); 
-    else
-        max_clust_perm(permi, : ) = 0; 
-    end
-    
-    
-end    
-
-
-allAb = max_clust_perm(abs(max_clust_perm) > abs(max_clust_obs));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
-
-save([c1 '_____' c2], 'p', 'max_clust_perm')
-
-toc
-
-
-%%Correlate different trial-level metrics at ALL TIME POINTS NEW TIMES (11)
-clear, clc
-
-printClust = 1; 
-print1Clust = 0; 
-
-paths = load_paths_EXT;
-
-c1 = 'trlCTX_PFC_CE_1-44_1_0_500-50'; 
-c2 = 'trlSTA_AMY_CE_1-44_1_0_500-50'; 
-
-
-
-[cond1 cond2 sub2exc] = determine_conds_andSub2exc_EXT(c1, c2, paths); 
-
-
-nTimepoints = 51; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-for subji = 1:50
-
-    rsa2T1 = cond1{subji, 1}; 
-    rsa2T1IDs = cond1{subji, 2}; 
-
-    rsa2T2 = cond2{subji, 1}; 
-    rsa2T2IDs = cond2{subji, 2}; 
-    
-    if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-        [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-        rsa2T1 = rsa2T1(i1, :); 
-        rsa2T1IDs = rsa2T1IDs(i1,:); 
-
-        rsa2T2 = rsa2T2(i2, :); 
-        rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-        nTrials(subji, :) = size(rsa2T1, 1); 
-    
-        
-         for timei = 1:bins 
-            %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-            rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-
-            for timej = 1:bins
-                timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-       
-                allRHO(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-            end
-        end
-    end
-end
-
-allRHO(sub2exc, :, :) = []; 
-
-ids2K = any(allRHO,2); 
-ids2K = ids2K(:, 1); 
-allRHO = allRHO(ids2K,:,:);
-[h p ci ts] = ttest(atanh(allRHO));
-h = squeeze(h); t = squeeze(ts.tstat); 
-
-%h(1:5, :) = 0;
-%h(:, 1:5) = 0;
-
-
-
-clear allSTs  
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    max_clust_obs = allSTs(id); 
-end
-
-if ~printClust
-    h = zeros(size(h)); 
-end
-if print1Clust
-    h(clustinfo.PixelIdxList{id}) = 1; 
-end
-
-
-d2p = squeeze(mean(allRHO)); 
-figure(); colormap (brewermap([100], '*Spectral'))
-contourf(myresizem(t, 10), 50, 'linecolor', 'none'); axis square; hold on; 
-contour( myresizem(h, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 4);
-plot([50 50],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
-plot(get(gca,'xlim'), [50 50],'k:', 'linewidth', 4); hold on; 
-set(gca, 'xlim', [1 400], 'ylim', [1 400], 'FontSize', 24)
-set(gca, 'xTick', [50 150 250 350], 'XTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'yTick', [50 150 250 350], 'YTickLabel', {'0', '0.5', '1', '1.5'})
-set(gca, 'clim', [-4 4])
-
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
-
-
-%%PERMUTATIONS
-clearvars -except max_clust_obs cond1 cond2 sub2exc c1 c2
-clc
-
-% sub2exc inherited from previous code block
-
-nPerm = 10000;
-t4P = 6:40; 
-
-nTimepoints = 35; 
-win_width = 10; 
-mf = 1; 
-bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
-
-tic
-
-for permi = 1:nPerm
-
-    clearvars -except nTimepoints win_width mf bins cond1 cond2 permi nPerm max_clust_perm max_clust_obs t4P sub2exc c1 c2
-
-    permi
-
-    for subji = 1:50
-    
-        rsa2T1 = cond1{subji, 1}; 
-        rsa2T1IDs = cond1{subji, 2}; 
-    
-        rsa2T2 = cond2{subji, 1}; 
-        rsa2T2IDs = cond2{subji, 2}; 
-        
-        if ~isempty(rsa2T1) & ~isempty(rsa2T2)
-            [C i1 i2] = intersect(rsa2T1IDs(:, 1), rsa2T2IDs(:,1)); 
-            rsa2T1 = rsa2T1(i1, t4P); 
-            rsa2T1IDs = rsa2T1IDs(i1,:); 
-    
-            rsa2T2 = rsa2T2(i2, t4P); 
-            rsa2T2IDs = rsa2T2IDs(i2,:); 
-
-            ids4perm = randperm(size(rsa2T2, 1)); 
-            rsa2T2 = rsa2T2(ids4perm, :); 
-            rsa2T2IDs = rsa2T2IDs(ids4perm, :); 
-        
-            
-             for timei = 1:bins 
-                %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
-                rsa2TT1 = mean(rsa2T1(:, timeBinsi), 2); 
-    
-                for timej = 1:bins
-                    timeBinsj = (timej*mf) - (mf-1):(timej*mf - (mf-1) )+win_width-1;
-                    rsa2TT2 = mean(rsa2T2(:, timeBinsj), 2); 
-           
-                    allRHOP(subji, timei, timej) = corr(rsa2TT1, rsa2TT2, 'type', 's');
-                end
-            end
-        end
-    end
-    
-    
-
-    allRHOP(sub2exc, :, :) = []; 
-    
-    ids2K = any(allRHOP,2); 
-    ids2K = ids2K(:, 1); 
-    allRHOP = allRHOP(ids2K,:,:); % limit also time 
-    [h p ci ts] = ttest(atanh(allRHOP));
-    h = squeeze(h); t = squeeze(ts.tstat); 
-    
-    clear allSTs  
-    clustinfo = bwconncomp(h);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-       allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-    end
-    if exist('allSTs')
-        [max2u id] = max(abs(allSTs));
-        max_clust_perm(permi, : ) = allSTs(id); 
-    else
-        max_clust_perm(permi, : ) = 0; 
-    end
-    
-    
-end    
-
-
-allAb = max_clust_perm(abs(max_clust_perm) > abs(max_clust_obs));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
-
-save([c1 '_____' c2], 'p', 'max_clust_perm')
-
-toc
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
