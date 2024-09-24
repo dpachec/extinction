@@ -245,7 +245,7 @@ cd (paths.github)
 
 %% ALL FREQUENCIES 
 
-freq2u = 4:8;
+freq2u = 1:12;
 
 f2u = strsplit(file2load, '_')
 
@@ -332,7 +332,7 @@ set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1  length(freq2u)], 'yti
 exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
 
-%% permutations 
+%% permutations shuffling condition labels at the group level
 
 nPerm = 1000; 
 t4p = 26:200; 
@@ -340,6 +340,7 @@ t4p = 26:200;
 clear max_clust_sum_perm c1BP c2BP
 tic
 for permi = 1:nPerm
+    progress_in_console(permi)
     for subji = 1:size(c1B, 1)
         if rand>.5
            c1BP(subji, :, :) = c2B(subji, :, t4p);
@@ -371,6 +372,68 @@ end
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(max_clust_obs));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
+toc
+
+%% permutations shuffling trial labels in each subject
+
+
+clearvars -except ALLEEG ids1 ids2 max_clust_obs file2load paths freq2u sub2exc
+
+
+nPerm = 500; 
+t4p = 301:475; 
+
+
+tic
+for subji = 1:length(ALLEEG)
+    progress_in_console(subji)
+    EEG = ALLEEG{subji};
+    if ~isempty(EEG)
+        c1 = squeeze(mean(EEG.power(ids1, :, freq2u ,t4p), 2, 'omitnan'));  %mean across electrodes
+        c2 = squeeze(mean(EEG.power(ids2, :, freq2u ,t4p), 2, 'omitnan')); 
+        junts = cat(1, c1, c2); 
+        realCondMapping = [zeros(1,size(c1, 1)) ones(1, size(c2, 1))]';
+        
+        for permi = 1:nPerm
+            fakeCondMapping = realCondMapping(randperm(length(realCondMapping)));
+            c1P = junts(fakeCondMapping ==0,:,:); 
+            c2P = junts(fakeCondMapping ==1,:,:); 
+        
+            powPerm(subji, permi, :, :, :) = cat(1, c1P, c2P);         
+        end
+    end
+end
+
+powPerm(sub2exc, :, :, :, :) = []; 
+
+toc
+
+
+%%
+tic
+for permi = 1:nPerm
+    progress_in_console(permi)
+    c1P = mean(powPerm(:, permi, 1:24, :, :), 3, 'omitnan'); 
+    c2P = mean(powPerm(:, permi, 25:72, :, :), 3, 'omitnan'); 
+
+    [hPerm p ci tsPerm] = ttest(c1P, c2P); 
+    hPerm = squeeze(hPerm); tPerm = squeeze(tsPerm.tstat);
+
+    clear allSTs  
+    clustinfo = bwconncomp(hPerm);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+        allSTs(pxi,:) = sum(tPerm(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs') & ~isempty(clustinfo.PixelIdxList)
+        [max2u id] = max(abs((allSTs)));
+        max_clust_sum_perm(permi,:) = allSTs(id); 
+    else
+        max_clust_sum_perm(permi,:) = 0; 
+    end
+end
+
+allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(max_clust_obs));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 toc
 
 %% 

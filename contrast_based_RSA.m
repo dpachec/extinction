@@ -6,8 +6,35 @@ clear , clc
 
 listF2sav = {
 
-'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
-'RSA_PFC_C_1-44_1_0_500-50_1_T_SCE-DCE'; 
+'RSA_aHPC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
+'RSA_aHPC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
+'RSA_aHPC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+'RSA_aHPC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+
+'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
+'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
+'RSA_AMY_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+'RSA_AMY_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+
+'RSA_PFC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
+'RSA_PFC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
+'RSA_PFC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+'RSA_PFC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+
+'RSA_OFC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
+'RSA_OFC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
+'RSA_OFC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+'RSA_OFC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+
+'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
+'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
+'RSA_TMP_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+'RSA_TMP_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+
+'RSA_OCC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
+'RSA_OCC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
+'RSA_OCC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+'RSA_OCC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
 
 };   
 
@@ -54,92 +81,26 @@ end
 
 
 
-%% plot 2 lines from TG DIFFERENT TIMES TRIALS
-clear
+%% plot 2 lines from TG 
+clear, clc
 
 paths = load_paths_EXT; 
-f2sav = 'RSA_OFC_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
-%f2sav  = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCA-DCA';
+%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+%f2sav  = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCE-DCE';
+
+f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
 
 load ([ paths.results.rsa f2sav '.mat']);
 
 cfg = getParams_EXT(f2sav);
-if length(cfg.contr2sav{1}) > 3 & strcmp(cfg.contr2sav{1}(1:5), 'SICSP') %ITEM STABILITY
-    if strcmp(cfg.contr2sav{1}(6), 'E') 
-        if strcmp(cfg.roi, 'TMP') 
-            sub2exc = [19 25 31 27 37]; 
-        elseif strcmp(cfg.roi, 'AMY') 
-            sub2exc = [27 37]; 
-        elseif strcmp(cfg.roi, 'HPC') 
-            sub2exc = [27 37];             
-        elseif strcmp(cfg.roi, 'PFC') 
-            sub2exc = [27 37];             
-        elseif strcmp(cfg.roi, 'OFC') 
-            sub2exc = [27 37];        
-        elseif strcmp(cfg.roi, 'OCC') 
-            sub2exc = [27 37];               
-        end
-    elseif strcmp(cfg.contr2sav{1}(6), 'A') 
-        disp('Acquisition')
-        sub2exc = [24 25 27 37]; 
-    end
-elseif strcmp(cfg.contr2sav{1}(1:2), 'SC') %CONTEXT
-    if strcmp(cfg.contr2sav{1}(3), 'A') 
-        if strcmp(cfg.roi, 'TMP') 
-            sub2exc = [27 37]; 
-        elseif strcmp(cfg.roi, 'PFC') 
-            sub2exc = [27 37]; 
-        elseif strcmp(cfg.roi, 'HPC') 
-            sub2exc = [27 37]; 
-        elseif strcmp(cfg.roi, 'OCC') 
-            sub2exc = [27 37];                  
-        end
-    elseif strcmp(cfg.contr2sav{1}(3), 'E')
 
-    end
-end
+sub2exc = load_sub2exc_EXT (cfg); 
 
 nTrials = compute_trial_number_EXT(ids); 
 
 [out_rsa, ids2rem] = rem_nan_subj_EXT(out_rsa, sub2exc); 
 
-cond1 = cellfun(@mean, cellfun(@(x) x{1}, out_rsa, 'un', 0), 'un', 0); 
-cond2 = cellfun(@mean, cellfun(@(x) x{2}, out_rsa, 'un', 0), 'un', 0); 
-
-cond1 = cat(1, cond1{:}); 
-cond2 = cat(1, cond2{:}); 
-
-
-diff = cond1-cond2; 
-
-for subji = 1:size(cond1, 1)
-   cond1B(subji, :) = diag(squeeze(cond1(subji, :, :)));
-   cond2B(subji, :) = diag(squeeze(cond2(subji, :, :)));
-end       
-cond1 = cond1B(:, 1:40); cond2 = cond2B(:, 1:40); 
-
-
-
-d2pm1	= squeeze(mean(cond1,'omitnan'));
-d2pm2	= squeeze(mean(cond2,'omitnan'));
-d2pstd1	= std(cond1, 'omitnan');
-d2pstd2	= std(cond2, 'omitnan');
-se1 = d2pstd1/sqrt(size(cond1, 1));
-se2 = d2pstd2/sqrt(size(cond1, 1));
-
-[h p ci ts] = ttest(cond1, cond2); 
-h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-    allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    tObs = allSTs(id); 
-else
-    tObs = 0; 
-end
+[h tObs d2pm1 d2pm2 se1 se2] = compute_real_differences_EXT(out_rsa); 
 
 
 %h = zeros(1, size(cond1, 2)); 
@@ -154,13 +115,13 @@ times = -.2:.05:1.75;
 h(2,:) = times; 
 figure(); 
 %colors2use = brewermap([6],'*Set1')*0.75;
-colors2use = brewermap([6],'*Accent')*0.75;
-%colors2use = brewermap([6],'Accent')*0.75;
+%colors2use = brewermap([6],'*Accent')*0.75; %CTX
+colors2use = brewermap([6],'Accent')*0.75; %STABILITY
 
 shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(2,:)}, 1); hold on; 
 shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(1,:)}, 1); hold on; 
-plot(times, hb, LineWidth=10)
-%set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 28);
+plot(times, hb,'k',  LineWidth=7)
+%set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .045], 'Fontsize', 22); %STABILITY
 set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 22);
 plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 2);
 plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
@@ -168,12 +129,7 @@ plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
 %set(gca, 'xlim', [-.25 1.4],'Fontsize', 18);%
 %title(f2sav, 'Interpreter','none')
 %exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
-exportgraphics(gcf, ['myP.png'], 'Resolution',150)
-
-
-
-
-
+exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
 
 
@@ -182,9 +138,10 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',150)
 nPerm = 100;
     
 clearvars -except out_rsa nPerm tObs
+
+
 for permi = 1:nPerm
-    
-    permi
+    progress_in_console(permi)
     out_rsa_perm = randomize_trials_EXT(out_rsa); 
     cond1P = cellfun(@mean, cellfun(@(x) x{1}, out_rsa_perm, 'un', 0), 'un', 0); 
     cond2P = cellfun(@mean, cellfun(@(x) x{2}, out_rsa_perm, 'un', 0), 'un', 0);     
@@ -224,12 +181,123 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
 
+%% 
+histogram (max_clust_sum_perm)
+
+
+%% Permutations (2D) TRIAL BASED IN LOOP 
+
+clear , clc
+
+
+nPerm = 1000;
+
+listF2sav = {
+
+% 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+% 'RSA_PFC_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+% 'RSA_HPC_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+% 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+% 'RSA_OFC_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+% 'RSA_OCC_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+% 
+% 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPA-SICSMA';
+% 'RSA_PFC_C_1-44_1_0_500-50_1_T_SICSPA-SICSMA';
+% 'RSA_HPC_C_1-44_1_0_500-50_1_T_SICSPA-SICSMA';
+% 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPA-SICSMA';
+% 'RSA_OFC_C_1-44_1_0_500-50_1_T_SICSPA-SICSMA';
+% 'RSA_OCC_C_1-44_1_0_500-50_1_T_SICSPA-SICSMA';
+% 
+% 
+% 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCE-DCE'; 
+%'RSA_TMP_C_1-44_1_0_500-50_1_T_SCE-DCE'; 
+%'RSA_HPC_C_1-44_1_0_500-50_1_T_SCE-DCE'; 
+'RSA_AMY_C_1-44_1_0_500-50_1_T_SCE-DCE'; 
+'RSA_OFC_C_1-44_1_0_500-50_1_T_SCE-DCE'; 
+'RSA_OCC_C_1-44_1_0_500-50_1_T_SCE-DCE'; 
+
+'RSA_PFC_C_1-44_1_0_500-50_1_T_SCA-DCA'; 
+'RSA_TMP_C_1-44_1_0_500-50_1_T_SCA-DCA'; 
+'RSA_HPC_C_1-44_1_0_500-50_1_T_SCA-DCA'; 
+'RSA_AMY_C_1-44_1_0_500-50_1_T_SCA-DCA'; 
+'RSA_OFC_C_1-44_1_0_500-50_1_T_SCA-DCA'; 
+'RSA_OCC_C_1-44_1_0_500-50_1_T_SCA-DCA'; 
+};   
+
+paths = load_paths_EXT; 
+t1 = datetime; 
+for listi = 1:length(listF2sav)
+
+    disp (['File ' num2str(listi) ' > ' listF2sav{listi} ])
+
+    clearvars -except listF2sav listi t1 paths nPerm 
+
+    f2load       = listF2sav{listi}; 
+    cfg         = getParams_EXT(f2load);
+    load ([ paths.results.rsa f2load '.mat']);
+    
+    sub2exc = load_sub2exc_EXT (cfg); 
+    nTrials = compute_trial_number_EXT(ids); 
+    [out_rsa, ids2rem] = rem_nan_subj_EXT(out_rsa, sub2exc); 
+    [~, tObs, ~, ~, ~, ~]  = compute_real_differences_EXT(out_rsa); 
+
+    for permi = 1:nPerm
+        progress_in_console(permi)
+        out_rsa_perm = randomize_trials_EXT(out_rsa); 
+        cond1P = cellfun(@mean, cellfun(@(x) x{1}, out_rsa_perm, 'un', 0), 'un', 0); 
+        cond2P = cellfun(@mean, cellfun(@(x) x{2}, out_rsa_perm, 'un', 0), 'un', 0);     
+        cond1P = cat(1, cond1P{:}); 
+        cond2P = cat(1, cond2P{:}); 
+        for subji = 1:size(cond1P, 1)
+           cond1BP(subji, :) = diag(squeeze(cond1P(subji, :, :)));
+           cond2BP(subji, :) = diag(squeeze(cond2P(subji, :, :)));
+        end       
+        cond1P = mean(cond1BP); cond2P = mean(cond2BP); 
+        [h p ci ts] = ttest(cond1P, cond2P); 
+        h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat); 
+        clear allSTs  
+        clustinfo = bwconncomp(h);
+        for pxi = 1:length(clustinfo.PixelIdxList)
+           allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+        end
+        
+        if exist('allSTs')
+            [max2u id] = max(abs(allSTs));
+            %[max2u id] = max(allSTs);
+            max_clust_sum_perm(permi,:) = allSTs(id); 
+        else
+            max_clust_sum_perm(permi,:) = 0; 
+        end
+    
+    end
+    
+    
+    disp('done')
+    
+     
+    %allAb = max_clust_sum_perm(max_clust_sum_perm > tObs);
+    nPerm = length(max_clust_sum_perm); 
+    allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
+    p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm;
+    disp (['p = ' num2str(p)])
+
+    save([paths.results.rsa_perm f2load '_' num2str(nPerm) '_p.mat'], 'max_clust_sum_perm', 'nPerm', 'tObs','p', 'nTrials')
+
+
+end
+
+
+
+
+
+
+
 %% plot 2 lines from TG DIFFERENT TIMES (ONLY WITH THE AVERAGES)
 clear
 
 paths = load_paths_EXT; 
-%f2sav = 'RSA_OFC_C_1-44_1_0_500-50_1_SICSPE-SICSME';
-f2sav  = 'RSA_PFC_C_1-44_1_0_500-50_1_SCA-DCA';
+f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_SICSPE-SICSME';
+%f2sav  = 'RSA_PFC_C_1-44_1_0_500-50_1_SCA-DCA';
 
 load ([ paths.results.rsa f2sav '.mat']);
 
@@ -405,103 +473,7 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
 
-%% 
-histogram (max_clust_sum_perm)
 
-
-
-%% plot 2 lines from TG 100ms
-clear
-
-
-sub2exc = []; %
-
-paths = load_paths_EXT; 
-f2sav = 'RSA_TMP_C_3-54_1_0_500-100_1_SICSPE-SICSME';
-%f2sav = 'RSA_TMP_C_1-44_1_0_500-100_1_SICSPE-SICSME';
-%f2sav = 'RSA_PFC_C_1-44_1_0_500-100_1_SCE-DCE';
-
-load ([ paths.results.rsa f2sav '.mat']);
-
-
-cfg = getParams_EXT(f2sav);
-if length(cfg.contr2sav{1}) > 3 & strcmp(cfg.contr2sav{1}(1:5), 'SICSP') 
-    sub2exc = [19 25 31 27 37]; 
-elseif strcmp(cfg.contr2sav{1}(1:2), 'SC')
-    sub2exc = [27 37]; 
-end
-
-
-nTrials = compute_trial_number_EXT(ids); 
-
-[out_rsa, ids2rem] = rem_nan_subj_EXT(out_rsa, sub2exc); 
-
-cond1 = squeeze(out_rsa(:, 1, :, :)); 
-cond2 = squeeze(out_rsa(:, 2, :, :)); 
-
-cond1(ids2rem, :, :) = []; 
-cond2(ids2rem, :, :) = []; 
-
-%cond1 = cond1 - mean(cond1(:, 1:2), 2); %subtract mean baseline
-%cond2 = cond2 - mean(cond2(:, 1:2), 2); 
-
-diff = cond1-cond2; 
-
-for subji = 1:size(cond1, 1)
-   cond1B(subji, :) = diag(squeeze(cond1(subji, :, :)));
-   cond2B(subji, :) = diag(squeeze(cond2(subji, :, :)));
-end       
-cond1 = cond1B; cond2 = cond2B; 
-
-% cond1(sub2exc, :) = []; 
-% cond2(sub2exc, :) = []; 
-
-d2pm1	= squeeze(mean(cond1,'omitnan'));
-d2pm2	= squeeze(mean(cond2,'omitnan'));
-d2pstd1	= std(cond1, 'omitnan');
-d2pstd2	= std(cond2, 'omitnan');
-se1 = d2pstd1/sqrt(size(cond1, 1));
-se2 = d2pstd2/sqrt(size(cond1, 1));
-
-[h p ci ts] = ttest(cond1, cond2); 
-h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    tObs = allSTs(id); 
-else
-    tObs = 0; 
-end
-
-
-%h = zeros(1, size(cond1, 2)); 
-%h(clustinfo.PixelIdxList{id}) = 1;
-%h = 0; 
-hb = h; hb(h==0) = nan; hb(hb==1) = -.005; 
-
-%times = (-.5:.01:2) + .25;
-times = -.25:.1:2.3;
-figure(); 
-%colors2use = brewermap([6],'*Set1')*0.75;
-%colors2use = brewermap([6],'*Accent')*0.75;
-colors2use = brewermap([6],'Accent')*0.75;
-
-shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(2,:)}, 1); hold on; 
-shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(1,:)}, 1); hold on; 
-plot(times, hb, LineWidth=10)
-%set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 28);
-set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .04], 'Fontsize', 28);
-plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 3);
-plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 3);
-
-%set(gca, 'xlim', [-.25 1.4],'Fontsize', 18);%
-%title(f2sav, 'Interpreter','none')
-%exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
-exportgraphics(gcf, ['myP.png'], 'Resolution',150)
 
 
 
@@ -790,7 +762,7 @@ figure();
 colors2use = brewermap([6],'*Set1')*0.75;
 shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(1,:)}, 1); hold on; 
 shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(2,:)}, 1); hold on; 
-plot(times, hb, LineWidth=10)
+plot(times, hb, 'k', LineWidth=7)
 
 set(gca, 'xlim', [-.25 1.75],'ylim', [-.015 .02], 'Fontsize', 22);%
 plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 2);
@@ -800,102 +772,6 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
 
 
-%% CHECK CONTEXT DURING ACQ AND EXT > GENERALIZATION 2D
-clear, clc
-paths = load_paths_EXT; 
-
-myR = 'PFC';
-
-%f2sav =   ['RSA_' myR '_C_3-54_1_0_500-100_1_SICSPA-SICSMA'];
-f2sav =   ['RSA_' myR '_C_3-54_1_0_500-100_1_SCA-DCA'];
-%f2sav =   ['POW_' myR '_C_3-54_1_0_50-10_1_DISVA-DIDVA'];
-load ([ paths.results.rsa f2sav '.mat']);
-out_rsa_ACQ = out_rsa; 
-
-%f2sav =   ['RSA_' myR '_C_3-54_1_0_500-100_1_SICSPE-SICSME'];
-f2sav =   ['RSA_' myR '_C_3-54_1_0_500-100_1_SCE-DCE'];
-%f2sav =   ['POW_' myR '_C_3-54_1_0_50-10_1_DISVE-DIDVE'];
-load ([ paths.results.rsa f2sav '.mat']);
-out_rsa_EXT = out_rsa; 
-
-
-
-% % % % %  remove hack 
-ids = []; 
-for subji = 1:size(out_rsa, 1)
-    %cond1 = squeeze(out_rsa(subji, 1, 1:13, 1:13)); 
-    %cond2 = squeeze(out_rsa(subji, 2, 1:13, 1:13)); 
-    cond1 = squeeze(out_rsa(subji, 1, :, :)); 
-    cond2 = squeeze(out_rsa(subji, 2, :, :)); 
-    if cond1(1) == 0
-        ids = [ids subji];
-    end
-end
-
-% cond1A = squeeze(out_rsa_ACQ(:, 1, 1:13, 1:13)); cond1A(ids, :, :) = []; 
-% cond2A = squeeze(out_rsa_ACQ(:, 2, 1:13, 1:13)); cond2A(ids, :,:) = []; 
-% cond1E = squeeze(out_rsa_EXT(:, 1, 1:13, 1:13)); cond1E(ids, :, :) = []; 
-% cond2E = squeeze(out_rsa_EXT(:, 2, 1:13, 1:13)); cond2E(ids, :, :) = []; 
-cond1A = squeeze(out_rsa_ACQ(:, 1, :, :)); cond1A(ids, :, :) = []; 
-cond2A = squeeze(out_rsa_ACQ(:, 2, :, :)); cond2A(ids, :,:) = []; 
-cond1E = squeeze(out_rsa_EXT(:, 1, :,:)); cond1E(ids, :, :) = []; 
-cond2E = squeeze(out_rsa_EXT(:, 2, :, :)); cond2E(ids, :, :) = []; 
-
-diffA = cond1A-cond2A; 
-diffE = cond1E-cond2E; 
-
-%diffA = cond1A; 
-%diffE = cond1E; 
-
-
-for subji = 1:size(cond1A, 1)
-   diffAB(subji, :) = diag(squeeze(diffA(subji, :, :)));
-   diffEB(subji, :) = diag(squeeze(diffE(subji, :, :)));
-end       
-diffA = diffAB; diffE = diffEB; 
-
-
-
-d2pm1	= squeeze(mean(diffA,'omitnan'));
-d2pm2	= squeeze(mean(diffE,'omitnan'));
-d2pstd1	= std(diffA, 'omitnan');
-d2pstd2	= std(diffE, 'omitnan');
-se1 = d2pstd1/sqrt(size(diffA, 1));
-se2 = d2pstd2/sqrt(size(diffE, 1));
-
-
-[h p ci ts] = ttest(diffA, diffE); 
-h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
-%h(1:26,1:2) = 0;  % % % no clusters before baseline
-clustinfo = bwconncomp(h);
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-end
-
-if exist('allSTs')
-    [max2u id] = max(abs(allSTs));
-    tObs = allSTs(id); 
-end
-
-
-%h = zeros(1, size(cond1, 2)); 
-%h(clustinfo.PixelIdxList{id}) = 1;
-hb = h; hb(h==0) = nan; hb(hb==1) = -.025; 
-
-%times = (-.5:.01:2) + .25;
-times = -.25:.1:2.3;
-figure(); 
-colors2use = brewermap([6],'*Set2')*0.75;
-shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(1,:)}, 1); hold on; 
-shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(2,:)}, 1); hold on; 
-plot(times, hb, LineWidth=8)
-set(gca, 'xlim', [-.25 1.7], 'Fontsize', 28);
-plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 2);
-plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
-
-%set(gca, 'xlim', [-.25 1.4],'Fontsize', 18);%'ylim', [-.032 .035], 
-%title(f2sav, 'Interpreter','none')
-exportgraphics(gcf, ['myP.png'], 'Resolution',150)
 
 
 %% Permutations (2D) 

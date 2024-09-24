@@ -5,22 +5,16 @@ clear , clc
 
 listF2sav = {
 
-'nRSM_AMY_CE_1-44_1_0_500-50';
-'nRSM_TMP_CE_1-44_1_0_500-50';
 
-% 'nRSM_HPC_CE_1-44_1_0_500-50';
-% 'nRSM_OFC_CE_1-44_1_0_500-50';
-% 'nRSM_OCC_CE_1-44_1_0_500-50';
-% 'nRSM_TMP_CE_1-44_1_0_500-50';
-% 'nRSM_PFC_CE_1-44_1_0_500-50';
-% 'nRSM_AMY_CE_1-44_1_0_500-50';
-% 
+'nRSM_aHPC_CAT_1-44_1_0_500-50';
 % 'nRSM_HPC_CA_1-44_1_0_500-50';
 % 'nRSM_OFC_CA_1-44_1_0_500-50';
 % 'nRSM_OCC_CA_1-44_1_0_500-50';
 % 'nRSM_TMP_CA_1-44_1_0_500-50';
 % 'nRSM_PFC_CA_1-44_1_0_500-50';
 % 'nRSM_AMY_CA_1-44_1_0_500-50';
+
+
 
 
 };   
@@ -58,7 +52,7 @@ for listi = 1:length(listF2sav)
             elseif strcmp(cfg.period, 'AE')
                 ids2rem = ids(:, 2)==3; 
             elseif strcmp(cfg.period, 'AT')
-                ids2rem = ids(:, 2)==1; 
+                ids2rem = ids(:, 2)==2; 
             elseif strcmp(cfg.period, 'AET')
                 ids2rem = []; 
             end
