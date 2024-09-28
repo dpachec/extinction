@@ -109,8 +109,8 @@ clear , clc
 listF2sav = {
 
 
-'POW_AMY_C_10';
-'POW_TMP_C_10';
+%'POW_AMY_C_10';
+%'POW_TMP_C_10';
 
 % 'POW_aHPC_C_10';
 % 'POW_OCC_C_10';
@@ -121,12 +121,12 @@ listF2sav = {
 % 'POW_AMY_C_10';
 % 
 % 'POW_aHPC_V_10';
-% 'POW_OCC_V_10';
-% 'POW_HPC_V_10';
-% 'POW_TMP_V_10';
-% 'POW_PFC_V_10';
-% 'POW_OFC_V_10';
-% 'POW_AMY_V_10';
+ 'POW_OCC_V_10';
+ 'POW_HPC_V_10';
+ 'POW_TMP_V_10';
+ 'POW_PFC_V_10';
+ 'POW_OFC_V_10';
+ 'POW_AMY_V_10';
 
 };   
 

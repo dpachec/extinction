@@ -45,7 +45,14 @@ EPP = (allComb(:,7) == 1 & allComb(:,17) == 3) | (allComb(:,7) == 3 & allComb(:,
 EPM = (allComb(:,7) == 1 & allComb(:,17) == 2) | (allComb(:,7) == 2 & allComb(:,17) == 1);
 
 
-
+if exist('SICSPT')
+   idF = DT & SI2 & CSP & TEST;
+   new_sicspt = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSMT')
+   idF = DT & SI2 & CSM & TEST;
+   new_sicspt = [allComb(idF, 1) allComb(idF, 11)];
+end
 if exist('ALLE')
    idF = DT & EXT;
    new_alle = [allComb(idF, 1) allComb(idF, 11)];
@@ -308,6 +315,7 @@ if exist('SCETR')
    new_sce = [oneListIdsA(idF, 1)];
    new_sce(:, 2) = new_sce(:, 1) + 1; 
 end
+
 
 
 %if strcmp(cfg.tyRSA, 'POW')

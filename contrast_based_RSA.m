@@ -6,35 +6,27 @@ clear , clc
 
 listF2sav = {
 
-'RSA_aHPC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
-'RSA_aHPC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
-'RSA_aHPC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
-'RSA_aHPC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+'RSA_AMY_V_1-44_1_0_500-50_1_T_SCA-DCA'; 
+'RSA_AMY_V_1-44_1_0_500-50_1_T_SCE-DCE'; 
+'RSA_AMY_V_1-44_1_0_500-50_1_T_SCT-DCT'; 
 
-'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
-'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
-'RSA_AMY_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
-'RSA_AMY_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+'RSA_HPC_V_1-44_1_0_500-50_1_T_SCA-DCA'; 
+'RSA_HPC_V_1-44_1_0_500-50_1_T_SCE-DCE'; 
+'RSA_HPC_V_1-44_1_0_500-50_1_T_SCT-DCT'; 
 
-'RSA_PFC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
-'RSA_PFC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
-'RSA_PFC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
-'RSA_PFC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+'RSA_TMP_V_1-44_1_0_500-50_1_T_SCA-DCA'; 
+'RSA_TMP_V_1-44_1_0_500-50_1_T_SCE-DCE'; 
+'RSA_TMP_V_1-44_1_0_500-50_1_T_SCT-DCT'; 
 
-'RSA_OFC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
-'RSA_OFC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
-'RSA_OFC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
-'RSA_OFC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+'RSA_OFC_V_1-44_1_0_500-50_1_T_SCA-DCA'; 
+'RSA_OFC_V_1-44_1_0_500-50_1_T_SCE-DCE'; 
+'RSA_OFC_V_1-44_1_0_500-50_1_T_SCT-DCT'; 
 
-'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
-'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
-'RSA_TMP_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
-'RSA_TMP_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+'RSA_PFC_V_1-44_1_0_500-50_1_T_SCA-DCA'; 
+'RSA_PFC_V_1-44_1_0_500-50_1_T_SCE-DCE'; 
+'RSA_PFC_V_1-44_1_0_500-50_1_T_SCT-DCT'; 
 
-'RSA_OCC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
-'RSA_OCC_C_1-44_1_0_500-50_1_T_SICSPT-SICSMT';
-'RSA_OCC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
-'RSA_OCC_C_1-44_1_0_500-50_1_T_SCT-DCT'; 
+
 
 };   
 
@@ -84,21 +76,23 @@ end
 %% plot 2 lines from TG 
 clear, clc
 
+minTr = 5; 
 paths = load_paths_EXT; 
-%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+%f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
 %f2sav  = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCE-DCE';
 
-f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+%f2sav = 'RSA_OFC_V_1-44_1_0_500-50_1_T_SCT-DCT';
 
 load ([ paths.results.rsa f2sav '.mat']);
 
 cfg = getParams_EXT(f2sav);
 
-sub2exc = load_sub2exc_EXT (cfg); 
+sub2exc = [11 37]; 
 
 nTrials = compute_trial_number_EXT(ids); 
 
-[out_rsa, ids2rem] = rem_nan_subj_EXT(out_rsa, sub2exc); 
+[out_rsa, sub2exc] = rem_nan_subj_EXT(out_rsa, sub2exc, nTrials, minTr); 
 
 [h tObs d2pm1 d2pm2 se1 se2] = compute_real_differences_EXT(out_rsa); 
 
@@ -123,6 +117,7 @@ shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(1,:)}, 1); hold on;
 plot(times, hb,'k',  LineWidth=7)
 %set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .045], 'Fontsize', 22); %STABILITY
 set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 22);
+%set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .1], 'Fontsize', 22);
 plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 2);
 plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
 
@@ -296,49 +291,16 @@ end
 clear
 
 paths = load_paths_EXT; 
-f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_SICSPE-SICSME';
-%f2sav  = 'RSA_PFC_C_1-44_1_0_500-50_1_SCA-DCA';
+%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_SICSPE-SICSME';
+f2sav  = 'RSA_PFC_C_1-44_1_0_500-50_1_SCE-DCE';
 
 load ([ paths.results.rsa f2sav '.mat']);
 
 cfg = getParams_EXT(f2sav);
-if length(cfg.contr2sav{1}) > 3 & strcmp(cfg.contr2sav{1}(1:5), 'SICSP') %ITEM STABILITY
-    if strcmp(cfg.contr2sav{1}(6), 'E') 
-        if strcmp(cfg.roi, 'TMP') 
-            sub2exc = [19 25 31 27 37]; 
-        elseif strcmp(cfg.roi, 'AMY') 
-            sub2exc = [27 37]; 
-        elseif strcmp(cfg.roi, 'HPC') 
-            sub2exc = [27 37];             
-        elseif strcmp(cfg.roi, 'PFC') 
-            sub2exc = [27 37];             
-        elseif strcmp(cfg.roi, 'OFC') 
-            sub2exc = [27 37];        
-        elseif strcmp(cfg.roi, 'OCC') 
-            sub2exc = [27 37];               
-        end
-    elseif strcmp(cfg.contr2sav{1}(6), 'A') 
-        disp('Acquisition')
-        sub2exc = [24 25 27 37]; 
-    end
-elseif strcmp(cfg.contr2sav{1}(1:2), 'SC') %CONTEXT
-    if strcmp(cfg.contr2sav{1}(3), 'A') 
-        if strcmp(cfg.roi, 'TMP') 
-            sub2exc = [27 37]; 
-        elseif strcmp(cfg.roi, 'PFC') 
-            sub2exc = [27 37]; 
-        elseif strcmp(cfg.roi, 'HPC') 
-            sub2exc = [27 37]; 
-        elseif strcmp(cfg.roi, 'OCC') 
-            sub2exc = [27 37];                  
-        end
-    elseif strcmp(cfg.contr2sav{1}(3), 'E')
-
-    end
-end
 
 nTrials = compute_trial_number_EXT(ids); 
 
+sub2exc = []; 
 [out_rsa, ids2rem] = rem_nan_subj_EXT(out_rsa, sub2exc); 
 
 cond1 = squeeze(out_rsa(:, 1, :, :)); 
@@ -702,9 +664,9 @@ nTrialsE = compute_trial_number_EXT(ids);
 
 cfg = getParams_EXT(f2sav);
 if length(cfg.contr2sav{1}) > 3 & strcmp(cfg.contr2sav{1}(1:5), 'SICSP') 
-    sub2exc = [19 24 25 31 27 37]; 
+    sub2exc = [11 37]; 
 elseif strcmp(cfg.contr2sav{1}(1:2), 'SC')
-    sub2exc = [27 37]; 
+    sub2exc = [11 37]; 
 end
 
 [out_rsa_ACQ, ids2remA] = rem_nan_subj_EXT(out_rsa_ACQ, sub2exc); 

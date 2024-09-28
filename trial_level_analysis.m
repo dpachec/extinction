@@ -1009,10 +1009,10 @@ plot(t)
 
 clear, clc
 
-trltype = 3;
+trltype = 2;
 minTrN = 5; 
 tP = 21:28; %21:28 PFC effect %19:31 PFC effec ACQvsEXT
-%tP = 19:31; %21:28 PFC effect %19:31 PFC effec ACQvsEXT
+%tP = 19:30; %21:28 PFC effect %19:31 PFC effec ACQvsEXT
 %tP2 = 6:40; %take all period for reinstatement
 
 paths = load_paths_EXT;
@@ -1054,7 +1054,8 @@ for subji = 1:50
         end
         
 
-        nTrials(subji, :) = size(rsa2T1, 1); 
+        nTrials(subji, :) = min([size(rsa2T1, 1), size(rsa2T2, 1),  size(rsa2T3, 1)]); 
+
         rsa2TT1(subji, :) = mean(rsa2T1, 'all', 'omitnan'); 
         rsa2TT2(subji, :) = mean(rsa2T2, 'all', 'omitnan'); 
         rsa2TT3(subji, :) = mean(rsa2T3, 'all', 'omitnan'); 
@@ -1063,7 +1064,7 @@ for subji = 1:50
 end
 
 sub2exc2 = find(nTrials < minTrN); 
-sub2exc3 = [sub2exc, sub2exc2']; 
+sub2exc3 = [sub2exc; sub2exc2]; 
 sub2exc = unique(sub2exc3); 
 
 rsa2TT1(sub2exc, :, :) = []; 
@@ -1074,12 +1075,13 @@ rsa2TT1(rsa2TT1==0) = [];
 rsa2TT2(rsa2TT2==0) = []; 
 rsa2TT3(rsa2TT3==0) = []; 
 
-%rsa2TT4 = rsa2TT2 - rsa2TT3; 
-rsa2TT4 = rsa2TT3; 
+rsa2TT4 = rsa2TT2 - rsa2TT3; 
+%rsa2TT4 = rsa2TT3; 
 
 [rho p] = corr(rsa2TT1, rsa2TT4, 'type', 's');
 
 nSubj = length(rsa2TT1); 
+disp(['Number of subjects: ' num2str(nSubj)]); 
 scatter(rsa2TT1, rsa2TT4, 1400, '.'); hold on; 
 pFit = polyfit(rsa2TT1, rsa2TT4, 1);
 m = pFit(1); % slope
@@ -1098,9 +1100,9 @@ disp(['Rho: ' num2str(rho, 3) ' p: ' num2str(p, 3)]);
 clear, clc
 
 
-trltype = 3;
-tP = 21:28; % PFC CTX cluster; 
-minTrN = 5; 
+trltype = 2;
+tP = 23:28; % PFC CTX cluster; 
+minTrN = 8; 
 
 
 paths = load_paths_EXT;
@@ -1149,7 +1151,7 @@ for subji = 1:50
             rsa2T3 = rsa2T3; 
         end
         
-        nTrials(subji, :) = size(rsa2T1, 1); 
+        nTrials(subji, :) = min([size(rsa2T1, 1), size(rsa2T2, 1),  size(rsa2T3, 1)]); 
 
         rsa2TT1(subji, :) = mean(mean(rsa2T1(:, tP), 2)); 
 
@@ -1167,7 +1169,7 @@ for subji = 1:50
 end
 
 sub2exc2 = find(nTrials < minTrN); 
-sub2exc3 = [sub2exc, sub2exc2']; 
+sub2exc3 = [sub2exc; sub2exc2]; 
 sub2exc = unique(sub2exc3); 
 
 rsa2TT1(sub2exc, :, :) = []; 
@@ -1200,7 +1202,7 @@ exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 
 clear, clc
 
-tyTR = 2; 
+tyTR = 1; 
 minTrN = 5;
 
 %tP = 19:31; %21:28 PFC effect %19:31 PFC effec ACQvsEXT

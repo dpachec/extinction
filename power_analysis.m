@@ -245,24 +245,18 @@ cd (paths.github)
 
 %% ALL FREQUENCIES 
 
-freq2u = 1:12;
+freq2u = 4:8;
 
+sub2excApriori = [11 24 37]'; 
+
+minTr = 10; 
 f2u = strsplit(file2load, '_')
 
-if strcmp(f2u{2}, 'AMY')
-    sub2exc = [19 27 37]; 
-elseif strcmp(f2u{2}, 'HPC')
-    sub2exc = []; % no exclusions: no subjects with less than 10 trials in HPC
-elseif strcmp(f2u{2}, 'OCC')
-    sub2exc = []; % no exclusions: no subjects with less than 10 trials in OCC
-elseif strcmp(f2u{2}, 'PFC')
-    sub2exc = [19 27 37]; 
-elseif strcmp(f2u{2}, 'OFC')
-    sub2exc = [27]; %no subjects to exclude in OFC
-elseif strcmp(f2u{2}, 'TMP')
-    %sub2exc = [6 19 21 24 25 31 32 33 38 39 41 42 46 48 50]; % all subj with less than 10
-    sub2exc = [19 21 25 31 46]; % all subj with less than 5 trials
-end
+
+sub2exc = find(nTrials(:, 1) < minTr | nTrials(:, 2) < minTr); 
+sub2exc2 = find(nTrials(:, 1) <minTr | nTrials(:, 2) <minTr ); 
+sub2exc3 = [sub2excApriori; sub2exc2]; 
+sub2exc = unique(sub2exc3)'; 
 
 
 c1B = c1(:, freq2u, 276:475); c2B = c2(:, freq2u, 276:475); 
@@ -374,51 +368,36 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 toc
 
+
 %% permutations shuffling trial labels in each subject
 
 
 clearvars -except ALLEEG ids1 ids2 max_clust_obs file2load paths freq2u sub2exc
 
 
-nPerm = 500; 
+nPerm = 1000; 
 t4p = 301:475; 
 
 
 tic
-for subji = 1:length(ALLEEG)
-    progress_in_console(subji)
-    EEG = ALLEEG{subji};
-    if ~isempty(EEG)
-        c1 = squeeze(mean(EEG.power(ids1, :, freq2u ,t4p), 2, 'omitnan'));  %mean across electrodes
-        c2 = squeeze(mean(EEG.power(ids2, :, freq2u ,t4p), 2, 'omitnan')); 
-        junts = cat(1, c1, c2); 
-        realCondMapping = [zeros(1,size(c1, 1)) ones(1, size(c2, 1))]';
-        
-        for permi = 1:nPerm
-            fakeCondMapping = realCondMapping(randperm(length(realCondMapping)));
-            c1P = junts(fakeCondMapping ==0,:,:); 
-            c2P = junts(fakeCondMapping ==1,:,:); 
-        
-            powPerm(subji, permi, :, :, :) = cat(1, c1P, c2P);         
-        end
-    end
-end
-
-powPerm(sub2exc, :, :, :, :) = []; 
-
-toc
-
-
-%%
-tic
 for permi = 1:nPerm
     progress_in_console(permi)
-    c1P = mean(powPerm(:, permi, 1:24, :, :), 3, 'omitnan'); 
-    c2P = mean(powPerm(:, permi, 25:72, :, :), 3, 'omitnan'); 
-
+    for subji = 1:length(ALLEEG)
+        EEG = ALLEEG{subji};
+        if ~isempty(EEG)
+            c1 = squeeze(mean(EEG.power(ids1, :, freq2u ,t4p), 2, 'omitnan'));  %mean across electrodes
+            c2 = squeeze(mean(EEG.power(ids2, :, freq2u ,t4p), 2, 'omitnan')); 
+            junts = cat(1, c1, c2); 
+            realCondMapping = [zeros(1,size(c1, 1)) ones(1, size(c2, 1))]';
+            fakeCondMapping = realCondMapping(randperm(length(realCondMapping)));
+            c1P(subji, :, :) = mean(junts(fakeCondMapping ==0,:,:)); 
+            c2P(subji, :, :) = mean(junts(fakeCondMapping ==1,:,:)); 
+        end
+    end
+    
     [hPerm p ci tsPerm] = ttest(c1P, c2P); 
     hPerm = squeeze(hPerm); tPerm = squeeze(tsPerm.tstat);
-
+    
     clear allSTs  
     clustinfo = bwconncomp(hPerm);
     for pxi = 1:length(clustinfo.PixelIdxList)
@@ -432,9 +411,13 @@ for permi = 1:nPerm
     end
 end
 
+
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(max_clust_obs));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
+
 toc
+
+
 
 %% 
 histogram(max_clust_sum_perm, 20)

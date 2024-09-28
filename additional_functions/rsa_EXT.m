@@ -123,10 +123,14 @@ for coni = 1:length(currentContrast)
             else
                 allRSAZ(coni, :, :) = squeeze(mean(rsaZ, 'omitnan')); 
             end
-        else 
-            if cfg.TG
-                allRSAZ(coni, :, :) = nan (bins);
-            end        
+        else
+            if strcmp(cfg.TnT, 'T')
+                allRSAZ{coni} = []; 
+            else
+                if cfg.TG
+                    allRSAZ(coni, :, :) = nan (bins);
+                end
+            end
         end
         
         

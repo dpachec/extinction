@@ -28,28 +28,28 @@ clear
 paths = load_paths_EXT;
 
 % 
-% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
-%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-%            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-%             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
-%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
-
-
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-            'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
 
 
+% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+%            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+%             'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
+%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
+
+
 responses = [];
 
 
-for subji=1:43%numel(allsubs)
+for subji=1:numel(allsubs)
 
     sub=allsubs{subji};
     info_file=strcat(paths.trlinfo,sub,'_trlinfo');
@@ -119,22 +119,22 @@ types={'cs+cs+','cs+cs-','cs-cs-'};
 
 paths = load_paths_EXT;
 
-% 
-% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
-%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-%            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-%             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
-%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
 
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-            'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub09', 'p_sub10', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
-            'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08 p_sub07 c_sub27
+            'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
+
+% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+%            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+%             'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub09', 'p_sub10', ...
+%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
+%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08 p_sub07 c_sub27
 
 
 
@@ -194,21 +194,21 @@ paths = load_paths_EXT;
 path_trlinfo= paths.trlinfo;
 
 
-% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
-%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-%            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-%             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
-%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
-
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-            'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub09', 'p_sub10', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
-            'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08 no c_sub27 no p_sub06
+            'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
+
+% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+%            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+%             'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub09', 'p_sub10', ...
+%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
+%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08 no c_sub27 no p_sub06
 
 
 for subji=1:numel(allsubs)
@@ -316,7 +316,7 @@ exportgraphics(gcf, filename, 'Resolution',300)
 
 
 
-window=2;
+window=1;
 
 % smooth trajectories
 move_avg=ones(1,window)/window;
@@ -395,8 +395,8 @@ newM(3, :) = green;
 
 for ty=1:3
     x1=1:size(avg_response_type,3)
-    y1=squeeze(nanmean(filt_avg_response_type(:,ty,:)));
-    b1=squeeze(nanstd(filt_avg_response_type(:,ty,:),1))./sqrt(numel(allsubs));
+    y1=squeeze(nanmean(avg_response_type(:,ty,:)));
+    b1=squeeze(nanstd(avg_response_type(:,ty,:),1))./sqrt(numel(allsubs));
    
     boundedline(x1, y1, b1, 'LineWidth', 2, 'cmap',newM(ty,:),'transparency',0.2,'alpha');
     
@@ -417,9 +417,9 @@ set(gca, 'xtick', [12 36 56], 'xticklabels', {'ACQ' 'EXT' 'TEST'})
 
 
 % anova %here
-clear tbl, clc
+clear tbl allP allF
 for timei = 1:64
-    d4ANOVA =  squeeze(filt_avg_response_type(:,:,timei)); 
+    d4ANOVA =  squeeze(avg_response_type(:,:,timei)); 
     nSubj = size(d4ANOVA, 1); 
     d4ANOVA = d4ANOVA(:); 
     d4ANOVA(:,2) = [ones(1,nSubj) ones(1,nSubj)*2 ones(1,nSubj)*3];
@@ -429,22 +429,22 @@ for timei = 1:64
     allF(timei) = f; 
 end
 
-hb = allP<0.05; 
-clustinfo = bwconncomp(hb);
-hb = double(hb); hb(hb == 0) = nan; hb(hb==1) = 1.1; 
-clear allSTs
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(allF(clustinfo.PixelIdxList{pxi}));% 
-end
-[max2u id] = max(abs(allSTs));
-max_clust_obs_ANOVA = allSTs(id)
+% hb = allP<0.05; 
+% clustinfo = bwconncomp(hb);
+% hb = double(hb); hb(hb == 0) = nan; hb(hb==1) = 1.1; 
+% clear allSTs
+% for pxi = 1:length(clustinfo.PixelIdxList)
+%    allSTs(pxi,:) = sum(allF(clustinfo.PixelIdxList{pxi}));% 
+% end
+% [max2u id] = max(abs(allSTs));
+% max_clust_obs_ANOVA = allSTs(id);
 
 % ttest 1
-for i=1:size(filt_avg_response_type,3)
-    [htest1(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,1,i)),squeeze(filt_avg_response_type(:,2,i)))
+for i=1:size(avg_response_type,3)
+    [htest1(i),p(i) ci ts(i)]=ttest(squeeze(avg_response_type(:,1,i)),squeeze(avg_response_type(:,2,i)));
 end
 t1 = [ts.tstat]; 
-hb1 = double(htest1); hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.2; 
+
 clustinfo1 = bwconncomp(htest1);
 clear allSTs
 for pxi = 1:length(clustinfo1.PixelIdxList)
@@ -456,15 +456,19 @@ if exist('allSTs')
 else
     max_clust_obs_TT1 = 0; 
 end
+%remove non significant 
+htest1 = zeros(1, length(htest1)); 
+htest1(clustinfo1.PixelIdxList{id}) = 1; 
+hb1 = double(htest1); hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.15; 
+
 [sxs iDp1ACQ] = min(p(1:24)); 
 t1ACQ = t1(iDp1ACQ); 
 
 % ttest 2
-for i=1:size(filt_avg_response_type,3)
-    [htest2(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,1,i)),squeeze(filt_avg_response_type(:,3,i)))
+for i=1:size(avg_response_type,3)
+    [htest2(i),p(i) ci ts(i)]=ttest(squeeze(avg_response_type(:,1,i)),squeeze(avg_response_type(:,3,i)));
 end
 t2 = [ts.tstat]; 
-hb2 = double(htest2); hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
 clustinfo2 = bwconncomp(htest2);
 clear allSTs
 for pxi = 1:length(clustinfo2.PixelIdxList)
@@ -476,13 +480,16 @@ if exist('allSTs')
 else
     max_clust_obs_TT2 = 0; 
 end
+%remove non significant 
+htest2 = zeros(1, length(htest2)); 
+htest2(clustinfo2.PixelIdxList{id}) = 1; 
+hb2 = double(htest2); hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
 
 % ttest 3
-for i=1:size(filt_avg_response_type,3)
-    [htest3(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,2,i)),squeeze(filt_avg_response_type(:,3,i)))
+for i=1:size(avg_response_type,3)
+    [htest3(i),p(i) ci ts(i)]=ttest(squeeze(avg_response_type(:,2,i)),squeeze(avg_response_type(:,3,i)));
 end
 t3 = [ts.tstat]; 
-hb3 = double(htest3); hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.4; 
 clustinfo3 = bwconncomp(htest3);
 clear allSTs
 for pxi = 1:length(clustinfo3.PixelIdxList)
@@ -494,7 +501,10 @@ if exist('allSTs')
 else
     max_clust_obs_TT3 = 0; 
 end
-
+%remove non significant 
+htest3 = zeros(1, length(htest3)); 
+htest3(clustinfo3.PixelIdxList{id}) = 1; 
+hb3 = double(htest3); hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.45; 
 
 plot(hb, 'k', 'LineWidth',5)
 plot(hb1, 'Color', '#EC5300', 'LineWidth',5)
@@ -557,7 +567,8 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 nPerm = 1000; 
 clear max_clust_sum_perm
 for permi = 1:nPerm
-    
+    progress_in_console(permi)
+
     for subji = 1:size(filt_avg_response_type)
         filt_avg_response_type_PERM(subji, :, :) = filt_avg_response_type(subji, randperm(3), :); 
     end
