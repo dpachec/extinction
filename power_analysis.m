@@ -1,124 +1,18 @@
-%% 
-%% Export power
-
-clear, close all
-paths = load_paths_EXT; 
-
-c2u = 'C';
-
-sROI = {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' ...
-        'occipital' '-cuneus' 'lingual' 'pericalcarine'}; 
-
-%{'Amygdala'}; 
-%{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
-%{'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
-%{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
-%{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'};
-
-allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
-           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17', 'p_sub18', ...
-            'p_sub19', 'p_sub20', 'p_sub21'}'; %subject 8 has differnet format (see below)}';
-
-
-for subji = 1:length(allsubs)
-    subji
-    sub = allsubs{subji}; 
-    cd([ paths.iEEG])
-    load ([sub '_iEEG.mat']);
-
-    EEG = remove_elec_EXT_manually(EEG, subji); %thres channels is 1/5 of 192 = 38
-    chansLab = {EEG.chanlocs.fsLabel}';
-    selChans = contains(chansLab, sROI);
-
-    
-    if find(selChans)
-        
-        EEG.chanlocs = EEG.chanlocs(selChans);
-        EEG.data = EEG.data(selChans, :); %contains nans
-        
-        %epoch data
-        Ev = [{EEG.event.type}]'; 
-        Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
-        clen = cellfun(@length, Ev1); 
-        EEG.event = EEG.event(clen==10); Ev1 = Ev1(clen==10);
-        Ev2 = cat(1, Ev1{:});
-       
-        Ev2(:, 10) = erase(Ev2(:, 10), ' '); %paris subjects have a space in the last character of the event WHY??
-        ids = strcmp(Ev2(:, 10), c2u); 
-        EEG.event = EEG.event(ids);
-
-        % % % remove renewal trials 
-        %id2r3 = strcmp(Ev2(:, 2), '1') | strcmp(Ev2(:, 2), '2'); 
-        %EEG.event = EEG.event(ids & id2r3);
-
-        %epoch data and markers
-        [EEG id2check] = pop_epoch( EEG, {}, [-3 4], 'newname', 'verbose', 'epochinfo', 'yes');
-        
-        EEG = remove_elec_EXT(EEG, 50); %thres channels is 1/5 of 192 = 38
-
-        
-
-        if ~isempty(EEG.data)
-            
-            EEG = extract_power_EXT(EEG, 0.01); 
-            %EEG = extract_theta_power_EXT(EEG); %HILBERT
-            EEG = normalize_EXT(EEG);
-            nChans(subji, :) = size(EEG.power, 2);
-            ALLEEG{subji,:} = EEG; 
-
-        end
-    
-    end
-
-
-end
-
-sROI = char(join(sROI, '_'));
-mkdir(paths.results.power)
-filename = [paths.results.power 'allS_' sROI '_' c2u];
-nSub = sum(cell2mat(cellfun(@(x) ~isempty(x), ALLEEG, 'un', 0)));
-totalChans = sum(nChans);
-save(filename, 'ALLEEG', 'nSub', 'nChans', 'totalChans', '-v7.3');
-
-cd (paths.github)
-
-
-%% load traces
-
-%file2load = ['TR_' 'HPC' '_C']; 
-file2load = ['TR_' 'AMY' '_C']; 
-load ([paths.results.traces file2load]); 
-disp('loaded')
-
-
-
 %% % % % % % % % FIRST LOAD FILE - > START HERE
+%%
 clear, clc
 
 paths = load_paths_EXT; 
-file2load = ['allS_' 'AMY' '_C']; 
+file2load = ['allS_' 'TMP' '_C']; 
 
 load ([paths.results.power file2load]); 
 
-sub2exc = []; % p_07 c_27 %Always in the 50 subject space
-%sub2exc = [27 37]; % p_07 c_27 %Always in the 50 subject space
-ALLEEG(sub2exc,:) = {[]}; 
-
-
-
-
-
-%% count channels 
+%%count channels 
 
 clear nChans
 for subji = 1:length(ALLEEG)
     EEG = ALLEEG{subji};
     if~isempty(EEG)
-        length(EEG.chanlocs)
         nChans(subji,:) = length(EEG.chanlocs);
     end
 end
@@ -126,51 +20,8 @@ end
 disp (['Subjects with elec: ' num2str(length(find(nChans)))])
 disp (['Total elec num: ' num2str(sum(nChans))])
 
-
-
-%% SELECT CHANNELS TO PLOT
-clearvars -except ALLEEG paths file2load
-clc 
-for subji = 1:length(ALLEEG)
-    EEG = ALLEEG{subji};
-    if ~isempty(EEG)
-        chans = [{EEG.chanlocs.fsLabel}]'; 
-        ids2rem1 = []; 
-        %ids2rem1 = contains(chans, 'Left')
-        ids2rem1 = contains(chans, 'Right')
-        %ids2rem1 = contains(chans, 'Hippocampus')
-        %ids2rem = logical(ids2rem1+ids2rem2)
-        ids2rem = ids2rem1; 
-        if ndims(EEG.power) == 3
-            tmph(:, 1, :, :)  = EEG.power; 
-            EEG.power = tmph; 
-        end
-        EEG.chanlocs(ids2rem) = []; 
-        if size(EEG.chanlocs, 2) >0 & size(EEG.chanlocs, 1) >0 
-            EEG.power(:, ids2rem, :, :) = []; 
-            ALLEEG1{subji,:} = EEG; 
-        end
-
-    end
-end
-
-clear ALLLEEG
-ALLEEG = ALLEEG1; 
-
-%% Plot time frequency power for all channels in one subject
-
-EEG = ALLEEG{19}; 
-size(EEG.power)
-nChans = size(EEG.power, 2); 
-nTrials = size(EEG.power, 1); 
-for chani = 1:nChans
-    for triali = 1:5 %:nTrials
-        
-        figure()
-        imagesc(squeeze(EEG.power(triali, chani, :, :))); 
-
-    end
-end
+nChans2 = nChans(any(nChans,2),:);
+disp (['Elec per subject in amy: ' num2str(mean(nChans2)) ' ± ' num2str(std(nChans2))])
 
 
 %% PLOT grand average for each condition
@@ -191,12 +42,12 @@ for subji = 1:length(ALLEEG)
 
 
         % % %   % % Acquisition
-        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
-        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+        ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+        ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
 
         % % % % % % Extinction
-        ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
-        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
+        %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ;
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
         
         %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
         %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
@@ -247,9 +98,10 @@ cd (paths.github)
 
 freq2u = 4:8;
 
-sub2excApriori = [11 24 37]'; 
+sub2excApriori = [37]'; 
+%sub2excApriori = []'; 
 
-minTr = 10; 
+minTr = 8; 
 f2u = strsplit(file2load, '_')
 
 
@@ -284,40 +136,50 @@ max_clust_obs = allSTs(id);
 h = zeros(size(c1B, 2),size(c1B, 3));
 h(clustinfo.PixelIdxList{id}) = 1; 
 
+hTestTimes = sum(h)'; 
+hTestFreqs = sum(h, 2); 
+
 
 
 times = -.24:.01:1.75; 
-findLAT_H = sum(h);
-findLAT_H(2, :) = times; 
+hTestTimes(:, 2) = times'; 
+
 
 freqs = 1:size(c1B, 2);
 figure()
 tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 900])
-nexttile
-contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
+ax1 = nexttile
+contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power'; 
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.125 .125])
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 title('CS+')
 xlabel('Time (s)')
 ylabel('Frequency (Hz)')
-nexttile
+ax2 = nexttile
 contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.125 .125])
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 title('CS-')
 xlabel('Time (s)')
 ylabel('Frequency (Hz)')
-nexttile
-contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T';
+ax3 = nexttile
+contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T'; c.Label.Rotation= 360; 
 contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-4 4])
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 title('CS+ vs CS-')
 xlabel('Time (s)')
 ylabel('Frequency (Hz)')
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-colormap(brewermap([],'*Spectral'))
+colormap(ax1, brewermap([],'*Spectral'))
+colormap(ax2, brewermap([],'*Spectral'))
+colormap(ax3, brewermap([],'*RdYlBu'))
 
 set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1  length(freq2u)], 'yticklabels', {num2str(freq2u(1)), num2str(freq2u(end))}, 'xlim', [-.24 1.75]);
+
+if freq2u(end) == 44
+    set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1  length(freq2u)], 'yticklabels', {num2str(freq2u(1)), '100'}, 'xlim', [-.24 1.75]);
+end
+
 %set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1 30 54], 'yticklabels', {'1', '30', '150'}, 'xlim', [-.25 1.75]);
 %set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [3 8], 'yticklabels', {'3', '8'}, 'xlim', [-.5 1.75]);
 
@@ -325,6 +187,9 @@ set(findobj(gcf,'type','axes'),'FontSize',18, 'ytick', [1  length(freq2u)], 'yti
 %exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
+%% 
+
+nTrials2 = nTrials(any(nTrials,2),:);
 
 %% permutations shuffling condition labels at the group level
 
@@ -419,85 +284,18 @@ toc
 
 
 
-%% 
-histogram(max_clust_sum_perm, 20)
-
-
-
-%% permutations 
-
-nPerm = 1000; 
-t4p = 26:200; 
-
-
-clear max_clust_sum_perm
-junts = cat(1, c1B, c2B);
-junts = junts(:, :, t4p); 
-
-nSubj =  size(c1B, 1);
-realCondMapping = [zeros(1,nSubj); ones(1, nSubj)]';
-[M,N] = size(realCondMapping);
-rowIndex = repmat((1:M)',[1 N]);
-
-tic
-for permi = 1:nPerm
-    [~,randomizedColIndex] = sort(rand(M,N),2);
-    newLinearIndex = sub2ind([M,N],rowIndex,randomizedColIndex);
-    fakeCondMapping = realCondMapping(newLinearIndex);
-    fakeCondMapping = fakeCondMapping(:);
-    
-
-    cond1P = junts(fakeCondMapping == 0, :,:);
-    cond2P = junts(fakeCondMapping == 1, :,:);
-    
-    [hPerm p ci tsPerm] = ttest(cond1P, cond2P); 
-    hPerm = squeeze(hPerm); tPerm = squeeze(tsPerm.tstat);
-
-    clear allSTs  
-    clustinfo = bwconncomp(hPerm);
-    for pxi = 1:length(clustinfo.PixelIdxList)
-        allSTs(pxi,:) = sum(tPerm(clustinfo.PixelIdxList{pxi}));% 
-    end
-    if exist('allSTs') & ~isempty(clustinfo.PixelIdxList)
-        [max2u id] = max(abs((allSTs)));
-        max_clust_sum_perm(permi,:) = allSTs(id); 
-    else
-        max_clust_sum_perm(permi,:) = 0; 
-    end
-    
-
-end
-
-allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(max_clust_obs));
-p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
-
-
-toc
-
-
-%% plot cluster depic schematic 
-
-eE1 = zeros(54,200); 
-eE1(clustinfo.PixelIdxList{id}) = 1; 
-
-
-figure(); set(gcf, 'Position', [100 100 500 200])
-contourf(1:2000, 1:540, myresizem(eE1, 10), 40, 'linecolor', 'none'); hold on; 
-contour(1:2000, 1:540,myresizem(eE1, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 6); 
-plot([250 250 ],get(gca,'ylim'), 'k:','lineWidth', 8);set(gca, 'clim', [-.125 .125]); hold on; 
-
-set(gca, 'xTick', [], 'xTicklabel', [], 'yTick', [], 'yTicklabel', []);
-colormap autumn
-
-exportgraphics(gcf, ['myP.png'], 'Resolution',300)
-
-
-
-
 %% take in cluster only
-clear 
-load allTHETAPOWER
-load clustinfo_AMY_THETA_px4
+% no need to exclude subjects, already excluded in previous blocks
+clearvars -except ALLEEG
+
+load _44_allTHETAPOWER
+load _44_clustinfo_AMY_THETA_px32
+px = 32; 
+
+% load _4-8_allTHETAPOWER
+% load _4-8_clustinfo_AMY_THETA_px4
+% px = 4; 
+% 
 
 
 for subji = 1:size(c1B_A, 1)
@@ -508,13 +306,15 @@ for subji = 1:size(c1B_A, 1)
     CSPME_S = squeeze(c2B_E(subji,:,:));
     CSMME_S = squeeze(c3B_E(subji,:,:));
     
-    CSPA(subji,:) = mean(CSPA_S(clustinfo.PixelIdxList{4}), 'all');
-    CSMA(subji,:) = mean(CSMA_S(clustinfo.PixelIdxList{4}), 'all');
-    CSPPE(subji,:) = mean(CSPPE_S(clustinfo.PixelIdxList{4}), 'all');
-    CSPME(subji,:) = mean(CSPME_S(clustinfo.PixelIdxList{4}), 'all');
-    CSMME(subji,:) = mean(CSMME_S(clustinfo.PixelIdxList{4}), 'all');
+    CSPA(subji,:) = mean(CSPA_S(clustinfo.PixelIdxList{px}), 'all');
+    CSMA(subji,:) = mean(CSMA_S(clustinfo.PixelIdxList{px}), 'all');
+    CSPPE(subji,:) = mean(CSPPE_S(clustinfo.PixelIdxList{px}), 'all');
+    CSPME(subji,:) = mean(CSPME_S(clustinfo.PixelIdxList{px}), 'all');
+    CSMME(subji,:) = mean(CSMME_S(clustinfo.PixelIdxList{px}), 'all');
 
 end
+
+
 
 %% 
 CSMME(isnan(CSMME)) = []; 
@@ -550,31 +350,31 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 clc
 [h p ci ts] = ttest(CSPA, CSMA); 
 t = ts.tstat; 
-disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
+disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
 
 [h p ci ts] = ttest(CSPPE, CSPME); 
 t = ts.tstat; 
-disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
+disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
 
 [h p ci ts] = ttest(CSPPE, CSMME); 
 t = ts.tstat; 
-disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
+disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
 
 [h p ci ts] = ttest(CSPME, CSMME); 
 t = ts.tstat; 
-disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
+disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
 
 [h p ci ts] = ttest(CSPPE); 
 t = ts.tstat; 
-disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
+disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
 
 [h p ci ts] = ttest(CSPME); 
 t = ts.tstat; 
-disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
+disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
 
 [h p ci ts] = ttest(CSMME); 
 t = ts.tstat; 
-disp (['t(' num2str(size(CSPA, 1)) ')= ' num2str(t) '  ' ' p = ' num2str(p)]);
+disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
 
 
 %% compare during extinction
@@ -589,6 +389,92 @@ subID = repmat(1:32, 1, 3)';
 d4ANOVA = [d4ANOVA conds subID]
 
 x = RMAOV1(d4ANOVA);
+
+%% UTILITITES BELOW
+
+%% count channels 
+
+clear nChans
+for subji = 1:length(ALLEEG)
+    EEG = ALLEEG{subji};
+    if~isempty(EEG)
+        length(EEG.chanlocs)
+        nChans(subji,:) = length(EEG.chanlocs);
+    end
+end
+
+disp (['Subjects with elec: ' num2str(length(find(nChans)))])
+disp (['Total elec num: ' num2str(sum(nChans))])
+
+
+
+%% SELECT CHANNELS TO PLOT
+clearvars -except ALLEEG paths file2load
+clc 
+for subji = 1:length(ALLEEG)
+    EEG = ALLEEG{subji};
+    if ~isempty(EEG)
+        chans = [{EEG.chanlocs.fsLabel}]'; 
+        ids2rem1 = []; 
+        %ids2rem1 = contains(chans, 'Left')
+        ids2rem1 = contains(chans, 'Right')
+        %ids2rem1 = contains(chans, 'Hippocampus')
+        %ids2rem = logical(ids2rem1+ids2rem2)
+        ids2rem = ids2rem1; 
+        if ndims(EEG.power) == 3
+            tmph(:, 1, :, :)  = EEG.power; 
+            EEG.power = tmph; 
+        end
+        EEG.chanlocs(ids2rem) = []; 
+        if size(EEG.chanlocs, 2) >0 & size(EEG.chanlocs, 1) >0 
+            EEG.power(:, ids2rem, :, :) = []; 
+            ALLEEG1{subji,:} = EEG; 
+        end
+
+    end
+end
+
+clear ALLLEEG
+ALLEEG = ALLEEG1; 
+
+%% Plot time frequency power for all channels in one subject
+
+EEG = ALLEEG{19}; 
+size(EEG.power)
+nChans = size(EEG.power, 2); 
+nTrials = size(EEG.power, 1); 
+for chani = 1:nChans
+    for triali = 1:5 %:nTrials
+        
+        figure()
+        imagesc(squeeze(EEG.power(triali, chani, :, :))); 
+
+    end
+end
+
+
+
+
+%% plot cluster depic schematic 
+
+eE1 = zeros(44,200); 
+eE1(clustinfo.PixelIdxList{32}) = 1; 
+
+
+figure(); set(gcf, 'Position', [100 100 500 200])
+contourf(1:2000, 1:440, myresizem(eE1, 10), 40, 'linecolor', 'none'); hold on; 
+contour(1:2000, 1:440,myresizem(eE1, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 6); 
+plot([250 250 ],get(gca,'ylim'), 'k:','lineWidth', 8);set(gca, 'clim', [-.125 .125]); hold on; 
+
+set(gca, 'xTick', [], 'xTicklabel', [], 'yTick', [], 'yTicklabel', []);
+colormap autumn
+
+exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+
+
+
+
+
 
 
 %% compare during acquisition

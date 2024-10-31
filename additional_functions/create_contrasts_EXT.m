@@ -304,6 +304,18 @@ if exist('SICSMMT')
    idF = DT & SI2 & CSMM & TEST;
    new_sicsmmt = [allComb(idF, 1) allComb(idF, 11)];
 end
+if exist('SICSPPE')
+   idF = DT & SI2 & CSPP & EXT;
+   new_sicsppe = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSPME')
+   idF = DT & SI2 & CSPM & EXT;
+   new_sicspme = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSMME')
+   idF = DT & SI2 & CSMM & EXT;
+   new_sicsmme = [allComb(idF, 1) allComb(idF, 11)];
+end
 if exist('SCATR')
    idF = DT & SC2 & ACQ; 
    new_scatr = [allComb(idF, 1) allComb(idF, 4) allComb(idF, 11) allComb(idF, 14)];

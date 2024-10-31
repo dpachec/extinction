@@ -1,119 +1,9 @@
 %% Extinction behavioral analysis
-%%
-% 1. what trial number (position in presentation)?
-% 2. which Phase?
-% 3. which context was used?
-% 4. what was the role of the video (A,B,C1,C2)
-% 5. which item was shown?
-% 6. which type of item was shown? % cs+/cs+=1;cs+/cs-=2;cs-/cs-=3;
-% 7. what response was given?
-% 8. cs (0/1) current cs+/cs-
-% 9. us 0/1 (y/n)
-%%%% SR logfile 10000
-% 10. sample point trialonset
-% 11. sample point videoonset
-% 12. sample point cueonset
-% 13. sample point us onset
-% 14. sample point response 
-
-%later added
-%15. number of item rep in each block
-%16 number of us in total
-%path_data='D:\Extinction\iEEG\rawdata\extinction_ieeg\';
-%path_out='D:\Extinction\iEEG\data\preproc\trialinfo\';
-
+%% INDIVIDUAL SUBJECT PLOTS: separately for each subject and type
 
 clear 
 
-paths = load_paths_EXT;
-
-% 
-allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
-           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
-            'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
-
-
-% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
-%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-%            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-%             'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
-%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
-%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
-
-
-responses = [];
-
-
-for subji=1:numel(allsubs)
-
-    sub=allsubs{subji};
-    info_file=strcat(paths.trlinfo,sub,'_trlinfo');
-    load(info_file)  
-    trialinfo = trlinfo; 
-    allTrialinfo{subji,:} = trlinfo;
-
-    label={'Dangerous','Safe'};
-    
-    
-    types={'cs+/cs+','cs+/cs-','cs-/cs-'};
-    items=1:3;
-
-
-    for i=1:3
-        type_item(i)=mean(trialinfo(trialinfo(:,5)==i,6));
-        tmp=trialinfo(trialinfo(:,5)==i,7);
-        responses(i,:)=[tmp',nan(1,length(responses)-numel(tmp))];
-        tmp_us=trialinfo(trialinfo(:,5)==i,9);
-        us_vec(i,:)=[tmp_us',nan(1,length(tmp_us)-numel(tmp_us))]
-    end
-    % 
-    % figure
-    % for i=1:3
-    %     subplot(2,3,i)
-    %     stem(responses(i,:))
-    %     title(types{type_item(i)})
-    % end
-    
-    % % % uncomnment to plot one fig per subject
-% % % % %     figure
-% % % % %     for ty=1:3
-% % % % %         avg_response_type(ty,:)=nanmean(responses(type_item==ty,:),1) 
-% % % % %         avg_us(ty,:)=us_vec(type_item==ty,:);
-% % % % %         subplot(2,2,ty)
-% % % % %         hold on
-% % % % %         rectangle('Position',[0 0 24 4],'FaceColor',[1 .9 .9])
-% % % % %         rectangle('Position',[24 0 24 4],'FaceColor',[0.9 .9 .9])
-% % % % %         rectangle('Position',[48 0 16 4],'FaceColor',[1 .8 1])
-% % % % %         rectangle('Position',[64 0 16 4],'FaceColor',[1 1 .8])
-% % % % %         
-% % % % %         
-% % % % %         stem(avg_response_type(ty,:))
-% % % % %         title(types{ty})
-% % % % %         h=gca;
-% % % % %         h.YTick=[0.1;4-(0.2*4)];
-% % % % %         h.YTickLabel=label;
-% % % % %         h.YTickLabelRotation=90;
-% % % % %     
-% % % % %     end
-% % % % %     
-% % % % %     mkdir(paths.results.behavior)
-% % % % %     filename = [paths.results.behavior sub '_behav.png']
-% % % % %     exportgraphics(gca, filename, 'Resolution',300)
-    %close all
-
-end
-clear avg_response_type tmp tmp_us
-
-%% plot separately for each type
-
-clear 
-
-type2u = 3; % (1, 2, 3) ; Cs+Cs+, Cs+Cs-, Cs-Cs-
+type2u = [1]; % (1, 2, 3) ; Cs+Cs+, Cs+Cs-, Cs-Cs-
 
 types={'cs+cs+','cs+cs-','cs-cs-'};
 
@@ -128,17 +18,7 @@ allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07'
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
 
-% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
-%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
-%            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-%             'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub09', 'p_sub10', ...
-%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
-%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08 p_sub07 c_sub27
 
-
-
-% removed p_07 and c_27
 
 responses = [];
 figure(1); set(gcf, 'Position', [10 20 1850 1350])
@@ -154,7 +34,7 @@ for subji=1:numel(allsubs)
     
     label={'Dangerous','Safe'};
     
-    
+    numberOfResponses{subji, :}= length(find(~isnan(trialinfo(:,7))));
     type_item=mean(trialinfo(trialinfo(:,5)==type2u,6));
     tmp=trialinfo(trialinfo(:,5)==type2u,7);
     responses=[tmp',nan(1,length(responses)-numel(tmp))];
@@ -188,27 +68,205 @@ end
   exportgraphics(gcf, filename, 'Resolution',300)
   
 
-%% analyse behavior: average responses
+%% AVERAGE REPONSES across TRIALS IN EACH BLOCK 
 clear
 paths = load_paths_EXT;
 path_trlinfo= paths.trlinfo;
 
 
+% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+%            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+%             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
+%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
+
 allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
-           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub09','c_sub10','c_sub11', 'c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'c_sub25','c_sub26','c_sub27', 'c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
-            'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
+            'p_sub19', 'p_sub20', 'p_sub21'}'; 
+
+
+for subji=1:numel(allsubs)
+    % plot responses for each type across experiment
+    load(strcat(path_trlinfo,allsubs{subji},'_trlinfo.mat'))
+    trialinfo=trlinfo;
+    nanResponses(subji, :) = length(find(isnan(trialinfo(:, 7))));
+    types={'cs+/cs+','cs+/cs-','cs-/cs-'};
+    items=1:3;
+    
+    for i=1:3
+        type_item(i)=mean(trialinfo(trialinfo(:,5)==i,6));
+        tmp=trialinfo(trialinfo(:,5)==i,7);
+        %responses(i,:)=[tmp',nan(1,64-numel(tmp))]; % does not affect results and don't understand, removed
+        responses(i,:)=tmp;
+    end
+    
+    % average responses for each  n x type x response
+    for ty=1:3
+        %avg_response_type(subji,ty,:)=nanmean(responses(type_item==ty,:),1) 
+        avg_response_type(subji,ty,:)=nanmean(responses(find(type_item==ty),:),1);
+    end
+end
+
+
+
+
+
+%% average rating each block
+
+block_def=[1 24;25 48;49 64];
+fig_stuff=subplot(1,1,1);
+cmap_default=fig_stuff.ColorOrder;
+green= colormap(brewermap([1],'Greens'))
+green = green*.9;
+red = cmap_default(2,:);
+yellow = cmap_default(3,:); 
+lCs = {red; yellow; green};
+hold  on
+for b=1:3
+    response_avgblock(:,b)=nanmean(nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),1),3);
+    response_stdblock(:,b)=(nanstd(nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3),1))./sqrt(numel(allsubs));
+    response_avgblocksub(:,:,b)=nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3);
+end
+
+for ty=1:3
+    errorbar(1:3,response_avgblock(ty,:),response_stdblock(ty,:), 'Color', lCs{ty}, 'LineWidth',2)
+end
+
+legend('cs+/cs+','cs+/cs-','cs-/cs-')
+h=gca;
+h.XLim=[0.5,4.5];
+h.XTick=[1:3];
+h.XTickLabel={'ACQ','EXT','TEST'}
+h.FontSize = 18; 
+
+
+%filename = [paths.results.behavior 'average_per_type_in_block.png']
+filename = 'myP.png'; 
+exportgraphics(gcf, filename, 'Resolution',300)
+
+
+%% Reshape data 4 Anova
+clc 
+sub2exc = [27 37]; % This subject needs to be excluded because of a technical problem, no ratings for the test period
+respAVG = response_avgblocksub; 
+
+respAVG(sub2exc, :, :) = []; 
+d4anova = respAVG(:);
+
+%rm_anova2
+nSubj = size(respAVG, 1); 
+subID = repmat((1:nSubj)', 9, 1); 
+trial_type = repmat([ones(1,nSubj) , ones(1,nSubj)*2 , ones(1,nSubj)*3]', 3, 1);
+block_n = [ones(1,nSubj*3) , ones(1,nSubj*3)*2 , ones(1,nSubj*3)*3]';
+
+
+
+anovaStats = rm_anova2(d4anova,subID,trial_type,block_n,{'trial_type', 'block_number'})
+
+%% posthocs
+
+
+% % % % BLOCK 1
+[h1,p1, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,2,1))); %CS+/CS+ vs CS+/CS- B1
+t1 = ts.tstat; 
+[h2,p2, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,3,1))); %CS+/CS+ vs CS-/CS- B1
+t2 = ts.tstat; 
+[h3,p3, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,1)),squeeze(response_avgblocksub(:,3,1))); %CS+/CS- vs CS-/CS- B1
+t3 = ts.tstat; 
+
+% % % % BLOCK 2
+[h4,p4, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,2)),squeeze(response_avgblocksub(:,2,2))); %CS+/CS+ vs CS+/CS- B2
+t4 = ts.tstat; 
+[h5,p5, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,2)),squeeze(response_avgblocksub(:,3,2))); %CS+/CS+ vs CS-/CS- B2
+t5 = ts.tstat; 
+[h6,p6, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,2)),squeeze(response_avgblocksub(:,3,2))); %CS+/CS- vs CS-/CS- B2
+t6 = ts.tstat; 
+
+% % % % BLOCK 2
+[h7,p7, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,3)),squeeze(response_avgblocksub(:,2,3))); %CS+/CS+ vs CS+/CS- B3
+t7 = ts.tstat; 
+[h8,p8, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,3)),squeeze(response_avgblocksub(:,3,3))); %CS+/CS+ vs CS-/CS- B3
+t8 = ts.tstat; 
+[h9,p9, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,3)),squeeze(response_avgblocksub(:,3,3))); %CS+/CS- vs CS-/CS- B3
+t9 = ts.tstat; 
+
+%% 
+% % % % CS+/CS+ 
+[h1,p1, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,1,2))); %B1 vs B2 CS+/CS+ 
+t1 = ts.tstat; 
+[h2,p2, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,1,3))); %B1 vs B3 CS+/CS+ 
+t2 = ts.tstat; 
+[h3,p3, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,2)),squeeze(response_avgblocksub(:,1,3))); %B2 vs B3 CS+/CS+ 
+t3 = ts.tstat; 
+
+% % % % CS+/CS-
+[h4,p4, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,1)),squeeze(response_avgblocksub(:,2,2))); %B1 vs B2 CS+/CS-
+t4 = ts.tstat; 
+[h5,p5, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,1)),squeeze(response_avgblocksub(:,2,3))); %B1 vs B3 CS+/CS- 
+t5 = ts.tstat; 
+[h6,p6, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,2)),squeeze(response_avgblocksub(:,2,3))); %B2 vs B3 CS+/CS- 
+t6 = ts.tstat; 
+
+% % % % CS-/CS-
+[h7,p7, ci, ts]=ttest(squeeze(response_avgblocksub(:,3,1)),squeeze(response_avgblocksub(:,3,2))); %B1 vs B2 CS-/CS- 
+t7 = ts.tstat; 
+[h8,p8, ci, ts]=ttest(squeeze(response_avgblocksub(:,3,1)),squeeze(response_avgblocksub(:,3,3))); %B1 vs B3 CS-/CS- 
+t8 = ts.tstat; 
+[h9,p9, ci, ts]=ttest(squeeze(response_avgblocksub(:,3,2)),squeeze(response_avgblocksub(:,3,3))); %B2 vs B3 CS-/CS-
+t9 = ts.tstat; 
+
+
+
+
+%% correct Bonferroni 18
+
+p1 = p1*18; 
+p2 = p2*18; 
+p3 = p3*18; 
+p4 = p4*9; 
+p5 = p5*18; 
+p6 = p6*18; 
+p7 = p7*18; 
+p8 = p8*18; 
+p9 = p9*18; 
+
+
+
+disp('corrected 18')
+
+
+
+
+
+
+
+%% PROGRESSIVE LEARNING: FIRST LOAD DATA
+clear
+paths = load_paths_EXT;
+path_trlinfo= paths.trlinfo;
+
 
 % allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
 %            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
 %            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
-%             'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
-%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub09', 'p_sub10', ...
+%             'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
 %             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
-%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08 no c_sub27 no p_sub06
+%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
+
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11', 'c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27', 'c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07', 'p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
+            'p_sub19', 'p_sub20', 'p_sub21'}'; 
 
 
 for subji=1:numel(allsubs)
@@ -232,95 +290,50 @@ for subji=1:numel(allsubs)
     end
 end
 
+
+
+%% plot without smoothing
 figure
 hold on
-fig_stuff=subplot(1,1,1)
+fig_stuff=subplot(1,1,1);
 cmap_default=fig_stuff.ColorOrder;
+green= colormap(brewermap([1],'Greens'))
+green = green*.9;
+red = cmap_default(2,:);
+yellow = cmap_default(3,:); 
+newM(1, :) = red; 
+newM(2, :) = yellow; 
+newM(3, :) = green; 
 
 
 for ty=1:3
     x1=1:size(avg_response_type,3)
     y1=squeeze(nanmean(avg_response_type(:,ty,:)));
     b1=squeeze(nanstd(avg_response_type(:,ty,:),1))./sqrt(numel(allsubs));
-   
-    boundedline(x1, y1, b1, 'LineWidth', 2, 'cmap',cmap_default(ty,:),'transparency',0.2,'alpha');
+
+    boundedline(x1, y1, b1, 'LineWidth', 2, 'cmap',newM(ty,:),'transparency',0.2,'alpha');
     %shadedErrorBar(x1, y1, b1, cmap_default(ty,:), .1)
-    
+
     %plot(squeeze(nanmean(avg_response_type(:,ty,:))))
     h=gca;
-    h.YLim=[1,4];
-    h.YTick=[1;4];
-    h.YTickLabel={'Dangerous','Safe'};
-    h.YTickLabelRotation=90;
-    h.FontSize = 18;
+    h.YLim=[1 4];
+    h.FontSize = 20;
 end
-
-
-
-% anova %here
-clear tbl, clc
-for timei = 1:64
-    d4ANOVA =  squeeze(avg_response_type(:,:,timei)); 
-    nSubj = size(d4ANOVA, 1); 
-    d4ANOVA = d4ANOVA(:); 
-    d4ANOVA(:,2) = [ones(1,nSubj) ones(1,nSubj)*2 ones(1,nSubj)*3];
-    d4ANOVA(:,3) = [1:nSubj 1:nSubj 1:nSubj];
-    [p f] = RMAOV1(d4ANOVA);
-    allP(timei) = p; 
-    allF(timei) = f; 
-end
-
-hb = allP<0.05; 
-clustinfo = bwconncomp(hb);
-hb = double(hb); hb(hb == 0) = nan; hb(hb==1) = 1.1; 
-for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(allF(clustinfo.PixelIdxList{pxi}));% 
-end
-[max2u id] = max(abs(allSTs));
-max_clust_obs = allSTs(id)
-
-
-
-% ttests
-for t=1:size(avg_response_type,3)
-    [htest1(t),p1(t)]=ttest(squeeze(avg_response_type(:,1,t)),squeeze(avg_response_type(:,2,t)))
-end
-htest1 = p1<0.05; hb1 = double(htest1); hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.4; 
-p1ACQ = p1(1:24); 
-
-% ttests
-for t=1:size(avg_response_type,3)
-    [htest2(t),p2(t)]=ttest(squeeze(avg_response_type(:,1,t)),squeeze(avg_response_type(:,3,t)))
-end
-htest2 = p2<0.05; hb2 = double(htest2); hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
-p2ACQ = p2(1:24); 
-
-% ttests
-for t=1:size(avg_response_type,3)
-    [htest3(t),p3(t)]=ttest(squeeze(avg_response_type(:,2,t)),squeeze(avg_response_type(:,3,t)))
-end
-htest3 = p3<0.05; hb3 = double(htest3); hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.5; 
-p3ACQ = p3(1:24); 
 
 
 plot([24 24],[1 4],':k', 'Linewidth', 2)
 plot([48 48],[1 4],':k', 'Linewidth', 2)
-
-%filename = [paths.results.behavior 'average_per_type.png']
-
-filename = ['myP.png']
-exportgraphics(gcf, filename, 'Resolution',300)
+%set(gca, 'xtick', [24 48], 'xticklabels', {'24' '48'})
+set(gca, 'xtick', [12 36 56], 'xticklabels', {'ACQ' 'EXT' 'TEST'})
 
 
 %% Plot with smoothing
-
-
 
 window=1;
 
 % smooth trajectories
 move_avg=ones(1,window)/window;
-for subji=1:27%numel(allsubs)
+for subji=1:numel(allsubs)
     for ty=1:3
      tmp_avg_response_type(subji,ty,:)=avg_response_type(subji,ty,:);
            
@@ -375,12 +388,43 @@ plot([48 48],[1 4],':k', 'Linewidth', 2)
 
 
 
+%% plot all subjects without smoothing IMAGESC PLOTS
+
+avg_response_type_NAN0 = avg_response_type; 
+avg_response_type_NAN0(isnan(avg_response_type_NAN0))=0; 
+
+figure(1); set(gcf, 'Position', [10 20 1850 1350])
+tiledlayout(7, 8,'TileSpacing','compact', 'Padding','none');
+
+for subji = 1:49
+    nexttile
+    imagesc(squeeze(avg_response_type_NAN0(subji, :, :))); colorbar
+    title(allsubs{subji}, 'Interpreter','none')
+end
+filename = 'myP.png'; 
+exportgraphics(gcf, filename, 'Resolution',300)
+
+%% plot all subjects with smoothing
 
 
+figure(1); set(gcf, 'Position', [10 20 1850 1350])
+tiledlayout(7, 8,'TileSpacing','compact', 'Padding','none');
+
+for subji = 1:49
+    nexttile
+    imagesc(squeeze(filt_avg_response_type(subji, :, :))); 
+    set(gca, 'clim', [0 4])
+    colorbar
+    title(allsubs{subji}, 'Interpreter','none')
+end
+filename = 'myP.png'; 
+exportgraphics(gcf, filename, 'Resolution',300)
 
 %% plot new colors ; perform ANOVA and t-tests at every trial
 
-figure
+filt_avg_response_type = avg_response_type; 
+
+figure; set(gcf, 'Position', [50 50 500 400])
 hold on
 fig_stuff=subplot(1,1,1)
 cmap_default=fig_stuff.ColorOrder;
@@ -394,9 +438,9 @@ newM(2, :) = yellow;
 newM(3, :) = green; 
 
 for ty=1:3
-    x1=1:size(avg_response_type,3)
-    y1=squeeze(nanmean(avg_response_type(:,ty,:)));
-    b1=squeeze(nanstd(avg_response_type(:,ty,:),1))./sqrt(numel(allsubs));
+    x1=1:size(filt_avg_response_type,3)
+    y1=squeeze(nanmean(filt_avg_response_type(:,ty,:)));
+    b1=squeeze(nanstd(filt_avg_response_type(:,ty,:),1))./sqrt(numel(allsubs));
    
     boundedline(x1, y1, b1, 'LineWidth', 2, 'cmap',newM(ty,:),'transparency',0.2,'alpha');
     
@@ -410,6 +454,7 @@ for ty=1:3
     h.FontSize = 18;
 end
 
+
 plot([24 24],[1 4],':k', 'Linewidth', 2)
 plot([48 48],[1 4],':k', 'Linewidth', 2)
 %set(gca, 'xtick', [24 48], 'xticklabels', {'24' '48'})
@@ -419,7 +464,7 @@ set(gca, 'xtick', [12 36 56], 'xticklabels', {'ACQ' 'EXT' 'TEST'})
 % anova %here
 clear tbl allP allF
 for timei = 1:64
-    d4ANOVA =  squeeze(avg_response_type(:,:,timei)); 
+    d4ANOVA =  squeeze(filt_avg_response_type(:,:,timei)); 
     nSubj = size(d4ANOVA, 1); 
     d4ANOVA = d4ANOVA(:); 
     d4ANOVA(:,2) = [ones(1,nSubj) ones(1,nSubj)*2 ones(1,nSubj)*3];
@@ -429,19 +474,19 @@ for timei = 1:64
     allF(timei) = f; 
 end
 
-% hb = allP<0.05; 
-% clustinfo = bwconncomp(hb);
-% hb = double(hb); hb(hb == 0) = nan; hb(hb==1) = 1.1; 
-% clear allSTs
-% for pxi = 1:length(clustinfo.PixelIdxList)
-%    allSTs(pxi,:) = sum(allF(clustinfo.PixelIdxList{pxi}));% 
-% end
-% [max2u id] = max(abs(allSTs));
-% max_clust_obs_ANOVA = allSTs(id);
+hb = allP<0.05; 
+clustinfo = bwconncomp(hb);
+hb = double(hb); hb(hb == 0) = nan; hb(hb==1) = 1; 
+clear allSTs
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi,:) = sum(allF(clustinfo.PixelIdxList{pxi}));% 
+end
+[max2u id] = max(abs(allSTs));
+max_clust_obs_ANOVA = allSTs(id);
 
 % ttest 1
-for i=1:size(avg_response_type,3)
-    [htest1(i),p(i) ci ts(i)]=ttest(squeeze(avg_response_type(:,1,i)),squeeze(avg_response_type(:,2,i)));
+for i=1:size(filt_avg_response_type,3)
+    [htest1(i),p1(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,1,i)),squeeze(filt_avg_response_type(:,2,i)));
 end
 t1 = [ts.tstat]; 
 
@@ -461,12 +506,12 @@ htest1 = zeros(1, length(htest1));
 htest1(clustinfo1.PixelIdxList{id}) = 1; 
 hb1 = double(htest1); hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.15; 
 
-[sxs iDp1ACQ] = min(p(1:24)); 
+[sxs iDp1ACQ] = min(p1(1:24)); 
 t1ACQ = t1(iDp1ACQ); 
 
 % ttest 2
-for i=1:size(avg_response_type,3)
-    [htest2(i),p(i) ci ts(i)]=ttest(squeeze(avg_response_type(:,1,i)),squeeze(avg_response_type(:,3,i)));
+for i=1:size(filt_avg_response_type,3)
+    [htest2(i),p2(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,1,i)),squeeze(filt_avg_response_type(:,3,i)));
 end
 t2 = [ts.tstat]; 
 clustinfo2 = bwconncomp(htest2);
@@ -486,8 +531,8 @@ htest2(clustinfo2.PixelIdxList{id}) = 1;
 hb2 = double(htest2); hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
 
 % ttest 3
-for i=1:size(avg_response_type,3)
-    [htest3(i),p(i) ci ts(i)]=ttest(squeeze(avg_response_type(:,2,i)),squeeze(avg_response_type(:,3,i)));
+for i=1:size(filt_avg_response_type,3)
+    [htest3(i),p3(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,2,i)),squeeze(filt_avg_response_type(:,3,i)));
 end
 t3 = [ts.tstat]; 
 clustinfo3 = bwconncomp(htest3);
@@ -506,15 +551,21 @@ htest3 = zeros(1, length(htest3));
 htest3(clustinfo3.PixelIdxList{id}) = 1; 
 hb3 = double(htest3); hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.45; 
 
+
 plot(hb, 'k', 'LineWidth',5)
-plot(hb1, 'Color', '#EC5300', 'LineWidth',5)
-plot(hb2, 'Color', '#964B00', 'LineWidth',5)
-plot(hb3,  'Color', [.5 .5 .5], 'LineWidth',5)
+plot(hb1, 'Color', '#EC5300', 'LineWidth',5); hold on %ORANGE
+plot(hb2, 'Color', '#964B00', 'LineWidth',5); hold on %BROWN
+plot(hb3,  'Color', [.5 .5 .5], 'LineWidth',5) % GREY
 
 
 %filename = [paths.results.behavior 'average_per_type_filtered.png']
 filename = 'myP.png'; 
 exportgraphics(gcf, filename, 'Resolution',300)
+
+%%
+
+allAb = max_clust_perm_TT3(abs(max_clust_perm_TT3) > abs(-2.56149440000433));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 %% permutations ANOVA
 
@@ -612,7 +663,7 @@ for permi = 1:nPerm
     
     % ttest 3
     for i=1:size(filt_avg_response_type_PERM,3)
-        [htest1(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type_PERM(:,2,i)),squeeze(filt_avg_response_type_PERM(:,3,i)));
+        [htest3(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type_PERM(:,2,i)),squeeze(filt_avg_response_type_PERM(:,3,i)));
     end
     t3 = [ts.tstat]; 
     hb3 = double(htest3); hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.4; 
@@ -636,132 +687,19 @@ end
 clear p mcsP
 allAb1 = max_clust_perm_TT1(abs(max_clust_perm_TT1) > abs(max_clust_obs_TT1));
 p1 = 1 - ((nPerm-1) - (length (allAb1)))  / nPerm; 
+
 allAb1ACQ = max_clust_perm_TT1(abs(max_clust_perm_TT1) > abs(t1ACQ));
 p1ACQ = 1 - ((nPerm-1) - (length (allAb1ACQ)))  / nPerm; 
 
 allAb2 = max_clust_perm_TT2(abs(max_clust_perm_TT2) > abs(max_clust_obs_TT2));
 p2 = 1 - ((nPerm-1) - (length (allAb2)))  / nPerm; 
+
 allAb3 = max_clust_perm_TT3(abs(max_clust_perm_TT3) > abs(max_clust_obs_TT3));
 p3 = 1 - ((nPerm-1) - (length (allAb3)))  / nPerm; 
 
 
 
 
-%% average rating each block
-
-block_def=[1 24;25 48;49 64];
-
-lCs = {red; yellow; green};
-figure
-hold  on
-for b=1:3
-    response_avgblock(:,b)=nanmean(nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),1),3);
-    response_stdblock(:,b)=(nanstd(nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3),1))./sqrt(numel(allsubs));
-    response_avgblocksub(:,:,b)=nanmean(avg_response_type(:,:,block_def(b,1):block_def(b,2)),3);
-end
-
-for ty=1:3
-    errorbar(1:3,response_avgblock(ty,:),response_stdblock(ty,:), 'Color', lCs{ty}, 'LineWidth',2)
-end
-
-legend('cs+/cs+','cs+/cs-','cs-/cs-')
-h=gca;
-h.XLim=[0.5,4.5];
-h.XTick=[1:3];
-h.XTickLabel={'ACQ','EXT','TEST'}
-h.FontSize = 18; 
-
-
-%filename = [paths.results.behavior 'average_per_type_in_block.png']
-filename = 'myP.png'; 
-exportgraphics(gcf, filename, 'Resolution',300)
-
-
-%% Reshape data 4 Anova
-clc 
-
-d4anova = response_avgblocksub(:);
-
-%rm_anova2
-nSubj = 48; 
-subID = repmat((1:nSubj)', 9, 1); 
-trial_type = repmat([ones(1,nSubj) , ones(1,nSubj)*2 , ones(1,nSubj)*3]', 3, 1);
-block_n = [ones(1,nSubj*3) , ones(1,nSubj*3)*2 , ones(1,nSubj*3)*3]';
-
-
-
-anovaStats = rm_anova2(d4anova,subID,trial_type,block_n,{'trial_type', 'block_number'})
-
-%% posthocs
-
-
-% % % % BLOCK 1
-[h1,p1, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,2,1))); %CS+/CS+ vs CS+/CS- B1
-t1 = ts.tstat; 
-[h2,p2, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,3,1))); %CS+/CS+ vs CS-/CS- B1
-t2 = ts.tstat; 
-[h3,p3, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,1)),squeeze(response_avgblocksub(:,3,1))); %CS+/CS- vs CS-/CS- B1
-t3 = ts.tstat; 
-
-% % % % BLOCK 2
-[h4,p4, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,2)),squeeze(response_avgblocksub(:,2,2))); %CS+/CS+ vs CS+/CS- B2
-t4 = ts.tstat; 
-[h5,p5, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,2)),squeeze(response_avgblocksub(:,3,2))); %CS+/CS+ vs CS-/CS- B2
-t5 = ts.tstat; 
-[h6,p6, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,2)),squeeze(response_avgblocksub(:,3,2))); %CS+/CS- vs CS-/CS- B2
-t6 = ts.tstat; 
-
-% % % % BLOCK 2
-[h7,p7, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,3)),squeeze(response_avgblocksub(:,2,3))); %CS+/CS+ vs CS+/CS- B3
-t7 = ts.tstat; 
-[h8,p8, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,3)),squeeze(response_avgblocksub(:,3,3))); %CS+/CS+ vs CS-/CS- B3
-t8 = ts.tstat; 
-[h9,p9, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,3)),squeeze(response_avgblocksub(:,3,3))); %CS+/CS- vs CS-/CS- B3
-t9 = ts.tstat; 
-
-%% 
-% % % % CS+/CS+ 
-[h1,p1, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,1,2))); %B1 vs B2 CS+/CS+ 
-t1 = ts.tstat; 
-[h2,p2, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,1)),squeeze(response_avgblocksub(:,1,3))); %B1 vs B3 CS+/CS+ 
-t2 = ts.tstat; 
-[h3,p3, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,2)),squeeze(response_avgblocksub(:,1,3))); %B2 vs B3 CS+/CS+ 
-t3 = ts.tstat; 
-
-% % % % CS+/CS-
-[h4,p4, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,1)),squeeze(response_avgblocksub(:,2,2))); %B1 vs B2 CS+/CS-
-t4 = ts.tstat; 
-[h5,p5, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,1)),squeeze(response_avgblocksub(:,2,3))); %B1 vs B3 CS+/CS- 
-t5 = ts.tstat; 
-[h6,p6, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,2)),squeeze(response_avgblocksub(:,2,3))); %B2 vs B3 CS+/CS- 
-t6 = ts.tstat; 
-
-% % % % CS-/CS-
-[h7,p7, ci, ts]=ttest(squeeze(response_avgblocksub(:,3,1)),squeeze(response_avgblocksub(:,3,2))); %B1 vs B2 CS-/CS- 
-t7 = ts.tstat; 
-[h8,p8, ci, ts]=ttest(squeeze(response_avgblocksub(:,3,1)),squeeze(response_avgblocksub(:,3,3))); %B1 vs B3 CS-/CS- 
-t8 = ts.tstat; 
-[h9,p9, ci, ts]=ttest(squeeze(response_avgblocksub(:,3,2)),squeeze(response_avgblocksub(:,3,3))); %B2 vs B3 CS-/CS-
-t9 = ts.tstat; 
-
-
-
-
-%% correct Bonferroni 18
-
-p1 = p1*18; 
-p2 = p2*18; 
-p3 = p3*18; 
-p4 = p4*9; 
-p5 = p5*18; 
-p6 = p6*18; 
-p7 = p7*18; 
-p8 = p8*18; 
-p9 = p9*18; 
-
-
-
-disp('corrected 18')
 
 
 %% LME
@@ -1200,3 +1138,115 @@ title(contrast_label{con})
 
 
 end
+
+
+%%
+%%
+% 1. what trial number (position in presentation)?
+% 2. which Phase?
+% 3. which context was used?
+% 4. what was the role of the video (A,B,C1,C2)
+% 5. which item was shown?
+% 6. which type of item was shown? % cs+/cs+=1;cs+/cs-=2;cs-/cs-=3;
+% 7. what response was given?
+% 8. cs (0/1) current cs+/cs-
+% 9. us 0/1 (y/n)
+%%%% SR logfile 10000
+% 10. sample point trialonset
+% 11. sample point videoonset
+% 12. sample point cueonset
+% 13. sample point us onset
+% 14. sample point response 
+
+%later added
+%15. number of item rep in each block
+%16 number of us in total
+%path_data='D:\Extinction\iEEG\rawdata\extinction_ieeg\';
+%path_out='D:\Extinction\iEEG\data\preproc\trialinfo\';
+
+
+clear 
+
+paths = load_paths_EXT;
+
+% 
+allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+           'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+           'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+            'c_sub25','c_sub26','c_sub27','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+            'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+            'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
+            'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
+
+
+% allsubs = {'c_sub01','c_sub02','c_sub03','c_sub04','c_sub05','c_sub06','c_sub07','c_sub08', ...
+%            'c_sub09','c_sub10','c_sub11','c_sub12','c_sub13','c_sub14','c_sub15','c_sub16', ...
+%            'c_sub17','c_sub18', 'c_sub19','c_sub20','c_sub21', 'c_sub22', 'c_sub23','c_sub24', ...
+%             'c_sub25','c_sub26','c_sub28','c_sub29','c_sub30' 'p_sub01','p_sub02', ...
+%             'p_sub03','p_sub04','p_sub05','p_sub06','p_sub07','p_sub09', 'p_sub10', ...
+%             'p_sub11','p_sub12','p_sub13','p_sub14','p_sub15', 'p_sub16','p_sub17','p_sub18', ... 
+%             'p_sub19', 'p_sub20', 'p_sub21'}'; % no p_sub08
+
+
+responses = [];
+
+
+for subji=1:numel(allsubs)
+
+    sub=allsubs{subji};
+    info_file=strcat(paths.trlinfo,sub,'_trlinfo');
+    load(info_file)  
+    trialinfo = trlinfo; 
+    allTrialinfo{subji,:} = trlinfo;
+
+    label={'Dangerous','Safe'};
+    
+    
+    types={'cs+/cs+','cs+/cs-','cs-/cs-'};
+    items=1:3;
+
+
+    for i=1:3
+        type_item(i)=mean(trialinfo(trialinfo(:,5)==i,6));
+        tmp=trialinfo(trialinfo(:,5)==i,7);
+        responses(i,:)=[tmp',nan(1,length(responses)-numel(tmp))];
+        tmp_us=trialinfo(trialinfo(:,5)==i,9);
+        us_vec(i,:)=[tmp_us',nan(1,length(tmp_us)-numel(tmp_us))]
+    end
+    % 
+    % figure
+    % for i=1:3
+    %     subplot(2,3,i)
+    %     stem(responses(i,:))
+    %     title(types{type_item(i)})
+    % end
+    
+    % % % uncomnment to plot one fig per subject
+% % % % %     figure
+% % % % %     for ty=1:3
+% % % % %         avg_response_type(ty,:)=nanmean(responses(type_item==ty,:),1) 
+% % % % %         avg_us(ty,:)=us_vec(type_item==ty,:);
+% % % % %         subplot(2,2,ty)
+% % % % %         hold on
+% % % % %         rectangle('Position',[0 0 24 4],'FaceColor',[1 .9 .9])
+% % % % %         rectangle('Position',[24 0 24 4],'FaceColor',[0.9 .9 .9])
+% % % % %         rectangle('Position',[48 0 16 4],'FaceColor',[1 .8 1])
+% % % % %         rectangle('Position',[64 0 16 4],'FaceColor',[1 1 .8])
+% % % % %         
+% % % % %         
+% % % % %         stem(avg_response_type(ty,:))
+% % % % %         title(types{ty})
+% % % % %         h=gca;
+% % % % %         h.YTick=[0.1;4-(0.2*4)];
+% % % % %         h.YTickLabel=label;
+% % % % %         h.YTickLabelRotation=90;
+% % % % %     
+% % % % %     end
+% % % % %     
+% % % % %     mkdir(paths.results.behavior)
+% % % % %     filename = [paths.results.behavior sub '_behav.png']
+% % % % %     exportgraphics(gca, filename, 'Resolution',300)
+    %close all
+
+end
+clear avg_response_type tmp tmp_us

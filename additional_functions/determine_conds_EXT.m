@@ -1,14 +1,12 @@
 function [cond1 cond2] = determine_conds_EXT(c1, c2, paths)
     
 
-    sub2exc = [11 37]';
-
-
+    
     cond1 = load ([paths.results.trial_based c1]);
     if ~strcmp(c2, 'none')
         cond2 = load ([paths.results.trial_based c2]);
     else 
-        cond2 = struct; 
+        cond2 = load ([paths.results.trial_based c2]);
     end
     
 
@@ -39,9 +37,12 @@ function [cond1 cond2] = determine_conds_EXT(c1, c2, paths)
             cond2 = cond2.trlSTA_ET; 
         elseif isfield(cond2, 'trlSTA_AT')
             cond2 = cond2.trlSTA_AT; 
-        else
-            cond2 = cell(1); 
-
+        elseif isfield(cond2, 'trlSTA_TE')
+                cond2 = cond2.trlSTA_TE; 
+                disp('cond2 trlSTA_TE')
+        elseif isfield(cond2, 'trlSTA_TA')
+                cond2 = cond2.trlSTA_TA; 
+                disp('cond2 trlSTA_TA')
         end
     end
     
