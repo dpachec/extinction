@@ -6,11 +6,8 @@ clear , clc
 
 listF2sav = {
 
-'RSA_PFC_V_1-44_1_0_500-50_1_NT_SCA-DCA'; 
-'RSA_PFC_V_1-44_1_0_500-50_1_NT_SCE-DCE'; 
+'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPPE-SICSPME';
 
-'RSA_HPC_V_1-44_1_0_500-50_1_NT_SCA-DCA'; 
-'RSA_HPC_V_1-44_1_0_500-50_1_NT_SCE-DCE'; 
 
 };   
 
@@ -63,10 +60,11 @@ end
 %% plot 2 lines from TG 
 clear, clc
 
-minTr = 8; 
+minTr = 50; 
 paths = load_paths_EXT; 
-f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
-%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+
+f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+%f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPPE-SICSMME';
 %f2sav  = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCE-DCE';
 
 %f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
@@ -83,7 +81,7 @@ nTrials = compute_trial_number_EXT(ids);
 
 nSubj = length(out_rsa); 
 
-[h tObs d2pm1 d2pm2 se1 se2] = compute_real_differences_EXT(out_rsa); 
+[h tObs d2pm1 d2pm2 se1 se2] = compute_real_differences_EXT(out_rsa, []); 
 
 
 %h(1:5) = 0; 
@@ -102,8 +100,8 @@ colors2use = brewermap([6],'*Accent')*0.75; %CTX
 shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(2,:)}, 1); hold on; 
 shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(1,:)}, 1); hold on; 
 plot(times, hb,'k',  LineWidth=7)
-set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .045], 'Fontsize', 22); %STABILITY
-%set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 22);
+%set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .045], 'Fontsize', 22); %STABILITY
+set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 22); %CTX
 %set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .1], 'Fontsize', 22);
 plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 2);
 plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
@@ -112,6 +110,37 @@ plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
 %title(f2sav, 'Interpreter','none')
 %exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+
+
+%% plot average in specific time period 
+
+clearvars -except out_rsa
+%[h tObs d2pm1 d2pm2 se1 se2] = compute_real_differences_EXT(out_rsa, [18:25]); % TMP 
+[h tObs d2pm1 d2pm2 se1 se2] = compute_real_differences_EXT(out_rsa, [29:33]); %AMY
+
+%% plot 2 bars
+clear data
+data.data = [d2pm1 d2pm2]; 
+
+figure(2); set(gcf,'Position', [0 0 500 620]); 
+mean_S = mean(data.data, 1);
+scatter([1 2], data.data, 100, 'k'); hold on;
+h = bar (mean_S);hold on;
+set(h,'FaceColor', 'none', 'lineWidth', 3);
+set(gca,'XTick',[1 2],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 3] );
+plot(get(gca,'xlim'), [0 0],'k','lineWidth', 3);
+
+[h p ci t] = ttest (data.data(:,1), data.data(:,2));
+disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
+
+set(gca, 'LineWidth', 3);
+
+
+exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+
+
+
+
 
 
 
@@ -636,13 +665,13 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 clear, clc
 paths = load_paths_EXT; 
 
-myR = 'HPC';
+myR = 'PFC';
 
-f2sav =   ['RSA_' myR '_V_1-44_1_0_500-50_1_NT_SCA-DCA'];
+f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_SCA-DCA'];
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_ACQ = out_rsa; 
 nTrialsA = compute_trial_number_EXT(ids); 
-f2sav =   ['RSA_' myR '_V_1-44_1_0_500-50_1_NT_SCE-DCE'];
+f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_SCE-DCE'];
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_EXT = out_rsa; 
 nTrialsE = compute_trial_number_EXT(ids); 

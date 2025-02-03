@@ -18,7 +18,7 @@
 % 14. sample point response 
 clear 
 
-type2u = [1]; % (1, 2, 3) ; Cs+Cs+, Cs+Cs-, Cs-Cs-
+type2u = [3]; % (1, 2, 3) ; Cs+Cs+, Cs+Cs-, Cs-Cs-
 
 types={'cs+cs+','cs+cs-','cs-cs-'};
 
@@ -129,6 +129,11 @@ for subji=1:numel(allsubs)
 end
 
 
+%%
+d2check = squeeze(avg_response_type(37,:,:)); 
+length(find(isnan(d2check(1,:))))
+length(find(isnan(d2check(2,:))))
+length(find(isnan(d2check(3,:))))
 
 
 
@@ -150,7 +155,7 @@ for b=1:3
 end
 
 for ty=1:3
-    errorbar(1:3,response_avgblock(ty,:),response_stdblock(ty,:), 'Color', lCs{ty}, 'LineWidth',2)
+    errorbar(1:3,response_avgblock(ty,:),response_stdblock(ty,:), 'Color', lCs{ty}, 'LineWidth',2);
 end
 
 legend('cs+/cs+','cs+/cs-','cs-/cs-')
@@ -164,6 +169,26 @@ h.FontSize = 18;
 %filename = [paths.results.behavior 'average_per_type_in_block.png']
 filename = 'myP.png'; 
 exportgraphics(gcf, filename, 'Resolution',300)
+
+%% mean across all experiment for CS++ and CS--
+
+threeConditions = nanmean(avg_response_type, 3); 
+
+CSPP = threeConditions(:, 1); 
+CSPM = threeConditions(:, 2); 
+CSMM = threeConditions(:, 3); 
+
+threeV = [CSPP;  CSPM ; CSMM]
+
+threeConditionsN = normalize(threeV); 
+
+threeV = reshape(threeConditionsN, [], 3)
+
+mean(threeV)
+mean(threeConditions)
+
+
+
 
 
 %% Reshape data 4 Anova
@@ -184,6 +209,24 @@ block_n = [ones(1,nSubj*3) , ones(1,nSubj*3)*2 , ones(1,nSubj*3)*3]';
 
 anovaStats = rm_anova2(d4anova,subID,trial_type,block_n,{'trial_type', 'block_number'})
 
+
+%% Friedman
+clc
+data = squeeze(response_avgblocksub(:,3,:)); 
+data([27 37], :) = []; 
+bar(mean(data))
+
+% Run the Friedman test:
+[p, tbl, stats] = friedman(data, 1, 'off');
+% The second argument (1) indicates that there is one observation per block per treatment.
+% The 'off' option suppresses the display of the ANOVA table.
+
+% Display the p-value:
+fprintf('The p-value from the Friedman test is: %g\n', p);
+
+
+
+
 %% posthocs
 
 
@@ -203,13 +246,54 @@ t5 = ts.tstat;
 [h6,p6, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,2)),squeeze(response_avgblocksub(:,3,2))); %CS+/CS- vs CS-/CS- B2
 t6 = ts.tstat; 
 
-% % % % BLOCK 2
+% % % % BLOCK 3
 [h7,p7, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,3)),squeeze(response_avgblocksub(:,2,3))); %CS+/CS+ vs CS+/CS- B3
 t7 = ts.tstat; 
 [h8,p8, ci, ts]=ttest(squeeze(response_avgblocksub(:,1,3)),squeeze(response_avgblocksub(:,3,3))); %CS+/CS+ vs CS-/CS- B3
 t8 = ts.tstat; 
 [h9,p9, ci, ts]=ttest(squeeze(response_avgblocksub(:,2,3)),squeeze(response_avgblocksub(:,3,3))); %CS+/CS- vs CS-/CS- B3
 t9 = ts.tstat; 
+%%
+data = squeeze(response_avgblocksub(:,2,3)); 
+
+%data = squeeze(response_avgblocksub(:,1,:)); 
+%data = data(:); 
+
+% Perform the Lilliefors test
+h = lillietest(data);
+%h = jbtest(data);
+%h = adtest(data);
+
+histogram(data, 20)
+
+if h == 0
+    disp('Do not reject the null hypothesis: data appears to be normally distributed.');
+else
+    disp('Reject the null hypothesis: data does not appear to be normally distributed.');
+end
+set(gca, fontsize=16)
+exportgraphics (gca, 'myP.png', 'Resolution', 300)
+
+%% shapiroWilk
+
+%data = squeeze(response_avgblocksub(:,3,3)); 
+
+data = squeeze(response_avgblocksub(:,:,:)); 
+data = data(:); 
+histogram(data, 20)
+[H, pValue, W] = swtest(data);
+
+if pValue > 0.05
+    disp('Do not reject the null hypothesis: data appears to be normally distributed.');
+else
+    disp('Reject the null hypothesis: data does not appear to be normally distributed.');
+end
+
+
+
+
+
+
 
 %% 
 % % % % CS+/CS+ 
@@ -340,6 +424,26 @@ plot([24 24],[1 4],':k', 'Linewidth', 2)
 plot([48 48],[1 4],':k', 'Linewidth', 2)
 %set(gca, 'xtick', [24 48], 'xticklabels', {'24' '48'})
 set(gca, 'xtick', [12 36 56], 'xticklabels', {'ACQ' 'EXT' 'TEST'})
+
+
+%% 
+d2c =  squeeze(avg_response_type(:,1,:));
+
+clear isNorMT; 
+for triali = 1:64
+
+    popTrial = d2c(:, triali); 
+    [H, pValue, W] = swtest(popTrial);
+    if pValue > 0.05
+        disp('Do not reject the null hypothesis: data appears to be normally distributed.');
+        isNorMT(triali) = 1; 
+    else
+        disp('Reject the null hypothesis: data does not appear to be normally distributed.');
+        isNorMT(triali) = 0; 
+    end
+    
+
+end
 
 
 %% Plot with smoothing
@@ -496,8 +600,12 @@ clear allSTs
 for pxi = 1:length(clustinfo.PixelIdxList)
    allSTs(pxi,:) = sum(allF(clustinfo.PixelIdxList{pxi}));% 
 end
-[max2u id] = max(abs(allSTs));
-max_clust_obs_ANOVA = allSTs(id);
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    max_clust_obs_ANOVA = allSTs(id);
+else
+    max_clust_obs_ANOVA = 0; 
+end
 
 % ttest 1
 for i=1:size(filt_avg_response_type,3)
@@ -582,6 +690,163 @@ exportgraphics(gcf, filename, 'Resolution',300)
 allAb = max_clust_perm_TT3(abs(max_clust_perm_TT3) > abs(-2.56149440000433));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
+%% plot new colors ; perform ANOVA and WILCOXON at every trial
+
+clearvars -except avg_response_type allsubs
+
+filt_avg_response_type = avg_response_type; 
+
+figure; set(gcf, 'Position', [50 50 500 400])
+hold on
+fig_stuff=subplot(1,1,1)
+cmap_default=fig_stuff.ColorOrder;
+
+green= colormap(brewermap([1],'Greens'))
+green = green*.9;
+red = cmap_default(2,:);
+yellow = cmap_default(3,:); 
+newM(1, :) = red; 
+newM(2, :) = yellow; 
+newM(3, :) = green; 
+
+for ty=1:3
+    x1=1:size(filt_avg_response_type,3)
+    y1=squeeze(nanmean(filt_avg_response_type(:,ty,:)));
+    b1=squeeze(nanstd(filt_avg_response_type(:,ty,:),1))./sqrt(numel(allsubs));
+   
+    boundedline(x1, y1, b1, 'LineWidth', 2, 'cmap',newM(ty,:),'transparency',0.2,'alpha');
+    
+    
+    %plot(squeeze(nanmean(avg_response_type(:,ty,:))))
+    h=gca;
+    %h.YLim=[1,4];
+    %h.YTick=[1;4];
+    %h.YTickLabel={'Dangerous','Safe'};
+    %h.YTickLabelRotation=90;
+    h.FontSize = 18;
+end
+
+
+plot([24 24],[1 4],':k', 'Linewidth', 2)
+plot([48 48],[1 4],':k', 'Linewidth', 2)
+%set(gca, 'xtick', [24 48], 'xticklabels', {'24' '48'})
+set(gca, 'xtick', [12 36 56], 'xticklabels', {'ACQ' 'EXT' 'TEST'})
+
+
+% anova %here
+clear tbl allP allF
+for timei = 1:64
+    d4ANOVA =  squeeze(filt_avg_response_type(:,:,timei)); 
+    nSubj = size(d4ANOVA, 1); 
+    d4ANOVA = d4ANOVA(:); 
+    d4ANOVA(:,2) = [ones(1,nSubj) ones(1,nSubj)*2 ones(1,nSubj)*3];
+    d4ANOVA(:,3) = [1:nSubj 1:nSubj 1:nSubj];
+    [p f] = RMAOV1(d4ANOVA);
+    allP(timei) = p; 
+    allF(timei) = f; 
+end
+
+hb = allP<0.05; 
+clustinfo = bwconncomp(hb);
+hb = double(hb); hb(hb == 0) = nan; hb(hb==1) = 1; 
+clear allSTs
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi,:) = sum(allF(clustinfo.PixelIdxList{pxi}));% 
+end
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    max_clust_obs_ANOVA = allSTs(id);
+else
+    max_clust_obs_ANOVA = 0; 
+end
+
+% Wilcoxon 1
+for i=1:size(filt_avg_response_type,3)
+    %[htest1(i),p1(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,1,i)),squeeze(filt_avg_response_type(:,2,i)));
+    differences = squeeze(filt_avg_response_type(:,1,i)) - squeeze(filt_avg_response_type(:,2,i)); 
+    differences = differences(~isnan(differences));
+    [p1(i) htest1(i) stats(i)] = signrank(differences);
+end
+
+clustinfo1 = bwconncomp(htest1);
+clear allSTs
+for pxi = 1:length(clustinfo1.PixelIdxList)
+   allSTs(pxi,:) = length(clustinfo1.PixelIdxList{pxi});% 
+end
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    max_clust_obs_TT1 = allSTs(id); 
+else
+    max_clust_obs_TT1 = 0; 
+end
+%remove non significant 
+htest1 = zeros(1, length(htest1)); 
+htest1(clustinfo1.PixelIdxList{id}) = 1; 
+hb1 = double(htest1); hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.15; 
+
+
+% Wilcoxon 2
+for i=1:size(filt_avg_response_type,3)
+    %[htest2(i),p2(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,1,i)),squeeze(filt_avg_response_type(:,3,i)));
+    differences = squeeze(filt_avg_response_type(:,1,i)) - squeeze(filt_avg_response_type(:,3,i)); 
+    differences = differences(~isnan(differences));
+    [p2(i) htest2(i) ] = signrank(differences);
+
+end
+
+clustinfo2 = bwconncomp(htest2);
+clear allSTs
+for pxi = 1:length(clustinfo2.PixelIdxList)
+   allSTs(pxi,:) = length(clustinfo2.PixelIdxList{pxi});% 
+end
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    max_clust_obs_TT2 = allSTs(id); 
+else
+    max_clust_obs_TT2 = 0; 
+end
+%remove non significant 
+htest2 = zeros(1, length(htest2)); 
+htest2(clustinfo2.PixelIdxList{id}) = 1; 
+hb2 = double(htest2); hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
+
+% Wilcoxon 3
+for i=1:size(filt_avg_response_type,3)
+    %[htest3(i),p3(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,2,i)),squeeze(filt_avg_response_type(:,3,i)));
+    differences = squeeze(filt_avg_response_type(:,2,i)) - squeeze(filt_avg_response_type(:,3,i)); 
+    differences = differences(~isnan(differences));
+    [p3(i) htest3(i)] = signrank(differences);
+end
+
+clustinfo3 = bwconncomp(htest3);
+clear allSTs
+for pxi = 1:length(clustinfo3.PixelIdxList)
+   allSTs(pxi,:) = length(clustinfo3.PixelIdxList{pxi});% 
+end
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    max_clust_obs_TT3 = allSTs(id); 
+else
+    max_clust_obs_TT3 = 0; 
+end
+%remove non significant 
+htest3 = zeros(1, length(htest3)); 
+htest3(clustinfo3.PixelIdxList{id}) = 1; 
+hb3 = double(htest3); hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.45; 
+
+
+plot(hb, 'k', 'LineWidth',5)
+plot(hb1, 'Color', '#EC5300', 'LineWidth',5); hold on %ORANGE
+plot(hb2, 'Color', '#964B00', 'LineWidth',5); hold on %BROWN
+plot(hb3,  'Color', [.5 .5 .5], 'LineWidth',5) % GREY
+
+
+%filename = [paths.results.behavior 'average_per_type_filtered.png']
+filename = 'myP.png'; 
+exportgraphics(gcf, filename, 'Resolution',300)
+
+
+
 %% permutations ANOVA
 
 nPerm = 1000; 
@@ -631,7 +896,7 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 %% permutations TTESTS
 
 nPerm = 1000; 
-clear max_clust_sum_perm
+clear max_clust_sum_perm max_clust_perm_TT1 max_clust_perm_TT2 max_clust_perm_TT3
 for permi = 1:nPerm
     progress_in_console(permi)
 

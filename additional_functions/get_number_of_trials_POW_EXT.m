@@ -1,8 +1,9 @@
 
-function [allTrials2Check] = get_number_of_trials_POW_EXT(EEG, ids1, ids2)
+function [allTrials2Check] = get_number_of_trials_POW_EXT(EEG, ids1, ids2, ids3)
 
     totalNIds1 = sum(ids1); 
     totalNIds2 = sum(ids2); 
+    totalNIds3 = sum(ids3);
 
     d2check = EEG.power(ids1, :, :, :); 
     nanTrials = zeros(size(d2check, 1), 1); 
@@ -29,6 +30,20 @@ function [allTrials2Check] = get_number_of_trials_POW_EXT(EEG, ids1, ids2)
     end
     if exist('nanTrials')
         allTrials2Check(:, 2) = totalNIds2 - sum(nanTrials); 
+        %allTrials2Check{subji, 2} = nanTrials; 
+    end
+
+    d2check = EEG.power(ids3, :, :, :); 
+    nanTrials = zeros(size(d2check, 1), 1); 
+    for triali = 1:size(d2check, 1)
+        tP = d2check(triali, :, :, 250:350); 
+        x = find(isnan(tP)); 
+        if ~isempty(x)
+            nanTrials(triali, 1) = 1; 
+        end
+    end
+    if exist('nanTrials')
+        allTrials2Check(:, 3) = totalNIds3 - sum(nanTrials); 
         %allTrials2Check{subji, 2} = nanTrials; 
     end
 

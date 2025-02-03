@@ -17,12 +17,15 @@ load ([paths.results.trial_based 'AMY_POW_1-44Hz_TR'])
 %load ([paths.results.trial_based 'trlCTX_OCC_CE_9-54_1_0_500-100'])
 
 
-%load ([paths.results.trial_based 'trlSTA_AMY_CE_1-44_1_0_500-50'])
+load ([paths.results.trial_based 'trlSTA_AMY_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_HPC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_PFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_TMP_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_OFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_OCC_CE_3-54_1_0_500-100'])
+
+
+minTr = 50; 
 
 
 if exist('itstaTRALL')
@@ -98,7 +101,7 @@ for subji = 1:50
         % % % %set(gca, 'ylim', [-3 3], 'xlim', [-3 3], 'Fontsize', 24)
 
 
-        if length(amyPOW) > 5 % at least five trials for the correlation analysis
+        if length(amyPOW) > minTr % at least five trials for the correlation analysis
             allRHO(subji, :) = corr(amyPOW, rsa2T, 'type', 's');
         end
 
@@ -111,7 +114,7 @@ for subji = 1:50
 end
 
 %allRHO(sub2exc) = nan; 
-%allRHO(isnan(allRHO)) = []; 
+allRHO(isnan(allRHO)) = []; 
 [h p ci ts] = ttest(atanh(allRHO));
 disp (['t(' num2str(ts.df) ')= ' num2str(ts.tstat, 3) ',' ' p = ' num2str(p, 3)]);
 
@@ -150,7 +153,7 @@ clear, clc
 
 paths = load_paths_EXT;
 load ([paths.results.trial_based 'AMY_POW_1-44Hz_TR'])
-load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_HPC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_AMY_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_TMP_CE_1-44_1_0_500-50'])
@@ -158,14 +161,14 @@ load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
 
 
 
-%load ([paths.results.trial_based 'trlSTA_AMY_CE_1-44_1_0_500-50'])
+load ([paths.results.trial_based 'trlSTA_AMY_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_HPC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_PFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_TMP_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_OFC_CE_1-44_1_0_500-50'])
 
 sub2exc = [37]; 
-minTr = 8; 
+minTr = 5; 
 
 
 
@@ -665,7 +668,7 @@ toc
 clear, clc
 
 trltype = 2;
-minTrN = 8; 
+minTrN = 10; 
 tP = 21:28;  %21:28 PFC effect %19:31 PFC effec ACQvsEXT
 
 remOutliers = 0; 
@@ -733,7 +736,7 @@ rsa2TT1(rsa2TT1==0) = [];
 rsa2TT2(rsa2TT2==0) = []; 
 rsa2TT3(rsa2TT3==0) = []; 
 
-rsa2TT4 = rsa2TT2 - rsa2TT3; 
+rsa2TT4 = rsa2TT2 - rsa2TT3;  %ACQ minus EXT
 %rsa2TT4 = rsa2TT3; 
 
 if remOutliers
@@ -949,9 +952,9 @@ scatter(max_clust_obs,0, 5000, 'r.')
 clear, clc
 
 tyTR = 2; 
-minTrN = 8;
+minTrN = 2;
 remOutliers = 0; 
-subtractionH = 1; % the difference between ACQ and EXT. If set to zero, only correlates with extinction (c1)
+subtractionH = 0; % the difference between ACQ and EXT. If set to zero, only correlates with extinction (c1)
 
 %tP = 19:31; %21:28 PFC effect %19:31 PFC effec ACQvsEXT
 tP = 18:25; %TMP effect
