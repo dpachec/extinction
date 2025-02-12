@@ -33,11 +33,11 @@ function [cond1 cond2] = determine_conds_EXT(c1, c2, paths)
     else
         if isfield(cond2, 'itstaTRALL')
             cond2 = cond2.itstaTRALL; 
-        elseif isfield(cond2, 'trlSTA_ET')
+        elseif isfield(cond2, 'trlSTA_ET') & ~isfield(cond1, 'trlSTA_AT')
             cond2 = cond2.trlSTA_ET; 
-        elseif isfield(cond2, 'trlSTA_AT')
+        elseif isfield(cond2, 'trlSTA_AT') 
             cond2 = cond2.trlSTA_AT; 
-        elseif isfield(cond2, 'trlSTA_TE')
+        elseif isfield(cond2, 'trlSTA_TE') 
                 cond2 = cond2.trlSTA_TE; 
                 disp('cond2 trlSTA_TE')
         elseif isfield(cond2, 'trlSTA_TA')
@@ -46,6 +46,15 @@ function [cond1 cond2] = determine_conds_EXT(c1, c2, paths)
         end
     end
     
+
+    if isfield(cond1, 'trlSTA_AT') & isfield(cond2, 'trlSTA_ET')
+        %disp('hola')
+        cond1 = cond1.trlSTA_AT; 
+        cond2 = cond2.trlSTA_ET; 
+
+    end
+
+    %disp(length(cond1)); 
     if length(cond1) < 50 
         cond1{50,2}= []; 
     end

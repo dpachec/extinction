@@ -1,4 +1,4 @@
-function [h tObs d2pm1 d2pm2 se1 se2]  = compute_real_differences_EXT(out_rsa, t2AV); 
+function [h tObs d2pm1 d2pm2 se1 se2 p]  = compute_real_differences_EXT(out_rsa, t2AV); 
 
 
     cond1 = cellfun(@mean, cellfun(@(x) x{1}, out_rsa, 'un', 0), 'un', 0); 
@@ -68,19 +68,8 @@ function [h tObs d2pm1 d2pm2 se1 se2]  = compute_real_differences_EXT(out_rsa, t
         se2 = d2pstd2/sqrt(size(cond1, 1));
         
         [h p ci ts] = ttest(mean(cond1(:, t2AV), 2), mean(cond2(:, t2AV), 2)); 
-        h = squeeze(h); h(isnan(h)) = 0; t = squeeze(ts.tstat);
-        clustinfo = bwconncomp(h);
-        for pxi = 1:length(clustinfo.PixelIdxList)
-            allSTs(pxi) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-        end
+        tObs = ts.tstat; 
         
-        if exist('allSTs')
-            [max2u id] = max(abs(allSTs));
-            tObs = allSTs(id); 
-        else
-            tObs = 0; 
-        end
-
 
 
     end

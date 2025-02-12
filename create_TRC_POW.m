@@ -8,19 +8,39 @@ listF2sav = {
                 %{'Amygdala' }; 
                 %{'Hippocampus'}; 
                 %{'orbitofrontal'}; 
-                {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+                %{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
                 %{'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
                 %{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
                 %{'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' 'orbitofrontal'}; 
+                    
+                % % % COMBINATIONS
+                {'Amygdala' 'Hippocampus'}; 
+                {'Amygdala' 'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+                {'Amygdala' 'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+                {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' ...
+                 'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+                {'Hippocampus' 'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+                {'orbitofrontal' 'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+
             };   
 n2SAV = {
             %'AMY'; 
             %'HPC'; 
             %'OFC'; 
-            'TMP'; 
+            %'TMP'; 
             %'OCC'; 
             %'PFC'; 
-            %'PFCO'};
+            %'PFCO';
+            'AMY-HPC';
+            'AMY-TMP'; 
+            'AMY-PFC';
+            'PFC-TMP';
+            'HPC-TMP'
+            'OFC-TMP'
+
+            
+            
+            };
 
 
 

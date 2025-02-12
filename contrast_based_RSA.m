@@ -6,7 +6,23 @@ clear , clc
 
 listF2sav = {
 
-'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPPE-SICSPME';
+% 'RSA_AMY_C_1-44_1_0_500-50_1_T_SISCOE-SIDCOE';
+% 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPPE-SICSPME';
+% 'RSA_TMP_C_1-44_1_0_500-50_1_T_SISCOE-SIDCOE';
+% 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPPE-SICSPME';
+
+%'RSA_HPC_C_1-44_1_0_500-50_1_T_SCCSPPE-DCCSPPE';
+%'RSA_HPC_C_1-44_1_0_500-50_1_T_SCCSPME-DCCSPME';
+%'RSA_HPC_C_1-44_1_0_500-50_1_T_SCCSMME-DCCSMME';
+
+% 'RSA_AMY_C_1-44_1_0_500-50_1_NT_SICSPPA-SICSPMA'; 
+% 'RSA_AMY_C_1-44_1_0_500-50_1_NT_SICSPPE-SICSPME'; 
+% 'RSA_TMP_C_1-44_1_0_500-50_1_NT_SICSPPA-SICSPMA'; 
+% 'RSA_TMP_C_1-44_1_0_500-50_1_NT_SICSPPE-SICSPME'; 
+
+'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPALT-SICSMALT'; 
+'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPALT-SICSMALT'; 
+
 
 
 };   
@@ -60,12 +76,22 @@ end
 %% plot 2 lines from TG 
 clear, clc
 
-minTr = 50; 
+minTr = 8; 
 paths = load_paths_EXT; 
 
-f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+
+%f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSMME-DCCSMME';
+
 %f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPPE-SICSMME';
-%f2sav  = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCE-DCE';
+
+%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SISCOE-SIDCOE';
+%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPALT-SICSMALT'; 
+
+%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SISCOE-SIDCOE';
+%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+%f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPPE-SICSMME';
+f2sav  = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCE-DCE';
+%f2sav  = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SCE-DCE';
 
 %f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
 
@@ -102,7 +128,7 @@ shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(1,:)}, 1); hold on;
 plot(times, hb,'k',  LineWidth=7)
 %set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .045], 'Fontsize', 22); %STABILITY
 set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 22); %CTX
-%set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .1], 'Fontsize', 22);
+
 plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 2);
 plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
 
@@ -116,7 +142,10 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
 clearvars -except out_rsa
 %[h tObs d2pm1 d2pm2 se1 se2] = compute_real_differences_EXT(out_rsa, [18:25]); % TMP 
-[h tObs d2pm1 d2pm2 se1 se2] = compute_real_differences_EXT(out_rsa, [29:33]); %AMY
+%[h tObs d2pm1 d2pm2 se1 se2] = compute_real_differences_EXT(out_rsa, [29:33]); %AMY
+%[h tObs d2pm1 d2pm2 se1 se2] = compute_real_differences_EXT(out_rsa, [21:28]); %PFC
+%[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [22:33]); %PFC
+[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [25:38]); %AMY
 
 %% plot 2 bars
 clear data
@@ -140,7 +169,9 @@ exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 
 
 
+%% compute context specificity for CS++ CS+- and CS--
 
+%First compute differences between same and diff context in each trial type and then check for differneces in each condition
 
 
 
@@ -573,24 +604,27 @@ paths = load_paths_EXT;
 
 myR = 'TMP';
 
-f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_SICSPA-SICSMA'];
+%f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_SICSPA-SICSMA'];
+f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_NT_SICSPPA-SICSPMA'];
+
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_ACQ = out_rsa; 
 nTrialsA = compute_trial_number_EXT(ids); 
-f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_SICSPE-SICSME'];
+%f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_SICSPE-SICSME'];
+f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_NT_SICSPPE-SICSPME'];
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_EXT = out_rsa; 
 nTrialsE = compute_trial_number_EXT(ids); 
 
 
 cfg = getParams_EXT(f2sav);
-if length(cfg.contr2sav{1}) > 3 & strcmp(cfg.contr2sav{1}(1:5), 'SICSP') 
-    sub2exc = [3 4 17 19 25 31 37]; 
-elseif strcmp(cfg.contr2sav{1}(1:2), 'SC')
-    sub2exc = [27 37]; 
-end
-
-
+% if length(cfg.contr2sav{1}) > 3 & strcmp(cfg.contr2sav{1}(1:5), 'SICSP') 
+%     sub2exc = [3 4 17 19 25 31 37]; 
+% elseif strcmp(cfg.contr2sav{1}(1:2), 'SC')
+%     sub2exc = [27 37]; 
+% end
+sub2exc = [37]; 
+%sub2exc = []; 
 
 
 

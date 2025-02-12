@@ -2,6 +2,20 @@ function [ids2comp] = extract_ids_EXT(EEG, contrast)
 
 chansLab = {EEG.chanlocs.fsLabel}';
 
+if strcmp(contrast, 'AMY-PFC')
+    allPFCLabs = {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' };
+    chAMYidLeft = find(contains(chansLab, 'Amygdala') & contains(chansLab, 'Left')); 
+    chHPCidLeft = find(contains(chansLab, allPFCLabs) & contains(chansLab, 'lh')); 
+    chAMYidRight = find(contains(chansLab, 'Amygdala') & contains(chansLab, 'Right')); 
+    chHPCidRight = find(contains(chansLab, allPFCLabs) & contains(chansLab, 'rh')); 
+end
+if strcmp(contrast, 'AMY-TMP')
+    allTMPLabs = {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+    chAMYidLeft = find(contains(chansLab, 'Amygdala') & contains(chansLab, 'Left')); 
+    chHPCidLeft = find(contains(chansLab, allTMPLabs) & contains(chansLab, 'lh')); 
+    chAMYidRight = find(contains(chansLab, 'Amygdala') & contains(chansLab, 'Right')); 
+    chHPCidRight = find(contains(chansLab, allTMPLabs) & contains(chansLab, 'rh')); 
+end
 if strcmp(contrast, 'AMY-HPC')
     chAMYidLeft = find(contains(chansLab, 'Amygdala') & contains(chansLab, 'Left')); 
     chHPCidLeft = find(contains(chansLab, 'Hippocampus') & contains(chansLab, 'Left')); 

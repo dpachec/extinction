@@ -14,7 +14,7 @@ load ([paths.results.power file2load]);
 
 clear nChans
 %for subji = 1:30 %length(ALLEEG)
-for subji = 31:length(ALLEEG)
+for subji = 1:length(ALLEEG)
     EEG = ALLEEG{subji};
     if~isempty(EEG)
         nChans(subji,:) = length(EEG.chanlocs);
@@ -58,9 +58,12 @@ for subji = 1:length(ALLEEG)
 
 
         % % %   % % Acquisition only late trials
-        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & double(string(Ev2(:, 1))) > 42;
-        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') & double(string(Ev2(:, 1))) > 42;
+        %t2t1 = 41; % will only consider trials above this number (overall)
+        %t2t2 = 41;
+        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & double(string(Ev2(:, 1))) > t2t1;
+        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') & double(string(Ev2(:, 1))) > t2t2;
 
+        
         % % % % Acquisition vs extinction
         %ids1 = strcmp(Ev2(:, 2), '1') ;
         %ids2 = strcmp(Ev2(:, 2), '2') ;
@@ -90,9 +93,13 @@ for subji = 1:length(ALLEEG)
         %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 5), '1')  ) ;
         %ids2 = strcmp(Ev2(:, 2), '2') &  ( strcmp(Ev2(:, 5), '1') ) ;
 
-        % % % % % % Extinction
-        ids1 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '3') ); % Cs+Cs+ or Cs-Cs-
-        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  ) ; % Cs+Cs- 
+        % % % % % % Contingencies change
+        %ids1 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '3') ); % Cs+Cs+ or Cs-Cs-
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  ) ; % Cs+Cs- 
+
+        % % % % % % CS+- vs. CS-- during extinction
+        ids1 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ); % Cs+Cs+ or Cs-Cs-
+        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3')  ) ; % Cs+Cs- 
 
 
         nTrials(subji, :) = get_number_of_trials_POW_EXT(EEG, ids1, ids2, []); 
@@ -172,7 +179,7 @@ max_clust_obs = allSTs(id);
 % 
 
 %h = zeros(size(c1B, 2),size(c1B, 3));
-h(clustinfo.PixelIdxList{id}) = 1; 
+%h(clustinfo.PixelIdxList{id}) = 1; 
 
 hTestTimes = sum(h)'; 
 hTestFreqs = sum(h, 2); 
@@ -193,22 +200,28 @@ plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 title('CS+')
 %title('ACQ')
 %title('CS-- ACQ')
+%title('CS++ and CS--')
+title('CS+-')
 xlabel('Time (s)')
 ylabel('Frequency (Hz)')
 ax2 = nexttile
 contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.125 .125])
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS-')
+
+%title('CS-')
+%title('CS+-')
 %title('EXT')
-%title('CS-- EXT')
+title('CS--')
 xlabel('Time (s)')
 ylabel('Frequency (Hz)')
 ax3 = nexttile
 contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T'; c.Label.Rotation= 360; 
 contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-4 4])
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS+ vs CS-')
+%title('CS++ and CS-- vs. CS+-')
+%title('CS+ vs CS-')
+title('CS+- vs CS--')
 %title('ACQ vs EXT')
 %title('CS-- ACQ vs. CS-- EXT')
 xlabel('Time (s)')

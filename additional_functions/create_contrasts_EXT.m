@@ -175,6 +175,19 @@ if exist('DCCSME')
    idF = DT & DC2 & CSM & EXT; 
    new_dccsme = [allComb(idF, 1) allComb(idF, 11)];
 end
+if exist('DCCSPPE')
+   idF = DT & DC2 & CSPP & EXT;
+   new_dccsppe = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCCSPME')
+   idF = DT & DC2 & CSPM & EXT;
+   new_dccspme = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCCSMME')
+   idF = DT & DC2 & CSMM & EXT;
+   new_dccsmme = [allComb(idF, 1) allComb(idF, 11)];
+end
+
 
 if exist('DCCSPA')
    idF = DT & DC2 & CSP & ACQ; 
@@ -223,6 +236,18 @@ end
 if exist('SCCSME')
    idF = DT & SC2 & CSM & EXT;
    new_sccsme = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCCSPPE')
+   idF = DT & SC2 & CSPP & EXT;
+   new_sccsppe = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCCSPME')
+   idF = DT & SC2 & CSPM & EXT;
+   new_sccspme = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SCCSMME')
+   idF = DT & SC2 & CSMM & EXT;
+   new_sccsmme = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('DICSPA')
    idF = DT & DI2 & CSP & ACQ;
@@ -316,16 +341,22 @@ if exist('SICSMME')
    idF = DT & SI2 & CSMM & EXT;
    new_sicsmme = [allComb(idF, 1) allComb(idF, 11)];
 end
-if exist('SCATR')
-   idF = DT & SC2 & ACQ; 
-   new_scatr = [allComb(idF, 1) allComb(idF, 4) allComb(idF, 11) allComb(idF, 14)];
+if exist('SISCOE')
+   idF = DT & SI2 & EXT  & (CSMM | CSPP); 
+   new_siscoe =  [allComb(idF, 1) allComb(idF, 11)];
    
-   new_scatr(:, 2) = new_scatr(:, 1) + 1; 
 end
-if exist('SCETR')
-   idF = DT & SC2 & EXT; 
-   new_sce = [oneListIdsA(idF, 1)];
-   new_sce(:, 2) = new_sce(:, 1) + 1; 
+if exist('SIDCOE')
+   idF = DT & SI2 & EXT & CSPM; 
+   new_sidcoe =  [allComb(idF, 1) allComb(idF, 11)];   
+end
+if exist('SICSPPA')
+   idF = DT & SI2 & CSPP & ACQ;
+   new_sicsppa = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSPMA')
+   idF = DT & SI2 & CSPM & ACQ;
+   new_sicspma = [allComb(idF, 1) allComb(idF, 11)];
 end
 
 
