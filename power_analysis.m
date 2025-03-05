@@ -29,11 +29,11 @@ disp (['Elec per subject in amy: ' num2str(mean(nChans2)) ' ± ' num2str(std(nCh
 
 
 %% PLOT grand average for each condition
-
+clc
 clearvars -except ALLEEG paths  totalChans nChans nSub nL file2load
 
 
-for subji = 1:length(ALLEEG)
+for subji = 1:31%length(ALLEEG)
     
     EEG = ALLEEG{subji};
     
@@ -50,18 +50,30 @@ for subji = 1:length(ALLEEG)
         %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
 
         % % % % % % Extinction
-        %ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ; % Cs+Cs+
-        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
+        ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ; % Cs+Cs+
+        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
         
         %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
         %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
 
 
         % % %   % % Acquisition only late trials
-        %t2t1 = 41; % will only consider trials above this number (overall)
-        %t2t2 = 41;
-        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & double(string(Ev2(:, 1))) > t2t1;
-        %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') & double(string(Ev2(:, 1))) > t2t2;
+        % allACT = sum(double(string(Ev2(:, 2))) == 1); % always 72
+        % t2t = allACT/2;
+        % ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & double(string(Ev2(:, 1))) > t2t;
+        % ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3') & double(string(Ev2(:, 1))) > t2t;
+
+        % % %   % % Extinction only early trials
+        % t2t = logical(zeros(192, 1)); 
+        % t2t(73:110) = true; 
+        % ids1 = strcmp(Ev2(:, 2), '2') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & double(string(Ev2(:, 1))) & t2t;
+        % ids2 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '3') & double(string(Ev2(:, 1))) & t2t;
+
+        % % %   % % Extinction only late trials
+        % t2t = logical(zeros(192, 1)); 
+        % t2t(111:144) = true; 
+        % ids1 = strcmp(Ev2(:, 2), '2') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) & double(string(Ev2(:, 1))) & t2t;
+        % ids2 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '3') & double(string(Ev2(:, 1))) & t2t;
 
         
         % % % % Acquisition vs extinction
@@ -88,18 +100,17 @@ for subji = 1:length(ALLEEG)
         %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '3') ) ;
         %ids2 = strcmp(Ev2(:, 2), '2') &  ( strcmp(Ev2(:, 6), '3') ) ;
 
+        % % % % % % Contingencies change during EXTINCTON
+        %ids1 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '3') ); % Cs++ or Cs--
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  ) ; % Cs+- 
 
-        % % % % Acquisition vs Extinction CS+ for each cue
-        %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 5), '1')  ) ;
-        %ids2 = strcmp(Ev2(:, 2), '2') &  ( strcmp(Ev2(:, 5), '1') ) ;
-
-        % % % % % % Contingencies change
-        %ids1 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '3') ); % Cs+Cs+ or Cs-Cs-
-        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  ) ; % Cs+Cs- 
+        % % % % % % Previous plus
+        %ids1 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ); % Cs++ or Cs+-
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3')  ) ; % Cs-- 
 
         % % % % % % CS+- vs. CS-- during extinction
-        ids1 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ); % Cs+Cs+ or Cs-Cs-
-        ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3')  ) ; % Cs+Cs- 
+        %ids1 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ); % 
+        %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3')  ) ; % 
 
 
         nTrials(subji, :) = get_number_of_trials_POW_EXT(EEG, ids1, ids2, []); 
@@ -140,14 +151,22 @@ cd (paths.github)
 
 %% ALL FREQUENCIES 
 
-freq2u = 4:8;
+%freq2u = 1:54;
+freq2u = 1:12;
+%freq2u = 4:8;
 
-sub2excApriori = [37]'; 
+plotC = 2; % 1: only biggest cluster; 2 all clusters; 3 no clusters
+
+title1 = 'CS+';
+title2 = 'CS-';
+title3 = 'CS+ vs CS-';
+
+%sub2excApriori = [37]'; 
 %sub2excApriori = [17]'; 
-%sub2excApriori = []'; 
+sub2excApriori = []'; 
 
 minTr = 8; 
-f2u = strsplit(file2load, '_')
+f2u = strsplit(file2load, '_'); 
 
 
 sub2exc = find(nTrials(:, 1) < minTr | nTrials(:, 2) < minTr); 
@@ -167,19 +186,29 @@ d2p2	= squeeze(mean(c2B, 'omitnan'));
 
 [h p ci ts] = ttest(c1B, c2B); 
 h = squeeze(h); t = squeeze(ts.tstat);
+h(:, 1:25) = 0; 
 
-clear allSTs  
+
+clear allSTOBS  
 clustinfo = bwconncomp(h);
 for pxi = 1:length(clustinfo.PixelIdxList)
-   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+   allSTOBS(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
 end
-[max2u id] = max(abs(allSTs));
-max_clust_obs = allSTs(id); 
+[max2u id] = max(abs(allSTOBS));
+max_clust_obs = allSTOBS(id); 
 
-% 
+%
 
-%h = zeros(size(c1B, 2),size(c1B, 3));
-%h(clustinfo.PixelIdxList{id}) = 1; 
+if plotC == 1
+    h = zeros(size(c1B, 2),size(c1B, 3));
+    h(clustinfo.PixelIdxList{id}) = 1; 
+elseif plotC == 2
+    %h = zeros(size(c1B, 2),size(c1B, 3));
+    %h(clustinfo.PixelIdxList{id}) = 1; 
+elseif plotC == 3 
+    h = zeros(size(c1B, 2),size(c1B, 3));
+end
+
 
 hTestTimes = sum(h)'; 
 hTestFreqs = sum(h, 2); 
@@ -193,37 +222,28 @@ hTestTimes(:, 2) = times';
 freqs = 1:size(c1B, 2);
 figure()
 tiledlayout(3, 1,'TileSpacing','loose'); set(gcf, 'Position', [100 100 600 900])
-ax1 = nexttile
+ax1 = nexttile;
 contourf(times, freqs, d2p1, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power'; 
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);set(gca, 'clim', [-.125 .125])
 plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-title('CS+')
-%title('ACQ')
-%title('CS-- ACQ')
-%title('CS++ and CS--')
-title('CS+-')
+title(title1)
+
 xlabel('Time (s)')
 ylabel('Frequency (Hz)')
-ax2 = nexttile
+ax2 = nexttile;
 contourf(times, freqs, d2p2, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'Z-Power';
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3); set(gca, 'clim', [-.125 .125])
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
 
-%title('CS-')
-%title('CS+-')
-%title('EXT')
-title('CS--')
+title(title2)
 xlabel('Time (s)')
 ylabel('Frequency (Hz)')
-ax3 = nexttile
+ax3 = nexttile;
 contourf(times, freqs, t, 40, 'linecolor', 'none'); hold on; c = colorbar; c.Label.String = 'T'; c.Label.Rotation= 360; 
 contour(times, freqs,h, 1, 'Color', [0, 0, 0], 'LineWidth', 2); set(gca, 'clim', [-4 4])
+%contour(times, freqs,h, 1,':', 'Color', [0, 0, 0], 'LineWidth', 3); set(gca, 'clim', [-4 4])
 plot([0 0 ],get(gca,'ylim'), 'k:','lineWidth', 3);
-%title('CS++ and CS-- vs. CS+-')
-%title('CS+ vs CS-')
-title('CS+- vs CS--')
-%title('ACQ vs EXT')
-%title('CS-- ACQ vs. CS-- EXT')
+title(title3) 
 xlabel('Time (s)')
 ylabel('Frequency (Hz)')
 %plot([1.77 1.77 ],get(gca,'ylim'), 'k:','lineWidth', 3);
@@ -244,16 +264,54 @@ end
 %exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
-%% 
+%%nTrials2 = nTrials(any(nTrials,2),:);
 
-nTrials2 = nTrials(any(nTrials,2),:);
+%% mean in cluster 
+load clustInfoAMY_1-12Hz.mat
+for subji = 1:size(c1B, 1)
+    d2p1B   = squeeze(c1B(subji, :, :));
+    d2p1	= mean(d2p1B(clustinfo.PixelIdxList{4}), 'all');
+    d2p2B   = squeeze(c2B(subji, :, :));
+    d2p2	= mean(d2p2B(clustinfo.PixelIdxList{4}), 'all');
+
+    both2usdiff(subji, 1) = d2p1;
+    both2usdiff(subji, 2) = d2p2; 
+    
+end
+
+
+
+%% plot 2 bar
+%data = [mcsP mcsM ];
+data = both2usdiff; 
+
+figure(2); set(gcf,'Position', [0 0 500 650]); 
+mean_S = mean(data, 1, 'omitnan');
+hb = plot ([1 2], data, 'k'); hold on;
+set(hb, 'lineWidth', 3, 'Marker', '.', 'MarkerSize',35);hold on;
+h = bar (mean_S);hold on;
+set(h,'FaceColor', 'none', 'lineWidth', 3);
+set(gca,'XTick',[1 2],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 3], 'ylim', [-.25 .45] );
+plot(get(gca,'xlim'), [0 0],'k','lineWidth', 3);
+
+[h p ci t] = ttest (data(:,1), data(:,2));
+disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
+
+set(gca, 'LineWidth', 3);
+
+exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+
+
+
 
 %% permutations shuffling condition labels at the group level
+
+
+clearvars -except ALLEEG ids1 ids2 max_clust_obs file2load paths freq2u sub2exc allSTOBS c1B c2B nTrials c1 c2
 
 nPerm = 1000; 
 t4p = 26:200; 
 
-clear max_clust_sum_perm c1BP c2BP
 tic
 for permi = 1:nPerm
     progress_in_console(permi)
@@ -285,16 +343,23 @@ for permi = 1:nPerm
 
 end
 
+
+max_clust_obs = allSTOBS(1)
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(max_clust_obs));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 toc
 
+%%
+max_clust_obs = allSTOBS(3)
+allAb = max_clust_sum_perm((max_clust_sum_perm) > (max_clust_obs));
+p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
+
 
 %% permutations shuffling trial labels in each subject
 
 
-clearvars -except ALLEEG ids1 ids2 max_clust_obs file2load paths freq2u sub2exc
+clearvars -except ALLEEG ids1 ids2 max_clust_obs file2load paths freq2u sub2exc allSTOBS c1B c2B nTrials c1 c2
 
 
 nPerm = 1000; 
@@ -307,10 +372,10 @@ for permi = 1:nPerm
     for subji = 1:length(ALLEEG)
         EEG = ALLEEG{subji};
         if ~isempty(EEG)
-            c1 = squeeze(mean(EEG.power(ids1, :, freq2u ,t4p), 2, 'omitnan'));  %mean across electrodes
-            c2 = squeeze(mean(EEG.power(ids2, :, freq2u ,t4p), 2, 'omitnan')); 
-            junts = cat(1, c1, c2); 
-            realCondMapping = [zeros(1,size(c1, 1)) ones(1, size(c2, 1))]';
+            c1N = squeeze(mean(EEG.power(ids1, :, freq2u ,t4p), 2, 'omitnan'));  %mean across electrodes
+            c2N = squeeze(mean(EEG.power(ids2, :, freq2u ,t4p), 2, 'omitnan')); 
+            junts = cat(1, c1N, c2N); 
+            realCondMapping = [zeros(1,size(c1N, 1)) ones(1, size(c2N, 1))]';
             fakeCondMapping = realCondMapping(randperm(length(realCondMapping)));
             c1P(subji, :, :) = mean(junts(fakeCondMapping ==0,:,:)); 
             c2P(subji, :, :) = mean(junts(fakeCondMapping ==1,:,:)); 
@@ -334,6 +399,9 @@ for permi = 1:nPerm
 end
 
 
+
+%max_clust_obs = allSTOBS(6)
+nPerm = permi; 
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(max_clust_obs));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
@@ -446,6 +514,8 @@ subID = repmat(1:32, 1, 3)';
 d4ANOVA = [d4ANOVA conds subID]
 
 x = RMAOV1(d4ANOVA);
+
+
 
 
 

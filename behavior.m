@@ -84,7 +84,7 @@ end
   
 
 %% AVERAGE REPONSES across TRIALS IN EACH BLOCK 
-clear
+clear, clc
 paths = load_paths_EXT;
 path_trlinfo= paths.trlinfo;
 
@@ -110,6 +110,7 @@ for subji=1:numel(allsubs)
     % plot responses for each type across experiment
     load(strcat(path_trlinfo,allsubs{subji},'_trlinfo.mat'))
     trialinfo=trlinfo;
+    allTRINFO{subji, :} = trlinfo; 
     nanResponses(subji, :) = length(find(isnan(trialinfo(:, 7))));
     types={'cs+/cs+','cs+/cs-','cs-/cs-'};
     items=1:3;
@@ -204,6 +205,46 @@ nSubj = size(respAVG, 1);
 subID = repmat((1:nSubj)', 9, 1); 
 trial_type = repmat([ones(1,nSubj) , ones(1,nSubj)*2 , ones(1,nSubj)*3]', 3, 1);
 block_n = [ones(1,nSubj*3) , ones(1,nSubj*3)*2 , ones(1,nSubj*3)*3]';
+
+
+
+anovaStats = rm_anova2(d4anova,subID,trial_type,block_n,{'trial_type', 'block_number'})
+
+%% Sum of Squares values from ANOVA table
+SS_A = 41.8509;
+SS_error_A = 103.4369;
+
+SS_B = 5.9429;
+SS_error_B = 30.9197;
+
+SS_AB = 6.5836;
+SS_error_AB = 44.4520;
+
+% Compute Partial Eta Squared
+eta_p2_A = SS_A / (SS_A + SS_error_A);
+eta_p2_B = SS_B / (SS_B + SS_error_B);
+eta_p2_AB = SS_AB / (SS_AB + SS_error_AB);
+
+% Display results
+fprintf('Partial Eta Squared for trial type (Factor A): %.3f\n', eta_p2_A);
+fprintf('Partial Eta Squared for block number (Factor B): %.3f\n', eta_p2_B);
+fprintf('Partial Eta Squared for Interaction (A × B): %.3f\n', eta_p2_AB);
+
+
+%% Reshape data 4 Anova ONLY CS++ vs CS--
+
+clc 
+sub2exc = [27 37]; % This subject needs to be excluded because of a technical problem, no ratings for the test period
+respAVG = response_avgblocksub(:, [1 3], :); 
+
+respAVG(sub2exc, :, :) = []; 
+d4anova = respAVG(:);
+
+%rm_anova2
+nSubj = size(respAVG, 1); 
+subID = repmat((1:nSubj)', 6, 1); 
+trial_type = repmat([ones(1,nSubj), ones(1,nSubj)*3]', 3, 1);
+block_n = [ones(1,nSubj*2) , ones(1,nSubj*2)*2 , ones(1,nSubj*2)*3]';
 
 
 

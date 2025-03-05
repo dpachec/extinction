@@ -39,7 +39,8 @@ CSPM = (allComb(:,7) == 2 & allComb(:,17) == 2);
 CSMM = (allComb(:,7) == 3 & allComb(:,17) == 3);
 SC2 = (allComb(:,4) == allComb(:,14));
 DC2 = (allComb(:,4) ~= allComb(:,14));
-LT = (allComb(:,2) > 39 & allComb(:,2) < 79) | (allComb(:,2) > 108 & allComb(:,2) < 154); 
+LTA = (allComb(:,2) > 36); 
+ETE = (allComb(:,2) < 111); 
 SPHA = allComb(:,3) == allComb(:,13);
 EPP = (allComb(:,7) == 1 & allComb(:,17) == 3) | (allComb(:,7) == 3 & allComb(:,17) == 1);
 EPM = (allComb(:,7) == 1 & allComb(:,17) == 2) | (allComb(:,7) == 2 & allComb(:,17) == 1);
@@ -210,7 +211,7 @@ if exist('SICSPA')
    new_sicspa = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SICSPALT')
-   idF = DT & SI2 & CSP & ACQ & LT;
+   idF = DT & SI2 & CSP & ACQ & LTA;
    new_sicspalt = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SICSMA')
@@ -218,8 +219,16 @@ if exist('SICSMA')
    new_sicsma = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SICSMALT')
-   idF = DT & SI2 & CSM & ACQ & LT;
+   idF = DT & SI2 & CSM & ACQ & LTA;
    new_sicsmalt = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSPEET')
+   idF = DT & SI2 & CSP & EXT & ETE;
+   new_sicspeet = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSMEET')
+   idF = DT & SI2 & CSM & EXT & ETE;
+   new_sicsmeet = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('SCCSPA')
    idF = DT & SC2 & CSP & ACQ;
@@ -241,13 +250,25 @@ if exist('SCCSPPE')
    idF = DT & SC2 & CSPP & EXT;
    new_sccsppe = [allComb(idF, 1) allComb(idF, 11)];
 end
+if exist('DCCSPPE')
+   idF = DT & DC2 & CSPP & EXT;
+   new_dccsppe = [allComb(idF, 1) allComb(idF, 11)];
+end
 if exist('SCCSPME')
    idF = DT & SC2 & CSPM & EXT;
    new_sccspme = [allComb(idF, 1) allComb(idF, 11)];
 end
+if exist('DCCSPME')
+   idF = DT & DC2 & CSPM & EXT;
+   new_dccspme = [allComb(idF, 1) allComb(idF, 11)];
+end
 if exist('SCCSMME')
    idF = DT & SC2 & CSMM & EXT;
    new_sccsmme = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('DCCSMME')
+   idF = DT & DC2 & CSMM & EXT;
+   new_dccsmme = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('DICSPA')
    idF = DT & DI2 & CSP & ACQ;
@@ -257,17 +278,9 @@ if exist('SICSPE')
    idF = DT & SI2 & CSP & EXT;
    new_sicspe = [allComb(idF, 1) allComb(idF, 11)];
 end
-if exist('SICSPELT')
-   idF = DT & SI2 & CSP & EXT & LT;
-   new_sicspelt = [allComb(idF, 1) allComb(idF, 11)];
-end
 if exist('SICSME')
    idF = DT & SI2 & CSM & EXT;
    new_sicsme = [allComb(idF, 1) allComb(idF, 11)];
-end
-if exist('SICSMELT')
-   idF = DT & SI2 & CSM & EXT & LT;
-   new_sicsmelt = [allComb(idF, 1) allComb(idF, 11)];
 end
 if exist('DICSME')
    idF = DT & DI2 & CSM & EXT;
@@ -357,6 +370,10 @@ end
 if exist('SICSPMA')
    idF = DT & SI2 & CSPM & ACQ;
    new_sicspma = [allComb(idF, 1) allComb(idF, 11)];
+end
+if exist('SICSMMA')
+   idF = DT & SI2 & CSMM & ACQ;
+   new_sicsmma = [allComb(idF, 1) allComb(idF, 11)];
 end
 
 

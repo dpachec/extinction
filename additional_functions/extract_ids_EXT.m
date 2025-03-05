@@ -24,9 +24,31 @@ if strcmp(contrast, 'AMY-HPC')
 end
 if strcmp(contrast, 'AMY-OFC')
     chAMYidLeft = find(contains(chansLab, 'Amygdala') & contains(chansLab, 'Left')); 
-    chHPCidLeft = find(contains(chansLab, 'orbitofrontal') & contains(chansLab, 'Left')); 
+    chHPCidLeft = find(contains(chansLab, 'orbitofrontal') & contains(chansLab, 'lh')); 
     chAMYidRight = find(contains(chansLab, 'Amygdala') & contains(chansLab, 'Right')); 
-    chHPCidRight = find(contains(chansLab, 'orbitofrontal') & contains(chansLab, 'Right')); 
+    chHPCidRight = find(contains(chansLab, 'orbitofrontal') & contains(chansLab, 'rh')); 
+end
+if strcmp(contrast, 'HPC-TMP')
+    allTMPLabs = {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+    chAMYidLeft = find(contains(chansLab, 'Hippocampus') & contains(chansLab, 'Left')); 
+    chHPCidLeft = find(contains(chansLab, allTMPLabs) & contains(chansLab, 'lh')); 
+    chAMYidRight = find(contains(chansLab, 'Hippocampus') & contains(chansLab, 'Right')); 
+    chHPCidRight = find(contains(chansLab, allTMPLabs) & contains(chansLab, 'rh')); 
+end
+if strcmp(contrast, 'OFC-TMP')
+    allTMPLabs = {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+    chAMYidLeft = find(contains(chansLab, 'orbitofrontal') & contains(chansLab, 'lh')); 
+    chHPCidLeft = find(contains(chansLab, allTMPLabs) & contains(chansLab, 'lh')); 
+    chAMYidRight = find(contains(chansLab, 'orbitofrontal') & contains(chansLab, 'rh')); 
+    chHPCidRight = find(contains(chansLab, allTMPLabs) & contains(chansLab, 'rh')); 
+end
+if strcmp(contrast, 'PFC-TMP')
+    allTMPLabsTMP = {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+    allTMPLabsPFC = {'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole' };
+    chAMYidLeft = find(contains(chansLab, allTMPLabsPFC) & contains(chansLab, 'lh')); 
+    chHPCidLeft = find(contains(chansLab, allTMPLabsTMP) & contains(chansLab, 'lh')); 
+    chAMYidRight = find(contains(chansLab, allTMPLabsPFC) & contains(chansLab, 'rh')); 
+    chHPCidRight = find(contains(chansLab, allTMPLabsTMP) & contains(chansLab, 'rh')); 
 end
 
 % % % % only anterior channels 

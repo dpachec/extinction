@@ -673,8 +673,8 @@ toc
 %% Correlate different trial-level metrics at ALL TIME POINTS NEW TIMES SEPARATELY FOR EACH CONDITION
 clear, clc
 
-c2u1 = 3; %cs++ cs+- cs--
-c2u2 = 3; % use the same in both c2u1 and c2u2 or different for OR
+c2u1 = 1; %cs++ cs+- cs--
+c2u2 = 1; % use the same in both c2u1 and c2u2 or different for OR
 
 minTrN = 8; 
 
@@ -910,8 +910,8 @@ toc
 %% Correlate different trial-level metrics at ALL TIME POINTS NEW TIMES SEPARATELY CONTRAST BETWEEN CONDITIONS
 clear, clc
 
-c2u1 = 2; %cs++ cs+- cs--
-c2u2 = 1; 
+c2u1 = 1; %cs++ cs+- cs--
+c2u2 = 2; 
 c2u3 = 3; % % the structure is c2u1 vs c2u2 OR C2u3
 
 minTrN = 8; 
@@ -921,10 +921,10 @@ print1Clust = 0;
 
 paths = load_paths_EXT;
 
-%c1 = 'trlSTA_HPC_CE_1-44_1_0_500-50'; 
-%c2 = 'trlSTA_AMY_CE_1-44_1_0_500-50'; 
+%c1 = 'trlSTA_AMY_CE_1-44_1_0_500-50'; 
+%c2 = 'trlSTA_HPC_CE_1-44_1_0_500-50'; 
 
-c1 = 'trlCTX_AMY_CE_1-44_1_0_500-50'; 
+c1 = 'trlCTX_TMP_CE_1-44_1_0_500-50'; 
 c2 = 'trlCTX_PFC_CE_1-44_1_0_500-50'; 
 
 %c1 = 'trlSTA_AMY_CE_1-44_1_0_500-50'; 
@@ -1098,15 +1098,13 @@ exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 clc
 
 % sub2exc inherited from previous code block
-
 nPerm = 1000;
 tic
 for permi = 1:nPerm
 
     progress_in_console(permi)
-
+    clear allRHO1p allRHO2p
     for subji = 1:size(allRHO1, 1)
-       
         if rand>.5
            allRHO1p(subji, :, :) =  allRHO2(subji, :, :) ; 
            allRHO2p(subji, :, :) =  allRHO1(subji, :, :) ; 
@@ -1114,23 +1112,26 @@ for permi = 1:nPerm
            allRHO1p(subji, :, :) =  allRHO1(subji, :, :) ; 
            allRHO2p(subji, :, :) =  allRHO2(subji, :, :) ; 
         end
-       
-    
-        [h p ci ts] = ttest(atanh(allRHO1p), atanh(allRHO2p));
-        h = squeeze(h); t = squeeze(ts.tstat); 
-        
-        clear allSTs  
-        clustinfo = bwconncomp(h);
-        for pxi = 1:length(clustinfo.PixelIdxList)
-           allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
-        end
-        if exist('allSTs')
-            [max2u id] = max(abs(allSTs));
-            max_clust_perm(permi, : ) = allSTs(id); 
-        else
-            max_clust_perm(permi, : ) = 0; 
-        end
     end
+
+    allRHO1p = allRHO1p(:, 6:42, 6:42); 
+    allRHO2p = allRHO2p(:, 6:42, 6:42); 
+
+    [h p ci ts] = ttest(atanh(allRHO1p), atanh(allRHO2p));
+    h = squeeze(h); t = squeeze(ts.tstat); 
+    
+    clear allSTs  
+    clustinfo = bwconncomp(h);
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs')
+        [max2u id] = max(abs(allSTs));
+        max_clust_perm(permi, : ) = allSTs(id); 
+    else
+        max_clust_perm(permi, : ) = 0; 
+    end
+    
     
 end    
 
@@ -1253,6 +1254,387 @@ exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 disp(['Rho: ' num2str(rho, 3) ' p: ' num2str(p, 3)]); 
 
 
+
+%% correlate ITEM STABILITY WITH with REINST in AMY AND TMP (across subjects)
+
+
+clear, clc
+
+trltype = 3;
+minTrN = 8; 
+%tP = 21:28;  %21:28 PFC effect %19:31 PFC effec ACQvsEXT
+tP = 29:33; %29:33; %18:25;  %21:28 
+
+
+remOutliers = 0; 
+sub2exc = [37]'; 
+
+
+c1 = 'trlSTA_AMY_CE_1-44_1_0_500-50'; 
+c2 = 'trlSTA_TMP_CAT_1-44_1_0_500-50'; 
+c3 = 'trlSTA_TMP_CET_1-44_1_0_500-50'; 
+
+
+paths = load_paths_EXT;
+
+
+[cond1 cond2] = determine_conds_EXT(c1, c2, paths); 
+[cond1 cond3] = determine_conds_EXT(c1, c3, paths); 
+
+rsa2TT1 = zeros(50, 1); 
+rsa2TT2 = zeros(50, 1); 
+rsa2TT3 = zeros(50, 1); 
+
+
+for subji = 1:50
+
+    rsa2T1 = cond1{subji, 1}; 
+    rsa2T1IDs = cond1{subji, 2}; 
+
+    rsa2T2 = cond2{subji, 1}; 
+    rsa2T2IDs = cond2{subji, 2}; 
+
+    rsa2T3 = cond3{subji, 1}; 
+    rsa2T3IDs = cond3{subji, 2}; 
+    
+    if ~isempty(rsa2T1) & ~isempty(rsa2T2) & ~isempty(rsa2T3)
+        
+        if trltype ~= 0
+            rsa2T1 = rsa2T1(rsa2T1IDs(:, 6) == trltype, tP); 
+            rsa2T2 = rsa2T2(rsa2T2IDs(:, 6) == trltype, tP); 
+            rsa2T3 = rsa2T3(rsa2T3IDs(:, 6) == trltype, tP); 
+            % rsa2T1 = rsa2T1(rsa2T1IDs(:, 6) == 1 | rsa2T1IDs(:, 6) == 3, tP); 
+            % rsa2T2 = rsa2T2(rsa2T2IDs(:, 6) == 1 | rsa2T2IDs(:, 6) == 3, tP); 
+            % rsa2T3 = rsa2T3(rsa2T3IDs(:, 6) == 1 | rsa2T3IDs(:, 6) == 3, tP); 
+        else 
+            rsa2T1 = rsa2T1(:, tP); 
+            rsa2T2 = rsa2T2(:, tP); 
+            rsa2T3 = rsa2T3(:, tP); 
+        end
+        
+
+        nTrials(subji, :) = min([size(rsa2T1, 1), size(rsa2T2, 1),  size(rsa2T3, 1)]); 
+
+        rsa2TT1(subji, :) = mean(rsa2T1, 'all', 'omitnan'); 
+        rsa2TT2(subji, :) = mean(rsa2T2, 'all', 'omitnan'); 
+        rsa2TT3(subji, :) = mean(rsa2T3, 'all', 'omitnan'); 
+
+    end
+end
+
+sub2exc2 = find(nTrials < minTrN); 
+sub2exc3 = [sub2exc; sub2exc2]; 
+sub2exc = unique(sub2exc3); 
+
+rsa2TT1(sub2exc, :, :) = []; 
+rsa2TT2(sub2exc, :, :) = []; 
+rsa2TT3(sub2exc, :, :) = []; 
+
+rsa2TT1(rsa2TT1==0) = []; 
+rsa2TT2(rsa2TT2==0) = []; 
+rsa2TT3(rsa2TT3==0) = []; 
+
+rsa2TT4 = rsa2TT2 - rsa2TT3;  %ACQ minus EXT
+%rsa2TT4 = rsa2TT3; 
+
+if remOutliers
+    %[B, tF1] = rmoutliers(rsa2TT1, 'percentile', [5 95]); 
+    %[B, tF2] = rmoutliers(rsa2TT4, 'percentile', [5 95]); 
+    [B, tF1] = rmoutliers(rsa2TT1, 'mean'); 
+    [B, tF2] = rmoutliers(rsa2TT4, 'mean'); 
+    tF3 = tF1 | tF2; 
+    nOut(subji, :) = sum(tF3); 
+    rsa2TT1(tF3) = []; 
+    rsa2TT4(tF3) = []; 
+end
+
+ 
+[rho p] = corr(rsa2TT1, rsa2TT4, 'type', 's');
+
+nSubj = length(rsa2TT1); 
+disp(['Number of subjects: ' num2str(nSubj)]); 
+scatter(rsa2TT1, rsa2TT4, 1400, '.'); hold on; 
+scatter(rsa2TT1, rsa2TT4, 400, 'ko'); hold on; 
+pFit = polyfit(rsa2TT1, rsa2TT4, 1);
+m = pFit(1); % slope
+b = pFit(2); % intercept
+line([min(rsa2TT1)-.03 max(rsa2TT1)+.03], [m*min(rsa2TT1)+b m*max(rsa2TT1)+b], 'color', 'r', linewidth=3);
+%title (['Rho: ' num2str(rho, 3) ' p: ' num2str(p, 3)]);
+
+set(gca, Fontsize=28)
+set(gca, xlim=[-.035 .05], ylim=[-.06 .06])
+exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+disp(['Rho: ' num2str(rho, 3) ' p: ' num2str(p, 3)]); 
+
+
+%% Correlate amygdala POWER IN CLUSTER with different trial-level metrics (ALL TIME POINTS)
+clear, clc
+
+paths = load_paths_EXT;
+load ([paths.results.trial_based 'AMY_POW_1-44Hz_TR'])
+%load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlCTX_HPC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlCTX_AMY_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlCTX_TMP_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlCTX_OFC_CE_1-44_1_0_500-50'])
+
+
+
+load ([paths.results.trial_based 'trlSTA_AMY_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_HPC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_PFC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_TMP_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_OFC_CE_1-44_1_0_500-50'])
+
+sub2exc = [37]; 
+minTr = 5; 
+
+
+
+if exist('itstaTRALL')
+    cond2u = itstaTRALL; 
+end
+if exist('ctxTRALL')
+    cond2u = ctxTRALL; 
+end
+
+if length(cond2u) < 50 
+    cond2u{50,2}= []; 
+end
+
+
+
+win_width = 10; 
+mf = 1; 
+nTimepoints = 51; 
+bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
+
+allRHO = zeros(50, bins); 
+
+for subji = 1:50
+
+    amyPOW1 = allPOWAMY{subji, 1}; 
+    amyPOWIDs = double(string(allPOWAMY{subji, 2})); 
+
+    rsa2T = cond2u{subji, 1}; 
+    rsa2TIDs = cond2u{subji, 2}; 
+    
+    if ~isempty(amyPOW1) & ~isempty(rsa2T)
+        [i1 i2] = intersect(amyPOWIDs(:, 1), rsa2TIDs(:,1)); 
+        amyPOW = amyPOW1(i2, :); 
+        amyPOWIDsh = amyPOWIDs(i2,:); 
+    
+        nanIds = isnan(amyPOW); 
+        amyPOW(nanIds,:) = []; 
+        rsa2T(nanIds,:) = []; 
+        amyPOWIDsh(nanIds,:) = []; 
+        rsa2TIDs(nanIds,:) = []; 
+
+
+        % % % z-score amygdala power separately for CS+ and CS-
+        amyPOWCSp = amyPOW(amyPOWIDsh(:, 8) == 1); 
+        amyPOWCSm = amyPOW(amyPOWIDsh(:, 8) == 0); 
+        amyPOWCSp = (amyPOWCSp - mean(amyPOWCSp, 'omitnan')) ./ std(amyPOWCSp, 'omitnan');
+        amyPOWCSm = (amyPOWCSm - mean(amyPOWCSm, 'omitnan')) ./ std(amyPOWCSm, 'omitnan');
+        amyPOW(amyPOWIDsh(:, 8) == 1) = amyPOWCSp; 
+        amyPOW(amyPOWIDsh(:, 8) == 0) = amyPOWCSm; 
+        % % % z-score RSA2T metric separately for CS+ and CS-
+        % rsa2TCSp = rsa2TT(rsa2TIDs(:, 8) == 1); 
+        % rsa2TCSm = rsa2TT(rsa2TIDs(:, 8) == 0); 
+        % rsa2TCSp = (rsa2TCSp - mean(rsa2TCSp, 'omitnan')) ./ std(rsa2TCSp, 'omitnan');
+        % rsa2TCSm = (rsa2TCSm - mean(rsa2TCSm, 'omitnan')) ./ std(rsa2TCSm, 'omitnan');
+        % rsa2TT(rsa2TIDs(:, 8) == 1) = rsa2TCSp; 
+        % rsa2TT(rsa2TIDs(:, 8) == 0) = rsa2TCSm; 
+
+        nTrials (subji, : ) = length(amyPOW); 
+        
+
+
+
+         for timei = 1:bins 
+            %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+            timeBins = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+            rsa2TT = mean(rsa2T(:, timeBins), 2);     
+    
+            % [B, tF1] = rmoutliers(rsa2TT, 'percentiles', [5 95]); 
+            % [B, tF2] = rmoutliers(amyPOW, 'percentiles', [5 95]); 
+            % [B, tF1] = rmoutliers(rsa2TT, 'mean'); 
+            % [B, tF2] = rmoutliers(amyPOW, 'mean'); 
+            % tF3 = tF1 | tF2; 
+            % nOut(subji, timei) = sum(tF3); 
+            % rsa2TT(tF3,:) = []; 
+            % amyPOWH = amyPOW; 
+            % amyPOWH(tF3,:) = []; 
+
+            if length(amyPOW) > minTr % at least five trials for the correlation analysis
+                allRHO(subji, timei, :) = corr(amyPOW, rsa2TT, 'type', 's');
+            
+            else
+            
+                allRHO(subji, timei, :) = nan; 
+            end
+    
+         end
+
+    end
+end
+
+allRHO(sub2exc, :) = []; 
+
+allRHO = allRHO(any(allRHO,2),:);
+[h p ci ts] = ttest(atanh(allRHO));
+t = squeeze(ts.tstat); 
+
+clear allSTs  
+clustinfo = bwconncomp(h);
+for pxi = 1:length(clustinfo.PixelIdxList)
+   allSTs(pxi,:) = sum(t(clustinfo.PixelIdxList{pxi}));% 
+end
+if exist('allSTs')
+    [max2u id] = max(abs(allSTs));
+    max_clust_obs = allSTs(id); 
+end
+
+
+%h(1:10) = 0; 
+hb = h; hb(h==0) = nan; hb(hb==1) = -.005; 
+
+mAR = mean(allRHO);
+stdAR = std(allRHO); 
+seAR = stdAR / sqrt(size(allRHO, 1))
+
+xStart = -.2; dx = 0.05; times = xStart + (0:bins-1)*dx;
+h(2, :) = times; 
+figure()
+%colors2use = brewermap([6],'*Set1')*0.75;
+colors2use = brewermap([6],'Set3')*0.75;
+shadedErrorBar(times, mAR, seAR, {'Color',colors2use(1,:)}, 1); hold on; 
+
+set(gca, 'ylim', [-.4 .2], 'xlim', [-.25 1.75]) % 
+
+plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
+plot(times, hb, Linewidth=6); 
+
+set(gca, 'Fontsize', 30)
+
+exportgraphics(gcf, ['myP.png'], 'Resolution',150)
+
+
+
+
+
+
+%% correlate THETA POWER WITH with REINST in AMY AND TMP (across subjects)
+
+
+clear, clc
+
+paths = load_paths_EXT;
+load ([paths.results.trial_based 'AMY_POW_1-44Hz_TR'])
+
+trltype = 3;
+minTrN = 8; 
+tP = 29:33;  %21:28 PFC effect %19:31 PFC effec ACQvsEXT
+%tP = 18:25; %29:33; %18:25;  %21:28 
+
+
+remOutliers = 0; 
+sub2exc = [37]'; 
+
+c2 = 'trlSTA_AMY_CAT_1-44_1_0_500-50'; 
+c3 = 'trlSTA_AMY_CET_1-44_1_0_500-50'; 
+
+
+paths = load_paths_EXT;
+
+
+[cond2 cond3] = determine_conds_EXT(c2, c3, paths); 
+%[cond1 cond3] = determine_conds_EXT(c1, c3, paths); 
+
+rsa2TT1 = zeros(50, 1); 
+rsa2TT2 = zeros(50, 1); 
+rsa2TT3 = zeros(50, 1); 
+
+
+for subji = 1:50
+
+    rsa2T1 = allPOWAMY{subji, 1}; 
+    rsa2T1IDs = double(string(allPOWAMY{subji, 2})); 
+
+    rsa2T2 = cond2{subji, 1}; 
+    rsa2T2IDs = cond2{subji, 2}; 
+
+    rsa2T3 = cond3{subji, 1}; 
+    rsa2T3IDs = cond3{subji, 2}; 
+    
+    if ~isempty(rsa2T1) & ~isempty(rsa2T2) & ~isempty(rsa2T3)
+        
+        if trltype ~= 0
+            %rsa2T1 = rsa2T1(rsa2T1IDs(:, 6) == trltype, :); 
+            %rsa2T2 = rsa2T2(rsa2T2IDs(:, 6) == trltype, tP); 
+            %rsa2T3 = rsa2T3(rsa2T3IDs(:, 6) == trltype, tP); 
+             rsa2T1 = rsa2T1(rsa2T1IDs(:, 6) == 2 | rsa2T1IDs(:, 6) == 3, :); 
+             rsa2T2 = rsa2T2(rsa2T2IDs(:, 6) == 2 | rsa2T2IDs(:, 6) == 3, tP); 
+             rsa2T3 = rsa2T3(rsa2T3IDs(:, 6) == 2 | rsa2T3IDs(:, 6) == 3, tP); 
+        else 
+            rsa2T1 = rsa2T1; 
+            rsa2T2 = rsa2T2(:, tP); 
+            rsa2T3 = rsa2T3(:, tP); 
+        end
+        
+
+        nTrials(subji, :) = min([size(rsa2T1, 1), size(rsa2T2, 1),  size(rsa2T3, 1)]); 
+
+        rsa2TT1(subji, :) = mean(rsa2T1, 'all', 'omitnan'); 
+        rsa2TT2(subji, :) = mean(rsa2T2, 'all', 'omitnan'); 
+        rsa2TT3(subji, :) = mean(rsa2T3, 'all', 'omitnan'); 
+
+    end
+end
+
+sub2exc2 = find(nTrials < minTrN); 
+sub2exc3 = [sub2exc; sub2exc2]; 
+sub2exc = unique(sub2exc3); 
+
+rsa2TT1(sub2exc, :, :) = []; 
+rsa2TT2(sub2exc, :, :) = []; 
+rsa2TT3(sub2exc, :, :) = []; 
+
+rsa2TT1(rsa2TT1==0) = []; 
+rsa2TT2(rsa2TT2==0) = []; 
+rsa2TT3(rsa2TT3==0) = []; 
+
+rsa2TT4 = rsa2TT2 - rsa2TT3;  %ACQ minus EXT
+%rsa2TT4 = rsa2TT3; 
+
+if remOutliers
+    %[B, tF1] = rmoutliers(rsa2TT1, 'percentile', [5 95]); 
+    %[B, tF2] = rmoutliers(rsa2TT4, 'percentile', [5 95]); 
+    [B, tF1] = rmoutliers(rsa2TT1, 'mean'); 
+    [B, tF2] = rmoutliers(rsa2TT4, 'mean'); 
+    tF3 = tF1 | tF2; 
+    nOut(subji, :) = sum(tF3); 
+    rsa2TT1(tF3) = []; 
+    rsa2TT4(tF3) = []; 
+end
+
+ 
+[rho p] = corr(rsa2TT1, rsa2TT4, 'type', 's');
+
+nSubj = length(rsa2TT1); 
+disp(['Number of subjects: ' num2str(nSubj)]); 
+scatter(rsa2TT1, rsa2TT4, 1400, '.'); hold on; 
+scatter(rsa2TT1, rsa2TT4, 400, 'ko'); hold on; 
+pFit = polyfit(rsa2TT1, rsa2TT4, 1);
+m = pFit(1); % slope
+b = pFit(2); % intercept
+line([min(rsa2TT1)-.03 max(rsa2TT1)+.03], [m*min(rsa2TT1)+b m*max(rsa2TT1)+b], 'color', 'r', linewidth=3);
+%title (['Rho: ' num2str(rho, 3) ' p: ' num2str(p, 3)]);
+
+set(gca, Fontsize=28)
+set(gca, xlim=[-.2 .2], ylim=[-.2 .2])
+exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+disp(['Rho: ' num2str(rho, 3) ' p: ' num2str(p, 3)]); 
 
 %% correlate across SUBJECTS and not trials : ONE time period PFC, ALL TIME PERIODS IN TMP
 
@@ -1499,9 +1881,9 @@ for typei = 1:3
     % rsa2TT2(rsa2TT2==0) = []; 
     % rsa2TT3(rsa2TT3==0) = []; 
     
-    rsa2TT3 = rsa2TT1 - rsa2TT2;  %ACQ minus EXT
-    %rsa2TT4 = rsa2TT3; 
-    
+    %rsa2TT3 = rsa2TT1 - rsa2TT2;  %ACQ minus EXT
+    rsa2TT3 = rsa2TT2; 
+
     if remOutliers
         %[B, tF1] = rmoutliers(rsa2TT1, 'percentile', [5 95]); 
         %[B, tF2] = rmoutliers(rsa2TT4, 'percentile', [5 95]); 
@@ -1566,6 +1948,7 @@ exportgraphics(gcf, 'myP.png', 'Resolution',150)
 
 
 
+
 %% Repeated-Measures ANOVA (Same as above)
 
 % Combine your data into a matrix where each column corresponds to a condition
@@ -1594,6 +1977,7 @@ disp(ranovatbl);
 comp = multcompare(rm, 'Condition', 'ComparisonType', 'bonferroni');
 disp('Pairwise Comparisons (Bonferroni corrected):');
 disp(comp);
+
 
  
 

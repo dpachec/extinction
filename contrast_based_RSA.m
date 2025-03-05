@@ -20,9 +20,27 @@ listF2sav = {
 % 'RSA_TMP_C_1-44_1_0_500-50_1_NT_SICSPPA-SICSPMA'; 
 % 'RSA_TMP_C_1-44_1_0_500-50_1_NT_SICSPPE-SICSPME'; 
 
-'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPALT-SICSMALT'; 
-'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPALT-SICSMALT'; 
+%'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPALT-SICSMALT'; 
+%'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPALT-SICSMALT'; 
+%'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPEET-SICSMEET'; 
+%'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPEET-SICSMEET'; 
 
+%'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPPA-SICSPPE'; 
+%'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPPA-SICSPPE'; 
+%'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSMMA-SICSMME'; 
+%'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSMMA-SICSMME'; 
+
+
+%'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPMA-SICSPME'; 
+%'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPMA-SICSPME'; 
+
+%'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSPPA-DCSCPPA'; 
+%'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSPMA-DCSCPMA'; 
+%'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSMMA-DCSCMMA'; 
+
+'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSPPE-DCCSPPE'; 
+'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSPME-DCCSPME'; 
+'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSMME-DCCSMME'; 
 
 
 };   
@@ -79,21 +97,9 @@ clear, clc
 minTr = 8; 
 paths = load_paths_EXT; 
 
+f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPPE-SICSPME'; 
 
-%f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSMME-DCCSMME';
-
-%f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPPE-SICSMME';
-
-%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SISCOE-SIDCOE';
-%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPALT-SICSMALT'; 
-
-%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SISCOE-SIDCOE';
-%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
-%f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPPE-SICSMME';
-f2sav  = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCE-DCE';
-%f2sav  = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SCE-DCE';
-
-%f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
+%f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSPPE-DCCSPPE'; 
 
 load ([ paths.results.rsa f2sav '.mat']);
 
@@ -119,15 +125,19 @@ times = -.2:.05:1.75;
 % to check the times 
 h(2,:) = times; 
 figure(); 
-%colors2use = brewermap([6],'*Set1')*0.75;
+%colors2use = brewermap([6],'*Set1')*0.75;%ACQ-EXT
 colors2use = brewermap([6],'*Accent')*0.75; %CTX
 %colors2use = brewermap([6],'Accent')*0.75; %STABILITY
 
 shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(2,:)}, 1); hold on; 
 shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(1,:)}, 1); hold on; 
+
+%shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(1,:)}, 1); hold on; 
+%shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(2,:)}, 1); hold on; 
+
 plot(times, hb,'k',  LineWidth=7)
-%set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .045], 'Fontsize', 22); %STABILITY
-set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 22); %CTX
+set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .045], 'Fontsize', 22); %STABILITY
+%set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 22); %CTX
 
 plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 2);
 plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
@@ -141,11 +151,11 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 %% plot average in specific time period 
 
 clearvars -except out_rsa
-%[h tObs d2pm1 d2pm2 se1 se2] = compute_real_differences_EXT(out_rsa, [18:25]); % TMP 
-%[h tObs d2pm1 d2pm2 se1 se2] = compute_real_differences_EXT(out_rsa, [29:33]); %AMY
-%[h tObs d2pm1 d2pm2 se1 se2] = compute_real_differences_EXT(out_rsa, [21:28]); %PFC
+%[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [18:25]); % TMP 
+%[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [29:33]); %AMY
+[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [21:28]); %PFC
 %[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [22:33]); %PFC
-[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [25:38]); %AMY
+%[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [25:38]); %AMY
 
 %% plot 2 bars
 clear data
@@ -153,6 +163,7 @@ data.data = [d2pm1 d2pm2];
 
 figure(2); set(gcf,'Position', [0 0 500 620]); 
 mean_S = mean(data.data, 1);
+std_S = std(data.data, [], 1)
 scatter([1 2], data.data, 100, 'k'); hold on;
 h = bar (mean_S);hold on;
 set(h,'FaceColor', 'none', 'lineWidth', 3);
@@ -217,6 +228,7 @@ disp('done')
 
  
 %allAb = max_clust_sum_perm(max_clust_sum_perm > tObs);
+%tObs = allSTs(3)
 nPerm = length(max_clust_sum_perm); 
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(tObs));
 p_value = 1 - ((nPerm-1) - (length (allAb)))  / nPerm;
@@ -604,14 +616,14 @@ paths = load_paths_EXT;
 
 myR = 'TMP';
 
-%f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_SICSPA-SICSMA'];
-f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_NT_SICSPPA-SICSPMA'];
+f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_SICSPA-SICSMA'];
+%f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_NT_SICSPMA-SICSMMA'];
 
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_ACQ = out_rsa; 
 nTrialsA = compute_trial_number_EXT(ids); 
-%f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_SICSPE-SICSME'];
-f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_NT_SICSPPE-SICSPME'];
+f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_SICSPE-SICSME'];
+%f2sav =   ['RSA_' myR '_C_1-44_1_0_500-50_1_NT_SICSPME-SICSMME'];
 load ([ paths.results.rsa f2sav '.mat']);
 out_rsa_EXT = out_rsa; 
 nTrialsE = compute_trial_number_EXT(ids); 
