@@ -33,7 +33,7 @@ clc
 clearvars -except ALLEEG paths  totalChans nChans nSub nL file2load
 
 
-for subji = 1:31%length(ALLEEG)
+for subji = 1:length(ALLEEG)
     
     EEG = ALLEEG{subji};
     

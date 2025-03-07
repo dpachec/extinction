@@ -97,9 +97,9 @@ clear, clc
 minTr = 8; 
 paths = load_paths_EXT; 
 
-f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPPE-SICSPME'; 
+f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPME-SICSMME'; 
 
-%f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSPPE-DCCSPPE'; 
+%f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSPME-DCCSPME'; 
 
 load ([ paths.results.rsa f2sav '.mat']);
 
@@ -153,7 +153,7 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 clearvars -except out_rsa
 %[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [18:25]); % TMP 
 %[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [29:33]); %AMY
-[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [21:28]); %PFC
+[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [21:28]); %PFC)
 %[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [22:33]); %PFC
 %[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [25:38]); %AMY
 
