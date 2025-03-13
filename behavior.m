@@ -231,6 +231,25 @@ fprintf('Partial Eta Squared for block number (Factor B): %.3f\n', eta_p2_B);
 fprintf('Partial Eta Squared for Interaction (A × B): %.3f\n', eta_p2_AB);
 
 
+%% one way anova for each phase separately
+clc 
+sub2exc = [27 37]; % This subject needs to be excluded because of a technical problem, no ratings for the test period
+respAVG = response_avgblocksub; 
+respAVG(sub2exc, :, :) = []; 
+
+b2use = 3; 
+respAVG1 = squeeze(respAVG(:, :, b2use )); 
+data = [respAVG1(:, 1), respAVG1(:, 2), respAVG1(:, 3)];
+nSubj = size(respAVG1(:, 1), 1); 
+d4anova = data(:);
+d4anova = d4anova(:); 
+d4anova(:,2) = [ones(1,nSubj) ones(1,nSubj)*2 ones(1,nSubj)*3];
+d4anova(:,3) = [1:nSubj 1:nSubj 1:nSubj];
+
+[allPs allFs] = RMAOV1(d4anova);
+
+
+
 %% Reshape data 4 Anova ONLY CS++ vs CS--
 
 clc 
@@ -732,7 +751,7 @@ allAb = max_clust_perm_TT3(abs(max_clust_perm_TT3) > abs(-2.56149440000433));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 %% plot new colors ; perform ANOVA and WILCOXON at every trial
-
+clc
 clearvars -except avg_response_type allsubs
 
 filt_avg_response_type = avg_response_type; 
@@ -756,7 +775,6 @@ for ty=1:3
     b1=squeeze(nanstd(filt_avg_response_type(:,ty,:),1))./sqrt(numel(allsubs));
    
     boundedline(x1, y1, b1, 'LineWidth', 2, 'cmap',newM(ty,:),'transparency',0.2,'alpha');
-    
     
     %plot(squeeze(nanmean(avg_response_type(:,ty,:))))
     h=gca;
@@ -808,11 +826,13 @@ for i=1:size(filt_avg_response_type,3)
     differences = differences(~isnan(differences));
     [p1(i) htest1(i) stats(i)] = signrank(differences);
 end
+Z1 = [stats.zval];
 
 clustinfo1 = bwconncomp(htest1);
 clear allSTs
 for pxi = 1:length(clustinfo1.PixelIdxList)
-   allSTs(pxi,:) = length(clustinfo1.PixelIdxList{pxi});% 
+   %allSTs(pxi,:) = length(clustinfo1.PixelIdxList{pxi});% 
+   allSTs(pxi,:) = sum(Z1(clustinfo1.PixelIdxList{pxi}));% 
 end
 if exist('allSTs')
     [max2u id] = max(abs(allSTs));
@@ -827,18 +847,28 @@ hb1 = double(htest1); hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.15;
 
 
 % Wilcoxon 2
+clear differences
 for i=1:size(filt_avg_response_type,3)
     %[htest2(i),p2(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,1,i)),squeeze(filt_avg_response_type(:,3,i)));
     differences = squeeze(filt_avg_response_type(:,1,i)) - squeeze(filt_avg_response_type(:,3,i)); 
     differences = differences(~isnan(differences));
-    [p2(i) htest2(i) ] = signrank(differences);
-
+    [p2_prev htest2_prev stats2_prev] = signrank(differences); 
+    p2(i) = p2_prev; 
+    htest2(i) = htest2_prev;
+    if isfield(stats2_prev, 'zval')
+        stats2(i) = stats2_prev;
+    else
+        %stats2(i) = nan;
+    end
 end
+
+Z2 = [stats2.zval];
 
 clustinfo2 = bwconncomp(htest2);
 clear allSTs
 for pxi = 1:length(clustinfo2.PixelIdxList)
-   allSTs(pxi,:) = length(clustinfo2.PixelIdxList{pxi});% 
+   %allSTs(pxi,:) = length(clustinfo2.PixelIdxList{pxi});% 
+   allSTs(pxi,:) = sum(Z2(clustinfo2.PixelIdxList{pxi}));% 
 end
 if exist('allSTs')
     [max2u id] = max(abs(allSTs));
@@ -852,17 +882,27 @@ htest2(clustinfo2.PixelIdxList{id}) = 1;
 hb2 = double(htest2); hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
 
 % Wilcoxon 3
+clear differences
 for i=1:size(filt_avg_response_type,3)
     %[htest3(i),p3(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type(:,2,i)),squeeze(filt_avg_response_type(:,3,i)));
     differences = squeeze(filt_avg_response_type(:,2,i)) - squeeze(filt_avg_response_type(:,3,i)); 
     differences = differences(~isnan(differences));
-    [p3(i) htest3(i)] = signrank(differences);
+    [p3_prev htest3_prev stats3_prev] = signrank(differences); 
+    p3(i) = p3_prev; 
+    htest3(i) = htest3_prev;
+    if isfield(stats3_prev, 'zval')
+        stats3(i) = stats3_prev;
+    else
+        %stats2(i) = nan;
+    end
 end
+Z3 = [stats3.zval];
 
 clustinfo3 = bwconncomp(htest3);
 clear allSTs
 for pxi = 1:length(clustinfo3.PixelIdxList)
-   allSTs(pxi,:) = length(clustinfo3.PixelIdxList{pxi});% 
+   %allSTs(pxi,:) = length(clustinfo3.PixelIdxList{pxi});% 
+   allSTs(pxi,:) = sum(Z3(clustinfo3.PixelIdxList{pxi}));% 
 end
 if exist('allSTs')
     [max2u id] = max(abs(allSTs));
@@ -1009,8 +1049,8 @@ clear p mcsP
 allAb1 = max_clust_perm_TT1(abs(max_clust_perm_TT1) > abs(max_clust_obs_TT1));
 p1 = 1 - ((nPerm-1) - (length (allAb1)))  / nPerm; 
 
-allAb1ACQ = max_clust_perm_TT1(abs(max_clust_perm_TT1) > abs(t1ACQ));
-p1ACQ = 1 - ((nPerm-1) - (length (allAb1ACQ)))  / nPerm; 
+%allAb1ACQ = max_clust_perm_TT1(abs(max_clust_perm_TT1) > abs(t1ACQ));
+%p1ACQ = 1 - ((nPerm-1) - (length (allAb1ACQ)))  / nPerm; 
 
 allAb2 = max_clust_perm_TT2(abs(max_clust_perm_TT2) > abs(max_clust_obs_TT2));
 p2 = 1 - ((nPerm-1) - (length (allAb2)))  / nPerm; 
@@ -1019,6 +1059,117 @@ allAb3 = max_clust_perm_TT3(abs(max_clust_perm_TT3) > abs(max_clust_obs_TT3));
 p3 = 1 - ((nPerm-1) - (length (allAb3)))  / nPerm; 
 
 
+
+%% permutations WILCOXON
+clc
+nPerm = 1000; 
+clear max_clust_sum_perm max_clust_perm_TT1 max_clust_perm_TT2 max_clust_perm_TT3
+for permi = 1:nPerm
+    progress_in_console(permi)
+
+    for subji = 1:size(filt_avg_response_type)
+        filt_avg_response_type_PERM(subji, :, :) = filt_avg_response_type(subji, randperm(3), :); 
+    end
+       
+    % ttest 1
+    for i=1:size(filt_avg_response_type_PERM,3)
+        %[htest1(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type_PERM(:,1,i)),squeeze(filt_avg_response_type_PERM(:,2,i)));
+        differences = filt_avg_response_type_PERM(:,1,i) - filt_avg_response_type_PERM(:,2,i); 
+        [p1_prev htest1_prev stats1_prev] = signrank(differences); 
+        p1(i) = p1_prev; 
+        htest1(i) = htest1_prev;
+        if isfield(stats1_prev, 'zval')
+            stats1(i) = stats1_prev;
+        else
+            %stats2(i) = nan;
+        end
+    end
+    
+    Z1 = [stats1.zval];
+    hb1 = double(htest1); hb1(hb1 == 0) = nan; hb1(hb1==1) = 1.2; 
+    clustinfo = bwconncomp(htest1);
+    clear allSTs
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi,:) = sum(Z1(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs')
+        [max2u id] = max(abs(allSTs));
+        max_clust_perm_TT1(permi, :) = allSTs(id); 
+    else
+        max_clust_perm_TT1(permi, :) = 0; 
+    end
+    
+    % ttest 2
+    for i=1:size(filt_avg_response_type_PERM,3)
+        %[htest2(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type_PERM(:,1,i)),squeeze(filt_avg_response_type_PERM(:,3,i)));
+        differences = filt_avg_response_type_PERM(:,1,i) - filt_avg_response_type_PERM(:,3,i); 
+        [p2_prev htest2_prev stats2_prev] = signrank(differences); 
+        p2(i) = p2_prev; 
+        htest2(i) = htest2_prev;
+        if isfield(stats2_prev, 'zval')
+            stats2(i) = stats2_prev;
+        else
+            %stats2(i) = nan;
+        end
+    end
+    Z2 = [stats2.zval];
+    hb2 = double(htest2); hb2(hb2 == 0) = nan; hb2(hb2==1) = 1.3; 
+    clustinfo = bwconncomp(htest2);
+    clear allSTs
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi,:) = sum(Z2(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs')
+        [max2u id] = max(abs(allSTs));
+        max_clust_perm_TT2(permi, :) = allSTs(id); 
+    else
+        max_clust_perm_TT2(permi, :) = 0; 
+    end
+    
+    % ttest 3
+    for i=1:size(filt_avg_response_type_PERM,3)
+        %[htest3(i),p(i) ci ts(i)]=ttest(squeeze(filt_avg_response_type_PERM(:,2,i)),squeeze(filt_avg_response_type_PERM(:,3,i)));
+        differences = filt_avg_response_type_PERM(:,2,i) - filt_avg_response_type_PERM(:,3,i); 
+        [p3_prev htest3_prev stats3_prev] = signrank(differences); 
+        p3(i) = p3_prev; 
+        htest3(i) = htest3_prev;
+        if isfield(stats3_prev, 'zval')
+            stats3(i) = stats3_prev;
+        else
+            %stats2(i) = nan;
+        end
+    end
+    Z3 = [stats3.zval];
+    hb3 = double(htest3); hb3(hb3 == 0) = nan; hb3(hb3==1) = 1.4; 
+    clustinfo = bwconncomp(htest3);
+    clear allSTs
+    for pxi = 1:length(clustinfo.PixelIdxList)
+       allSTs(pxi,:) = sum(Z3(clustinfo.PixelIdxList{pxi}));% 
+    end
+    if exist('allSTs')
+        [max2u id] = max(abs(allSTs));
+        max_clust_perm_TT3(permi, :) = allSTs(id); 
+    else
+        max_clust_perm_TT3(permi, :) = 0; 
+    end
+
+
+    
+
+end
+
+clear p mcsP
+allAb1 = max_clust_perm_TT1(abs(max_clust_perm_TT1) > abs(max_clust_obs_TT1));
+p1 = 1 - ((nPerm-1) - (length (allAb1)))  / nPerm; 
+
+%allAb1ACQ = max_clust_perm_TT1(abs(max_clust_perm_TT1) > abs(t1ACQ));
+%p1ACQ = 1 - ((nPerm-1) - (length (allAb1ACQ)))  / nPerm; 
+
+allAb2 = max_clust_perm_TT2(abs(max_clust_perm_TT2) > abs(max_clust_obs_TT2));
+p2 = 1 - ((nPerm-1) - (length (allAb2)))  / nPerm; 
+
+allAb3 = max_clust_perm_TT3(abs(max_clust_perm_TT3) > abs(max_clust_obs_TT3));
+p3 = 1 - ((nPerm-1) - (length (allAb3)))  / nPerm; 
 
 
 

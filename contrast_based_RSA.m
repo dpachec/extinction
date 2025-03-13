@@ -97,9 +97,9 @@ clear, clc
 minTr = 8; 
 paths = load_paths_EXT; 
 
-f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPME-SICSMME'; 
+%f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPME-SICSMME'; 
 
-%f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSPME-DCCSPME'; 
+f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSPME-DCCSPME'; 
 
 load ([ paths.results.rsa f2sav '.mat']);
 
@@ -157,6 +157,8 @@ clearvars -except out_rsa
 %[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [22:33]); %PFC
 %[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [25:38]); %AMY
 
+
+
 %% plot 2 bars
 clear data
 data.data = [d2pm1 d2pm2]; 
@@ -178,11 +180,66 @@ set(gca, 'LineWidth', 3);
 
 exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 
+%% substract same versus different context
+
+clear, clc
+
+minTr = 8; 
+t2AV = [21:28]; %PFC CTX
+sub2exc = [37]; 
+paths = load_paths_EXT; 
+
+f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSPME-DCCSPME'; 
+load ([ paths.results.rsa f2sav '.mat']);
+cfg = getParams_EXT(f2sav);
+nTrialsCSPM = compute_trial_number_EXT(ids); 
+%out_rsa_CSPM = out_rsa; 
+[out_rsa_CSPM, sub2exc_CSPM] = rem_nan_subj_EXT(out_rsa, sub2exc, nTrialsCSPM, minTr); 
+[rsaDiffCSPM]  = substract_same_diff(out_rsa_CSPM, t2AV); 
+
+f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSMME-DCCSMME'; 
+load ([ paths.results.rsa f2sav '.mat']);
+nTrialsCSMM = compute_trial_number_EXT(ids); 
+cfg = getParams_EXT(f2sav);
+%out_rsa_CSMM = out_rsa; 
+[out_rsa_CSMM, sub2exc_CSMM] = rem_nan_subj_EXT(out_rsa, sub2exc, nTrialsCSMM, minTr); 
+[rsaDiffCSMM]  = substract_same_diff(out_rsa_CSMM, t2AV); 
 
 
-%% compute context specificity for CS++ CS+- and CS--
+f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSPPE-DCCSPPE'; 
+load ([ paths.results.rsa f2sav '.mat']);
+cfg = getParams_EXT(f2sav);
+nTrialsCSPP = compute_trial_number_EXT(ids); 
+%out_rsa_CSPP = out_rsa; 
+[out_rsa_CSPP, sub2exc_CSPP] = rem_nan_subj_EXT(out_rsa, sub2exc, nTrialsCSMM, minTr); % here I use nTrialsCSMM because we need to exclude the same subjects 
+[rsaDiffCSPP]  = substract_same_diff(out_rsa_CSPP, t2AV); 
 
-%First compute differences between same and diff context in each trial type and then check for differneces in each condition
+
+clc 
+data = [rsaDiffCSPP, rsaDiffCSPM, rsaDiffCSMM];
+nSubj = size(rsaDiffCSPP, 1); 
+d4anova = data(:);
+d4anova = d4anova(:); 
+d4anova(:,2) = [ones(1,nSubj) ones(1,nSubj)*2 ones(1,nSubj)*3];
+d4anova(:,3) = [1:nSubj 1:nSubj 1:nSubj];
+
+[p f] = RMAOV1(d4anova);
+
+boxplot(data)
+
+%%
+
+[h p ci ts] = ttest(rsaDiffCSPP, rsaDiffCSPM)
+[h p ci ts] = ttest(rsaDiffCSPP, rsaDiffCSMM) 
+[h p ci ts] = ttest(rsaDiffCSPM, rsaDiffCSMM) 
+
+
+
+
+
+
+
+
 
 
 
