@@ -25,7 +25,7 @@ function [h tObs d2pm1 d2pm2 se1 se2 p]  = compute_real_differences_EXT(out_rsa,
        cond1B(subji, :) = diag(squeeze(cond1(subji, :, :)));
        cond2B(subji, :) = diag(squeeze(cond2(subji, :, :)));
     end       
-    cond1 = cond1B(:, 1:40); cond2 = cond2B(:, 1:40); 
+    cond1 = cond1B(:, 1:45); cond2 = cond2B(:, 1:45); 
     
     
 

@@ -99,7 +99,7 @@ paths = load_paths_EXT;
 
 %f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPME-SICSMME'; 
 
-f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCCSPME-DCCSPME'; 
+f2sav = 'RSA_PFC_V_1-44_1_0_500-50_1_T_SCE-DCE'; 
 
 load ([ paths.results.rsa f2sav '.mat']);
 
@@ -120,8 +120,12 @@ nSubj = length(out_rsa);
 hb = h; hb(h==0) = nan; hb(hb==1) = -.005; hb = hb'; 
 
 
+
+%%
 %times = (-.5:.01:2) + .25;
-times = -.2:.05:1.75;
+%times = -.2:.05:1.75;
+times = -.2:.05:2;
+
 % to check the times 
 h(2,:) = times; 
 figure(); 
@@ -135,9 +139,12 @@ shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(1,:)}, 1); hold on;
 %shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(1,:)}, 1); hold on; 
 %shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(2,:)}, 1); hold on; 
 
+hb(hb==-0.005) = -0.0025; 
 plot(times, hb,'k',  LineWidth=7)
-set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .045], 'Fontsize', 22); %STABILITY
+%set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .045], 'Fontsize', 22); %STABILITY
 %set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 22); %CTX
+
+set(gca, 'xlim', [-.25 2],'ylim', [-.005 .03], 'Fontsize', 22); %CTX VIDEO
 
 plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 2);
 plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
@@ -244,15 +251,16 @@ boxplot(data)
 
 
 %% Permutations (2D) TRIAL BASED
-
+clc 
 nPerm = 1000;
-    
-clearvars -except out_rsa nPerm tObs
+cov = 'V'; 
+
+clearvars -except out_rsa nPerm tObs cov
 
 
 for permi = 1:nPerm
     progress_in_console(permi)
-    out_rsa_perm = randomize_trials_EXT(out_rsa); 
+    out_rsa_perm = randomize_trials_EXT(out_rsa, cov);
     cond1P = cellfun(@mean, cellfun(@(x) x{1}, out_rsa_perm, 'un', 0), 'un', 0); 
     cond2P = cellfun(@mean, cellfun(@(x) x{2}, out_rsa_perm, 'un', 0), 'un', 0);     
     cond1P = cat(1, cond1P{:}); 

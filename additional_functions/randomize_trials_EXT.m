@@ -1,4 +1,4 @@
-function [out_rsa_perm] = randomize_trials_EXT(out_rsa)
+function [out_rsa_perm] = randomize_trials_EXT(out_rsa, cov)
 
 
 
@@ -10,9 +10,13 @@ function [out_rsa_perm] = randomize_trials_EXT(out_rsa)
         realCondMapping = [zeros(1,size(orSc1, 1)) ones(1, size(orSc2, 1))]';
         fakeCondMapping = realCondMapping(randperm(length(realCondMapping)));
 
-        out_rsa_perm{subji,:}{1} = junts(fakeCondMapping ==0,6:40,6:40); 
-        out_rsa_perm{subji,:}{2} = junts(fakeCondMapping ==1,6:40,6:40); 
-
+        if strcmp(cov, 'C')
+            out_rsa_perm{subji,:}{1} = junts(fakeCondMapping ==0,6:40,6:40);
+            out_rsa_perm{subji,:}{2} = junts(fakeCondMapping ==1,6:40,6:40); 
+        elseif strcmp(cov, 'V')
+            out_rsa_perm{subji,:}{1} = junts(fakeCondMapping ==0,6:45,6:45);
+            out_rsa_perm{subji,:}{2} = junts(fakeCondMapping ==1,6:45,6:45); 
+        end
 
     end
 

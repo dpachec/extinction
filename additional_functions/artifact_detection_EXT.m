@@ -7,6 +7,7 @@ function [EEG]  = artifact_detection_EXT(EEG, std_thres, std_thres2, paddingValu
             grad = diff(data); grad(end+1) = nan; 
             zScoreGrad = bsxfun(@rdivide, grad - mean(grad, 'omitnan'), std(grad, 'omitnan'));
             hpf_data = eegfilt(data,1000, 250, nan);
+            hpf_data = abs(hilbert(hpf_data));
             zScoreHPFD = bsxfun(@rdivide, hpf_data - mean(hpf_data), std(hpf_data));
             
             markers = zeros(1, length(data));
