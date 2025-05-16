@@ -14,15 +14,14 @@ load ([paths.results.trial_based 'AMY_POW_1-44Hz_TR'])
 %load ([paths.results.trial_based 'trlCTX_AMY_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_TMP_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_OFC_CE_1-44_1_0_500-50'])
-%load ([paths.results.trial_based 'trlCTX_OCC_CE_9-54_1_0_500-100'])
 
 
 %load ([paths.results.trial_based 'trlSTA_AMY_CE_1-44_1_0_500-50'])
-load ([paths.results.trial_based 'trlSTA_HPC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_HPC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_PFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_TMP_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_OFC_CE_1-44_1_0_500-50'])
-%load ([paths.results.trial_based 'trlSTA_OCC_CE_3-54_1_0_500-100'])
+
 
 
 minTr = 50; 

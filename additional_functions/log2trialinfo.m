@@ -1,5 +1,6 @@
 %% This scripts reads the raw log files and creates trialinfo files 
-%%
+%% A path containing the .log files (generated in Presentation) should be specified in load_paths_EXT.m
+
 % 1. what trial number (position in presentation)?
 % 2. which Phase?
 % 3. which context was used?

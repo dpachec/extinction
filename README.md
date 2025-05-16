@@ -1,12 +1,12 @@
 # System requirements
 
-This code has been implemented in Matlab 2023b, using EEGLAB (2021.0) and Fieldtrip (2023-12-20). 
+This code has been implemented in Matlab 2024b, using EEGLAB (2021.0) and Fieldtrip (2023-12-20). 
 
 # Instructions
 
 To run the scripts, open Matlab and add the additional_functions folder to the path 
 
-Use behavior.m to reproduce the behavioral results (Fig. 1)
+Use behavior.m to reproduce the behavioral results (Fig. 1). To generate _trlinfo.mat files for every subject, containing matlab matrices that store the parsed logs, run log2trialinfo.m. 
 
 Use power_analysis to reproduce the theta power results (Fig. 2) 
 

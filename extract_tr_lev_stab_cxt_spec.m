@@ -1,5 +1,5 @@
-%% Trial level metric of context specificity - SAME EXPERIMENTAL PHASE
-%%
+%% Extract trial level metric of trial stability or context specificity in the same experimental phase
+% to run this script, the temporally resolved neural RSMs should be provided. These are stored in 
 
 
 clear , clc

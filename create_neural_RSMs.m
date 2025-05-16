@@ -1,5 +1,5 @@
 %%
-%% CREATE NEURAL RSMs
+%% CREATE NEURAL RSMs at different task stages
 %nRSM_Region_CUE-TaskPeriod_freqs_avTimeFeatVect_freqResolv(0-1)_win-width_mf_
 clear , clc
 

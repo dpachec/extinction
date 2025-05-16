@@ -151,8 +151,8 @@ cd (paths.github)
 
 %% ALL FREQUENCIES 
 
-%freq2u = 1:54;
 freq2u = 1:12;
+%freq2u = 1:12;
 %freq2u = 4:8;
 
 plotC = 2; % 1: only biggest cluster; 2 all clusters; 3 no clusters
@@ -301,7 +301,9 @@ set(gca, 'LineWidth', 3);
 
 exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
-
+%%
+clc
+[h p ci t] = ttest (data(:,1))
 
 
 %% permutations shuffling condition labels at the group level
