@@ -1,9 +1,11 @@
-%% Extract trial level metric of trial stability or context specificity in the same experimental phase
-% to run this script, the temporally resolved neural RSMs should be provided. These are stored in 
-
+%% Extract trial level metric of trial stability or context specificity (same experimental phase)
+% to run this script, a path to the temporally resolved neural RSMs should be provided in the load_paths_EXT.m script
+% These can be generated with the script create_neural_RSMs.m 
+% A list with the specific analyses to be performed must be provided in listF2sav
+% The code for each file is: Analysis 2 perform (trlSTA or trlCTX) + name of the RSM files (e.g.: 'trlSTA_TMP_VE_1-44_1_0_500-50')
+% The neural RSM files can be downloaded from https://osf.io/xfprt/neural_RSMs or generated using the script create_neural_RSMs.m
 
 clear , clc
-
 
 listF2sav = {
 

@@ -97,11 +97,11 @@ clear, clc
 minTr = 8; 
 paths = load_paths_EXT; 
 
-%f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPME-SICSMME'; 
+f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPPE-SICSMME'; 
 
 %f2sav = 'RSA_PFC_V_1-44_1_0_500-50_1_T_SCE-DCE'; 
 
-f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPME-SICSMME'; 
+%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPPE-SICSMME'; 
 
 load ([ paths.results.rsa f2sav '.mat']);
 
@@ -154,14 +154,15 @@ plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
 %set(gca, 'xlim', [-.25 1.4],'Fontsize', 18);%
 %title(f2sav, 'Interpreter','none')
 %exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
-exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+%exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+exportgraphics(gcf, ['myP.eps'], 'Resolution',300)
 
 
 %% plot average in specific time period 
 
 clearvars -except out_rsa
-[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [18:25]); % TMP 
-%[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [29:33]); %AMY
+%[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [18:25]); % TMP 
+[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [29:33]); %AMY
 %[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [21:28]); %PFC)
 %[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [22:33]); %PFC
 %[h tObs d2pm1 d2pm2 se1 se2 p] = compute_real_differences_EXT(out_rsa, [25:38]); %AMY

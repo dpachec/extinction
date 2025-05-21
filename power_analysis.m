@@ -151,8 +151,8 @@ cd (paths.github)
 
 %% ALL FREQUENCIES 
 
-freq2u = 1:12;
 %freq2u = 1:12;
+freq2u = 1:44;
 %freq2u = 4:8;
 
 plotC = 2; % 1: only biggest cluster; 2 all clusters; 3 no clusters
@@ -184,9 +184,9 @@ d2p1	= squeeze(mean(c1B, 'omitnan'));
 d2p2	= squeeze(mean(c2B, 'omitnan'));
 
 
-[h p ci ts] = ttest(c1B, c2B); 
+[h p ci ts] = ttest(c1B, c2B, 'Alpha',0.01); 
 h = squeeze(h); t = squeeze(ts.tstat);
-h(:, 1:25) = 0; 
+%h(:, 1:25) = 0; 
 
 
 clear allSTOBS  
@@ -267,7 +267,8 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 %%nTrials2 = nTrials(any(nTrials,2),:);
 
 %% mean in cluster 
-load clustInfoAMY_1-12Hz.mat
+paths = load_paths_EXT; 
+load ([paths.results.additional_results 'clustInfoAMY_1-12Hz.mat'])
 for subji = 1:size(c1B, 1)
     d2p1B   = squeeze(c1B(subji, :, :));
     d2p1	= mean(d2p1B(clustinfo.PixelIdxList{4}), 'all');
@@ -281,8 +282,8 @@ end
 
 
 
-%% plot 2 bar
-%data = [mcsP mcsM ];
+%% plot 2 bar (perform separately for Paris and Guangzhou) 
+
 data = both2usdiff; 
 
 figure(2); set(gcf,'Position', [0 0 500 650]); 
@@ -413,10 +414,11 @@ toc
 
 %% take in cluster only
 % no need to exclude subjects, already excluded in previous blocks
-clearvars -except ALLEEG
-
-load _44_allTHETAPOWER
-load _44_clustinfo_AMY_THETA_px32
+clearvars -except ALLEEG file2load
+paths = load_paths_EXT; 
+load (['_44_allTHETAPOWER'])
+%load ([paths.results.additional_results '_44_allTHETAPOWER'])
+load ([paths.results.additional_results '_44_clustinfo_AMY_THETA_px32'])
 px = 32; 
 
 % load _4-8_allTHETAPOWER
@@ -471,6 +473,9 @@ hb = scatter (d2p, 1:5,35, 'k'); hold on;
 set(gca, 'LineWidth', 0.5, 'FontSize', 14);
 box on
 exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+
+%%
+writematrix(d2p, 'source_data_std.xlsx')
 
 
 %% compare during acquisition

@@ -9,7 +9,7 @@ tp2use = 33:41; % > AMY theta power effect
 
 paths = load_paths_EXT;
 load ([paths.results.trial_based 'AMY_POW_1-44Hz_TR'])
-%load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
+load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_HPC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_AMY_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_TMP_CE_1-44_1_0_500-50'])
@@ -24,7 +24,7 @@ load ([paths.results.trial_based 'AMY_POW_1-44Hz_TR'])
 
 
 
-minTr = 50; 
+minTr = 8; 
 
 
 if exist('itstaTRALL')
@@ -1496,7 +1496,7 @@ toc
 
 clear, clc
 
-trltype = 2;
+trltype = 3;
 minTrN = 8; 
 tP = 21:28;  %21:28 PFC effect %19:31 PFC effec ACQvsEXT
 
@@ -2148,12 +2148,12 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
 
-%% COMPUTE REINSTATEMENT SEPARATELY FOR CS++ CS+- and CS-- Reviewer 3 last point
+%% COMPUTE REINSTATEMENT SEPARATELY FOR CS++ CS+- and CS-- 
 
 
 clear, clc
 
-roi = 'TMP'; 
+roi = 'AMY'; 
 aet = 1; % 0 = ACQ-EXT; 1 = ACQ; 2 = EXT; 
 minTrN = 8; 
 %tP = 21:28;  %21:28 PFC effect %19:31 PFC effec ACQvsEXT
@@ -2345,13 +2345,13 @@ disp(comp);
 
 
  
-%% COMPUTE REINSTATEMENT SEPARATELY FOR CS++ CS+- and CS-- Reviewer 3 last point FOR ALL TIME POINTS
+%% COMPUTE REINSTATEMENT SEPARATELY FOR CS++ CS+- and CS-- FOR ALL TIME POINTS
 
 
 clear, clc
 
 aet = 0; % 0 = ACQ-EXT; 1 = ACQ; 2 = EXT; 
-roi = 'TMP';
+roi = 'AMY';
 minTrN = 8; 
 remOutliers = 0; 
 sub2exc = [37]'; 
@@ -2548,8 +2548,8 @@ plot(h)
 
 clear, clc
 
-tyTR = 2; 
-minTrN = 2;
+tyTR = 3; 
+minTrN = 4;
 remOutliers = 0; 
 subtractionH = 0; % the difference between ACQ and EXT. If set to zero, only correlates with extinction (c1)
 
@@ -2632,8 +2632,8 @@ sub2exc = unique(sub2exc3);
 
 
 allRHO(sub2exc) = []; 
-%nTr(allRHO==0 | isnan(allRHO)) = []; 
-%allRHO(allRHO==0 | isnan(allRHO)) = []; 
+nTr(allRHO==0 | isnan(allRHO)) = []; 
+allRHO(allRHO==0 | isnan(allRHO)) = []; 
 nTr(isnan(allRHO)) = []; 
 allRHO(isnan(allRHO)) = []; 
 allRHO = atanh(allRHO); 

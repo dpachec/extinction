@@ -10,9 +10,9 @@ Use behavior.m to reproduce the behavioral results (Fig. 1). To generate _trlinf
 
 Use power_analysis to reproduce the theta power results (Fig. 2) 
 
-Use contrast_based_RSA.m to reproduce the main effects of item stability and item specificity (Figs. 3-4)
+Use contrast_based_RSA.m to reproduce the main effects of item stability and item specificity (Figs. 3-4). To generate neural RSMs, use the script create_neural_RSMs.m.
 
-Use trial_level_analysis.m to perform the coordination analyses in all ROIs (Figs 3-5)
+Use trial_level_analysis.m to perform the coordination analyses in all ROIs (Figs 3-5). To extract trial level estimates of item stability and context specificity, use extract_tr_lev_stab_cxt_spec.m
 
 
 

@@ -118,7 +118,7 @@ for subji=1:numel(allsubs)
     for i=1:3
         type_item(i)=mean(trialinfo(trialinfo(:,5)==i,6));
         tmp=trialinfo(trialinfo(:,5)==i,7);
-        %responses(i,:)=[tmp',nan(1,64-numel(tmp))]; % does not affect results and don't understand, removed
+        %responses(i,:)=[tmp',nan(1,64-numel(tmp))]; % does not affect results
         responses(i,:)=tmp;
     end
     
@@ -473,6 +473,9 @@ for ty=1:3
     boundedline(x1, y1, b1, 'LineWidth', 2, 'cmap',newM(ty,:),'transparency',0.2,'alpha');
     %shadedErrorBar(x1, y1, b1, cmap_default(ty,:), .1)
 
+    source_data_mean(ty, :) = y1; 
+    source_data_std(ty,:) = b1; 
+
     %plot(squeeze(nanmean(avg_response_type(:,ty,:))))
     h=gca;
     h.YLim=[1 4];
@@ -485,6 +488,8 @@ plot([48 48],[1 4],':k', 'Linewidth', 2)
 %set(gca, 'xtick', [24 48], 'xticklabels', {'24' '48'})
 set(gca, 'xtick', [12 36 56], 'xticklabels', {'ACQ' 'EXT' 'TEST'})
 
+%%
+writematrix(source_data_std, 'source_data_std.xlsx')
 
 %% 
 d2c =  squeeze(avg_response_type(:,1,:));
