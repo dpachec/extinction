@@ -1,5 +1,6 @@
 % This template file indicates placeholders for paths 
 % Raw data and preprocessed data folders, and output results folders should be specified. 
+% This template script and be renamed to load_paths_EXT.m to run with the other scripts in the repository
 
 function [paths] = load_paths()
 
