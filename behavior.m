@@ -193,7 +193,7 @@ mean(threeConditions)
 
 
 %% Reshape data 4 Anova
-clc 
+%clc 
 sub2exc = [27 37]; % This subject needs to be excluded because of a technical problem, no ratings for the test period
 respAVG = response_avgblocksub; 
 
@@ -207,8 +207,36 @@ trial_type = repmat([ones(1,nSubj) , ones(1,nSubj)*2 , ones(1,nSubj)*3]', 3, 1);
 block_n = [ones(1,nSubj*3) , ones(1,nSubj*3)*2 , ones(1,nSubj*3)*3]';
 
 
+allDtog = [subID, trial_type, block_n, d4anova];
+
 
 anovaStats = rm_anova2(d4anova,subID,trial_type,block_n,{'trial_type', 'block_number'})
+
+
+%% WITHIN SUBJECTS DESING IN MATLAB
+clc
+% organize the data in a table
+respAN = reshape(respAVG, 48, []); 
+T = array2table(respAN);
+T.Properties.VariableNames = {'t1b1' 't1b2' 't1b3' 't2b1' 't2b2' 't2b3' 't3b1' 't3b2' 't3b3' };
+% create the within-subjects design
+withinDesign = table([1 1 1 2 2 2 3 3 3]', [1 2 3 1 2 3 1 2 3]', 'VariableNames',{'block_n', 'trial_type'});
+withinDesign.trial_type = categorical(withinDesign.trial_type);
+withinDesign.block_n = categorical(withinDesign.block_n);
+% create the repeated measures model and do the anova
+rm = fitrm(T,'t1b1-t3b3 ~ 1','WithinDesign',withinDesign);
+AT = ranova(rm,'WithinModel','trial_type*block_n'); % remove comma to see ranova's table
+%tbl = multcompare(rm, 'Model', 'ComparisonType', 'tukey-kramer'); % see: help RepeatedMeasuresModel/multcompare;  'tukey-kramer' (default), 'dunn-sidak', 'bonferroni','scheffe'
+%tbl = multcompare(rm, 'Model', 'ComparisonType', 'bonferroni'); % see: help RepeatedMeasuresModel/multcompare;  'tukey-kramer' (default), 'dunn-sidak', 'bonferroni','scheffe'
+
+
+% output a conventional anova table
+disp(anovaTable(AT, 'Measure (units)'));
+
+
+%%
+writematrix(allDtog, 'myM.xlsx')
+
 
 %% Sum of Squares values from ANOVA table
 SS_A = 41.8509;
@@ -400,9 +428,22 @@ p9 = p9*18;
 disp('corrected 18')
 
 
+%% EFFECT SIZES
+response_avgblocksub_here = response_avgblocksub; 
+response_avgblocksub_here (sub2exc, :, :) = []; 
+% CS+- EXT vs CS+- ACQU
+x1 = squeeze(response_avgblocksub_here(:,2,1)); 
+x2 = squeeze(response_avgblocksub_here(:,2,2)); 
 
+% CS++ TEST vs CS+- TEST
+%x1 = squeeze(response_avgblocksub_here(:,2,3)); 
+%x2 = squeeze(response_avgblocksub_here(:,3,3)); 
 
+[h4,p4, ci, ts]=ttest(x1,x2); %B1 vs B2 CS+/CS-
+t4 = ts.tstat; 
 
+%%
+myD = meanEffectSize(x2, x1, Effect="cohen", Paired=true)
 
 
 %% PROGRESSIVE LEARNING: FIRST LOAD DATA

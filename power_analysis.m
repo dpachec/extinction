@@ -151,8 +151,8 @@ cd (paths.github)
 
 %% ALL FREQUENCIES 
 
-%freq2u = 1:12;
-freq2u = 1:44;
+freq2u = 1:12;
+%freq2u = 1:44;
 %freq2u = 4:8;
 
 plotC = 2; % 1: only biggest cluster; 2 all clusters; 3 no clusters
@@ -169,7 +169,6 @@ minTr = 8;
 f2u = strsplit(file2load, '_'); 
 
 
-sub2exc = find(nTrials(:, 1) < minTr | nTrials(:, 2) < minTr); 
 sub2exc2 = find(nTrials(:, 1) <minTr | nTrials(:, 2) <minTr ); 
 sub2exc3 = [sub2excApriori; sub2exc2]; 
 sub2exc = unique(sub2exc3)'; 
@@ -184,7 +183,8 @@ d2p1	= squeeze(mean(c1B, 'omitnan'));
 d2p2	= squeeze(mean(c2B, 'omitnan'));
 
 
-[h p ci ts] = ttest(c1B, c2B, 'Alpha',0.01); 
+%[h p ci ts] = ttest(c1B, c2B, 'Alpha',0.01); 
+[h p ci ts] = ttest(c1B, c2B); 
 h = squeeze(h); t = squeeze(ts.tstat);
 %h(:, 1:25) = 0; 
 
@@ -301,6 +301,10 @@ disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
 set(gca, 'LineWidth', 3);
 
 exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+
+
+myD = meanEffectSize(data(:, 1), data(:, 2), Effect="cohen", Paired=true)
+
 
 %%
 clc
@@ -483,6 +487,7 @@ clc
 [h p ci ts] = ttest(CSPA, CSMA); 
 t = ts.tstat; 
 disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
+myES = meanEffectSize(CSPA, CSMA, Effect="cohen")
 
 [h p ci ts] = ttest(CSPPE, CSPME); 
 t = ts.tstat; 
@@ -499,15 +504,17 @@ disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
 [h p ci ts] = ttest(CSPPE); 
 t = ts.tstat; 
 disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
+myES = meanEffectSize(CSPPE, Effect="cohen")
 
 [h p ci ts] = ttest(CSPME); 
 t = ts.tstat; 
 disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
+myES = meanEffectSize(CSPME, Effect="cohen")
 
 [h p ci ts] = ttest(CSMME); 
 t = ts.tstat; 
 disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
-
+myES = meanEffectSize(CSMME, Effect="cohen")
 
 %% compare during extinction
 

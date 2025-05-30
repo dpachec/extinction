@@ -9,7 +9,7 @@ tp2use = 33:41; % > AMY theta power effect
 
 paths = load_paths_EXT;
 load ([paths.results.trial_based 'AMY_POW_1-44Hz_TR'])
-load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_HPC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_AMY_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_TMP_CE_1-44_1_0_500-50'])
@@ -17,7 +17,7 @@ load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
 
 
 %load ([paths.results.trial_based 'trlSTA_AMY_CE_1-44_1_0_500-50'])
-%load ([paths.results.trial_based 'trlSTA_HPC_CE_1-44_1_0_500-50'])
+load ([paths.results.trial_based 'trlSTA_HPC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_PFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_TMP_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_OFC_CE_1-44_1_0_500-50'])
@@ -111,7 +111,7 @@ for subji = 1:50
 
 end
 
-%allRHO(sub2exc) = nan; 
+allRHO(sub2exc) = nan; 
 allRHO(isnan(allRHO)) = []; 
 [h p ci ts] = ttest(atanh(allRHO));
 disp (['t(' num2str(ts.df) ')= ' num2str(ts.tstat, 3) ',' ' p = ' num2str(p, 3)]);
@@ -142,6 +142,8 @@ disp (res2title);
 
 exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 
+%%
+myD = meanEffectSize(allRHO, Effect="cohen")
 
 %% Correlate amygdala power IN CLUSTER with different trial-level metrics FOR DIFFERENT CONDITIONS
 clearvars -except allRHO_1 allRHO_2 allRHO_3
@@ -266,8 +268,8 @@ end
 
 %%
 clc
-%allRHO(sub2exc) = nan; 
-%allRHO(isnan(allRHO)) = []; 
+allRHO(sub2exc) = nan; 
+allRHO(isnan(allRHO)) = []; 
 [h p ci ts] = ttest(atanh(allRHO_1), atanh(allRHO_3));
 disp (['t(' num2str(ts.df) ')= ' num2str(ts.tstat, 3) ',' ' p = ' num2str(p, 3)]);
 
@@ -299,6 +301,11 @@ d4anova(:,3) = [1:nSubj 1:nSubj 1:nSubj];
 [p f] = RMAOV1(d4anova);
 
 boxplot(data)
+
+%%
+
+0.036  / ( 0.036  +  3.034)
+0.127  / ( 0.127  +  1.531)
 
 %%
 
@@ -2653,6 +2660,10 @@ set(gca, fontsize=24)
 
 
 exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+
+
+
+myD = meanEffectSize(allRHO, Effect="cohen")
 
 
 %% EXTRACT STA LEVELS IN TMP or PFC CLUSTER and correlate with behavior for all three trial types
