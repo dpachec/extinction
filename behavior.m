@@ -650,6 +650,7 @@ exportgraphics(gcf, filename, 'Resolution',300)
 filt_avg_response_type = avg_response_type; 
 
 figure; set(gcf, 'Position', [50 50 500 400])
+%figure; set(gcf, 'Position', [50 50 500*0.8 400*0.8])
 hold on
 fig_stuff=subplot(1,1,1)
 cmap_default=fig_stuff.ColorOrder;
@@ -684,7 +685,7 @@ plot([24 24],[1 4],':k', 'Linewidth', 2)
 plot([48 48],[1 4],':k', 'Linewidth', 2)
 %set(gca, 'xtick', [24 48], 'xticklabels', {'24' '48'})
 set(gca, 'xtick', [12 36 56], 'xticklabels', {'ACQ' 'EXT' 'TEST'})
-
+set(gca,'fontname','Arial')  % Set it to times
 
 % anova %here
 clear tbl allP allF
@@ -788,8 +789,9 @@ plot(hb3,  'Color', [.5 .5 .5], 'LineWidth',5) % GREY
 
 
 %filename = [paths.results.behavior 'average_per_type_filtered.png']
-filename = 'myP.png'; 
-exportgraphics(gcf, filename, 'Resolution',300)
+%exportgraphics(gcf, 'myP.png', 'Resolution',300)
+%exportgraphics(gcf, 'myP.svg', 'ContentType','vector')
+exportgraphics(gcf, 'myP.eps', 'ContentType','vector')
 
 %%
 

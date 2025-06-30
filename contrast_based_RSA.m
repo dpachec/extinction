@@ -97,11 +97,11 @@ clear, clc
 minTr = 8; 
 paths = load_paths_EXT; 
 
-%f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPME-SICSMME'; 
+%f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPME-SICSMME';
 
-%f2sav = 'RSA_PFC_V_1-44_1_0_500-50_1_T_SCE-DCE'; 
+f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCE-DCE'; 
 
-f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPPE-SICSPME'; 
+%f2sav = 'RSA_TMP_C_1-44_1_0_500-50_1_T_SICSPME-SICSMME';
 
 load ([ paths.results.rsa f2sav '.mat']);
 
@@ -125,16 +125,16 @@ hb = h; hb(h==0) = nan; hb(hb==1) = -.005; hb = hb';
 
 %%
 %times = (-.5:.01:2) + .25;
-%times = -.2:.05:1.75;
 times = -.2:.05:2;
 
 % to check the times 
 h(2,:) = times; 
-figure(); 
+ 
 %colors2use = brewermap([6],'*Set1')*0.75;%ACQ-EXT
 colors2use = brewermap([6],'*Accent')*0.75; %CTX
 %colors2use = brewermap([6],'Accent')*0.75; %STABILITY
 
+figure; set(gcf, 'Position', [100 100 560 420]); 
 shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(2,:)}, 1); hold on; 
 shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(1,:)}, 1); hold on; 
 
@@ -142,20 +142,23 @@ shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(1,:)}, 1); hold on;
 %shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(2,:)}, 1); hold on; 
 
 hb(hb==-0.005) = -0.0025; 
+%hb(1:end) = nan;
 plot(times, hb,'k',  LineWidth=7)
 %set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .045], 'Fontsize', 22); %STABILITY
-%set(gca, 'xlim', [-.25 1.7],'ylim', [-.01 .03], 'Fontsize', 22); %CTX
+set(gca, 'xlim', [-.25 1.7],'ylim', [-.005 .03], 'Fontsize', 22); %CTX
 
-set(gca, 'xlim', [-.25 2],'ylim', [-.005 .03], 'Fontsize', 22); %CTX VIDEO
+%set(gca, 'xlim', [-.25 2],'ylim', [-.005 .03], 'Fontsize', 22); %CTX VIDEO
 
-plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 2);
-plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
+
+plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 4);
+plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 4);
 
 %set(gca, 'xlim', [-.25 1.4],'Fontsize', 18);%
 %title(f2sav, 'Interpreter','none')
 %exportgraphics(gcf, [paths.results.rsa  'myP.png'], 'Resolution',150)
 %exportgraphics(gcf, ['myP.png'], 'Resolution',300)
-exportgraphics(gcf, ['myP.eps'], 'Resolution',300)
+exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
+
 
 
 %% plot average in specific time period 
@@ -173,22 +176,25 @@ clearvars -except out_rsa
 clear data
 data.data = [d2pm1 d2pm2]; 
 
-figure(2); set(gcf,'Position', [0 0 500 620]); 
+figure(2); set(gcf, 'Position', [100 100 360 420]); 
 mean_S = mean(data.data, 1);
 std_S = std(data.data, [], 1)
-scatter([1 2], data.data, 100, 'k'); hold on;
+scatter([1 2], data.data, 100, 'k', 'linew', 1); hold on;
 h = bar (mean_S);hold on;
-set(h,'FaceColor', 'none', 'lineWidth', 3);
-set(gca,'XTick',[1 2],'XTickLabel',{'', ''}, 'FontSize', 30, 'linew',2, 'xlim', [0 3] );
-plot(get(gca,'xlim'), [0 0],'k','lineWidth', 3);
+set(h,'FaceColor', 'none', 'lineWidth', 2);
+set(gca,'XTick',[1 2],'XTickLabel',{'', ''}, 'FontSize', 22, 'xlim', [0 3] );
+set(gca, 'ylim', [-.1 .1])
+plot(get(gca,'xlim'), [0 0],'k','lineWidth', 2);
 
 [h p ci t] = ttest (data.data(:,1), data.data(:,2));
 disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
 
-set(gca, 'LineWidth', 3);
+set(gca, 'LineWidth', 2);
 
 
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+%exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
+
 
 %%
 
@@ -853,7 +859,7 @@ hb = h; hb(h==0) = nan; hb(hb==1) = -.012;
 
 %times = (-.5:.01:2) + .25;
 times = -.25:.05:2.25;
-figure(); 
+figure; set(gcf, 'Position', [100 100 560 420]); 
 colors2use = brewermap([6],'*Set1')*0.75;
 shadedErrorBar(times,  d2pm1, se1, {'Color',colors2use(1,:)}, 1); hold on; 
 shadedErrorBar(times, d2pm2, se2,  {'Color',colors2use(2,:)}, 1); hold on; 
@@ -863,11 +869,11 @@ set(gca, 'xlim', [-.25 1.75],'ylim', [-.015 .02], 'Fontsize', 22);%
 plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 2);
 plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
 %title(f2sav, 'Interpreter','none')
-exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+%exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
 
 
-
+exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
 
 %% Permutations (2D) 
 

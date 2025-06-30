@@ -9,7 +9,7 @@ tp2use = 33:41; % > AMY theta power effect
 
 paths = load_paths_EXT;
 load ([paths.results.trial_based 'AMY_POW_1-44Hz_TR'])
-%load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
+load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_HPC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_AMY_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_TMP_CE_1-44_1_0_500-50'])
@@ -17,7 +17,7 @@ load ([paths.results.trial_based 'AMY_POW_1-44Hz_TR'])
 
 
 %load ([paths.results.trial_based 'trlSTA_AMY_CE_1-44_1_0_500-50'])
-load ([paths.results.trial_based 'trlSTA_HPC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_HPC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_PFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_TMP_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_OFC_CE_1-44_1_0_500-50'])
@@ -127,7 +127,7 @@ hb = scatter([1], data.data, 100, 'k'); hold on;
 %set(hb, 'lineWidth', 0.01, 'Marker', '.', 'MarkerSize',45);hold on;
 h = bar (mean_S);hold on;
 set(h,'FaceColor', 'none', 'lineWidth', 2);
-set(gca,'XTick',[1],'XTickLabel',{'', ''}, 'FontSize', 35, 'linew',1, 'xlim', [0 2] );
+set(gca,'XTick',[1],'XTickLabel',{'', ''}, 'FontSize', 25, 'linew',1, 'xlim', [0 2] );
 plot(get(gca,'xlim'), [0 0],'k','lineWidth', 2);
 set(gca, 'LineWidth', 2);
 %set(gca, 'ylim', [-.75 .75])
@@ -140,7 +140,8 @@ disp (res2title);
 
 %title(res2title)
 
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+%exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
 
 %%
 myD = meanEffectSize(allRHO, Effect="cohen")
@@ -344,7 +345,7 @@ clear, clc
 
 paths = load_paths_EXT;
 load ([paths.results.trial_based 'AMY_POW_1-44Hz_TR'])
-%load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
+load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_HPC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_AMY_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlCTX_TMP_CE_1-44_1_0_500-50'])
@@ -352,14 +353,14 @@ load ([paths.results.trial_based 'AMY_POW_1-44Hz_TR'])
 
 
 
-load ([paths.results.trial_based 'trlSTA_AMY_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_AMY_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_HPC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_PFC_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_TMP_CE_1-44_1_0_500-50'])
 %load ([paths.results.trial_based 'trlSTA_OFC_CE_1-44_1_0_500-50'])
 
 sub2exc = [37]; 
-minTr = 5; 
+minTr = 8; 
 
 
 
@@ -471,7 +472,7 @@ end
 
 
 %h(1:10) = 0; 
-hb = h; hb(h==0) = nan; hb(hb==1) = -.005; 
+hb = h; hb(h==0) = nan; hb(hb==1) = -.0075; 
 
 mAR = mean(allRHO);
 stdAR = std(allRHO); 
@@ -479,7 +480,7 @@ seAR = stdAR / sqrt(size(allRHO, 1))
 
 xStart = -.2; dx = 0.05; times = xStart + (0:bins-1)*dx;
 h(2, :) = times; 
-figure()
+figure; set(gcf, 'Position', [100 100 560 420]); 
 %colors2use = brewermap([6],'*Set1')*0.75;
 colors2use = brewermap([6],'Set3')*0.75;
 shadedErrorBar(times, mAR, seAR, {'Color',colors2use(1,:)}, 1); hold on; 
@@ -488,11 +489,12 @@ set(gca, 'ylim', [-.4 .2], 'xlim', [-.25 1.75]) %
 
 plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 4); hold on; 
 plot(times, hb, Linewidth=6); 
+plot(get(gca,'xlim'),[0 0],'k:', 'linewidth', 4); hold on; 
 
-set(gca, 'Fontsize', 30)
+set(gca, 'Fontsize', 22)
 
-exportgraphics(gcf, ['myP.png'], 'Resolution',150)
-
+%exportgraphics(gcf, ['myP.png'], 'Resolution',150)
+exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
 
 
 
@@ -775,18 +777,21 @@ exportgraphics(gcf, ['myP.png'], 'Resolution',150)
 
 
 %% Correlate different trial-level metrics at ALL TIME POINTS NEW TIMES
+% Note that c1 (condition 1) is plotted on the Y axis of the coordinated
+% representation plot 
+
 clear, clc
 
 
 minTrN = 8; 
 
-printClust = 1; 
-print1Clust = 0; 
+printClust = 0; 
+print1Clust = 1; 
 
 paths = load_paths_EXT;
 
 %c1 = 'trlSTA_AMY_CE_1-44_1_0_500-50'; 
-%c2 = 'trlSTA_HPC_CE_1-44_1_0_500-50'; 
+%c2 = 'trlSTA_TMP_CE_1-44_1_0_500-50'; 
 
 c1 = 'trlCTX_PFC_CE_1-44_1_0_500-50'; 
 c2 = 'trlCTX_TMP_CE_1-44_1_0_500-50'; 
@@ -902,12 +907,13 @@ end
 % h2(1:22, :) = 0;
 % h2(:, 1:22) = 0;
 
- %h(clustinfo.PixelIdxList{2}) = 1; 
- % h(clustinfo.PixelIdxList{1}) = 1; 
-% h(clustinfo.PixelIdxList{3}) = 1; 
+%h(clustinfo.PixelIdxList{2}) = 1; 
+%h(clustinfo.PixelIdxList{1}) = 1; 
+%h(clustinfo.PixelIdxList{3}) = 0; 
 
 d2p = squeeze(mean(allRHO)); 
-figure(); colormap (brewermap([100], '*Spectral'))
+figure; set(gcf, 'Position', [100 100 560 420]); 
+colormap (brewermap([100], '*Spectral'))
 contourf(myresizem(t, 10), 50, 'linecolor', 'none'); axis square; hold on; 
 contour( myresizem(h, 10), 1, 'Color', [0, 0, 0], 'LineWidth', 4);
 % contour( myresizem(h2, 10), 1, 'k:', 'LineWidth', 4);
@@ -919,8 +925,8 @@ set(gca, 'xTick', [55 155 255 355], 'XTickLabel', {'0', '0.5', '1', '1.5'})
 set(gca, 'yTick', [55 155 255 355], 'YTickLabel', {'0', '0.5', '1', '1.5'})
 set(gca, 'clim', [-4 4])
 
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
-
+%exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
 
 
 %% PERMUTATIONS
@@ -1503,7 +1509,7 @@ toc
 
 clear, clc
 
-trltype = 3;
+trltype = 1;
 minTrN = 8; 
 tP = 21:28;  %21:28 PFC effect %19:31 PFC effec ACQvsEXT
 
@@ -1591,6 +1597,7 @@ end
 
 nSubj = length(rsa2TT1); 
 disp(['Number of subjects: ' num2str(nSubj)]); 
+figure; set(gcf, 'Position', [100 100 560 420]); 
 scatter(rsa2TT1, rsa2TT4, 1400, '.'); hold on; 
 scatter(rsa2TT1, rsa2TT4, 400, 'ko'); hold on; 
 pFit = polyfit(rsa2TT1, rsa2TT4, 1);
@@ -1601,9 +1608,10 @@ line([min(rsa2TT1)-.03 max(rsa2TT1)+.03], [m*min(rsa2TT1)+b m*max(rsa2TT1)+b], '
 
 set(gca, Fontsize=28)
 set(gca, xlim=[-.035 .05], ylim=[-.06 .06])
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+%exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 disp(['Rho: ' num2str(rho, 3) ' p: ' num2str(p, 3)]); 
 
+exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
 
 
 %% correlate ITEM STABILITY WITH with REINST in AMY AND TMP (across subjects)
@@ -2659,8 +2667,8 @@ set(gca, 'ylim', [-1 1], 'xlim', [.5 1.5], 'xtick', [], 'xticklabel', [])
 set(gca, fontsize=24)
 
 
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
-
+%exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
 
 
 myD = meanEffectSize(allRHO, Effect="cohen")

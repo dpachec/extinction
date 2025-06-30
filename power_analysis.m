@@ -151,11 +151,11 @@ cd (paths.github)
 
 %% ALL FREQUENCIES 
 
-freq2u = 1:12;
-%freq2u = 1:44;
+%freq2u = 1:12;
+freq2u = 1:44;
 %freq2u = 4:8;
 
-plotC = 2; % 1: only biggest cluster; 2 all clusters; 3 no clusters
+plotC = 1; % 1: only biggest cluster; 2 all clusters; 3 no clusters
 
 title1 = 'CS+';
 title2 = 'CS-';
@@ -262,10 +262,13 @@ end
 
 
 %exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
-exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+%exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+exportgraphics(gcf, 'myP.svg', 'ContentType','vector')
+%exportgraphics(gcf, 'myP.eps', 'ContentType','vector')
 
 %%nTrials2 = nTrials(any(nTrials,2),:);
 
+disp(datetime)
 %% mean in cluster 
 paths = load_paths_EXT; 
 load ([paths.results.additional_results 'clustInfoAMY_1-12Hz.mat'])
@@ -422,7 +425,8 @@ clearvars -except ALLEEG file2load
 paths = load_paths_EXT; 
 load (['_44_allTHETAPOWER'])
 %load ([paths.results.additional_results '_44_allTHETAPOWER'])
-load ([paths.results.additional_results '_44_clustinfo_AMY_THETA_px32'])
+%load ([paths.results.additional_results '_44_clustinfo_AMY_THETA_px32'])
+load ('_44_clustinfo_AMY_THETA_px32')
 px = 32; 
 
 % load _4-8_allTHETAPOWER
@@ -460,10 +464,12 @@ CSMA(isnan(CSMA)) = [];
 d2p = [CSMME CSPME CSPPE CSPA CSMA ]; 
 d2pm = mean(d2p, 'omitnan')
 
+figure; set(gcf, 'Position', [100 100 560 420]); 
 mean_S = mean(d2p, 'omitnan');
 h = barh (mean_S);hold on;
 set(h,'FaceColor', 'flat', 'lineWidth', 2);
 set(gca,'YTick',[1:5],'YTickLabel',{'', ''}, 'FontSize', 18, 'linew',2, 'xlim', [-.5 .7], 'ylim', [0 6] );
+
 plot([0 0],get(gca,'ylim'), 'k','lineWidth', 2);
 
 fig_stuff=subplot(1,1,1)
@@ -476,7 +482,8 @@ hb = scatter (d2p, 1:5,35, 'k'); hold on;
 %disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
 set(gca, 'LineWidth', 0.5, 'FontSize', 14);
 box on
-exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+%exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
 
 %%
 writematrix(d2p, 'source_data_std.xlsx')
