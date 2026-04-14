@@ -2,11 +2,11 @@
 %% Loads amplitude time series and export epoched data for specific ROIs
 clear , clc
 
-c2u = 'C';
+c2u = 'U';
 
 listF2sav = {   
-                %{'Amygdala' }; 
-                %{'Hippocampus'}; 
+                {'Amygdala' }; 
+                {'Hippocampus'}; 
                 %{'orbitofrontal'}; 
                 %{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
                 %{'occipital' '-cuneus' 'lingual' 'pericalcarine'}; % '-' needed for cuneus, to not be confounded with precuneus
@@ -14,29 +14,29 @@ listF2sav = {
                 
                     
                 % % % COMBINATIONS
-                {'Amygdala' 'Hippocampus'}; 
-                {'Amygdala' 'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
-                {'Amygdala' 'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
-                {'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' ...
-                 'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
-                {'Hippocampus' 'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
-                {'orbitofrontal' 'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+                %{'Amygdala' 'Hippocampus'}; 
+                %{'Amygdala' 'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+                %{'Amygdala' 'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+                %{'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' ...
+                % 'caudalmiddlefrontal' 'parsopercularis' 'parsorbitalis' 'superiorfrontal' 'parstriangularis' 'rostralmiddlefrontal' 'frontalpole'}; 
+                %{'Hippocampus' 'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
+                %{'orbitofrontal' 'inferiortemporal' 'middletemporal' 'superiortemporal' 'transversetemporal' 'fusiform' 'temporalpole' 'bankssts' 'parahippocampal' 'entorhinal' };
 
             };   
 n2SAV = {
-            %'AMY'; 
-            %'HPC'; 
-            %'OFC'; 
-            %'TMP'; 
+            'AMY'; 
+            'HPC'; 
+            'OFC'; 
+            'TMP'; 
             %'OCC'; 
-            %'PFC'; 
+            'PFC'; 
             %'PFCO';
-            'AMY-HPC';
-            'AMY-TMP'; 
-            'AMY-PFC';
-            'PFC-TMP';
-            'HPC-TMP'
-            'OFC-TMP'
+            %'AMY-HPC';
+            %'AMY-TMP'; 
+            %'AMY-PFC';
+            %'PFC-TMP';
+            %'HPC-TMP'
+            %'OFC-TMP'
 
             
             
