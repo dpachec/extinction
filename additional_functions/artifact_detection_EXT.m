@@ -12,8 +12,8 @@ function [EEG]  = artifact_detection_EXT(EEG, std_thres, std_thres2, paddingValu
             
             markers = zeros(1, length(data));
             
-            markers(zScoreAmp > std_thres | zScoreGrad > std_thres | zScoreHPFD > std_thres | ... 
-                (zScoreAmp > std_thres2 & (zScoreGrad > std_thres2 | zScoreHPFD > std_thres2)) ) = 1; %check Staresina 2018 Nat Neuro
+            markers(abs(zScoreAmp) > std_thres | abs(zScoreGrad) > std_thres | zScoreHPFD > std_thres | ...
+                (abs(zScoreAmp) > std_thres2 & (abs(zScoreGrad) > std_thres2 | zScoreHPFD > std_thres2)) ) = 1; 
             
             newTrace = padding_EXT(markers, paddingValue); 
             

@@ -9,9 +9,6 @@ load ([paths.results.power file2load]);
 
 %%count channels 
 
-
-
-
 clear nChans
 %for subji = 1:30 %length(ALLEEG)
 for subji = 1:length(ALLEEG)
@@ -116,9 +113,6 @@ for subji = 1:length(ALLEEG)
         nTrials(subji, :) = get_number_of_trials_POW_EXT(EEG, ids1, ids2, []); 
 
         
-
-
-
         tfDCH1 = mean(EEG.power(ids1, :, : ,:), 'omitnan'); 
         tfDTF1 = squeeze(mean(tfDCH1, 2, 'omitnan'));
         tfDCH2 = mean(EEG.power(ids2, :, : ,:), 'omitnan'); 
@@ -172,7 +166,6 @@ f2u = strsplit(file2load, '_');
 sub2exc2 = find(nTrials(:, 1) <minTr | nTrials(:, 2) <minTr ); 
 sub2exc3 = [sub2excApriori; sub2exc2]; 
 sub2exc = unique(sub2exc3)'; 
-
 
 c1B = c1(:, freq2u, 276:475); c2B = c2(:, freq2u, 276:475); 
 c1B(sub2exc,:,:) = []; c2B(sub2exc,:,:) = []; 
@@ -263,7 +256,7 @@ end
 
 %exportgraphics(gcf, [paths.results.power  'myP.png'], 'Resolution',300)
 %exportgraphics(gcf, ['myP.png'], 'Resolution',300)
-exportgraphics(gcf, 'myP.svg', 'ContentType','vector')
+%exportgraphics(gcf, 'myP.svg', 'ContentType','vector')
 %exportgraphics(gcf, 'myP.eps', 'ContentType','vector')
 
 %%nTrials2 = nTrials(any(nTrials,2),:);
@@ -271,7 +264,7 @@ exportgraphics(gcf, 'myP.svg', 'ContentType','vector')
 disp(datetime)
 %% mean in cluster 
 paths = load_paths_EXT; 
-load ([paths.results.additional_results 'clustInfoAMY_1-12Hz.mat'])
+%load ([paths.results.additional_results 'clustInfoAMY_1-12Hz.mat'])
 for subji = 1:size(c1B, 1)
     d2p1B   = squeeze(c1B(subji, :, :));
     d2p1	= mean(d2p1B(clustinfo.PixelIdxList{4}), 'all');
@@ -306,7 +299,7 @@ set(gca, 'LineWidth', 3);
 exportgraphics(gcf, ['myP.png'], 'Resolution',300)
 
 
-myD = meanEffectSize(data(:, 1), data(:, 2), Effect="cohen", Paired=true)
+myD = meanEffectSize(data(:, 1), data(:, 2), Effect="cohen", Paired=True)
 
 
 %%
@@ -317,7 +310,7 @@ clc
 %% permutations shuffling condition labels at the group level
 
 
-clearvars -except ALLEEG ids1 ids2 max_clust_obs file2load paths freq2u sub2exc allSTOBS c1B c2B nTrials c1 c2
+clearvars -except ALLEEG ids1 ids2 max_clust_obs file2load paths freq2u sub2exc allSTOBS c1B c2B nTrials c1 c2  
 
 nPerm = 1000; 
 t4p = 26:200; 
@@ -354,7 +347,7 @@ for permi = 1:nPerm
 end
 
 
-max_clust_obs = allSTOBS(1)
+%max_clust_obs = allSTOBS(1)
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(max_clust_obs));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
@@ -367,13 +360,12 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
 %% permutations shuffling trial labels in each subject
-
-
-clearvars -except ALLEEG ids1 ids2 max_clust_obs file2load paths freq2u sub2exc allSTOBS c1B c2B nTrials c1 c2
+clearvars -except ALLEEG max_clust_obs file2load paths allSTOBS c1 c2 freq2u 
 
 
 nPerm = 1000; 
 t4p = 301:475; 
+minTr = 8; 
 
 
 tic
@@ -381,17 +373,43 @@ for permi = 1:nPerm
     progress_in_console(permi)
     for subji = 1:length(ALLEEG)
         EEG = ALLEEG{subji};
+
         if ~isempty(EEG)
+            Ev = [{EEG.event.type}]';
+            Ev1 = cellfun(@(x) strsplit(x, '_'), Ev, 'un', 0); 
+            Ev2 = cat(1, Ev1{:});
+            Ev2(:, 10) = erase(Ev2(:, 10), ' '); %sub33 has some space in the last character of the event WHY??
+
+            % % %   % % Acquisition
+            %ids1 = strcmp(Ev2(:, 2), '1') &  ( strcmp(Ev2(:, 6), '1')  | strcmp(Ev2(:, 6), '2') ) ;
+            %ids2 = strcmp(Ev2(:, 2), '1') & strcmp(Ev2(:, 6), '3');
+
+            % % % % % % Extinction
+            ids1 = strcmp(Ev2(:, 2), '2') & strcmp(Ev2(:, 6), '1') ; % Cs+Cs+
+            ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2')  | strcmp(Ev2(:, 6), '3') ) ; % Cs+Cs- & Cs-Cs-
+                        
+            %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '2') ) ; % Cs+Cs-
+            %ids2 = strcmp(Ev2(:, 2), '2') & ( strcmp(Ev2(:, 6), '3') ) ; % Cs-Cs-
+            
+            nTrials(subji, :) = get_number_of_trials_POW_EXT(EEG, ids1, ids2, []); 
+            
             c1N = squeeze(mean(EEG.power(ids1, :, freq2u ,t4p), 2, 'omitnan'));  %mean across electrodes
             c2N = squeeze(mean(EEG.power(ids2, :, freq2u ,t4p), 2, 'omitnan')); 
             junts = cat(1, c1N, c2N); 
             realCondMapping = [zeros(1,size(c1N, 1)) ones(1, size(c2N, 1))]';
             fakeCondMapping = realCondMapping(randperm(length(realCondMapping)));
-            c1P(subji, :, :) = mean(junts(fakeCondMapping ==0,:,:)); 
-            c2P(subji, :, :) = mean(junts(fakeCondMapping ==1,:,:)); 
+            c1P(subji, :, :) = mean(junts(fakeCondMapping ==0,:,:), 'omitnan'); 
+            c2P(subji, :, :) = mean(junts(fakeCondMapping ==1,:,:), 'omitnan'); 
         end
     end
-    
+    sub2excApriori = []'; 
+    sub2exc2 = find(nTrials(:, 1) <minTr | nTrials(:, 2) <minTr ); 
+    sub2exc3 = [sub2excApriori; sub2exc2]; 
+    sub2exc = unique(sub2exc3)'; 
+    c1P(sub2exc,:,:) = []; c2P(sub2exc,:,:) = []; 
+    c1P(c1P == 0) = nan; 
+    c2P(c2P == 0) = nan; 
+
     [hPerm p ci tsPerm] = ttest(c1P, c2P); 
     hPerm = squeeze(hPerm); tPerm = squeeze(tsPerm.tstat);
     
@@ -410,7 +428,6 @@ end
 
 
 
-%max_clust_obs = allSTOBS(6)
 nPerm = permi; 
 allAb = max_clust_sum_perm(abs(max_clust_sum_perm) > abs(max_clust_obs));
 p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
@@ -422,11 +439,12 @@ toc
 %% take in cluster only
 % no need to exclude subjects, already excluded in previous blocks
 clearvars -except ALLEEG file2load
+clc
 paths = load_paths_EXT; 
-load (['_44_allTHETAPOWER'])
-%load ([paths.results.additional_results '_44_allTHETAPOWER'])
-%load ([paths.results.additional_results '_44_clustinfo_AMY_THETA_px32'])
-load ('_44_clustinfo_AMY_THETA_px32')
+%load (['_44_allTHETAPOWER'])
+load ([paths.results.additional_results '_44_allTHETAPOWER'])
+load ([paths.results.additional_results '_44_clustinfo_AMY_THETA_px32'])
+%load ('_44_clustinfo_AMY_THETA_px32')
 px = 32; 
 
 % load _4-8_allTHETAPOWER
@@ -454,12 +472,6 @@ end
 
 
 %% 
-CSMME(isnan(CSMME)) = []; 
-CSPME(isnan(CSPME)) = []; 
-CSPPE(isnan(CSPPE)) = []; 
-CSPA(isnan(CSPA)) = []; 
-CSMA(isnan(CSMA)) = []; 
-
 
 d2p = [CSMME CSPME CSPPE CSPA CSMA ]; 
 d2pm = mean(d2p, 'omitnan')
@@ -476,37 +488,25 @@ fig_stuff=subplot(1,1,1)
 cmap_default=fig_stuff.ColorOrder;
 h.CData = [cmap_default(5,:); cmap_default(3,:); cmap_default(2, :);  cmap_default(5,:); cmap_default(2,:)]
 hb = scatter (d2p, 1:5,35, 'k'); hold on;
-%h.CData = [0 0 0; 1 0 1; 1 0 1; 0 0 1; 1 0 0]
 
 %[h p ci t] = ttest (data.data(:,1));
 %disp (['t = ' num2str(t.tstat) '  ' ' p = ' num2str(p)]);
 set(gca, 'LineWidth', 0.5, 'FontSize', 14);
 box on
-%exportgraphics(gcf, ['myP.png'], 'Resolution',300)
-exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
+exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+%exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
 
-%%
+%% check this carefully as it created an error in the export of some values
 writematrix(d2p, 'source_data_std.xlsx')
 
 
-%% compare during acquisition
+%% Figure 2C, bottom
+
 clc
 [h p ci ts] = ttest(CSPA, CSMA); 
 t = ts.tstat; 
 disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
-myES = meanEffectSize(CSPA, CSMA, Effect="cohen")
-
-[h p ci ts] = ttest(CSPPE, CSPME); 
-t = ts.tstat; 
-disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
-
-[h p ci ts] = ttest(CSPPE, CSMME); 
-t = ts.tstat; 
-disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
-
-[h p ci ts] = ttest(CSPME, CSMME); 
-t = ts.tstat; 
-disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
+myES = meanEffectSize(CSPA, CSMA, Effect="cohen", paired = true)
 
 [h p ci ts] = ttest(CSPPE); 
 t = ts.tstat; 
@@ -523,22 +523,10 @@ t = ts.tstat;
 disp (['t(' num2str(size(CSPA, 1)-1) ')= ' num2str(t) ',' ' p = ' num2str(p)]);
 myES = meanEffectSize(CSMME, Effect="cohen")
 
-%% compare during extinction
-
-
-d4ANOVA = [CSMME CSPME CSPPE];
-d4ANOVA = d4ANOVA(any(d4ANOVA ,2),:);
-d4ANOVA = d4ANOVA(:);
-conds = [ones(1, 32) ones(1, 32)*2 ones(1, 32)*3]';
-subID = repmat(1:32, 1, 3)'; 
-
-d4ANOVA = [d4ANOVA conds subID]
-
-x = RMAOV1(d4ANOVA);
 
 
 
-
+%% 
 
 
 
