@@ -165,7 +165,7 @@ t2 = datetime;
 etime(datevec(t2), datevec(t1))
 
 %% Trial level metric of item stability between extinction and test > loop through every trial during test
-
+%IMPORTANT : THIS GENERATES A FILE WITH A DIFFERENT NAME: TEST TO EXTINCTION RATHER THAN EXTINCTION TO TEST
 clear , clc
 
 
@@ -205,7 +205,7 @@ for listi = 1:length(listF2sav)
                 if ~isempty(nRDM)
 
                     allTrT = find(ids(:, 2)==3); 
-                    % loop through every trial during extinction
+                    % loop through every trial during test
                     count= 1; 
                     for triali = 1:length(allTrT)
                         t2u = allTrT(triali);
@@ -213,6 +213,7 @@ for listi = 1:length(listF2sav)
                         %identify the same trial during extinction
                         sameITIDs = (ids(:, 5) == currTr) & ( ids(:, 2) == 2 ) ;
                         reinstTE(count, :,:) = squeeze( mean(nRDM(t2u, sameITIDs,:,:), 2) );
+                        %reinstTE(count, :,:) = squeeze( mean(nRDM(triali, sameITIDs,:,:), 2) );
                         count = count+1; 
                     end
                     trlSTA_TE{subji, 1} = reinstTE;

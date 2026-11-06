@@ -1255,7 +1255,7 @@ line([min(rsa2TT1)-.03 max(rsa2TT1)+.03], [m*min(rsa2TT1)+b m*max(rsa2TT1)+b], '
 
 set(gca, Fontsize=28)
 set(gca, xlim=[-.2 .2], ylim=[-.2 .2])
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+%exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 disp(['Rho: ' num2str(rho, 3) ' p: ' num2str(p, 3)]); 
 
 %% correlate across SUBJECTS and not trials : ONE time period PFC, ALL TIME PERIODS IN TMP
@@ -1426,204 +1426,6 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 
 
-%% COMPUTE REINSTATEMENT SEPARATELY FOR CS++ CS+- and CS-- 
-
-
-clear, clc
-
-roi = 'AMY'; 
-aet = 1; % 0 = ACQ-EXT; 1 = ACQ; 2 = EXT; 
-minTrN = 8; 
-%tP = 21:28;  %21:28 PFC effect %19:31 PFC effec ACQvsEXT
-%tP = 18:25; %TMP ITEM STABILITY
-tP = 29:33; %AMY ITEM STABILITY 
-
-
-allSUB2EXC =  []; 
-for typei = 1:3
-
-    clearvars -except allRSATT typei allSUB2EXC aet roi tP minTrN 
-    
-    
-    trltype = typei;
-
-    
-    remOutliers = 0; 
-    sub2exc = [37]'; 
-    
-        
-    c1 = ['trlSTA_' roi '_CAT_1-44_1_0_500-50']; 
-    c2 = ['trlSTA_' roi '_CET_1-44_1_0_500-50']; 
-
-    
-    
-    paths = load_paths_EXT;
-    
-    
-    [cond1 cond2] = determine_conds_EXT(c1, c2, paths); 
-    
-    rsa2TT1 = zeros(50, 1); 
-    rsa2TT2 = zeros(50, 1); 
-    
-
-    for subji = 1:50
-    
-        rsa2T1 = cond1{subji, 1}; 
-        rsa2T1IDs = cond1{subji, 2}; 
-    
-        rsa2T2 = cond2{subji, 1}; 
-        rsa2T2IDs = cond2{subji, 2}; 
-    
-        
-        if ~isempty(rsa2T1) & ~isempty(rsa2T2) 
-            
-            if trltype ~= 0
-                rsa2T1 = rsa2T1(rsa2T1IDs(:, 6) == trltype, tP); 
-                rsa2T2 = rsa2T2(rsa2T2IDs(:, 6) == trltype, tP); 
-                
-            else 
-                rsa2T1 = rsa2T1(:, tP); 
-                rsa2T2 = rsa2T2(:, tP); 
-            end
-            
-    
-            %nTrials(subji, :) = min([size(rsa2T1, 1), size(rsa2T2, 1),  size(rsa2T3, 1)]); 
-            nTrials(subji, :) = min([size(rsa2T1, 1),  size(rsa2T2, 1)]); 
-    
-            rsa2TT1(subji, :) = mean(rsa2T1, 'all', 'omitnan'); 
-            rsa2TT2(subji, :) = mean(rsa2T2, 'all', 'omitnan'); 
-            
-    
-        end
-    end
-    
-    sub2exc2 = find(nTrials < minTrN); 
-    sub2exc3 = [sub2exc; sub2exc2]; 
-    sub2exc = unique(sub2exc3); 
-
-    allSUB2EXC = [allSUB2EXC sub2exc']; 
-    
-    % rsa2TT1(sub2exc, :, :) = []; 
-    % rsa2TT2(sub2exc, :, :) = []; 
-    % rsa2TT3(sub2exc, :, :) = []; 
-    % 
-    % rsa2TT1(rsa2TT1==0) = []; 
-    % rsa2TT2(rsa2TT2==0) = []; 
-    % rsa2TT3(rsa2TT3==0) = []; 
-    
-    %rsa2TT3 = rsa2TT1 - rsa2TT2;  %ACQ minus EXT
-    if aet == 1
-        rsa2TT3 = rsa2TT1; 
-    elseif aet == 2
-        rsa2TT3 = rsa2TT2; 
-    elseif aet == 0
-        rsa2TT3 = rsa2TT1 - rsa2TT2;  %ACQ minus EXT
-    end
-
-    if remOutliers
-        %[B, tF1] = rmoutliers(rsa2TT1, 'percentile', [5 95]); 
-        %[B, tF2] = rmoutliers(rsa2TT4, 'percentile', [5 95]); 
-        [B, tF1] = rmoutliers(rsa2TT1, 'mean'); 
-        [B, tF2] = rmoutliers(rsa2TT4, 'mean'); 
-        tF3 = tF1 | tF2; 
-        nOut(subji, :) = sum(tF3); 
-        rsa2TT1(tF3) = []; 
-        rsa2TT4(tF3) = []; 
-    end
-    
-    
-    allRSATT{typei, :} = rsa2TT3; 
-end
-
-allSUB2EXC = unique(allSUB2EXC); 
-
-for typei = 1:3
-
-    allRSAH = allRSATT{typei, :} ; 
-    allRSAH(allSUB2EXC, :, :) = []; 
-    allRSAH(allRSAH==0) = [];
-    allRSATT{typei, :}  = allRSAH; 
-end
-
-%%ANOVA REPEATED MEASURES
-
-clc 
-data = [allRSATT{1}, allRSATT{2}, allRSATT{3}];
-nSubj = size(allRSATT{1}, 1); 
-d4anova = data(:);
-d4anova = d4anova(:); 
-d4anova(:,2) = [ones(1,nSubj) ones(1,nSubj)*2 ones(1,nSubj)*3];
-d4anova(:,3) = [1:nSubj 1:nSubj 1:nSubj];
-
-[p f] = RMAOV1(d4anova);
-
-boxplot(data)
-
-%%
-
-c2u = 2; 
-c1 = data_1(:, c2u); 
-c2 = data_2(:, c2u); 
-
-[h p ci ts] = ttest(c1, c2); 
-disp (['t(' num2str(ts.df) ')= ' num2str(ts.tstat, 3) ';' ' p = ' num2str(p, 3)]);
-    
-
-
-%% plot two bar
-
-ylim = [-.075 .15];
-xlim = [0 4];
-
-%data.data = [plvCSPPE plvCSMME]; 
-figure(2); set(gcf,'Position', [0 0 500 600]); 
-mean_S = mean(data, 1);
-std_S = std(data, [], 1);
-h = bar (mean_S);hold on;
-hb = plot ([1 2 3], data, 'k'); hold on; % > lines
-set(hb, 'lineWidth', 1, 'Marker', '.', 'MarkerSize',20);hold on;
-set(h,'FaceColor', 'none', 'lineWidth', 2);
-set(hb,'linestyle','none', 'lineWidth', 2);
-set(gca,'XTick',[1 2 3],'XTickLabel',{'   '},     'FontSize', 20, 'linew',2, 'ylim', ylim, 'xlim', xlim);
-plot(get(gca,'xlim'), [0 0],'k','lineWidth', 2);
-exportgraphics(gcf, 'myP.png', 'Resolution',150)
-
-%%
-
-[h p ci ts] = ttest(data(:, 1), data(:, 3))
-
-%% Repeated-Measures ANOVA (Same as above)
-
-% Combine your data into a matrix where each column corresponds to a condition
-data = [allRSATT{1}, allRSATT{2}, allRSATT{3}];
-
-% Create a table with valid variable names for each condition.
-% (We use names like 'CSpp', 'CSpm', and 'CSmm' instead of 'CS++', etc.)
-T = array2table(data, 'VariableNames', {'CSpp', 'CSpm', 'CSmm'});
-
-% Create a within-subjects design table.
-% The table must have as many rows as the number of repeated measures (here, 3 conditions).
-withinDesign = table((1:3)', 'VariableNames', {'Condition'});
-withinDesign.Condition = categorical(withinDesign.Condition);
-
-% Fit the repeated measures model.
-% The model specification 'CSpp-CSmm ~ 1' tells MATLAB to use the table columns from CSpp to CSmm.
-rm = fitrm(T, 'CSpp-CSmm ~ 1', 'WithinDesign', withinDesign);
-
-% Run the repeated-measures ANOVA.
-% Specify the within-subject factor using the name you gave in withinDesign (here, 'Condition').
-ranovatbl = ranova(rm, 'WithinModel', 'Condition');
-disp('Repeated Measures ANOVA Table:');
-disp(ranovatbl);
-
-% (Optional) Do post-hoc pairwise comparisons with Bonferroni correction:
-comp = multcompare(rm, 'Condition', 'ComparisonType', 'bonferroni');
-disp('Pairwise Comparisons (Bonferroni corrected):');
-disp(comp);
-
-
- 
-
 
 
 
@@ -1632,18 +1434,18 @@ disp(comp);
 
 clear, clc
 
-tyTR = 1; 
+tyTR = 2; 
 minTrN = 4;
 remOutliers = 0; 
-subtractionH = 1; % the difference between ACQ and EXT. If set to zero, only correlates with extinction (c1)
+subtractionH = 0; % the difference between ACQ and EXT. If set to zero, only correlates with extinction (c1)
 
 %tP = 19:31; %21:28 PFC effect %19:31 PFC effec ACQvsEXT
 tP = 18:25; %TMP effect
 
 paths = load_paths_EXT;
 
-c1 = 'trlSTA_TMP_CTA_1-44_1_0_500-50';
-c2 = 'trlSTA_TMP_CTE_1-44_1_0_500-50';
+c1 = 'trlSTA_TMP_CTE_1-44_1_0_500-50';
+c2 = 'trlSTA_TMP_CTA_1-44_1_0_500-50';
 
 sub2exc = [37];
 [cond1 cond2] = determine_conds_EXT(c1, c2, paths); 
@@ -1741,7 +1543,7 @@ set(gca, 'ylim', [-1 1.2], 'xlim', [.5 1.5], 'xtick', [], 'xticklabel', [])
 set(gca, fontsize=24)
 
 
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+%exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 %exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
 
 
@@ -1751,4 +1553,329 @@ exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 
 
 
-%% 
+%% COMPUTE REINSTATEMENT SEPARATELY FOR CS++ CS+- and CS-- FOR ALL TIME POINTS
+% Extended Figure 1
+
+
+clear, clc
+
+aet = 0; % 0 = ACQ-EXT; 1 = ACQ; 2 = EXT; 
+roi = 'AMY';
+minTrN = 8; 
+remOutliers = 0; 
+sub2exc = [37]'; 
+
+
+allSUB2EXC =  []; 
+nTimepoints = 51; 
+win_width = 10; 
+mf = 1; 
+bins =  floor ( (nTimepoints/mf)- win_width/mf+1 );
+allData = [];              
+for timei = 1:bins 
+    %timeBins(timei,:) = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+    timeBinsi = (timei*mf) - (mf-1):(timei*mf - (mf-1) )+win_width-1;
+    for typei = 1:3
+
+        clearvars -except allRSATT typei allSUB2EXC timei allPs allFs timeBinsi mf win_width nTimepoints aet roi ...
+            minTrN remOutliers sub2exc allData
+
+        trltype = typei;
+
+        tP = timeBinsi; %21:28;  %21:28 PFC effect %19:31 PFC effec ACQvsEXT
+        %tP = 15:28;
+
+
+
+        c1 = ['trlSTA_' roi '_CAT_1-44_1_0_500-50']; 
+        c2 = ['trlSTA_' roi '_CET_1-44_1_0_500-50']; 
+
+
+        paths = load_paths_EXT;
+
+
+        [cond1 cond2] = determine_conds_EXT(c1, c2, paths); 
+
+        rsa2TT1 = zeros(50, 1); 
+        rsa2TT2 = zeros(50, 1); 
+
+
+        for subji = 1:50
+
+            rsa2T1 = cond1{subji, 1}; 
+            rsa2T1IDs = cond1{subji, 2}; 
+
+            rsa2T2 = cond2{subji, 1}; 
+            rsa2T2IDs = cond2{subji, 2}; 
+
+
+            if ~isempty(rsa2T1) & ~isempty(rsa2T2) 
+
+                if trltype ~= 0
+                    rsa2T1= rsa2T1(rsa2T1IDs(:, 6) == trltype, tP); 
+                    rsa2T2 = rsa2T2(rsa2T2IDs(:, 6) == trltype, tP); 
+
+                else 
+                    rsa2T1 = rsa2T1(:, tP); 
+                    rsa2T2 = rsa2T2(:, tP); 
+                end
+
+
+                %nTrials(subji, :) = min([size(rsa2T1, 1), size(rsa2T2, 1),  size(rsa2T3, 1)]); 
+                nTrials(subji, :) = min([size(rsa2T1, 1),  size(rsa2T2, 1)]); 
+
+                rsa2TT1(subji, :) = mean(rsa2T1, 'all', 'omitnan'); 
+                rsa2TT2(subji, :) = mean(rsa2T2, 'all', 'omitnan'); 
+
+
+            end
+        end
+
+        sub2exc2 = find(nTrials < minTrN); 
+        sub2exc3 = [sub2exc; sub2exc2]; 
+        sub2exc = unique(sub2exc3); 
+
+        allSUB2EXC = [allSUB2EXC sub2exc']; 
+
+        % rsa2TT1(sub2exc, :, :) = []; 
+        % rsa2TT2(sub2exc, :, :) = []; 
+        % rsa2TT3(sub2exc, :, :) = []; 
+        % 
+        % rsa2TT1(rsa2TT1==0) = []; 
+        % rsa2TT2(rsa2TT2==0) = []; 
+        % rsa2TT3(rsa2TT3==0) = []; 
+
+        %rsa2TT3 = rsa2TT1 - rsa2TT2;  %ACQ minus EXT
+        if aet == 1
+            rsa2TT3 = rsa2TT1; 
+        elseif aet == 2
+            rsa2TT3 = rsa2TT2; 
+        elseif aet == 0
+            rsa2TT3 = rsa2TT1 - rsa2TT2;  %ACQ minus EXT
+        end
+
+        if remOutliers
+            %[B, tF1] = rmoutliers(rsa2TT1, 'percentile', [5 95]); 
+            %[B, tF2] = rmoutliers(rsa2TT4, 'percentile', [5 95]); 
+            [B, tF1] = rmoutliers(rsa2TT1, 'mean'); 
+            [B, tF2] = rmoutliers(rsa2TT4, 'mean'); 
+            tF3 = tF1 | tF2; 
+            nOut(subji, :) = sum(tF3); 
+            rsa2TT1(tF3) = []; 
+            rsa2TT4(tF3) = []; 
+        end
+
+
+        allRSATT{typei, :} = rsa2TT3; 
+
+    end
+
+    allSUB2EXC = unique(allSUB2EXC); 
+
+    for typei = 1:3
+
+        allRSAH = allRSATT{typei, :} ; 
+        allRSAH(allSUB2EXC, :, :) = []; 
+        allRSAH(allRSAH==0) = [];
+        allRSATT{typei, :}  = allRSAH; 
+    end
+
+    %%ANOVA REPEATED MEASURES
+
+    clc 
+    data = [allRSATT{1}, allRSATT{2}, allRSATT{3}];
+    allData(:, :, timei) = data; 
+    nSubj = size(allRSATT{1}, 1); 
+    d4anova = data(:);
+    d4anova = d4anova(:); 
+    d4anova(:,2) = [ones(1,nSubj) ones(1,nSubj)*2 ones(1,nSubj)*3];
+    d4anova(:,3) = [1:nSubj 1:nSubj 1:nSubj];
+
+    [allPs(timei, :) allFs(timei, :)] = RMAOV1(d4anova);
+
+
+end
+
+%figure()
+%times = -.2:.05:1.85;
+%plot (times, allFs); hold on; 
+%plot(times, allPs)
+%set(gca, 'xlim', [-.25 1.7]); 
+
+%% plot tree conditions
+clc 
+
+mD = squeeze(mean(allData, 1)); 
+stD = squeeze(std(allData, [], 1)); 
+se = stD / sqrt(size(allData, 1)); 
+
+fig_stuff=subplot(1,1,1);
+cmap_default=fig_stuff.ColorOrder;
+green= colormap(brewermap([1],'Greens'))
+green = green*.9;
+red = cmap_default(2,:);
+yellow = cmap_default(3,:); 
+
+times = -.2:.05:1.85;
+boundedline(times, mD(1,:), se(1, :),'LineWidth', 2, 'cmap',red,'transparency',0.2,'alpha'); hold on; 
+boundedline(times, mD(2,:), se(2, :),'LineWidth', 2, 'cmap',yellow,'transparency',0.2,'alpha');
+boundedline(times, mD(3,:), se(3, :),'LineWidth', 2, 'cmap',green,'transparency',0.2,'alpha');
+h = double(allPs<0.05); 
+hb = h; hb(h==0) = nan; hb(hb==1) = -.015; 
+set(gca, fontsize=25)
+plot(times, hb,'k',  LineWidth=7)
+set(gca, 'xlim', [-.25 1.7],'ylim', [-.02 .03]); 
+plot(get(gca,'xlim'), [0 0],'k:', 'linewidth', 2);
+plot([0 0],get(gca,'ylim'),'k:', 'linewidth', 2);
+
+
+exportgraphics(gcf, ['myP.png'], 'Resolution',300)
+
+
+
+%% Correlate amygdala power IN CLUSTER with different trial-level metrics FOR DIFFERENT CONDITIONS
+% Supplementary Note 2
+clearvars -except allRHO_1 allRHO_2 allRHO_3
+clc
+
+%tp2use = 36:46;
+%tp2use = 20:32; % check OFC
+
+con2u = 3; 
+tp2use = 33:41; % > AMY theta power effect
+
+
+paths = load_paths_EXT;
+load ([paths.results.trial_based 'AMY_POW_1-44Hz_TR'])
+%load ([paths.results.trial_based 'trlCTX_PFC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlCTX_HPC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlCTX_AMY_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlCTX_TMP_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlCTX_OFC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlCTX_OCC_CE_9-54_1_0_500-100'])
+
+
+load ([paths.results.trial_based 'trlSTA_AMY_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_HPC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_PFC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_TMP_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_OFC_CE_1-44_1_0_500-50'])
+%load ([paths.results.trial_based 'trlSTA_OCC_CE_3-54_1_0_500-100'])
+
+
+minTr = 8; 
+
+
+if exist('itstaTRALL')
+    cond2u = itstaTRALL; 
+end
+if exist('ctxTRALL')
+    cond2u = ctxTRALL; 
+end
+
+if length(cond2u) < 50 
+    cond2u{50,2}= []; 
+end
+
+sub2exc = [37];
+
+allRHO = nan(50, 1); 
+
+for subji = 1:50
+
+    amyPOW = allPOWAMY{subji, 1}; 
+    amyPOWIDs = double(string(allPOWAMY{subji, 2})); 
+
+    rsa2T = cond2u{subji, 1}; 
+    rsa2TIDs = cond2u{subji, 2}; 
+
+    if ~isempty(amyPOW) & ~isempty(rsa2T)
+
+        conids = rsa2TIDs(:, 6) == con2u; 
+        amyPOW = amyPOW(conids); 
+        amyPOWIDs = amyPOWIDs(conids,:); 
+
+        [C i1 i2] = intersect(amyPOWIDs(:, 1), rsa2TIDs(:,1)); 
+        amyPOW = amyPOW(i1, :); 
+        amyPOWIDs = amyPOWIDs(i1,:); 
+        rsa2T = mean(rsa2T(i2, tp2use), 2); 
+
+
+
+        % % % z-score amygdala power separately for CS+ and CS-
+        amyPOWCSp = amyPOW(amyPOWIDs(:, 8) == 1); 
+        amyPOWCSm = amyPOW(amyPOWIDs(:, 8) == 0); 
+        amyPOWCSp = (amyPOWCSp - mean(amyPOWCSp, 'omitnan')) ./ std(amyPOWCSp, 'omitnan');
+        amyPOWCSm = (amyPOWCSm - mean(amyPOWCSm, 'omitnan')) ./ std(amyPOWCSm, 'omitnan');
+        amyPOW(amyPOWIDs(:, 8) == 1) = amyPOWCSp; 
+        amyPOW(amyPOWIDs(:, 8) == 0) = amyPOWCSm; 
+
+        % % % z-score RSA2T metric separately for CS+ and CS-
+        % % rsa2TCSp = rsa2T(rsa2TIDs(:, 8) == 1); 
+        % % rsa2TCSm = rsa2T(rsa2TIDs(:, 8) == 0); 
+        % % rsa2TCSp = (rsa2TCSp - mean(rsa2TCSp, 'omitnan')) ./ std(rsa2TCSp, 'omitnan');
+        % % rsa2TCSm = (rsa2TCSm - mean(rsa2TCSm, 'omitnan')) ./ std(rsa2TCSm, 'omitnan');
+        % % rsa2T(rsa2TIDs(:, 8) == 1) = rsa2TCSp; 
+        % % rsa2T(rsa2TIDs(:, 8) == 0) = rsa2TCSm; 
+
+        nanIds = isnan(amyPOW); 
+        amyPOW(nanIds) = []; 
+        rsa2T(nanIds) = []; 
+
+
+        % [B, tF1] = rmoutliers(rsa2T, 'percentiles', [10 90]); 
+        % [B, tF2] = rmoutliers(amyPOW, 'percentiles', [10 90]); 
+        % [B, tF1] = rmoutliers(rsa2T, 'mean'); 
+        % [B, tF2] = rmoutliers(amyPOW, 'mean'); 
+        % tF3 = tF1 | tF2; 
+        % nOut(subji, :) = sum(tF3); 
+        % rsa2T(tF3) = []; 
+        % amyPOW(tF3) = []; 
+
+        % % % 
+        % % % figure()
+        % % % scatter(amyPOW, rsa2T, 150, 'filled');
+        % % % h2 = lsline;h2.LineWidth = 2;h2.Color = [.5 .5 .5 ];
+        % % % C = [ones(size(h2.XData(:))), h2.XData(:)]\h2.YData(:);
+        % % % allSlopes(subji, :) = C(2);
+        % % % allIntercepts(subji, :) = C(1);
+        % % % set(gca, 'ylim', [-.15 .15], 'xlim', [-3 3], 'Fontsize', 24)
+        % % % %set(gca, 'ylim', [-3 3], 'xlim', [-3 3], 'Fontsize', 24)
+
+
+        if length(amyPOW) > minTr % at least five trials for the correlation analysis
+            allRHO(subji, :) = corr(amyPOW, rsa2T, 'type', 's');
+        end
+
+    else
+
+        allRHO(subji, :) = nan; 
+
+    end
+
+end
+
+%% allRHO_1, allRHO_2 and allRHO_3 need to be generated for each condition in the cell above
+
+clc 
+isnan1 = isnan(allRHO_1); 
+isnan2 = isnan(allRHO_2); 
+isnan3 = isnan(allRHO_3); 
+allisN = isnan1|isnan2|isnan3; 
+
+allRHO_1(allisN) = []; 
+allRHO_2(allisN) = []; 
+allRHO_3(allisN) = []; 
+
+data = [allRHO_1, allRHO_2, allRHO_3];
+nSubj = size(allRHO_1, 1); 
+d4anova = data(:);
+d4anova = d4anova(:); 
+d4anova(:,2) = [ones(1,nSubj) ones(1,nSubj)*2 ones(1,nSubj)*3];
+d4anova(:,3) = [1:nSubj 1:nSubj 1:nSubj];
+
+[p f] = RMAOV1(d4anova);
+
+boxplot(data)
+
+%%
