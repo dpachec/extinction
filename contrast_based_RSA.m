@@ -97,7 +97,7 @@ clear, clc
 minTr = 8; 
 paths = load_paths_EXT; 
 
-f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPPE-SICSPME';
+f2sav = 'RSA_AMY_C_1-44_1_0_500-50_1_T_SICSPE-SICSME';
 
 %f2sav = 'RSA_PFC_C_1-44_1_0_500-50_1_T_SCE-DCE'; 
 

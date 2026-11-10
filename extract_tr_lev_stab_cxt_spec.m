@@ -24,7 +24,7 @@ listF2sav = {
 % 'trlCTX_AMY_VE_1-44_1_0_500-50';
 
 
-'trlSTA_TMP_CE_1-44_1_0_500-50';
+'trlSTA_TMP_CT_1-44_1_0_500-50';
 
 };   
 
@@ -100,13 +100,9 @@ clear , clc
 
 listF2sav = {
 
-%'trlSTA_aHPC_CET_1-44_1_0_500-50';
-
-% 'trlSTA_AMY_CET_1-44_1_0_500-50';
-% 'trlSTA_HPC_CET_1-44_1_0_500-50';
-% 'trlSTA_PFC_CET_1-44_1_0_500-50';
-% 'trlSTA_OCC_CET_1-44_1_0_500-50';
-% 'trlSTA_OFC_CET_1-44_1_0_500-50';
+ %'trlSTA_AMY_CET_1-44_1_0_500-50';
+ %'trlSTA_HPC_CET_1-44_1_0_500-50';
+ %'trlSTA_PFC_CET_1-44_1_0_500-50';
  'trlSTA_TMP_CET_1-44_1_0_500-50';
 % 
 
@@ -138,15 +134,13 @@ for listi = 1:length(listF2sav)
                     allTrE = find(ids(:, 2)==2); 
                     
                     % loop through every trial during extinction
-                    count= 1; 
                     for triali = 1:length(allTrE)
                         t2u = allTrE(triali);
                         currTr = ids(t2u, 5); 
                         %identify the same trial during test
                         sameITIDs = (ids(:, 5) == currTr) & ( ids(:, 2) == 3 ) ;
                         % sameITIDs(triali) = 0; % no need to exclude the same trial here (diff exp phases)
-                        reinstET(count, :,:) = squeeze( mean(nRDM(triali, sameITIDs,:,:), 2) );
-                        count = count+1; 
+                        reinstET(triali, :,:) = squeeze( mean(nRDM(t2u, sameITIDs,:,:), 2) );
                     end
                     trlSTA_ET{subji, 1} = reinstET;
                     ids2sav = ids(ids(:, 2) == 2,:); 
@@ -165,7 +159,7 @@ t2 = datetime;
 etime(datevec(t2), datevec(t1))
 
 %% Trial level metric of item stability between extinction and test > loop through every trial during test
-%IMPORTANT : THIS GENERATES A FILE WITH A DIFFERENT NAME: TEST TO EXTINCTION RATHER THAN EXTINCTION TO TEST
+%IMPORTANT : THIS SAVES A FILE WITH A DIFFERENT NAME: TEST TO EXTINCTION RATHER THAN EXTINCTION TO TEST
 clear , clc
 
 
@@ -174,8 +168,6 @@ listF2sav = { %note that in this case the names are modified at the end CET > CT
 %'trlSTA_AMY_CET_1-44_1_0_500-50';
 %'trlSTA_HPC_CET_1-44_1_0_500-50';
 %'trlSTA_PFC_CET_1-44_1_0_500-50';
-%'trlSTA_OCC_CET_1-44_1_0_500-50';
-%'trlSTA_OFC_CET_1-44_1_0_500-50';
 'trlSTA_TMP_CET_1-44_1_0_500-50';
 
 
@@ -206,15 +198,19 @@ for listi = 1:length(listF2sav)
 
                     allTrT = find(ids(:, 2)==3); 
                     % loop through every trial during test
-                    count= 1; 
                     for triali = 1:length(allTrT)
                         t2u = allTrT(triali);
                         currTr = ids(t2u, 5); 
-                        %identify the same trial during extinction
+                        
+                        %ONLY SAME ITEMS
                         sameITIDs = (ids(:, 5) == currTr) & ( ids(:, 2) == 2 ) ;
-                        reinstTE(count, :,:) = squeeze( mean(nRDM(t2u, sameITIDs,:,:), 2) );
-                        %reinstTE(count, :,:) = squeeze( mean(nRDM(triali, sameITIDs,:,:), 2) );
-                        count = count+1; 
+                        reinstTE(triali, :,:) = squeeze( mean(nRDM(t2u, sameITIDs,:,:), 2) );
+
+                        %SAME MINUS DIFFERENT
+                        %sameITIDs = (ids(:, 5) == currTr) & ( ids(:, 2) == 2 ) ;
+                        %diffITIDs = (ids(:, 5) ~= currTr) & ( ids(:, 2) == 2 ) ;
+                        %reinstTE(triali, :,:) = squeeze( mean(nRDM(t2u, sameITIDs,:,:), 2) - mean(nRDM(t2u, diffITIDs,:,:), 2) );
+                        
                     end
                     trlSTA_TE{subji, 1} = reinstTE;
                     ids2sav = ids(ids(:, 2) == 3,:); 
@@ -244,12 +240,10 @@ clear , clc
 
 listF2sav = {
 
-%'trlSTA_AMY_CAT_1-44_1_0_500-50';
-%'trlSTA_HPC_CAT_1-44_1_0_500-50';
-%'trlSTA_aHPC_CAT_1-44_1_0_500-50';
-%'trlSTA_PFC_CAT_1-44_1_0_500-50';
-%'trlSTA_OCC_CAT_1-44_1_0_500-50';
-%'trlSTA_OFC_CAT_1-44_1_0_500-50';
+'trlSTA_AMY_CAT_1-44_1_0_500-50';
+'trlSTA_HPC_CAT_1-44_1_0_500-50';
+'trlSTA_PFC_CAT_1-44_1_0_500-50';
+'trlSTA_OFC_CAT_1-44_1_0_500-50';
 'trlSTA_TMP_CAT_1-44_1_0_500-50';
 
 
@@ -281,15 +275,13 @@ for listi = 1:length(listF2sav)
                     allTrA = find(ids(:, 2)==1); 
                     
                     % loop through every trial during extinction
-                    count= 1; 
                     for triali = 1:length(allTrA)
                         t2u = allTrA(triali);
                         currTr = ids(t2u, 5); 
                         %identify the same trial during test
                         sameITIDs = (ids(:, 5) == currTr) & ( ids(:, 2) == 3 ) ;
                         % sameITIDs(triali) = 0; % no need to exclude the same trial here (diff exp phases)
-                        reinstAT(count, :,:) = squeeze( mean(nRDM(triali, sameITIDs,:,:), 2) );
-                        count = count+1; 
+                        reinstAT(triali, :,:) = squeeze( mean(nRDM(t2u, sameITIDs,:,:), 2) );
                     end
                     trlSTA_AT{subji, 1} = reinstAT;
                     ids2sav = ids(ids(:, 2) == 1,:); 
@@ -309,18 +301,15 @@ etime(datevec(t2), datevec(t1))
 
 
 %% Trial level metric of item stability between acquisition and test > IMPORTANT !! %note that in this case the names are modified at the end CAT > CTA
-
+%IMPORTANT : THIS SAVES A FILE WITH A DIFFERENT NAME: TEST TO ACQUISITION RATHER THAN ACQUISITION TO TEST
 clear , clc
 
 
 listF2sav = { %note that in this case the names are modified at the end CAT > CTA
 
-%'trlSTA_AMY_CAT_1-44_1_0_500-50';
-%'trlSTA_HPC_CAT_1-44_1_0_500-50';
-%'trlSTA_aHPC_CAT_1-44_1_0_500-50';
-%'trlSTA_PFC_CAT_1-44_1_0_500-50';
-%'trlSTA_OCC_CAT_1-44_1_0_500-50';
-%'trlSTA_OFC_CAT_1-44_1_0_500-50';
+'trlSTA_AMY_CAT_1-44_1_0_500-50';
+'trlSTA_HPC_CAT_1-44_1_0_500-50';
+'trlSTA_PFC_CAT_1-44_1_0_500-50';
 'trlSTA_TMP_CAT_1-44_1_0_500-50';
 
 
@@ -352,14 +341,12 @@ for listi = 1:length(listF2sav)
                     allTrT = find(ids(:, 2)==3); 
                     
                     % loop through every trial during test
-                    count= 1; 
                     for triali = 1:length(allTrT)
                         t2u = allTrT(triali);
                         currTr = ids(t2u, 5); 
                         %identify the same trial during acquisition
                         sameITIDs = (ids(:, 5) == currTr) & ( ids(:, 2) == 1 ) ;
-                        reinstAT(count, :,:) = squeeze( mean(nRDM(t2u, sameITIDs,:,:), 2) );
-                        count = count+1; 
+                        reinstAT(triali, :,:) = squeeze( mean(nRDM(t2u, sameITIDs,:,:), 2) );
                     end
                     trlSTA_TA{subji, 1} = reinstAT;
                     ids2sav = ids(ids(:, 2) == 3,:); 
