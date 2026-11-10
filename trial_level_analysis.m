@@ -1431,7 +1431,7 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 %% EXTRACT STA LEVELS IN TMP or PFC CLUSTER and correlate with behavior
 clear, clc
-
+%%
 tyTR = 3; 
 minTrN = 8;
 remOutliers = 1; 
@@ -1508,7 +1508,7 @@ for subji = 1:50
         end
 
     else 
-        disp(subji)
+        %disp(subji)
         nOut(subji, :) = nan; 
         allRHO(subji, :) = nan; 
     end
@@ -1524,7 +1524,7 @@ sub2exc3 = [sub2exc, sub2exc2'];
 sub2exc = unique(sub2exc3); 
 
 allRHO(sub2exc) = []; 
-nOut(sub2exc) = []; 
+%nOut(sub2exc) = []; 
 nTr (sub2exc) = []; 
 nTr(isnan(allRHO)) = nan; 
 nOut(isnan(allRHO)) = nan; 
@@ -1548,12 +1548,13 @@ set(gca, 'ylim', [-1 1], 'xlim', [.5 1.5], 'xtick', [], 'xticklabel', [])
 set(gca, fontsize=24)
 
 
-exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+%exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 %exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
 
 
 %myD = meanEffectSize(allRHO, Effect="cohen")
 
+nansum(nOut)
 
 
 
