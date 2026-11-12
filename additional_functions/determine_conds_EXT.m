@@ -17,13 +17,13 @@ function [cond1 cond2] = determine_conds_EXT(c1, c2, paths)
             cond1 = cond1.itstaTRALL; 
         elseif isfield(cond1, 'trlSTA_ET')
                 cond1 = cond1.trlSTA_ET; 
-                disp('cond1 trlSTA_ET')
+                %disp('cond1 trlSTA_ET')
         elseif isfield(cond1, 'trlSTA_TE')
                 cond1 = cond1.trlSTA_TE; 
-                disp('cond1 trlSTA_TE')
+                %disp('cond1 trlSTA_TE')
         elseif isfield(cond1, 'trlSTA_TA')
                 cond1 = cond1.trlSTA_TA; 
-                disp('cond1 trlSTA_TA')
+                %disp('cond1 trlSTA_TA')
         end
     end 
     
@@ -39,9 +39,9 @@ function [cond1 cond2] = determine_conds_EXT(c1, c2, paths)
             cond2 = cond2.trlSTA_AT; 
         elseif isfield(cond2, 'trlSTA_TE') 
                 cond2 = cond2.trlSTA_TE; 
-                disp('cond2 trlSTA_TE')
+                %disp('cond2 trlSTA_TE')
         elseif isfield(cond2, 'trlSTA_TA')
-                cond2 = cond2.trlSTA_TA; 
+                %cond2 = cond2.trlSTA_TA; 
                 disp('cond2 trlSTA_TA')
         end
     end

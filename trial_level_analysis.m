@@ -923,7 +923,7 @@ toc
 
 clear, clc
 
-trltype = 2;
+trltype = 3;
 minTrN = 8; 
 tP = 21:28;  %21:28 PFC effect %19:31 PFC effec ACQvsEXT
 
@@ -1431,7 +1431,7 @@ p = 1 - ((nPerm-1) - (length (allAb)))  / nPerm
 
 %% EXTRACT STA LEVELS IN TMP or PFC CLUSTER and correlate with behavior
 clear, clc
-%%
+
 tyTR = 3; 
 minTrN = 8;
 remOutliers = 1; 
@@ -1501,6 +1501,7 @@ for subji = 1:50
             ratings2u(tF3) = []; 
         end
 
+        nVar(subji, :) = var(ratings2u); 
         nTr(subji, :) = length(trSTA); 
         allRatSame(subji, :) = length(unique(ratings2u)) == 1; 
         if ~isempty(trSTA)
@@ -1511,6 +1512,7 @@ for subji = 1:50
         %disp(subji)
         nOut(subji, :) = nan; 
         allRHO(subji, :) = nan; 
+        nVar(subji, :) = nan; 
     end
     
     % % plot scatters 
@@ -1519,17 +1521,25 @@ for subji = 1:50
     %set(gca, 'ylim', [0 5])
 end
 
+
+
+%sub2exc1 = find(nVar < .1);
+%sub2exc3 = [sub2exc, sub2exc1']; 
 sub2exc2 = find(nTr < minTrN); 
 sub2exc3 = [sub2exc, sub2exc2']; 
+%sub2exc3 = [sub2exc, sub2exc1', sub2exc2']; 
 sub2exc = unique(sub2exc3); 
 
-allRHO(sub2exc) = []; 
-%nOut(sub2exc) = []; 
-nTr (sub2exc) = []; 
-nTr(isnan(allRHO)) = nan; 
-nOut(isnan(allRHO)) = nan; 
+allRHO(sub2exc) = nan; 
+nOut(sub2exc) = nan; 
+allRatSame = double(allRatSame) ; 
+allRatSame(sub2exc) = nan; 
+sum(allRatSame, 'omitnan')
+%nTr (sub2exc) = []; 
+%nTr(isnan(allRHO)) = nan; 
+%nOut(isnan(allRHO)) = nan; 
 %nOut(isnan(nOut) | isnan(allRHO)) = []; 
-%allRHO(isnan(allRHO)) = []; 
+allRHO(isnan(allRHO)) = []; 
 allRHO = atanh(allRHO); 
 
 
@@ -1537,24 +1547,22 @@ allRHO = atanh(allRHO);
 %[h p ci ts] = ttest(allRHO([1:9 11:end])); 
 disp (['t(' num2str(ts.df) ')= ' num2str(ts.tstat, 3) ';' ' p = ' num2str(p, 3)]);
 
-figure(); set (gcf, 'Position', [50 50 300 500]);
-initialColorOrder = get(gca,'ColorOrder'); 
-scatter(1, allRHO, 75, initialColorOrder(1, :), 'filled'); hold on
-scatter(1, allRHO, 200, initialColorOrder(2, :), 'ko', 'LineWidth', 1); hold on
-plot(get(gca, 'xlim'), [0 0], 'k:', linewidth=2)
-set(gca, 'ylim', [-1 1], 'xlim', [.5 1.5], 'xtick', [], 'xticklabel', [])
-%set(gca, 'ylim', [-2 2], 'xlim', [.5 1.5], 'xtick', [], 'xticklabel', [])
-%title (['t(' num2str(ts.df) ')= ' num2str(ts.tstat, 3) ',' ' p = ' num2str(p, 3)])
-set(gca, fontsize=24)
+% figure(1); set (gcf, 'Position', [50 50 300 500]);
+% initialColorOrder = get(gca,'ColorOrder'); 
+% scatter(1, allRHO, 75, initialColorOrder(1, :), 'filled'); hold on
+% scatter(1, allRHO, 200, initialColorOrder(2, :), 'ko', 'LineWidth', 1); hold on
+% plot(get(gca, 'xlim'), [0 0], 'k:', linewidth=2)
+% set(gca, 'ylim', [-1.2 1.2], 'xlim', [.5 1.5], 'xtick', [], 'xticklabel', [])
+% set(gca, fontsize=24)
 
 
 %exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 %exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
 
 
-%myD = meanEffectSize(allRHO, Effect="cohen")
+myD = meanEffectSize(allRHO, Effect="cohen")
 
-nansum(nOut)
+%nansum(nOut)
 
 
 
