@@ -923,7 +923,7 @@ toc
 
 clear, clc
 
-trltype = 3;
+trltype = 1;
 minTrN = 8; 
 tP = 21:28;  %21:28 PFC effect %19:31 PFC effec ACQvsEXT
 
@@ -1017,14 +1017,19 @@ scatter(rsa2TT1, rsa2TT4, 400, 'ko'); hold on;
 
 %scatter(rsa2TT1(1), rsa2TT4(1), 1400, '.'); hold on; 
 
-pFit = polyfit(rsa2TT1, rsa2TT4, 1);
-m = pFit(1); % slope
-b = pFit(2); % intercept
-line([min(rsa2TT1)-.03 max(rsa2TT1)+.03], [m*min(rsa2TT1)+b m*max(rsa2TT1)+b], 'color', 'r', linewidth=3);
+%pFit = polyfit(rsa2TT1, rsa2TT4, 1);
+%m = pFit(1); % slope
+%b = pFit(2); % intercept
+%line([min(rsa2TT1)-.03 max(rsa2TT1)+.03], [m*min(rsa2TT1)+b m*max(rsa2TT1)+b], 'color', 'r', linewidth=3);
 %title (['Rho: ' num2str(rho, 3) ' p: ' num2str(p, 3)]);
 
+pFit = polyfit(rsa2TT1, rsa2TT4, 1);
+xl = [min(rsa2TT1)-.03, max(rsa2TT1)+.03];
+line(xl, polyval(pFit, xl), 'Color', 'r', 'LineWidth', 3);
+
 set(gca, Fontsize=28)
-set(gca, xlim=[-.035 .05], ylim=[-.06 .06])
+%set(gca, xlim=[-.035 .05], ylim=[-.06 .06])
+set(gca, xlim=[-.035 .05], ylim=[-.11 .11])
 %exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 disp(['Rho: ' num2str(rho, 3) ' p: ' num2str(p, 3)]); 
 
