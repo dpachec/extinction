@@ -1440,7 +1440,6 @@ clear, clc
 tyTR = 3; 
 minTrN = 8;
 remOutliers = 1; 
-subtractionH = 0; % the difference between ACQ and EXT. If set to zero, only correlates with extinction (c1)
 
 %tP = 19:31; %21:28 PFC effect %19:31 PFC effec ACQvsEXT
 tP = 18:25; %TMP effect
@@ -1454,6 +1453,10 @@ c2 = 'trlSTA_TMP_CTE_1-44_1_0_500-50';
 sub2exc = [37];
 [cond1 cond2] = determine_conds_EXT(c1, c2, paths); 
 allRHO = zeros(50, 1); 
+nTR = nan(50, 1); 
+
+figure(); set (gcf, 'Position', [50 50 1800 1000])
+t = tiledlayout(5,10, 'TileSpacing','Compact');
 
 for subji = 1:50
 
@@ -1463,7 +1466,7 @@ for subji = 1:50
     rsa2T2 = cond2{subji, 1}; 
     rsa2T2IDs = cond2{subji, 2}; 
 
-    
+    clear trSTA ratings2u
     if ~isempty(rsa2T1)        
         % % % % % % take only CS+- items
         if tyTR ~= 0            
@@ -1476,17 +1479,13 @@ for subji = 1:50
             rsa2T2 = rsa2T2(mask, :); 
         end
 
-        clear trSTA
         for triali = 1:size(rsa2T1, 1)
             cTR1 = squeeze(mean(rsa2T1(triali, tP), 2));
             cTR2 = squeeze(mean(rsa2T2(triali, tP), 2));
             
-            if subtractionH
-                trSTA(triali, :) = cTR1 - cTR2;
-            else
-                trSTA(triali, :) = cTR1;     
-            end
+            trSTA(triali, :) = cTR1;     
         end
+
         r2check{subji, :} = rsa2T1IDs(:, 7);
         ratings2u = rsa2T1IDs(:, 7);
         
@@ -1495,35 +1494,55 @@ for subji = 1:50
         ratings2u(nanIds) = []; 
         trSTA(nanIds) = []; 
         
+        rat2checkBefore{subji, :} = ratings2u; 
         if remOutliers
-            %[B, tF1] = rmoutliers(trSTA, 'percentiles', [5 95]); 
-            %[B, tF2] = rmoutliers(ratings2u, 'percentiles', [5 95]); 
-            [B, tF1] = rmoutliers(trSTA, 'mean', ThresholdFactor=2.5); 
-            [B, tF2] = rmoutliers(ratings2u, 'mean', ThresholdFactor=2.5); 
+            [B, tF1] = rmoutliers(trSTA, 'mean', ThresholdFactor=1.5); 
+            [B, tF2] = rmoutliers(ratings2u, 'mean', ThresholdFactor=1.5); 
+            %[B, tF1] = rmoutliers(trSTA, 'mean', ThresholdFactor=2); 
+            %[B, tF2] = rmoutliers(ratings2u, 'mean', ThresholdFactor=2); 
             tF3 = tF1 | tF2; 
+            %tF3 = tF1;
             nOut(subji, :) = sum(tF3); 
             trSTA(tF3) = []; 
             ratings2u(tF3) = []; 
+        else 
+            nOut(subji, :) = nan; 
         end
+        rat2checkAfter{subji, :} = ratings2u; 
 
         nVar(subji, :) = var(ratings2u); 
         nTr(subji, :) = length(trSTA); 
         allRatSame(subji, :) = length(unique(ratings2u)) == 1; 
-        if ~isempty(trSTA)
+        if ~isempty(trSTA) 
             allRHO(subji, : ) = corr (trSTA, ratings2u, 'type', 's');
         end
 
     else 
         %disp(subji)
         nOut(subji, :) = nan; 
+        nTr(subji, :) = nan; 
         allRHO(subji, :) = nan; 
         nVar(subji, :) = nan; 
+        allRatSame(subji, :) = 0; 
+        
     end
     
     % % plot scatters 
-    %figure()
-    %scatter(trSTA, ratings2u, 75, 'filled'); 
-    %set(gca, 'ylim', [0 5])
+    %title(['N out:  ' num2str(nOut(subji, :))  ' // N tr: ' num2str(nTr(subji, :))])
+    nexttile
+    if exist('ratings2u')
+        scatter(trSTA, ratings2u, 25, 'filled'); hold on; 
+        %scatter(trSTA, ratings2u, 45, 'ko', 'LineWidth', 1); hold on    
+        if allRatSame(subji) == 1 | nTr(subji) < minTrN | isnan(nTr(subji))
+            title(['S' num2str(subji) ': ' num2str(nOut(subji, :))  ' // ' num2str(nTr(subji, :))], 'Color','red');
+        else 
+            title(['S' num2str(subji) ': ' num2str(nOut(subji, :))  ' // ' num2str(nTr(subji, :))]);
+        end
+        set(gca, 'ylim', [0 5])
+    else 
+        title(['S' num2str(subji) ': ' 'NO ELECTRODES'], 'Color','red');
+    end
+    
 end
 
 
@@ -1544,7 +1563,7 @@ sum(allRatSame, 'omitnan')
 %nTr(isnan(allRHO)) = nan; 
 %nOut(isnan(allRHO)) = nan; 
 %nOut(isnan(nOut) | isnan(allRHO)) = []; 
-allRHO(isnan(allRHO)) = []; 
+%allRHO(isnan(allRHO)) = []; 
 allRHO = atanh(allRHO); 
 
 
@@ -1552,20 +1571,20 @@ allRHO = atanh(allRHO);
 %[h p ci ts] = ttest(allRHO([1:9 11:end])); 
 disp (['t(' num2str(ts.df) ')= ' num2str(ts.tstat, 3) ';' ' p = ' num2str(p, 3)]);
 
-% figure(1); set (gcf, 'Position', [50 50 300 500]);
-% initialColorOrder = get(gca,'ColorOrder'); 
-% scatter(1, allRHO, 75, initialColorOrder(1, :), 'filled'); hold on
-% scatter(1, allRHO, 200, initialColorOrder(2, :), 'ko', 'LineWidth', 1); hold on
-% plot(get(gca, 'xlim'), [0 0], 'k:', linewidth=2)
-% set(gca, 'ylim', [-1.2 1.2], 'xlim', [.5 1.5], 'xtick', [], 'xticklabel', [])
-% set(gca, fontsize=24)
+%figure(); set (gcf, 'Position', [50 50 300 500]);
+%initialColorOrder = get(gca,'ColorOrder'); 
+%scatter(1, allRHO, 75, initialColorOrder(1, :), 'filled'); hold on
+%scatter(1, allRHO, 200, initialColorOrder(2, :), 'ko', 'LineWidth', 1); hold on
+%plot(get(gca, 'xlim'), [0 0], 'k:', linewidth=2)
+%set(gca, 'ylim', [-1.2 1.2], 'xlim', [.5 1.5], 'xtick', [], 'xticklabel', [])
+%set(gca, fontsize=24)
 
 
-%exportgraphics(gcf, 'myP.png', 'Resolution', 300);
+exportgraphics(gcf, 'myP.png', 'Resolution', 300);
 %exportgraphics(gcf, ['myP.svg'], 'ContentType','vector')
 
 
-myD = meanEffectSize(allRHO, Effect="cohen")
+%myD = meanEffectSize(allRHO, Effect="cohen")
 
 %nansum(nOut)
 
